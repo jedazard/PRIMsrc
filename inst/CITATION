@@ -1,0 +1,119 @@
+citHeader("To cite PrimSRC in publications use:")
+
+titl <- paste(meta$Package, ":", meta$Title, sep=" ")
+year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
+vers <- paste("R package version", meta$Version)
+
+citEntry(entry       = "Manual",
+         title       = titl,
+         author      = personList(person(family="Dazard", given="J-E."),
+                                  person(family="Choe", given="M."),
+                                  person(family="LeBlanc", given="M."),
+                                  person(family="Santana", given="A.")), 	 	
+         publisher   = "CRAN",
+         year        = year,
+         note        = vers,
+         url         = "http://cran.r-project.org/web/packages/PrimSRC/",
+         pdf         = "http://cran.r-project.org/web/packages/PrimSRC/PrimSRC.pdf",
+         textVersion = paste("Dazard J-E., Choe M., LeBlanc M. and Santana A. (", year ,"). ", titl, ", ", vers, ".", sep=""))
+
+citEntry(entry       = "Article",
+         title       = "Local Sparse Bump Hunting",
+         author      = personList(person(family="Dazard", given="J-E."),
+                                  person(family="Rao", given="J.S.")), 	
+         journal     = "J. Comp Graph. Statistics",
+         year        = "2010",
+         volume      = "19",
+         number      = "4",
+         pages       = "900-929",
+         textVersion = "Dazard J-E. and Rao J.S. (2010).
+                        J. Comp Graph. Statistics, 19(4):900-92.")
+
+citEntry(entry       = "Proceedings",
+         title       = "Optimization of PRIM under Normality",
+         author      = personList(person(family="Diaz-Pachon", given="D.A."),
+                                  person(family="Rao", given="J.S."),
+                                  person(family="Dazard", given="J-E.")), 	
+         journal     = "SCo Proceedings.
+                       Complex Data Modeling and Computationally Intensive Statistical Methods for Estimation and Prediction.
+                       Politecnico di Milano, Milan, Italy.",
+         year        = "2013",
+         url         = "http://www2.mate.polimi.it/ocs/viewabstract.php?id=371&cf=33",
+         textVersion = "Diaz-Pachon D.A., Rao J.S. and Dazard J-E. (2013).
+                        Optimization of PRIM under Normality.
+                        In SCo Proceedings, Complex Data Modeling and Computationally Intensive Statistical Methods for Estimation and Prediction. Milan, Italy.")
+
+citEntry(entry       = "Article",
+         title       = "On the Explanatory Power of Principal Components",
+         author      = personList(person(family="Diaz-Pachon", given="D.A."),
+                                  person(family="Rao", given="J.S."),
+                                  person(family="Dazard", given="J-E.")), 	
+         journal     = "(submitted)",
+         year        = "2014",
+         volume      = "x",
+         number      = "x",
+         pages       = "xxx-xxx",
+         textVersion = "Diaz-Pachon D.A., Rao J.S and Dazard J-E. (2014).
+                        On the Explanatory Power of Principal Components.
+                        (submitted).")
+
+citEntry(entry       = "Article",
+         title       = "Unsupervised Bump Hunting Using Principal Components",
+         author      = personList(person(family="Diaz-Pachon", given="D.A."),
+                                  person(family="Dazard", given="J-E."),
+                                  person(family="Rao", given="J.S.")), 	
+         journal     = "(submitted)",
+         year        = "2014",
+         volume      = "x",
+         number      = "x",
+         pages       = "xxx-xxx",
+         textVersion = "Diaz-Pachon D.A., Dazard J-E. and Rao J.S. (2014).
+                        Unsupervised Bump Hunting Using Principal Components.
+                        (submitted).")
+
+citEntry(entry       = "Proceedings",
+         title       = "Cross-Validation of Survival Bump Hunting by Recursive Peeling Methods",
+         author      = personList(person(family="Dazard", given="J-E."),
+                                  person(family="Choe", given="M."),
+                                  person(family="LeBlanc", given="M."),
+                                  person(family="Rao", given="J.S.")), 	
+         journal     = "JSM Proceedings.
+                        Survival Methods for Risk Estimation/Prediction Section.
+                        American Statistical Association-IMS.
+                        Boston, MA, USA.",
+         year        = "2014",
+         pages       = "3366-3380",
+         textVersion = "Dazard J-E., Choe M., LeBlanc M. and Rao J.S. (2014).
+                        Cross-Validation of Survival Bump Hunting by Recursive Peeling Methods.
+                        In JSM Proceedings, Survival Methods for Risk Estimation/Prediction Section. Boston, MA, USA.
+                        American Statistical Association-IMS, p. 3366-3380.")
+
+citEntry(entry       = "Article",
+         title       = "Cross-validation and Peeling Strategies for Survival Bump Hunting using Recursive Peeling Methods",
+         author      = personList(person(family="Dazard", given="J-E."),
+                                  person(family="Choe", given="M."),
+                                  person(family="LeBlanc", given="M."),
+                                  person(family="Rao", given="J.S.")), 	
+         journal     = "(submitted)",
+         year        = "2015",
+         volume      = "x",
+         number      = "x",
+         pages       = "xxx-xxx",
+         textVersion = "Dazard J-E., Choe M., LeBlanc M. and Rao J.S. (2015).
+                        Cross-validation and Peeling Strategies for Survival Bump Hunting using Recursive Peeling Methods.
+                        (submitted)")
+
+citEntry(entry       = "Article",
+         title       = "Survival Bump Hunting for Identification and Characterization of Informative Prognostic Subgroups",
+         author      = personList(person(family="Choe", given="M."),
+                                  person(family="Dazard", given="J-E."),
+                                  person(family="Rao", given="J.S.")), 	
+         journal     = "(submitted)",
+         year        = "2015",
+         volume      = "x",
+         number      = "x",
+         pages       = "xxx-xxx",
+         textVersion = "Choe M., Dazard J-E. and Rao J.S. (2015).
+                        Survival Bump Hunting for Identification and Characterization of Informative Prognostic Subgroups.
+                        (submitted)")
+
