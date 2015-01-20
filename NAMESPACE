@@ -1,0 +1,11 @@
+exportPattern("^[[:alpha:]]+")
+
+export(PrimSRC.news,
+       sbh,
+       plot_boxkm,
+       plot_boxtraj,
+       plot_boxtrace,
+       plot_scatter,
+       plot_profile)
+
+import(parallel, survival, Hmisc, MASS) 
