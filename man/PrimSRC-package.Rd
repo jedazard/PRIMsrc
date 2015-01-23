@@ -8,12 +8,11 @@
 
 \title{Bump Hunting by Patient Rule Induction Method in Survival, Regression and Classification settings}
 
-\description{Performs a Bump Hunting serach by Patient Rule Induction Method. The method generates decision rules delineating a region in the predictor space, where the response is larger than its average over the entire space. The region is shaped as a hyperdimensional box that is not necessarily contiguous. Assumptions are that the multivariate input variables can be discrete or continuous and the univariate response variable can be discrete (Classification), continuous (Regression) or a time-to-event, possibly censored (Survival). It is intended to handle high-dimensional multivariate datasets, where the number of variables far exceeds that of the samples (\eqn{p \gg n} paradigm).}
+\description{Performs a Bump Hunting search by Patient Rule Induction Method. The method generates decision rules delineating a region in the predictor space, where the response is larger than its average over the entire space. The region is shaped as a hyperdimensional box that is not necessarily contiguous. Assumptions are that the multivariate input variables can be discrete or continuous and the univariate response variable can be discrete (Classification), continuous (Regression) or a time-to-event, possibly censored (Survival). It is intended to handle high-dimensional multivariate datasets, where the number of variables far exceeds that of the samples (\eqn{p \gg n} paradigm).}
 
 \details{
     The current version is the initial release (version 1.0.0) that only includes the case of low dimensional situations and a survival response.
-    Ultimately, it will include all the features described above.
-    New features will be added soon as they are available.
+    Ultimately, it will include all the features described above. New features will be added soon as they are available.
 
     \tabular{ll}{
       Package: \tab PrimSRC\cr
@@ -24,10 +23,9 @@
     }
 
     The following describes all the end-user functions (not the internal subroutines) that are needed to run a complete procedure.
-    The other internal subroutines are not to be called by the end-user at any time.
-    For computational efficiency, some end-user functions offer a parallelization option that is done by passing
-    a few parameters needed to configure a cluster. This is indicated by an asterisk (* = optionally involving cluster usage).
-    The R functions are categorized as follows:
+    The other internal subroutines are not to be called by the end-user at any time. For computational efficiency, 
+    some end-user functions offer a parallelization option that is done by passing a few parameters needed to configure a cluster. 
+    This is indicated by an asterisk (* = optionally involving cluster usage). The R functions are categorized as follows:
 
     \enumerate{
 
@@ -47,7 +45,7 @@
             The function offers a few options such as the type of cross-validation desired (\eqn{K}-fold (replicated)-averaged or-combined),
             peeling and optimization critera for model fitting, tuning and selection and a few more parameters for the PRSP algorithm.
             The function takes advantage of the R package \pkg{parallel} for efficient parallel execution. It allows users to create a 
-            cluster of workstations on a local and/or remote machine(s), enabling scaling-up with the number of CPU cores specified.
+            cluster of workstations on a local and/or remote machine(s), enabling scaling-up to the number of specified CPU cores.
             Discrete (or nominal) variables should be made (or re-arranged into) ordinal variables.\cr
 
       \item{END-USER PLOTS FOR MODEL VALIDATION CHECKING AND GRAPHICAL VISUALIZATION OF RESULTS} \cr

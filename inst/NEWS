@@ -4,4 +4,9 @@ Package: PrimSRC
 Date   : 2015-01-20
 o RELEASE 1.00.0
 - Initial release of the package to GitHub.
+- Test build under 3.0.2 
+---------------------------------------------------------------------------------
+Date   : 2015-01-22
+o RELEASE 1.00.0
+- Test build under 3.1.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
