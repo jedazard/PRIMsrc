@@ -20,4 +20,3 @@ devtools::install_github("jedazard/PrimSRC")
 
 library("PrimSRC")
 
-# ...and you are good to go!
