@@ -16,6 +16,7 @@ Installation has been tested on Windows, Linux and Mac platforms.
 To install the software and load the PrimSRC library in an R session, simply type:
 
 library(devtools)
+
 devtools::install_github("jedazard/PrimSRC")
 
 library("PrimSRC")
