@@ -1,7 +1,7 @@
 =======
 PrimSRC
 =======
-This is the development release of the future PrimSRC CRAN package for Bump Hunting by Patient Rule Induction Method in Survival, Regression and Classification settings.
+This is the development release of the future PrimSRC CRAN package for Bump Hunting by Patient Rule Induction Method in Survival, Regression and Classification settings. The companion paper (submitted for publication) can be accessed here: http://arxiv.org/abs/1501.03856.
 
 =========================
 Documentation and Manual: 
