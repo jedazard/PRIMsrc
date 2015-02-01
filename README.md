@@ -30,10 +30,10 @@ devtools::install_github("jedazard/PrimSRC")
 
 library("PrimSRC")
 
-# PrimSRC package news:
+#PrimSRC package news:
 
 PrimSRC.news()
 
-# PrimSRC package citation:
+#PrimSRC package citation:
 
 citation("PrimSRC")
