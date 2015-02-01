@@ -13,7 +13,7 @@ The current version is the development release that only includes the case of lo
 situations and a survival response. Ultimately, it will include all the features described above. New
 features will be added soon as they are available.
 
-See also below the PrimSRC package news with 'PrimSRC.news().
+See also below the package news with the R command: PrimSRC.news().
 
 ==========
 References
@@ -24,7 +24,7 @@ JSM Proceedings 2014 (ASA-IMS): https://www.amstat.org/membersonly/proceedings/2
 
 Archives arXiv: http://arxiv.org/abs/1501.03856.
 
-See also below how to cite PrimSRC packagewith 'PrimSRC.news().
+See also below how to cite the package with the R command: citation("PrimSRC").
 
 =========================
 Documentation and Manual: 
@@ -48,6 +48,6 @@ library("PrimSRC")
 
 PrimSRC.news()
 
-PrimSRC package citation:
+
 
 citation("PrimSRC")
