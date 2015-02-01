@@ -20,11 +20,13 @@ References
 ==========
 The companion papers (accepted and submitted for publication) can be accessed here:
 
-JSM Proceedings 2014 (ASA-IMS): https://www.amstat.org/membersonly/proceedings/2014/data/assets/pdf/312982_90342.pdf
+ASA-IMS JSM Proceedings (2014): 
+https://www.amstat.org/membersonly/proceedings/2014/data/assets/pdf/312982_90342.pdf
 
-Archives arXiv: http://arxiv.org/abs/1501.03856.
+Archives arXiv:
+http://arxiv.org/abs/1501.03856.
 
-See also below how to cite the package with the R command: citation("PrimSRC").
+See also below on how to cite the package with the R command: citation("PrimSRC").
 
 =========================
 Documentation and Manual: 
