@@ -11,7 +11,7 @@ All the codes are in the R folder and a manual (PrimSRC.pdf) details the end-use
 =============
 Installation: 
 =============
-The latest R version 3.1.2 (2014-10-31) is recommended.
+The latest R version 3.1.2 (2014-10-31) is required.
 Installation has been tested on Windows, Linux and Mac platforms.
 To install the software and load the PrimSRC library in an R session, simply type:
 
