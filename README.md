@@ -36,7 +36,7 @@ All the codes are in the R folder and a manual (PrimSRC.pdf) details the end-use
 =============
 Installation: 
 =============
-PrimSRC 0.3.0 was built under the latest R version 3.1.2 (2014-10-31).
+PrimSRC 0.3.0 was built under R version 3.1.2 (2014-10-31).
 Installation has been tested on Windows, Linux and Mac platforms.
 To install the software, simply type:
 
