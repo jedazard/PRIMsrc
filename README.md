@@ -42,12 +42,11 @@ library(devtools)
 
 devtools::install_github("jedazard/PrimSRC")
 
+=============
+Usage: 
+=============
 library("PrimSRC")
 
-
-
 PrimSRC.news()
-
-
 
 citation("PrimSRC")
