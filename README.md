@@ -6,7 +6,7 @@ This is the development release of the future PrimSRC CRAN package for Bump Hunt
 =========================
 Documentation and Manual: 
 =========================
-All the codes are in the R folder and a manual (PrimSRC.pdf) details the end-user (and internal) functions. At this stage and for simplicity, there are only one end-user function (sbh) and 5 end-user plotting functions (plot_****). See the "PrimSRC-package" introduction section of the manual for more details and examples of use.
+All the codes are in the R folder and a manual (PrimSRC.pdf) details the end-user (and internal) functions. At this stage and for simplicity, there are only one end-user function (sbh), 5 end-user plotting functions (plot_****) and 2 end-user datasets (synthetic and real). See the "PrimSRC-package" introduction section of the manual for more details and examples of use.
 
 =============
 Installation: 
