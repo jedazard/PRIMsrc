@@ -1,0 +1,28 @@
+Package: PrimSRC
+Type: Package
+Title: PRIM Survival Regression Classification
+Version: 0.3.0
+Date: 2015-02-01
+Authors@R: c(person("Jean-Eudes", "Dazard",
+                    role = c("aut", "cre"),
+                    email = "jean-eudes.dazard@case.edu"),
+             person("Michael", "Choe",
+                    role = "ctb",
+                    email = "mjc206@case.edu"),
+             person("Michael", "LeBlanc",
+                    role = "ctb",
+                    email = "mleblanc@fhcrc.org"),
+             person("Alberto", "Santana",
+                    role = "ctb",
+	               email = "ahs4@case.edu"))
+Author: Jean-Eudes Dazard [aut, cre], Michael Choe [ctb], Michael LeBlanc [ctb], Alberto Santana [ctb]
+Maintainer: Jean-Eudes Dazard <jean-eudes.dazard@case.edu>
+Description: Performs Bump Hunting by Patient Rule Induction Method
+             in Survival, Regression and Classification settings.
+Depends: R (>= 3.1.2), parallel, survival, Hmisc, MASS
+URL: https://github.com/jedazard/PrimSRC
+Repository: PrimSRC, GitHub, Inc.
+License: GPL (>= 3) | file LICENSE
+LazyLoad: yes
+LazyData: yes
+Archs: i386, x64
