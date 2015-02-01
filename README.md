@@ -1,7 +1,19 @@
 =======
 PrimSRC
 =======
-This is the development release of the future PrimSRC CRAN package for Bump Hunting by Patient Rule Induction Method in Survival, Regression and Classification settings. 
+Performs a Bump Hunting search by Patient Rule Induction Method. The method generates decision
+rules delineating a region in the predictor space, where the response is larger than its average
+over the entire space. The region is shaped as a hyperdimensional box that is not necessarily contiguous.
+Assumptions are that the multivariate input variables can be discrete or continuous and the
+univariate response variable can be discrete (Classification), continuous (Regression) or a time-toevent,
+possibly censored (Survival). It is intended to handle high-dimensional multivariate datasets,
+where the number of variables far exceeds that of the samples (p >> n paradigm).
+
+The current version is the development release that only includes the case of low dimensional
+situations and a survival response. Ultimately, it will include all the features described above. New
+features will be added soon as they are available.
+
+See also below the PrimSRC package news with 'PrimSRC.news().
 
 ==========
 References
@@ -11,6 +23,8 @@ The companion papers (accepted and submitted for publication) can be accessed he
 JSM Proceedings 2014 (ASA-IMS): https://www.amstat.org/membersonly/proceedings/2014/data/assets/pdf/312982_90342.pdf
 
 Archives arXiv: http://arxiv.org/abs/1501.03856.
+
+See also below how to cite PrimSRC packagewith 'PrimSRC.news().
 
 =========================
 Documentation and Manual: 
@@ -30,7 +44,7 @@ devtools::install_github("jedazard/PrimSRC")
 
 library("PrimSRC")
 
-PrimSRC package news:
+
 
 PrimSRC.news()
 
