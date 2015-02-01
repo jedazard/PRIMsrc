@@ -18,7 +18,7 @@ See also below the package news with the R command: PrimSRC.news().
 ==========
 References
 ==========
-The companion papers (accepted and submitted for publication) can be accessed here (see also PrimSRC package citation below):
+The companion papers (accepted and submitted for publication) can be accessed here:
 
 JSM Proceedings 2014 (ASA-IMS): https://www.amstat.org/membersonly/proceedings/2014/data/assets/pdf/312982_90342.pdf
 
