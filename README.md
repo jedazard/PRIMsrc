@@ -13,6 +13,8 @@ features will be added soon as they are available.
 
 See also below the package news with the R command: PrimSRC.news().
 
+PrimSRC is Open Source / Free Software, and is freely available under the GNU General Public License, version 3.
+
 ==========
 References
 ==========
