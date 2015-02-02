@@ -1,11 +1,9 @@
 =======
 PrimSRC
 =======
-Performs a Bump Hunting search by Patient Rule Induction Method. The method generates decision
-rules delineating a region in the predictor space, where the response is larger than its average
-over the entire space. The region is shaped as a hyperdimensional box that is not necessarily contiguous.
+Performs a unified treatment of Bump Hunting by Patient Rule Induction Method in Survival, Regression and Classification settings (SRC). The method generates decision rules delineating a region in the predictor space, where the response is larger than its average over the entire space. The region is shaped as a hyperdimensional box that is not necessarily contiguous.
 Assumptions are that the multivariate input variables can be discrete or continuous and the
-univariate response variable can be discrete (Classification), continuous (Regression) or a time-toevent,
+univariate response variable can be discrete (Classification), continuous (Regression) or a time-to event,
 possibly censored (Survival). It is intended to handle high-dimensional multivariate datasets,
 where the number of variables far exceeds that of the samples (p >> n paradigm).
 
