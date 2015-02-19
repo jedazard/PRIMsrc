@@ -11,7 +11,7 @@
 #Usage         :
 ################
 #                   sbh(dataset, discr,
-#                       B=100, K=5, A=1000, cpv=FALSE, cvtype="combined", cvcriterion="lrt",
+#                       B=10, K=5, A=1000, cpv=FALSE, cvtype="combined", cvcriterion="lrt",
 #                       arg="beta=0.05,alpha=0.1,minn=10,L=NULL,peelcriterion=\"lr\"",
 #                       probval=NULL, timeval=NULL,
 #                       parallel=FALSE, conf=NULL, seed=NULL)
@@ -28,16 +28,16 @@
 ################
 # dataset       :   Input dataset containing the observed survival and status indicator variables in the first two columns, respectively.
 # discr         :   Logical vector describing what covariates are discrete. Defaults to logical(ncol(dataset)-2).
+# B             :   Number of replications of the cross-validation procedure. Defaults to 10.
+# K             :   Number of folds for the cross-validation procedure. Defaults to 5.
+# A             :   Number of permutations for the computation of p-values. Defaults to 1000.
+# cpv           :   Logical. Flag for computation of cross-validated p-values. Defaults to FALSE.
+#                   If computation of cross-validated p-value is deired, then running with the parallelization option is
+#                   strongly advised, as it may take a while otherwise.
 # cvtype        :   Character vector describing the cross-validation technique in {"none", "averaged", "combined"}.
 #                   Defaults to "combined".
 # cvcriterion   :   Character vector describing the cross-validation optimization criterion in {"lhr", "lrt", "cer"}.
 #                   Defaults to "lrt". Automatically set to NULL if cvtype="none".
-# B             :   Number of replications of the cross-validation procedure.
-# K             :   Number of folds for the cross-validation procedure.
-# A             :   Number of permutations for the computation of p-values.
-# cpv           :   Logical. Flag for computation of cross-validated p-values. Defaults to
-#                   If computation of cross-validated p-value is deired, then running with the parallelization option is
-#                   strongly advised, as it may take a while otherwise.
 # arg           :   Character vector describing the parameters to use:
 #                     alpha = fraction to peel off at each step. Defaults to 0.1.
 #                     beta = minimum support size resulting from the peeling sequence. Defaults to 0.05.
@@ -68,13 +68,14 @@
 # cpv           :   Returned flag of computation of cross-validated p-values.
 # cvtype        :   Cross-validation technique used.
 # cvcriterion   :   Cross-validation optimization criterion used.
+# varsign       :   Numeric vector \in {-1,+1} of directions of peeling for all variables.
+# varnz         :   Numeric vector giving the selected variable by regularized (Elastic-Net) Cox-regression.
 # arg           :   Character vector of parameters used.
 # probval       :   Survival probability used.
 # timeval       :   Survival time used.
 # cvfit         :   List of 9 fiels of cross-validated estimates:
 #                     "cv.maxsteps"=numeric scalar of maximal ceiled-mean of number of peeling steps over the replicates
 #                     "cv.nsteps"=numeric scalar of optimal number of peeling steps according to the optimization criterion
-#                     "cv.sign"=binary character vector {-1,+1} of direction of peeling for each variable. Invariable for directed peeling (as is the case here).
 #                     "cv.trace"=numeric vector of variable usage traces at each step
 #                     "cv.boxind"=logical matrix {TRUE, FALSE} of sample box membership indicator (columns) by peeling steps (rows)
 #                     "cv.vertices"=numeric matrix of box vertices. LB=Lower Bound and UB=Upper Bound by rows. Dimensions by columns
@@ -82,25 +83,25 @@
 #                     "cv.stats"=numeric matrix of box quantities of interest (columns) by peeling steps (rows)
 #                     "cv.pval"=numeric vector of cross-validated log-rank p-values of sepraration of survival distributions
 # cvprofiles    :   List (B) of numeric vectors, one for each replicate, of cross-validated statistic
-#                     used in the optimization criterion (setup by user)
-#                     as  function of the number of peeling steps.
+#                   used in the optimization criterion (setup by user)
+#                   as  function of the number of peeling steps.
 # plot          :   Returned flag for plotting results (TRUE if cross-validation successful)
 # seed          :   User seed(s) used:
-#                     Integer scalar of a single value, if parallelization is used.
-#                     Integer vector of values, one for each replication, if parallelization is not used.
+#                   Integer scalar of a single value, if parallelization is used.
+#                   Integer vector of values, one for each replication, if parallelization is not used.
 #
 ##########################################################################################################################################
 
 sbh <- function(dataset, discr,
-                B=100, K=5, A=1000, cpv=FALSE, cvtype="combined", cvcriterion="lrt",
+                B=10, K=5, A=1000, cpv=FALSE, cvtype="combined", cvcriterion="lrt",
                 arg="beta=0.05,alpha=0.1,minn=10,L=NULL,peelcriterion=\"lr\"",
                 probval=NULL, timeval=NULL,
                 parallel=FALSE, conf=NULL, seed=NULL) {
 
   if (missing(dataset)) {
-    stop("No dataset provided !\n")
+    stop("\nNo dataset provided !\n\n")
   } else {
-    cat("Survival dataset provided.\n")
+    cat("\nSurvival dataset provided.\n\n")
     x <- as.matrix(dataset[ ,-c(1,2), drop=FALSE])
     times <- dataset$stime
     status <- dataset$status
@@ -110,19 +111,79 @@ sbh <- function(dataset, discr,
       discr <- logical(p)
   }
 
-  if (cvtype == "none") {
-    cvcriterion <- NULL
-  }
-
+  # Parsing and evaluating parameters
   alpha <- NULL
   beta <- NULL
   minn <- NULL
   L <- NULL
   peelcriterion <- NULL
+  eval(parse( text=unlist(strsplit(x=arg, split=",")) ))
+  digits <- getOption("digits")
 
+  # Summary of user options
+  if (B > 1) {
+    cat("Replicated Cross-validation requested with", B, "replications \n")
+  } else {
+    cat("Single Cross-validation requested with no replications\n")
+  }
+  cat("Cross-validation technique: ", cvtype, "\n")
+  cat("Cross-validation criterion: ", cvcriterion, "\n")
+  cat("Peeling criterion: ", peelcriterion, "\n")
+  cat("Computation of cross-validated p-values:", cpv, "\n")
+  cat("Parallelization:", parallel, "\n")
+  cat("\n")
+
+  # Variable selection by regularized Cox-regression
+  set.seed(seed)
+  continue <- "y"
+  while (continue == "y") {
+    cv.fit <- cv.glmnet(x=x, y=Surv(times, status), nfolds=max(3,K), family="cox", maxit=1e5)
+    fit <- glmnet(x=x, y=Surv(times, status), family="cox", maxit=1e5)
+    cv.coef <- as.numeric(coef(fit, s = cv.fit$lambda.min))
+    varnz <- which(cv.coef != 0)
+    names(varnz) <- colnames(x)[varnz]
+    cat("Selected variables:\n")
+    print(varnz)
+    cat("\n")
+    if (is.empty(varnz)) {
+      continue <- readline(prompt = "No selected variables!. Try again with a new random seed? yes(\"y\"), no(\"n\").")
+      while (!(continue %in% c("y", "n"))) {
+        continue <- readline(prompt = "Wrong answer! Try again? yes(\"y\"), no(\"n\").")
+      }
+      set.seed(runif(n=1, min=1, max=2) * 10^digits)
+      if (continue == "n") {
+        stop("Process ended by user.\n")
+      }
+    } else {
+      continue <- "n"
+    }
+  }
+
+  # Directions of directed peeling by selected variable
+  varsign <- sign(cv.coef)
+  names(varsign) <- colnames(x)
+  cat("\nDirections of peeling by selected variable:\n")
+  print(varsign[varnz])
+  cat("\n")
+
+  initcutpts <- numeric(p)
+  for(j in 1:p){
+    if ((varsign[j] == 0) || (varsign[j] == 1)) {
+      initcutpts[j] <- min(x[,j])
+    } else if (varsign[j] == -1) {
+      initcutpts[j] <- max(x[,j])
+    } else {
+      stop("Erreur in direction of peeling for variable", j, "\n")
+    }
+  }
+
+  if (cvtype == "none") {
+    cvcriterion <- NULL
+  }
+
+  cat("\nFitting the Survival Bump Hunting model using the PRSP agorithm ... \n")
   if (!parallel) {
     if (is.null(seed)) {
-      digits <- getOption("digits")
       seed <- runif(n=B, min=1, max=2) * 10^digits
     } else {
       seed <- (0:(B-1)) + seed
@@ -131,6 +192,7 @@ sbh <- function(dataset, discr,
                                  B=B, K=K, arg=arg,
                                  cvtype=cvtype,
                                  probval=probval, timeval=timeval,
+                                 varsign=varsign, varnz=varnz, initcutpts=initcutpts,
                                  parallel=parallel, seed=seed)
   } else {
     if (conf$type == "SOCK") {
@@ -147,31 +209,19 @@ sbh <- function(dataset, discr,
                         verbose=conf$verbose)
     }
     clusterSetRNGStream(cl=cl, iseed=seed)
-    clusterExport(cl=cl, varlist=list("cv.box.rep", "cv.pval", "cv.null", "cv.folds",
-                                      "peel.box", "endpoints", "updatecut"), envir=.GlobalEnv)
-    if (cvtype == "averaged") {
-      clusterExport(cl=cl, varlist=list("cv.ave.box", "cv.ave.fold", "cv.ave.peel"), envir=.GlobalEnv)
-    } else if (cvtype == "combined") {
-      clusterExport(cl=cl, varlist=list("cv.comb.box", "cv.comb.fold", "cv.comb.peel"), envir=.GlobalEnv)
-    } else if (cvtype == "none") {
-      clusterExport(cl=cl, varlist=list("cv.comb.box", "cv.comb.fold", "cv.comb.peel"), envir=.GlobalEnv)
-    } else {
-      stop("Invalid CV type option \n")
-    }
-    clusterExport(cl=cl, varlist=as.list(ls(.GlobalEnv)))
     a <- ceiling(B/conf$cpus)
     obj.cl <- clusterCall(cl=cl, fun=cv.box.rep,
                           x=x, times=times, status=status,
                           B=a, K=K, arg=arg,
                           cvtype=cvtype,
                           probval=probval, timeval=timeval,
+                          varsign=varsign, varnz=varnz, initcutpts=initcutpts,
                           parallel=parallel, seed=NULL)
     stopCluster(cl)
     CV.box.rep.obj <- list("cv.maxsteps"=numeric(0),
                            "cv.nsteps.lhr"=numeric(0),
                            "cv.nsteps.lrt"=numeric(0),
                            "cv.nsteps.cer"=numeric(0),
-                           "cv.sign"=vector(mode="list", length=B),
                            "cv.trace"=vector(mode="list", length=B),
                            "cv.boxind"=vector(mode="list", length=B),
                            "cv.boxcut"=vector(mode="list", length=B),
@@ -189,7 +239,6 @@ sbh <- function(dataset, discr,
       CV.box.rep.obj$cv.nsteps.lhr <- c(CV.box.rep.obj$cv.nsteps.lhr, obj.cl[[b]]$cv.nsteps.lhr)
       CV.box.rep.obj$cv.nsteps.lrt <- c(CV.box.rep.obj$cv.nsteps.lrt, obj.cl[[b]]$cv.nsteps.lrt)
       CV.box.rep.obj$cv.nsteps.cer <- c(CV.box.rep.obj$cv.nsteps.cer, obj.cl[[b]]$cv.nsteps.cer)
-      CV.box.rep.obj$cv.sign[((b-1)*a+1):(b*a)] <- obj.cl[[b]]$cv.sign
       CV.box.rep.obj$cv.trace[((b-1)*a+1):(b*a)] <- obj.cl[[b]]$cv.trace
       CV.box.rep.obj$cv.boxind[((b-1)*a+1):(b*a)] <- obj.cl[[b]]$cv.boxind
       CV.box.rep.obj$cv.boxcut[((b-1)*a+1):(b*a)] <- obj.cl[[b]]$cv.boxcut
@@ -211,7 +260,6 @@ sbh <- function(dataset, discr,
   CV.nsteps.lhr <- CV.box.rep.obj$cv.nsteps.lhr
   CV.nsteps.lrt <- CV.box.rep.obj$cv.nsteps.lrt
   CV.nsteps.cer <- CV.box.rep.obj$cv.nsteps.cer
-  CV.sign <- CV.box.rep.obj$cv.sign
   CV.trace <- CV.box.rep.obj$cv.trace
   CV.boxind <- CV.box.rep.obj$cv.boxind
   CV.boxcut <- CV.box.rep.obj$cv.boxcut
@@ -239,9 +287,6 @@ sbh <- function(dataset, discr,
 
     # Cross-validated optimal length from all replicates
     CV.nsteps <- NULL
-
-    # Modal or majority vote sign value over the replicates
-    CV.sign <- NULL
 
     # Modal or majority vote trace value over the replicates
     CV.trace <- NULL
@@ -307,10 +352,6 @@ sbh <- function(dataset, discr,
       stop("Invalid CV type option \n")
     }
 
-    # Modal or majority vote sign value over the replicates
-    CV.sign <- lapply.mat(X=CV.sign, FUN=function(x){as.numeric(names(which.max(table(x))))}, MARGIN=2)
-    names(CV.sign) <- colnames(x)
-
     # Modal or majority vote trace value over the replicates
     CV.trace <- lapply.mat(X=CV.trace, trunc=CV.nsteps, FUN=function(x){as.numeric(names(which.max(table(x))))}, MARGIN=2)
     names(CV.trace) <- paste("step", 0:(CV.nsteps-1), sep="")
@@ -327,7 +368,7 @@ sbh <- function(dataset, discr,
     colnames(CV.boxcut.sd) <- colnames(x)
     CV.tmp <- as.data.frame(matrix(data=NA, nrow=CV.nsteps, ncol=p, dimnames=list(paste("step", 0:(CV.nsteps-1), sep=""), colnames(x))))
     for (j in 1:p) {
-      if (CV.sign[j] > 0) {
+      if (varsign[j] > 0) {
         ss <- ">="
       } else {
         ss <- "<="
@@ -345,8 +386,8 @@ sbh <- function(dataset, discr,
     # (using the averaged box over the replicates)
     # CV.boxind <- matrix(NA, nrow=CV.nsteps, ncol=n)
     # for (l in 1:CV.nsteps) {
-    #    boxcut <- CV.boxcut.mu[l, ] * CV.sign
-    #    x.cut <- t(t(x) * CV.sign)
+    #    boxcut <- CV.boxcut.mu[l, ] * varsign
+    #    x.cut <- t(t(x) * varsign)
     #    x.ind <- t(t(x.cut) >= boxcut)
     #    CV.boxind[l,] <- (rowMeans(x.ind) == 1)  # Set as TRUE which observations are inside the box boudaries for all axes directions
     # }
@@ -424,11 +465,11 @@ sbh <- function(dataset, discr,
 
     # Vector of p-values for each step
     if (cpv) {
-      cat("\nComputation of cross-validated LRT p-values at all steps ... \n\n")
-      eval(parse( text=unlist(strsplit(x=arg, split=",")) ))
+      cat("Computation of cross-validated LRT p-values at all steps ... \n")
       arg <- paste("beta=", beta, ",alpha=", alpha, ",minn=", minn, ",L=", CV.nsteps-1, ",peelcriterion=\"", peelcriterion, "\"", sep="")
       CV.pval <- cv.pval(x=x, times=times, status=status,
                          cvtype=cvtype,
+                         varsign=varsign, varnz=varnz, initcutpts=initcutpts,
                          A=A, K=K, arg=arg, obs.chisq=CV.stats$mean$cv.lrt,
                          parallel=parallel, conf=conf)
     } else {
@@ -439,7 +480,6 @@ sbh <- function(dataset, discr,
   # Create the return object 'CV.fit'
   CV.fit <- list("cv.maxsteps"=CV.maxsteps,
                  "cv.nsteps"=CV.nsteps,
-                 "cv.sign"=CV.sign,
                  "cv.trace"=CV.trace,
                  "cv.boxind"=CV.boxind,
                  "cv.vertices"=CV.vertices,
@@ -448,10 +488,12 @@ sbh <- function(dataset, discr,
                  "cv.pval"=CV.pval)
 
   return(structure(list("x"=x, "times"=times, "status"=status,
-                        "B"=B, "K"=K, "A"=A, "cpv"=cpv,
-                        "cvtype"=cvtype, "cvcriterion"=cvcriterion, "arg"=arg,
+                        "B"=B, "K"=K, "A"=A, "cpv"=cpv, "arg"=arg,
+                        "cvtype"=cvtype, "cvcriterion"=cvcriterion,
+                        "varsign"=varsign, "varnz"=varnz,
                         "probval"=probval, "timeval"=timeval,
-                        "cvfit"=CV.fit, "cvprofiles"=CV.profiles, "plot"=bool.plot, "seed"=seed),
+                        "cvfit"=CV.fit, "cvprofiles"=CV.profiles,
+                        "plot"=bool.plot, "seed"=seed),
                    class = "PRSP"))
 }
 ##########################################################################################################################################
@@ -1207,6 +1249,7 @@ plot_boxkm <- function(peelobj,
 #                              B, K, arg,
 #                              cvtype,
 #                              probval, timeval,
+#                              varsign, varnz, initcutpts,
 #                              parallel, seed)
 #
 ################
@@ -1227,13 +1270,13 @@ cv.box.rep <- function(x, times, status,
                        B, K, arg,
                        cvtype,
                        probval, timeval,
+                       varsign, varnz, initcutpts,
                        parallel, seed) {
 
   CV.maxsteps <- numeric(B)
   CV.nsteps.lhr <- numeric(B)
   CV.nsteps.lrt <- numeric(B)
   CV.nsteps.cer <- numeric(B)
-  CV.sign <- vector(mode="list", length=B)
   CV.trace <- vector(mode="list", length=B)
   CV.boxind <- vector(mode="list", length=B)
   CV.boxcut <- vector(mode="list", length=B)
@@ -1256,16 +1299,22 @@ cv.box.rep <- function(x, times, status,
       cat("seed : ", seed[b], "\n", sep="")
     }
     if (cvtype == "averaged") {
-      CVBOX <- cv.ave.box(x=x, times=times, status=status, K=K, arg=arg,
+      CVBOX <- cv.ave.box(x=x, times=times, status=status,
+                          K=K, arg=arg,
                           probval=probval, timeval=timeval,
+                          varsign=varsign, varnz=varnz, initcutpts=initcutpts,
                           seed=seed[b])
     } else if (cvtype == "combined") {
-      CVBOX <- cv.comb.box(x=x, times=times, status=status, K=K, arg=arg,
+      CVBOX <- cv.comb.box(x=x, times=times, status=status,
+                           K=K, arg=arg,
                            probval=probval, timeval=timeval,
+                           varsign=varsign, varnz=varnz, initcutpts=initcutpts,
                            seed=seed[b])
     } else if (cvtype == "none") {
-      CVBOX <- cv.comb.box(x=x, times=times, status=status, K=1, arg=arg,
+      CVBOX <- cv.comb.box(x=x, times=times, status=status,
+                           K=1, arg=arg,
                            probval=probval, timeval=timeval,
+                           varsign=varsign, varnz=varnz, initcutpts=initcutpts,
                            seed=seed[b])
     } else {
       stop("Invalid CV type option \n")
@@ -1275,7 +1324,6 @@ cv.box.rep <- function(x, times, status,
       CV.nsteps.lhr[b] <- CVBOX$cvfit$cv.nsteps.lhr
       CV.nsteps.lrt[b] <- CVBOX$cvfit$cv.nsteps.lrt
       CV.nsteps.cer[b] <- CVBOX$cvfit$cv.nsteps.cer
-      CV.sign[[b]] <- CVBOX$cvfit$cv.sign
       CV.trace[[b]] <- CVBOX$cvfit$cv.trace
       CV.boxind[[b]] <- CVBOX$cvfit$cv.boxind
       CV.boxcut[[b]] <- CVBOX$cvfit$cv.boxcut
@@ -1306,7 +1354,6 @@ cv.box.rep <- function(x, times, status,
               "cv.nsteps.lhr"=CV.nsteps.lhr,
               "cv.nsteps.lrt"=CV.nsteps.lrt,
               "cv.nsteps.cer"=CV.nsteps.cer,
-              "cv.sign"=CV.sign,
               "cv.trace"=CV.trace,
               "cv.boxind"=CV.boxind,
               "cv.boxcut"=CV.boxcut,
@@ -1331,7 +1378,11 @@ cv.box.rep <- function(x, times, status,
 #################
 # Usage         :
 ################
-#                    cv.pval (x, times, status, cvtype, A, K, arg, obs.chisq, parallel, conf)
+#                    cv.pval (x, times, status, 
+#                             cvtype, 
+#                             varsign, varnz, initcutpts, 
+#                             A, K, arg, obs.chisq, 
+#                             parallel, conf)
 #
 ################
 # Description   :
@@ -1348,10 +1399,16 @@ cv.box.rep <- function(x, times, status,
 #
 ##########################################################################################################################################
 
-cv.pval <- function(x, times, status, cvtype, A, K, arg, obs.chisq, parallel, conf) {
+cv.pval <- function(x, times, status, 
+                    cvtype, 
+                    varsign, varnz, initcutpts, 
+                    A, K, arg, obs.chisq, 
+                    parallel, conf) {
 
   if (!parallel) {
-    null.chisq <- cv.null(x=x, times=times, status=status, cvtype=cvtype,
+    null.chisq <- cv.null(x=x, times=times, status=status,
+                          cvtype=cvtype,
+                          varsign=varsign, varnz=varnz, initcutpts=initcutpts,
                           A=A, K=K, arg=arg)
   } else {
     if (conf$type == "SOCK") {
@@ -1368,20 +1425,10 @@ cv.pval <- function(x, times, status, cvtype, A, K, arg, obs.chisq, parallel, co
                         verbose=conf$verbose)
     }
     clusterSetRNGStream(cl=cl, iseed=NULL)
-    clusterExport(cl=cl, varlist=list("cv.null", "cv.folds", "peel.box", "updatecut"), envir=.GlobalEnv)
-    if (cvtype == "averaged") {
-      clusterExport(cl=cl, varlist=list("cv.ave.box", "cv.ave.fold", "cv.ave.peel"), envir=.GlobalEnv)
-    } else if (cvtype == "combined") {
-      clusterExport(cl=cl, varlist=list("cv.comb.box", "cv.comb.fold", "cv.comb.peel"), envir=.GlobalEnv)
-    } else if (cvtype == "none") {
-      clusterExport(cl=cl, varlist=list("cv.comb.box", "cv.comb.fold", "cv.comb.peel"), envir=.GlobalEnv)
-    } else {
-      stop("Invalid CV type option \n")
-    }
-    clusterExport(cl=cl, varlist=as.list(ls(.GlobalEnv)))
     null.cl <- clusterCall(cl=cl, fun=cv.null,
                            x=x, times=times, status=status,
                            cvtype=cvtype,
+                           varsign=varsign, varnz=varnz, initcutpts=initcutpts,
                            A=ceiling(A/conf$cpus), K=K, arg=arg)
     stopCluster(cl)
     null.chisq <- cbindlist(null.cl)
@@ -1403,7 +1450,10 @@ cv.pval <- function(x, times, status, cvtype, A, K, arg, obs.chisq, parallel, co
 #################
 # Usage         :
 ################
-#                   cv.null (x, times, status, cvtype, A, K, arg)
+#                   cv.null (x, times, status, 
+#                            cvtype, 
+#                            varsign, varnz, initcutpts, 
+#                            A, K, arg)
 #
 ################
 # Description   :
@@ -1420,7 +1470,10 @@ cv.pval <- function(x, times, status, cvtype, A, K, arg, obs.chisq, parallel, co
 #
 ##########################################################################################################################################
 
-cv.null <- function(x, times, status, cvtype, A, K, arg) {
+cv.null <- function(x, times, status, 
+                    cvtype, 
+                    varsign, varnz, initcutpts, 
+                    A, K, arg) {
 
   n <- nrow(x)
   null.chisq <- vector(mode="list", length=A)
@@ -1431,7 +1484,7 @@ cv.null <- function(x, times, status, cvtype, A, K, arg) {
     perm.times <- times[perm.ind]
     perm.status <- status[perm.ind]
     if (cvtype == "averaged") {
-      obj <- tryCatch({cv.ave.box(x=x, times=perm.times, status=perm.status, K=K, arg=arg, probval=NULL, timeval=NULL, seed=NULL)}, error=function(w){NULL})
+      obj <- tryCatch({cv.ave.box(x=x, times=perm.times, status=perm.status, varsign=varsign, varnz=varnz, initcutpts=initcutpts, K=K, arg=arg, probval=NULL, timeval=NULL, seed=NULL)}, error=function(w){NULL})
       if (is.list(obj)) {
         null.chisq[[a]] <- obj$cvfit$cv.stats$cv.lrt
         a <- a + 1
@@ -1439,7 +1492,7 @@ cv.null <- function(x, times, status, cvtype, A, K, arg) {
         cat("Permutation sample dropped... \n")
       }
     } else if (cvtype == "combined") {
-      obj <- tryCatch({cv.comb.box(x=x, times=perm.times, status=perm.status, K=K, arg=arg, probval=NULL, timeval=NULL, seed=NULL)}, error=function(w){NULL})
+      obj <- tryCatch({cv.comb.box(x=x, times=perm.times, status=perm.status, varsign=varsign, varnz=varnz, initcutpts=initcutpts, K=K, arg=arg, probval=NULL, timeval=NULL, seed=NULL)}, error=function(w){NULL})
       if (is.list(obj)) {
         null.chisq[[a]] <- obj$cvfit$cv.stats$cv.lrt
         a <- a + 1
@@ -1447,7 +1500,7 @@ cv.null <- function(x, times, status, cvtype, A, K, arg) {
         cat("Permutation sample dropped... \n")
       }
     } else if (cvtype == "none") {
-      obj <- tryCatch({cv.comb.box(x=x, times=perm.times, status=perm.status, K=1, arg=arg, probval=NULL, timeval=NULL, seed=NULL)}, error=function(w){NULL})
+      obj <- tryCatch({cv.comb.box(x=x, times=perm.times, status=perm.status, varsign=varsign, varnz=varnz, initcutpts=initcutpts, K=1, arg=arg, probval=NULL, timeval=NULL, seed=NULL)}, error=function(w){NULL})
       if (is.list(obj)) {
         null.chisq[[a]] <- obj$cvfit$cv.stats$cv.lrt
         a <- a + 1
@@ -1471,9 +1524,9 @@ cv.null <- function(x, times, status, cvtype, A, K, arg) {
 # Usage         :
 ################
 #                   cv.ave.box (x, times, status,
-#                               K, arg,
 #                               probval, timeval,
-#                               seed)
+#                               varsign, varnz, initcutpts,
+#                               K, arg, seed)
 #
 ################
 # Description   :
@@ -1491,17 +1544,17 @@ cv.null <- function(x, times, status, cvtype, A, K, arg) {
 ##########################################################################################################################################
 
 cv.ave.box <- function(x, times, status,
-                       K, arg,
                        probval, timeval,
-                       seed) {
+                       varsign, varnz, initcutpts,
+                       K, arg, seed) {
 
   n <- nrow(x)
   p <- ncol(x)
 
-  fold.obj <- cv.ave.fold(x=x, times=times, status=status, K=K, arg=arg,
+  fold.obj <- cv.ave.fold(x=x, times=times, status=status,
                           probval=probval, timeval=timeval,
-                          seed=seed)
-  sign.list <- fold.obj$sign
+                          varsign=varsign, varnz=varnz, initcutpts=initcutpts,
+                          K=K, arg=arg, seed=seed)
   trace.list <- fold.obj$trace
   steps.list <- fold.obj$steps
   boxcut.list <- fold.obj$boxcut
@@ -1509,10 +1562,6 @@ cv.ave.box <- function(x, times, status,
 
   # Cross-validated minimum length from all folds
   CV.Lm <- min(fold.obj$nsteps)
-
-  # Get the modal or majority vote sign value over the folds
-  CV.sign <- lapply.mat(X=sign.list, FUN=function(x){as.numeric(names(which.max(table(x))))}, MARGIN=2)
-  names(CV.sign) <- colnames(x)
 
   # Get the modal or majority vote trace value over the folds (folds by rows, variables by columns)
   CV.trace <- lapply.mat(X=trace.list, trunc=CV.Lm, FUN=function(x){as.numeric(names(which.max(table(x))))}, MARGIN=2)
@@ -1581,7 +1630,7 @@ cv.ave.box <- function(x, times, status,
   # Box peeling rules for each step
   CV.rules<- as.data.frame(matrix(data=NA, nrow=CV.Lm, ncol=p, dimnames=list(paste("step", 0:(CV.Lm-1), sep=""), colnames(x))))
   for (j in 1:p) {
-    if (CV.sign[j] > 0) {
+    if (varsign[j] > 0) {
       ss <- ">="
     } else {
       ss <- "<="
@@ -1593,8 +1642,8 @@ cv.ave.box <- function(x, times, status,
   # Based on the corresponding averaged box over the folds
   CV.boxind <- matrix(NA, nrow=CV.Lm, ncol=n)
   for (l in 1:CV.Lm) {
-    boxcut <- CV.boxcut[l, ] * CV.sign
-    x.cut <- t(t(x) * CV.sign)
+    boxcut <- CV.boxcut[l, ] * varsign
+    x.cut <- t(t(x) * varsign)
     x.ind <- t(t(x.cut) >= boxcut)
     CV.boxind[l,] <- (rowMeans(x.ind) == 1)  # Set as TRUE which observations are inside the box boudaries for all axes directions
   }
@@ -1608,8 +1657,8 @@ cv.ave.box <- function(x, times, status,
   for (l in 1:CV.Lm) {
     CV.vertices[[l]] <- matrix(data=NA, nrow=2, ncol=p, dimnames=list(c("LB","UB"), colnames(x)))
     for (j in 1:p) {
-      CV.vertices[[l]][1,j] <- ifelse(test=(CV.sign[j] > 0), yes=max(x.range[1,j], CV.boxcut[l,j]), no=min(x.range[1,j], CV.boxcut[l,j]))
-      CV.vertices[[l]][2,j] <- ifelse(test=(CV.sign[j] < 0), yes=min(x.range[2,j], CV.boxcut[l,j]), no=max(x.range[2,j], CV.boxcut[l,j]))
+      CV.vertices[[l]][1,j] <- ifelse(test=(varsign[j] > 0), yes=max(x.range[1,j], CV.boxcut[l,j]), no=min(x.range[1,j], CV.boxcut[l,j]))
+      CV.vertices[[l]][2,j] <- ifelse(test=(varsign[j] < 0), yes=min(x.range[2,j], CV.boxcut[l,j]), no=max(x.range[2,j], CV.boxcut[l,j]))
     }
   }
 
@@ -1653,7 +1702,6 @@ cv.ave.box <- function(x, times, status,
                  "cv.boxcut"=CV.boxcut,
                  "cv.rules"=CV.rules,
                  "cv.stats"=CV.stats,
-                 "cv.sign"=CV.sign,
                  "cv.trace"=CV.trace,
                  "cv.boxind"=CV.boxind,
                  "cv.vertices"=CV.vertices)
@@ -1671,9 +1719,9 @@ cv.ave.box <- function(x, times, status,
 # Usage         :
 ################
 #                   cv.comb.box (x, times, status,
-#                                K, arg,
 #                                probval, timeval,
-#                                seed)
+#                                varsign, varnz, initcutpts,
+#                                K, arg, seed)
 #
 #
 ################
@@ -1692,17 +1740,18 @@ cv.ave.box <- function(x, times, status,
 ##########################################################################################################################################
 
 cv.comb.box <- function(x, times, status,
-                        K, arg,
                         probval, timeval,
-                        seed) {
+                        varsign, varnz, initcutpts,
+                        K, arg, seed) {
   n <- nrow(x)
   p <- ncol(x)
 
-  fold.obj <- cv.comb.fold(x=x, times=times, status=status, K=K, arg=arg, seed=seed)
+  fold.obj <- cv.comb.fold(x=x, times=times, status=status,
+                           varsign=varsign, varnz=varnz, initcutpts=initcutpts,
+                           K=K, arg=arg, seed=seed)
   ord <- fold.obj$key
   times.list <- fold.obj$cvtimes
   status.list <- fold.obj$cvstatus
-  sign.list <- fold.obj$sign
   trace.list <- fold.obj$trace
   boxind.list <- fold.obj$boxind
   boxcut.list <- fold.obj$boxcut
@@ -1715,32 +1764,26 @@ cv.comb.box <- function(x, times, status,
   CV.times <- unlist(times.list)[ord]
   CV.status <- unlist(status.list)[ord]
 
-  # Get the modal or majority vote sign value over the folds
-  CV.sign <- lapply.mat(X=sign.list, FUN=function(x){as.numeric(names(which.max(table(x))))}, MARGIN=2)
-  names(CV.sign) <- colnames(x)
-
   # Get the modal or majority vote trace value over the folds (folds by rows, variables by columns)
+  # Ties are broken by which.min(), which takes the first (also smallest) instance
   CV.trace <- lapply.mat(X=trace.list, trunc=CV.Lm, FUN=function(x){as.numeric(names(which.max(table(x))))}, MARGIN=2)
   names(CV.trace) <- paste("step", 0:(CV.Lm-1), sep="")
 
   # Get the combined box mincuts for each step from all the folds and truncate to the same x-validated length
-  #CV.boxcut <- lapply.array(X=boxcut.list, trunc=CV.Lm, FUN=mean, MARGIN=1:2)
-  #rownames(CV.boxcut) <- paste("step", 0:(CV.Lm-1), sep="")
-  #colnames(CV.boxcut) <- colnames(x)
   CV.boxcut <- matrix(data=NA, nrow=CV.Lm, ncol=p, dimnames=list(paste("step", 0:(CV.Lm-1), sep=""), colnames(x)))
   tmparray <- list2array(list=boxcut.list, trunc=CV.Lm)
   for (j in 1:p) {
-    if (CV.sign[j] >= 0) {
-      CV.boxcut[,j] <- apply(X=tmparray[,j,,drop=FALSE], MARGIN=1, FUN=min, na.rm=TRUE)
-    } else {
+    if (varsign[j] >= 0) {
       CV.boxcut[,j] <- apply(X=tmparray[,j,,drop=FALSE], MARGIN=1, FUN=max, na.rm=TRUE)
+    } else {
+      CV.boxcut[,j] <- apply(X=tmparray[,j,,drop=FALSE], MARGIN=1, FUN=min, na.rm=TRUE)
     }
   }
 
   # Box peeling rules for each step
   CV.rules<- as.data.frame(matrix(data=NA, nrow=CV.Lm, ncol=p, dimnames=list(paste("step", 0:(CV.Lm-1), sep=""), colnames(x))))
   for (j in 1:p) {
-    if (CV.sign[j] > 0) {
+    if (varsign[j] > 0) {
       ss <- ">="
     } else {
       ss <- "<="
@@ -1762,10 +1805,10 @@ cv.comb.box <- function(x, times, status,
   for (l in 1:CV.Lm) {
     CV.vertices[[l]] <- matrix(data=NA, nrow=2, ncol=p, dimnames=list(c("LB","UB"), colnames(x)))
     for (j in 1:p) {
-      CV.vertices[[l]][1,j] <- ifelse(test=(CV.sign[j] > 0),
+      CV.vertices[[l]][1,j] <- ifelse(test=(varsign[j] > 0),
                                       yes=max(x.range[1,j], CV.boxcut[l,j]),
                                       no=min(x.range[1,j], CV.boxcut[l,j]))
-      CV.vertices[[l]][2,j] <- ifelse(test=(CV.sign[j] < 0),
+      CV.vertices[[l]][2,j] <- ifelse(test=(varsign[j] < 0),
                                       yes=min(x.range[2,j], CV.boxcut[l,j]),
                                       no=max(x.range[2,j], CV.boxcut[l,j]))
     }
@@ -1892,7 +1935,6 @@ cv.comb.box <- function(x, times, status,
                  "cv.boxcut"=CV.boxcut,
                  "cv.rules"=CV.rules,
                  "cv.stats"=CV.stats,
-                 "cv.sign"=CV.sign,
                  "cv.trace"=CV.trace,
                  "cv.boxind"=CV.boxind,
                  "cv.vertices"=CV.vertices)
@@ -1910,9 +1952,9 @@ cv.comb.box <- function(x, times, status,
 # Usage         :
 ################
 #                    cv.ave.fold (x, times, status,
-#                                 K, arg,
 #                                 probval, timeval,
-#                                 seed)
+#                                 varsign, varnz, initcutpts,
+#                                 K, arg, seed)
 #
 ################
 # Description   :
@@ -1930,16 +1972,15 @@ cv.comb.box <- function(x, times, status,
 ##########################################################################################################################################
 
 cv.ave.fold <- function(x, times, status,
-                        K, arg,
                         probval, timeval,
-                        seed) {
+                        varsign, varnz, initcutpts,
+                        K, arg, seed) {
 
   drop <- FALSE
   folds <- cv.folds(n=nrow(x), K=K, seed=seed)
-  boxcut <- vector(mode="list", length=K)
-  sign <- vector(mode="list", length=K)
-  trace <- vector(mode="list", length=K)
   steps <- vector(mode="list", length=K)
+  boxcut <- vector(mode="list", length=K)
+  trace <- vector(mode="list", length=K)
   nsteps <- numeric(K)
 
   for (k in 1:K) {
@@ -1957,23 +1998,20 @@ cv.ave.fold <- function(x, times, status,
       testtime <- times[folds$subsets[(folds$which == k)]]
       teststatus <- status[folds$subsets[(folds$which == k)]]
     }
-    peelobj <- cv.ave.peel(x=x, times=times, status=status,
-                           traindata=traindata, trainstatus=trainstatus, traintime=traintime,
+    peelobj <- cv.ave.peel(traindata=traindata, trainstatus=trainstatus, traintime=traintime,
                            testdata=testdata, teststatus=teststatus, testtime=testtime,
-                           K=K, arg=arg,
                            probval=probval, timeval=timeval,
-                           seed=seed)
+                           varsign=varsign, varnz=varnz, initcutpts=initcutpts, K=K, arg=arg, seed=seed)
 
     # Store the test set data/results from each fold (Note: observations of times and status from each fold are ordered in the list)
-    boxcut[[k]] <- peelobj$boxcut
-    sign[[k]] <- peelobj$sign
-    trace[[k]] <- peelobj$trace
     steps[[k]] <- peelobj$steps
     nsteps[[k]] <- peelobj$nsteps
+    boxcut[[k]] <- peelobj$boxcut
+    trace[[k]] <- peelobj$trace
     drop <- (drop || peelobj$drop)
   }
 
-  return(list("steps"=steps, "boxcut"=boxcut, "sign"=sign, "nsteps"=nsteps, "trace"=trace, "drop"=drop))
+  return(list("nsteps"=nsteps, "steps"=steps, "boxcut"=boxcut, "trace"=trace, "drop"=drop))
 }
 ##########################################################################################################################################
 
@@ -1985,8 +2023,8 @@ cv.ave.fold <- function(x, times, status,
 # Usage         :
 ################
 #                    cv.comb.fold (x, times, status,
-#                                  K, arg,
-#                                  seed)
+#                                  varsign, varnz, initcutpts,
+#                                  K, arg, seed)
 #
 ################
 # Description   :
@@ -2004,15 +2042,14 @@ cv.ave.fold <- function(x, times, status,
 ##########################################################################################################################################
 
 cv.comb.fold <- function(x, times, status,
-                         K, arg,
-                         seed) {
+                         varsign, varnz, initcutpts,
+                         K, arg, seed) {
 
   folds <- cv.folds(n=nrow(x), K=K, seed=seed)
   cvtimes <- vector(mode="list", length=K)
   cvstatus <- vector(mode="list", length=K)
   boxind <- vector(mode="list", length=K)
   boxcut <- vector(mode="list", length=K)
-  sign <- vector(mode="list", length=K)
   trace <- vector(mode="list", length=K)
   nsteps <- numeric(K)
 
@@ -2030,23 +2067,23 @@ cv.comb.fold <- function(x, times, status,
       testtime <- times[folds$subsets[(folds$which == k)]]
       teststatus <- status[folds$subsets[(folds$which == k)]]
     }
-    peelobj <- cv.comb.peel(x=x, times=times, status=status,
-                            traindata=traindata, trainstatus=trainstatus, traintime=traintime,
+    peelobj <- cv.comb.peel(traindata=traindata, trainstatus=trainstatus, traintime=traintime,
                             testdata=testdata, teststatus=teststatus, testtime=testtime,
-                            K=K, arg=arg, seed=seed)
+                            varsign=varsign, varnz=varnz, initcutpts=initcutpts, K=K, arg=arg, seed=seed)
 
     # Store the test set data/results from each fold
     # Note: the order of observations of times and status from each fold is kept in the list
+    nsteps[k] <- peelobj$nsteps
     cvtimes[[k]] <- testtime
     cvstatus[[k]] <- teststatus
     boxind[[k]] <- peelobj$testindmat
     boxcut[[k]] <- peelobj$boxcut
-    sign[[k]] <- peelobj$sign
     trace[[k]] <- peelobj$trace
-    nsteps[k] <- peelobj$nsteps
   }
 
-  return(list("nsteps"=nsteps, "key"=folds$key, "cvtimes"=cvtimes, "cvstatus"=cvstatus, "boxind"=boxind, "boxcut"=boxcut, "sign"=sign, "trace"=trace))
+  return(list("nsteps"=nsteps, "key"=folds$key,
+              "cvtimes"=cvtimes, "cvstatus"=cvstatus,
+              "boxind"=boxind, "boxcut"=boxcut, "trace"=trace))
 }
 ##########################################################################################################################################
 
@@ -2057,12 +2094,11 @@ cv.comb.fold <- function(x, times, status,
 #################
 # Usage         :
 ################
-#                    cv.ave.peel (x, times, status,
-#                                 traindata, trainstatus, traintime,
+#                    cv.ave.peel (traindata, trainstatus, traintime,
 #                                 testdata, teststatus, testtime,
-#                                 K, arg,
 #                                 probval, timeval,
-#                                 seed)
+#                                 varsign, varnz, initcutpts,
+#                                 K, arg, seed)
 #
 ################
 # Description   :
@@ -2078,17 +2114,16 @@ cv.comb.fold <- function(x, times, status,
 #
 ##########################################################################################################################################
 
-cv.ave.peel <- function(x, times, status,
-                        traindata, trainstatus, traintime,
+cv.ave.peel <- function(traindata, trainstatus, traintime,
                         testdata, teststatus, testtime,
-                        K, arg,
                         probval, timeval,
-                        seed) {
+                        varsign, varnz, initcutpts,
+                        K, arg, seed) {
 
   # Training the model
-  peelobj <- peel.box(x=x, times=times, status=status,
-                      traindata=traindata, traintime=traintime, trainstatus=trainstatus,
-                      wt=rep(1, nrow(traindata)), arg=arg, seed=seed)
+  peelobj <- peel.box(traindata=traindata, traintime=traintime, trainstatus=trainstatus,
+                      varsign=varsign, varnz=varnz, initcutpts=initcutpts,
+                      arg=arg, seed=seed)
   nsteps <- peelobj$nsteps
 
   # Compute the box statistics for all steps, each entry or row signifies a step
@@ -2098,8 +2133,8 @@ cv.ave.peel <- function(x, times, status,
   ind.rem <- numeric(0)
   for (l in 1:nsteps) {
     # Extract the rule and sign as one vector
-    boxcut <- peelobj$boxcut[l, ] * peelobj$sign
-    test.cut <- t(t(testdata) * peelobj$sign)
+    boxcut <- peelobj$boxcut[l, ] * varsign
+    test.cut <- t(t(testdata) * varsign)
     test.ind <- t(t(test.cut) >= boxcut)
     # Set as TRUE which observations are TRUE for all variables
     test.ind <- (rowMeans(test.ind) == 1)
@@ -2161,7 +2196,7 @@ cv.ave.peel <- function(x, times, status,
     }
   }
 
-  return(list("nsteps"=nsteps, "steps"=steps.list, "boxcut"=peelobj$boxcut, "sign"=peelobj$sign, "trace"=peelobj$trace, "drop"=drop))
+  return(list("steps"=steps.list, "nsteps"=nsteps, "boxcut"=peelobj$boxcut, "trace"=peelobj$trace, "drop"=drop))
 }
 ##########################################################################################################################################
 
@@ -2172,9 +2207,9 @@ cv.ave.peel <- function(x, times, status,
 #################
 # Usage         :
 ################
-#                    cv.comb.peel (x, times, status,
-#                                  traindata, trainstatus, traintime,
+#                    cv.comb.peel (traindata, trainstatus, traintime,
 #                                  testdata, teststatus, testtime,
+#                                  varsign, varnz, initcutpts,
 #                                  K, arg, seed)
 #
 ################
@@ -2191,29 +2226,28 @@ cv.ave.peel <- function(x, times, status,
 #
 ##########################################################################################################################################
 
-cv.comb.peel <- function(x, times, status,
-                         traindata, trainstatus, traintime,
+cv.comb.peel <- function(traindata, trainstatus, traintime,
                          testdata, teststatus, testtime,
+                         varsign, varnz, initcutpts,
                          K, arg, seed) {
-
   # Training the model
-  peelobj <- peel.box(x=x, times=times, status=status,
-                      traindata=traindata, traintime=traintime, trainstatus=trainstatus,
-                      wt=rep(1, nrow(traindata)), arg=arg, seed=seed)
+  peelobj <- peel.box(traindata=traindata, traintime=traintime, trainstatus=trainstatus,
+                      varsign=varsign, varnz=varnz, initcutpts=initcutpts,
+                      arg=arg, seed=seed)
   nsteps <- peelobj$nsteps
 
   # Create matrix that will represent the index of the test data that is within the box (i.e. for each step)
   test.ind.mat <- matrix(NA, nrow=nsteps, ncol=nrow(testdata))
   for (l in 1:nsteps) {
     # Extract the rule and sign as one vector
-    boxcut <- peelobj$boxcut[l, ] * peelobj$sign
-    test.cut <- t(t(testdata) * peelobj$sign)
+    boxcut <- peelobj$boxcut[l, ] * varsign
+    test.cut <- t(t(testdata) * varsign)
     test.ind <- t(t(test.cut) >= boxcut)
     # Set as TRUE which observations are TRUE for all variables
     test.ind.mat[l, ] <- (rowMeans(test.ind) == 1)
   }
 
-  return(list("testindmat"=test.ind.mat, "nsteps"=nsteps, "boxcut"=peelobj$boxcut, "sign"=peelobj$sign, "trace"=peelobj$trace))
+  return(list("testindmat"=test.ind.mat, "nsteps"=nsteps, "boxcut"=peelobj$boxcut, "trace"=peelobj$trace))
 }
 ##########################################################################################################################################
 
@@ -2225,7 +2259,9 @@ cv.comb.peel <- function(x, times, status,
 #################
 # Usage         :
 ################
-#                    peel.box (x, times, status, traindata, traintime, trainstatus, wt, arg, seed)
+#                    peel.box (traindata, traintime, trainstatus,
+#                              varsign, varnz, initcutpts,
+#                              arg, seed)
 #
 ################
 # Description   :
@@ -2241,7 +2277,9 @@ cv.comb.peel <- function(x, times, status,
 #
 ##########################################################################################################################################
 
-peel.box <- function(x, times, status, traindata, traintime, trainstatus, wt, arg, seed) {
+peel.box <- function(traindata, traintime, trainstatus,
+                     varsign, varnz, initcutpts,
+                     arg, seed) {
 
   if (!is.null(seed))
     set.seed(seed)
@@ -2251,141 +2289,96 @@ peel.box <- function(x, times, status, traindata, traintime, trainstatus, wt, ar
   minn <- NULL
   L <- NULL
   peelcriterion <- NULL
-
   eval(parse( text=unlist(strsplit(x=arg, split=",")) ))
 
   digits <- getOption("digits")
 
-  # ensure that train data is a matrix
+  # Ensures that the training data is a numeric matrix
   traindata <- as.matrix(traindata)
   mode(traindata) <- "numeric"
 
+  # Constants
   n <- nrow(traindata)
   p <- ncol(traindata)
-  boxmass <- mean(wt > 0)
-  beta <- max(minn/n, beta)
+  beta <- max(minn/n, beta)                              # Minimal box support thresholded to 10 points
+  ncut <- ceiling(log(beta) / log(1 - (1/n)))            # Maximal number of peeling steps
+  pnz <- length(varnz)                                   # Number of selected variables
 
-  # currind <- the current box
-  currind <- (wt > 0)
-
-  # boxes <- set of potential boxes
-  boxes <- matrix(data=FALSE, nrow=n, ncol=p)
-
-  # maximal number of peeling steps determined by beta (fixed by user) and smallest possible peeling fraction
-  ncut <- ceiling(log(beta) / log(1 - (1/n)))
-
-  # Box quantities of interest to return
-  boxcut <- matrix(data=NA, nrow=ncut, ncol=p, dimnames=list(NULL,colnames(x)))
+  # Initializations of variable trace and box boundaries
   vartrace <- numeric(ncut)
+  boxcut <- matrix(data=NA, nrow=ncut, ncol=p)
 
-  xsel <- traindata[currind, ]
-  xpeel <- (apply(xsel, 2, "var") > 10^(-digits))
-
-  varsign <- sign(coxph(Surv(times, status) ~ x, eps=0.01, singular.ok=TRUE, iter.max=1)$coef)
-  varsign[is.na(varsign) | (varsign == 0)] <- 1
-  names(varsign) <- colnames(x)
-
-  initcut <- numeric(p)
-  for(j in 1:p){
-    if (varsign[j] == 1) {
-      initcut[j] <- min(x[,j])
-    } else if (varsign[j] == -1) {
-      initcut[j] <- max(x[,j])
-    }
-  }
-
-  mincutpts <- numeric(p)
-  for(j in 1:p){
-    if (varsign[j] == 1) {
-      mincutpts[j] <- min(x[,j])
-    } else if (varsign[j] == -1) {
-      mincutpts[j] <- max(x[,j])
-    }
-  }
-
+  # Initializations
+  boxcutpts <- initcutpts
+  boxmass <- 1
+  boxes <- matrix(data=FALSE, nrow=n, ncol=p)            # Initial logical matrix of box membership indicator by dimension
+  sel <- rep(TRUE, n)                                    # Initial logical vector of selected samples
+  xsel <- traindata                                      # Initial selection of samples from training data
+  varpeel <- (apply(traindata, 2, "var") > 10^(-digits)) # Initial selection of variables for peeling
   if (!(is.null(L))) {
     switch <- 1
   } else {
     L <- 1
     switch <- 0
   }
-
   l <- 0
   lhrlj <- matrix(NA, ncut, p)
   lrtlj <- matrix(NA, ncut, p)
-  while ((boxmass >= beta) & (l*switch < L) & (sum(xpeel) > 0)) {
 
+  while ((boxmass >= beta) & (l*switch < L) & (sum(varpeel) > 0)) {
     l <- l + 1
     xsign <- t(t(xsel) * varsign)
 
-    # Look for potential new cutpts
+    # Potential cutpts by dimension
     cutpts.sign <- updatecut(x=xsign, fract=alpha)
-
-    # Box membership by dimension
     cutpts <- cutpts.sign * varsign
-    boxes <- as.matrix(t((t(traindata) * varsign) >= as.vector(cutpts.sign)) & currind)
 
-    # Choosing of variable to peel on the basis of different peeling criteria
-    # Peeling by maximization of the rate of increase of LHR (between in and out box)
-    if (peelcriterion == "hr") {
-      vmd <- rep(NA, p)
-      for (j in 1:p) {
-        boxes1j <- 1 * boxes[,j]
-        if ((sum(boxes1j) != length(boxes1j)) && (sum(boxes1j) != 0)) {
-          lhrlj[l,j] <- coxph(Surv(traintime, trainstatus) ~ 1 + boxes1j, singular.ok=TRUE, iter.max=1)$coef
+    # Update box membership indicator by dimension
+    boxes <- as.matrix(t((t(traindata) * varsign) >= as.vector(cutpts.sign)) & sel)
+
+    vmd <- rep(NA, p)
+    for (j in 1:pnz) {
+      jnz <- varnz[j]
+      boxes1j <- 1 * boxes[,jnz]
+      if ((sum(boxes1j) != length(boxes1j)) && (sum(boxes1j) != 0)) {
+        # Rate of increase of LHR (between in and out box)
+        if (peelcriterion == "hr") {
+          lhrlj[l,jnz] <- coxph(Surv(traintime, trainstatus) ~ 1 + boxes1j, singular.ok=TRUE, iter.max=1)$coef
           if (l == 1) {
-            vmd[j] <- (lhrlj[l,j] - 0) / (1 - mean(boxes1j))
+            vmd[jnz] <- (lhrlj[l,jnz] - 0) / (1 - mean(boxes1j))
           } else {
-            vmd[j] <- (lhrlj[l,j] - lhrlj[l-1,j]) / (boxmass - mean(boxes1j))
+            vmd[jnz] <- (lhrlj[l,jnz] - lhrlj[l-1,jnz]) / (boxmass - mean(boxes1j))
           }
-          if (is.na(lhrlj[l,j])) {
-            xpeel[j] <- FALSE
-            cat("coxph could not find log hazard for variable", j, "\n")
+        # Rate of increase of LRT (between in and out box)
+        } else if (peelcriterion == "lr") {
+          lrtlj[l,jnz] <- survdiff(Surv(traintime, trainstatus) ~ 1 + boxes1j, rho=0)$chisq
+          if (l == 1) {
+            vmd[jnz] <- (lrtlj[l,jnz] - 0) / (1 - mean(boxes1j))
+          } else {
+            vmd[jnz] <- (lrtlj[l,jnz] - lrtlj[l-1,jnz]) / (boxmass - mean(boxes1j))
           }
         } else {
-          xpeel[j] <- FALSE
-          cat("There is only one group for variable", j, "\n")
+          stop("Invalid peeling criterion \n")
         }
+      } else {
+        varpeel[jnz] <- FALSE
       }
-      # Peeling by maximization of the rate of increase of the LRT (between in and out box)
-    } else if (peelcriterion == "lr") {
-      vmd <- rep(NA, p)
-      for (j in 1:p) {
-        boxes1j <- 1 * boxes[,j]
-        if ((sum(boxes1j) != length(boxes1j)) && (sum(boxes1j) != 0)) {
-          lrtlj[l,j] <- survdiff(Surv(traintime, trainstatus) ~ 1 + boxes1j, rho=0)$chisq
-          if (l == 1) {
-            vmd[j] <- (lrtlj[l,j] - 0) / (1 - mean(boxes1j))
-          } else {
-            vmd[j] <- (lrtlj[l,j] - lrtlj[l-1,j]) / (boxmass - mean(boxes1j))
-          }
-        } else {
-          xpeel[j] <- FALSE
-          cat("There is only one group for variable", j, "\n")
-        }
-      }
-    } else {
-      stop("Invalid peeling criterion \n")
     }
 
-    if (sum(xpeel) > 0) {
-
-      resample <- function(x,...) {
-        ifelse(test=(length(x) == 1), yes=x, no=sample(x,...))
-      }
-      varj <- resample(c(((1:length(vmd))[xpeel])[max(vmd[xpeel]) == vmd[xpeel]]), size=1)
-      currind <- as.vector(as.matrix(boxes)[, varj])
-
+    # If the last attempted peeling succeeded
+    if (sum(varpeel) > 0) {
+      # Maximizing the rate of increase of LHR or LRT (peeling criterion)
+      varj <- which(vmd == max(vmd[(!is.nan(vmd)) & (!is.infinite(vmd))], na.rm=TRUE))[1]
       # Updating
-      boxmass <- mean(1 * currind)
-      xsel <- as.matrix(traindata[currind, ])
-      xpeel <- (apply(xsel, 2, "var") > 10^(-digits))
-
-      # Saving trained box quantities of interest at each step
+      sel <- boxes[, varj, drop=TRUE]
+      boxmass <- mean(1 * sel)
+      xsel <- traindata[sel, ,drop=FALSE]
+      varpeel <- (apply(xsel, 2, "var") > 10^(-digits))
+      boxcutpts[varj] <- cutpts[varj]
+      # Saving trained box quantities of interest for the current peeling step
+      boxcut[l, ] <- boxcutpts
       vartrace[l] <- varj
-      mincutpts[varj] <- cutpts[varj]
-      boxcut[l, ] <- mincutpts
-
+    # Else exiting the loop and decrementing the last peeling step number since the last attempted peeling failed in that case
     } else {
       l <- l - 1
     }
@@ -2393,11 +2386,11 @@ peel.box <- function(x, times, status, traindata, traintime, trainstatus, wt, ar
 
   if (l == 0) {
     # Taking the first step box covering all the data
-    boxcut <- as.matrix(initcut)
+    boxcut <- as.matrix(initcutpts)
     vartrace <- 0
   } else if (l >= 1) {
-    # Adding a box covering all the data at the first step
-    boxcut <- rbind(initcut, boxcut[1:l, , drop=FALSE])
+    # Prepending the first step box covering all the data
+    boxcut <- rbind(initcutpts, boxcut[1:l, , drop=FALSE])
     vartrace <- c(0, vartrace[1:l])
   }
 
@@ -2406,9 +2399,9 @@ peel.box <- function(x, times, status, traindata, traintime, trainstatus, wt, ar
   names(vartrace) <- paste("step", 0:l, sep="")
   names(varsign) <- colnames(traindata)
 
+  # Returning the final results, considering the starting point as step #0
   return(list("nsteps"=l+1,
               "boxcut"=boxcut,
-              "sign"=varsign,
               "trace"=vartrace))
 }
 ##########################################################################################################################################
@@ -2586,7 +2579,6 @@ updatecut <- function(x, fract) {
   cutpts <- apply(x, 2, "quantile", type=7, probs=fract)
 
   for (j in 1:p) {
-
     xunique <- sort(unique(x[, j]))
     if (length(xunique) == 1) {
       cutpts[j] <- min(xunique)
