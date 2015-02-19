@@ -6,4 +6,4 @@ export(PrimSRC.news,
        plot_scatter,
        plot_profile)
 
-import(parallel, survival, Hmisc, MASS) 
+import(parallel, survival, Hmisc, glmnet, MASS) 
