@@ -2,15 +2,26 @@ Package: PrimSRC
 
 ---------------------------------------------------------------------------------
 Date   : 2015-01-20
-o RELEASE 0.01.0
+o RELEASE 0.1.0
 - Initial release of the package to GitHub.
 - Test build under 3.0.2 
 ---------------------------------------------------------------------------------
 Date   : 2015-01-22
-o RELEASE 0.02.0
+o RELEASE 0.2.0
 - Test build under 3.1.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
 Date   : 2015-02-01
-o RELEASE 0.03.0
+o RELEASE 0.3.0
 - Minor updates in the manual, email and version number.
+---------------------------------------------------------------------------------
+Date   : 2015-02-18
+o RELEASE 0.4.0
+- Extension to high-dimensional covariates and p > n case
+- Added dependency to glmnet package for initial variable selection.
+- Added synthetic dataset #5 and example with p > n.
+- Added new ouput of selected variables in main function sbh(). 
+- Corrected stepwise variable selection procedure in peel.box() in the case of missing values. 
+- Minor other code improvements in sbh() ad peel.box() without consequences on user end.
+- Updated manual, version number.
+- Test build under 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
