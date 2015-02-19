@@ -11,13 +11,15 @@
 \description{Performs a Bump Hunting search by Patient Rule Induction Method. The method generates decision rules delineating a region in the predictor space, where the response is larger than its average over the entire space. The region is shaped as a hyperdimensional box that is not necessarily contiguous. Assumptions are that the multivariate input variables can be discrete or continuous and the univariate response variable can be discrete (Classification), continuous (Regression) or a time-to-event, possibly censored (Survival). It is intended to handle high-dimensional multivariate datasets, where the number of variables far exceeds that of the samples (\eqn{p \gg n} paradigm).}
 
 \details{
-    The current version is the initial development release that only includes the case of low dimensional situations and a survival response.
-    Ultimately, it will include all the features described above. New features will be added soon as they are available.
+    The current version is the initial development release that only includes the case of a survival response in either low (\eqn{p \le n}) 
+    or high-dimensional situations (\eqn{p > n}). Ultimately, it will include all the features described above. 
+    New features will be added soon as they are available.
 
-    The following describes all the end-user functions (not the internal subroutines) that are needed to run a complete procedure.
-    The other internal subroutines are not to be called by the end-user at any time. For computational efficiency, 
-    some end-user functions offer a parallelization option that is done by passing a few parameters needed to configure a cluster. 
-    This is indicated by an asterisk (* = optionally involving cluster usage). The R functions are categorized as follows:
+    The following describes only the end-user functions that are needed to run a complete procedure.
+    The other internal subroutines are briefly documented in the manual, but are not to be called by the end-user at any time. 
+    For computational efficiency, some end-user functions offer a parallelization option that is done by passing a few parameters 
+    needed to configure a cluster. This is indicated by an asterisk (* = optionally involving cluster usage). 
+    The R functions are categorized as follows:
 
     \enumerate{
 
@@ -88,27 +90,33 @@
             African American ethnicity ("Race"), age ("Age"), and baseline CD4 count ("CD4"). The question in this dataset example 
             is whether it is possible to achieve a prognostication of patients for AIDS and HAART. \cr
 
-      \code{\link[PrimSRC]{Synthetic.1}}, \code{\link[PrimSRC]{Synthetic.2}}, \code{\link[PrimSRC]{Synthetic.3}}, \code{\link[PrimSRC]{Synthetic.4}}
-      \bold{Four Simulated Survival Models Datasets} \cr
-            Modeling survival models #1-4 with censoring as a regression function of some informative predictors, depending on the model used. 
-            In some models, this represents un-informative noisy variables, which are not part of the design matrix (models #2 and #3). 
-            In one example, the signal is limited to a box-shaped region R of the predictor space (model #4). 
+      \code{\link[PrimSRC]{Synthetic.1}},
+      \code{\link[PrimSRC]{Synthetic.2}},
+      \code{\link[PrimSRC]{Synthetic.3}}, 
+      \code{\link[PrimSRC]{Synthetic.4}}, 
+      \code{\link[PrimSRC]{Synthetic.5}}
+      \bold{Five Simulated Survival Models Datasets} \cr
+            Modeling survival models #1-5 with censoring as a regression function of some informative predictors, depending on the model used. 
+            In models where non-informative noisy variables were used, these variables were not part of the design matrix (models #2-3 and #5). 
+            In one example, the signal is limited to a box-shaped region \eqn{R} of the predictor space (model #4). 
+            In the last example, the signal is limited to 10\% of the predictors in a \eqn{p > n} situation (model #5).
             Survival time was generated from an exponential model with with rate parameter \eqn{\lambda} (and mean \eqn{\frac{1}{\lambda}})
             according to a Cox-PH model with hazard exp(eta), where eta(.) is the regression function.
-            Censoring indicator were generated from a uniform distribution on [0, 3].
-            In these synthetic examples, all covariates are continuous, i.i.d. from a multivariate uniform distribution on [0, 1].
+            Censoring indicator were generated from a uniform distribution on [0,3] (models #1-4) or [0,2] (model #5).
+            In these synthetic examples, all covariates are continuous, i.i.d. from a multivariate uniform distribution on [0,1] (models #1-4)
+            or from a multivariate standard normal distribution (model #5).
     }
     Known Bugs/Problems : None at this time.
 }
 
 \author{
     \itemize{
-        \item "Jean-Eudes Dazard, Ph.D." \email{jean-eudes.dazard@case.edu}
+        \item "Jean-Eudes Dazard, Ph.D." \email{jxd101@case.edu}
         \item "Michael Choe, M.D." \email{mjc206@case.edu}
         \item "Michael LeBlanc, Ph.D." \email{mleblanc@fhcrc.org}
         \item "Alberto Santana, MBA." \email{ahs4@case.edu}
     }
-    Maintainer: "Jean-Eudes Dazard, Ph.D." \email{jean-eudes.dazard@case.edu}
+    Maintainer: "Jean-Eudes Dazard, Ph.D." \email{jxd101@case.edu}
 
     Acknowledgments: This project was partially funded by the National Institutes of Health
     NIH - National Cancer Institute (R01-CA160593) to J-E. Dazard and J.S. Rao.

@@ -11,7 +11,7 @@
 }
 
 \usage{
-  sbh(dataset, discr, B = 100, K = 5, A = 1000, cpv = FALSE,
+  sbh(dataset, discr, B = 10, K = 5, A = 1000, cpv = FALSE,
       cvtype = "combined", cvcriterion = "lrt",
       arg = "beta=0.05,alpha=0.1,minn=10,L=NULL,peelcriterion=\"lr\"",
       probval = NULL, timeval = NULL, 
@@ -27,7 +27,7 @@
     Defaults to \code{logical}(ncol(dataset)-2).
   }
   \item{B}{
-    Positive \code{integer} scalar of the number of replications of the cross-validation procedure. Defaults to 100.
+    Positive \code{integer} scalar of the number of replications of the cross-validation procedure. Defaults to 10.
   }
   \item{K}{
     Positive \code{integer} scalar of the number of folds for the cross-validation procedure. Defaults to 5.
@@ -119,7 +119,7 @@
 
 \value{
   Object of \code{class} "PRSP" (Patient Recursive Survival Peeling)
-  \code{List} containing the following 16 fields:
+  \code{List} containing the following 18 fields:
     \item{x}{\code{numeric} \code{matrix} of original covariates.}
     \item{times}{\code{numeric} \code{vector} of observed failure / survival times.}
     \item{status}{\code{numeric} \code{vector} of observed event indicator in \{1,0\}.}
@@ -129,15 +129,15 @@
     \item{cpv}{\code{logical} scalar returned flag of computation of cross-validated p-values.}
     \item{cvtype}{\code{character} \code{vector} of the cross-validation technique used.}
     \item{cvcriterion}{\code{character} \code{vector} of cross-validation optimization criterion used.}
+    \item{varsign}{\code{numeric} \code{vector} in \{-1,+1\} of directions of peeling for all variables.} 
+    \item{varnz}{\code{numeric} \code{vector} giving the selected variable by regularized (Elastic-Net) Cox-regression.}
     \item{arg}{\code{character} \code{vector} of the parameters used:}
     \item{probval}{\code{Numeric} scalar of survival probability used.}
     \item{timeval}{\code{Numeric} scalar of survival time used.}
-    \item{cvfit}{\code{List} with 9 fields of cross-validated estimates:
+    \item{cvfit}{\code{List} with 8 fields of cross-validated estimates:
     \itemize{
         \item{cv.maxsteps}: \code{numeric} scalar of maximal ceiled-mean of number of peeling steps over the replicates
         \item{cv.nsteps}: \code{numeric} scalar of optimal number of peeling steps according to the optimization criterion
-        \item{cv.sign}: \code{binary} \code{character} \code{vector} in \{-1,+1\} of direction of peeling for each variable.
-              Invariable for directed peeling (as is the case here).
         \item{cv.trace}: \code{numeric} \code{vector} of variable usage traces at each step
         \item{cv.boxind}: \code{logical} \code{matrix} in {\code{TRUE}, \code{FALSE}} of sample box membership indicator (columns) by peeling steps (rows)
         \item{cv.vertices}: \code{numeric} \code{matrix} of box vertices. LB=Lower Bound and UB=Upper Bound by rows. Dimensions by columns
@@ -170,12 +170,12 @@
 
 \author{
     \itemize{
-        \item "Jean-Eudes Dazard, Ph.D." \email{jean-eudes.dazard@case.edu}
+        \item "Jean-Eudes Dazard, Ph.D." \email{jxd101@case.edu}
         \item "Michael Choe, M.D." \email{mjc206@case.edu}
         \item "Michael LeBlanc, Ph.D." \email{mleblanc@fhcrc.org}
         \item "Alberto Santana, MBA." \email{ahs4@case.edu}
     }
-    Maintainer: "Jean-Eudes Dazard, Ph.D." \email{jean-eudes.dazard@case.edu}
+    Maintainer: "Jean-Eudes Dazard, Ph.D." \email{jxd101@case.edu}
 
     Acknowledgments: This project was partially funded by the National Institutes of Health
     NIH - National Cancer Institute (R01-CA160593) to J-E. Dazard and J.S. Rao.
@@ -219,7 +219,7 @@ citation("PrimSRC")
 # Loading of the Synthetic and Real datasets
 # (see description of datasets)
 #===================================================
-data("Synthetic.1", "Real", package="PrimSRC")
+data("Synthetic.1", "Synthetic.5", "Real", package="PrimSRC")
 
 #===================================================
 # Simulated dataset example from model #1 (n=250, p=3)
@@ -231,20 +231,51 @@ data("Synthetic.1", "Real", package="PrimSRC")
 #===================================================
 CVCOMBREP.synt1 <- sbh(dataset = Synthetic.1, 
                        cvtype = "combined", cvcriterion = "lrt",
-                       B = 10, K = 5, cpv = FALSE, probval = 0.5, 
+                       B = 5, K = 5, cpv = FALSE, probval = 0.5, 
                        arg = "beta=0.05,
                               alpha=0.1,
                               minn=10,
                               L=NULL,
                               peelcriterion=\"lr\"",
-                       parallel = FALSE, conf = NULL, seed = 777)
+                       parallel = FALSE, conf = NULL, seed = 123)
 
+# variables used for peeling:
+nzv <- sort(unique(CVCOMBREP.synt1$cvfit$cv.trace))[-1]
+nzv
 # some output results:
 CVCOMBREP.synt1$cvfit$cv.maxsteps
 CVCOMBREP.synt1$cvfit$cv.nsteps
 CVCOMBREP.synt1$cvfit$cv.rules$frame
 CVCOMBREP.synt1$cvfit$cv.trace
-CVCOMBREP.synt1$cvfit$cv.stats
+round(CVCOMBREP.synt1$cvfit$cv.stats$mean,2)
+
+#===================================================
+# Simulated dataset example from model #5 (n=100, p=1000)
+# Replicated Combined Cross-Validation (RCCV)
+# Peeling criterion = LRT
+# Optimization criterion = LRT
+# No parallelization
+# No computation of cross-validated p-values
+#===================================================
+CVCOMBREP.synt5 <- sbh(dataset = Synthetic.5, 
+                       cvtype = "combined", cvcriterion = "lrt",
+                       B = 5, K = 5, cpv = FALSE, probval = 0.5, 
+                       arg = "beta=0.05,
+                              alpha=0.1,
+                              minn=10,
+                              L=NULL,
+                              peelcriterion=\"lr\"",
+                       parallel = FALSE, conf = NULL, seed = 123)
+
+# variables used for peeling:
+nzv <- sort(unique(CVCOMBREP.synt5$cvfit$cv.trace))[-1]
+nzv
+# some output results:
+CVCOMBREP.synt5$cvfit$cv.maxsteps
+CVCOMBREP.synt5$cvfit$cv.nsteps
+CVCOMBREP.synt5$cvfit$cv.rules$frame[,nzv]
+CVCOMBREP.synt5$cvfit$cv.trace
+round(CVCOMBREP.synt5$cvfit$cv.stats$mean,2)
 
 #===================================================
 # Real dataset example (n=485, p=4)
@@ -257,20 +288,23 @@ CVCOMBREP.synt1$cvfit$cv.stats
 CVCOMBREP.real <- sbh(dataset = Real, 
                       discr = c(0,1,1,0),
                       cvtype = "combined", cvcriterion = "lrt",
-                      B = 10, K = 5, cpv = FALSE, probval = 0.5, 
+                      B = 5, K = 5, cpv = FALSE, probval = 0.5, 
                       arg = "beta=0.05,
                              alpha=0.1,
                              minn=10,
                              L=NULL,
                              peelcriterion=\"lr\"",
-                      parallel = FALSE, conf = NULL, seed = 777)
+                      parallel = FALSE, conf = NULL, seed = 123)
 
+# variables used for peeling:
+nzv <- sort(unique(CVCOMBREP.real$cvfit$cv.trace))[-1]
+nzv
 # some output results:
 CVCOMBREP.real$cvfit$cv.maxsteps
 CVCOMBREP.real$cvfit$cv.nsteps
-CVCOMBREP.real$cvfit$cv.rules$frame
+CVCOMBREP.real$cvfit$cv.rules$frame[,nzv]
 CVCOMBREP.real$cvfit$cv.trace
-CVCOMBREP.real$cvfit$cv.stats
+round(CVCOMBREP.real$cvfit$cv.stats$mean,2)
 
 \dontrun{
     #=================================================================================
@@ -312,21 +346,24 @@ CVCOMBREP.real$cvfit$cv.stats
     
     CVCOMBREP.synt1 <- sbh(dataset = Synthetic.1, 
                            cvtype = "combined", cvcriterion = "lrt",
-                           B = 10, K = 5, A = 1024, cpv = TRUE, probval = 0.5, 
+                           B = 5, K = 5, A = 1024, cpv = TRUE, probval = 0.5, 
                            arg = "beta=0.05,
                                   alpha=0.1,
                                   minn=10,
                                   L=NULL,
                                   peelcriterion=\"lr\"",
-                           parallel = TRUE, conf = conf, seed = 777)
+                           parallel = TRUE, conf = conf, seed = 123)
     
+    # variables used for peeling:
+    nzv <- sort(unique(CVCOMBREP.synt1$cvfit$cv.trace))[-1]
+    nzv
     # some output results:
     CVCOMBREP.synt1$cvfit$cv.maxsteps
     CVCOMBREP.synt1$cvfit$cv.nsteps
-    CVCOMBREP.synt1$cvfit$cv.rules$frame
+    CVCOMBREP.synt1$cvfit$cv.rules$frame[,nzv]
     CVCOMBREP.synt1$cvfit$cv.trace
     CVCOMBREP.synt1$cvfit$cv.pval
-    CVCOMBREP.synt1$cvfit$cv.stats
+    round(CVCOMBREP.synt1$cvfit$cv.stats$mean,2)
 }
 
 }

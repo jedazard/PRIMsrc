@@ -89,12 +89,12 @@
 
 \author{
     \itemize{
-        \item "Jean-Eudes Dazard, Ph.D." \email{jean-eudes.dazard@case.edu}
+        \item "Jean-Eudes Dazard, Ph.D." \email{jxd101@case.edu}
         \item "Michael Choe, M.D." \email{mjc206@case.edu}
         \item "Michael LeBlanc, Ph.D." \email{mleblanc@fhcrc.org}
         \item "Alberto Santana, MBA." \email{ahs4@case.edu}
     }
-    Maintainer: "Jean-Eudes Dazard, Ph.D." \email{jean-eudes.dazard@case.edu}
+    Maintainer: "Jean-Eudes Dazard, Ph.D." \email{jxd101@case.edu}
 
     Acknowledgments: This project was partially funded by the National Institutes of Health
     NIH - National Cancer Institute (R01-CA160593) to J-E. Dazard and J.S. Rao.

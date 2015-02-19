@@ -11,7 +11,10 @@
 
 \usage{
     cv.box.rep(x, times, status, 
-               B, K, arg, cvtype, probval, timeval, 
+               B, K, arg, 
+               cvtype, 
+               probval, timeval, 
+               varsign, varnz, initcutpts,
                parallel, seed)
 }
 
@@ -49,6 +52,15 @@
   }
   \item{timeval}{
     \code{Numeric} scalar of the survival time at which we want to get the endpoint box survival probability.
+  }
+  \item{varsign}{
+    \code{numeric} \code{vector} in \{-1,+1\} of directions of peeling for all variables.
+  } 
+  \item{varnz}{
+    \code{numeric} \code{vector} giving the selected variable by regularized (Elastic-Net) Cox-regression.
+  }
+  \item{initcutpts}{
+    \code{numeric} \code{vector} of initial box boundaries for each dimension.
   }
   \item{parallel}{
     \code{Logical}. Is parallel computing to be performed? Optional.

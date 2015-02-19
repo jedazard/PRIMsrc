@@ -9,22 +9,13 @@
 }
 
 \usage{
-    cv.comb.peel(x, times, status, 
-                 traindata, trainstatus, traintime, 
+    cv.comb.peel(traindata, trainstatus, traintime, 
                  testdata, teststatus, testtime, 
+                 varsign, varnz, initcutpts,
                  K, arg, seed)
 }
 
 \arguments{
-  \item{x}{
-    \code{Numeric} \code{matrix} of original covariates.
-  }
-  \item{times}{
-    \code{Numeric} \code{vector} of original survival times.
-  }
-  \item{status}{
-    \code{Logical} \code{vector} of original event indicators.
-  }
   \item{traindata}{
       \code{Numeric} \code{matrix} of training covariates.
   }
@@ -42,6 +33,15 @@
   }
   \item{testtime}{
       \code{Numeric} \code{vector} of test survival times.
+  }
+  \item{varsign}{
+    \code{numeric} \code{vector} in \{-1,+1\} of directions of peeling for all variables.
+  } 
+  \item{varnz}{
+    \code{numeric} \code{vector} giving the selected variable by regularized (Elastic-Net) Cox-regression.
+  }
+  \item{initcutpts}{
+    \code{numeric} \code{vector} of initial box boundaries for each dimension.
   }
   \item{K}{
     Positive \code{integer} scalar of the number of folds for the cross-validation procedure.

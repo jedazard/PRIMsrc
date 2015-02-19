@@ -9,7 +9,10 @@
 }
 
 \usage{
-    cv.ave.fold(x, times, status, K, arg, probval, timeval, seed)
+    cv.ave.fold(x, times, status, 
+                probval, timeval, 
+                varsign, varnz, initcutpts, 
+                K, arg, seed)
 }
 
 \arguments{
@@ -21,6 +24,21 @@
   }
   \item{status}{
     \code{Logical} \code{vector} of original event indicators.
+  }
+  \item{probval}{
+    \code{Numeric} scalar of the survival probability at which we want to get the endpoint box survival time.
+  }
+  \item{timeval}{
+    \code{Numeric} scalar of the survival time at which we want to get the endpoint box survival probability.
+  }
+  \item{varsign}{
+    \code{numeric} \code{vector} in \{-1,+1\} of directions of peeling for all variables.
+  } 
+  \item{varnz}{
+    \code{numeric} \code{vector} giving the selected variable by regularized (Elastic-Net) Cox-regression.
+  }
+  \item{initcutpts}{
+    \code{numeric} \code{vector} of initial box boundaries for each dimension.
   }
   \item{K}{
     Positive \code{integer} scalar of the number of folds for the cross-validation procedure.
@@ -34,12 +52,6 @@
         \item{\code{L}} = fixed peeling length.
         \item{\code{peelcriterion}} in \{"hr" (LHR), "lr" (LRT)\}.
     }
-  }
-  \item{probval}{
-    \code{Numeric} scalar of the survival probability at which we want to get the endpoint box survival time.
-  }
-  \item{timeval}{
-    \code{Numeric} scalar of the survival time at which we want to get the endpoint box survival probability.
   }
   \item{seed}{
     Positive \code{integer} scalar for the seed.

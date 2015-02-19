@@ -9,7 +9,9 @@
 }
 
 \usage{
-    cv.comb.fold(x, times, status, K, arg, seed)
+    cv.comb.fold(x, times, status, 
+                 varsign, varnz, initcutpts, 
+                 K, arg, seed)
 }
 
 \arguments{
@@ -21,6 +23,15 @@
   }
   \item{status}{
     \code{Logical} \code{vector} of original event indicators.
+  }
+  \item{varsign}{
+    \code{numeric} \code{vector} in \{-1,+1\} of directions of peeling for all variables.
+  } 
+  \item{varnz}{
+    \code{numeric} \code{vector} giving the selected variable by regularized (Elastic-Net) Cox-regression.
+  }
+  \item{initcutpts}{
+    \code{numeric} \code{vector} of initial box boundaries for each dimension.
   }
   \item{K}{
     Positive \code{integer} scalar of the number of folds for the cross-validation procedure.

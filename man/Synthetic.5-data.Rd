@@ -1,19 +1,19 @@
-\name{Synthetic.2}
+\name{Synthetic.5}
 
 \docType{data}
 
-\alias{Synthetic.2}
+\alias{Synthetic.5}
 
-\title{\code{Synthetic.2} Dataset}
+\title{\code{Synthetic.5} Dataset}
 
 \description{
-  Modeling survival model #2 as described in Dazard et al. (2015) with censoring.
-  Here, the regression function uses some informative predictors. 
+  Modeling survival model #5 as described in Dazard et al. (2015) with censoring.
+  Here, the regression function uses 1/10 of informative predictors in a \eqn{p > n} situation with \eqn{p = 1000} and \eqn{n = 100}. 
   The rest represent un-informative noisy variables, which are not part of the design matrix. 
   Survival time was generated from an exponential model with rate parameter \eqn{\lambda} (and mean \eqn{\frac{1}{\lambda}})
   according to a Cox-PH model with hazard exp(eta), where eta(.) is the regression function.
-  Censoring indicator were generated from a uniform distribution on [0, 3].
-  In this synthetic example, all covariates are continuous, i.i.d. from a multivariate uniform distribution on [0, 1].
+  Censoring indicator were generated from a uniform distribution on [0, 2].
+  In this synthetic example, all covariates are continuous, i.i.d. from a multivariate standard normal distribution.
 }
 
 \usage{Synthetic.2}

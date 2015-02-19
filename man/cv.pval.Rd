@@ -9,7 +9,11 @@
 }
 
 \usage{
-    cv.pval(x, times, status, cvtype, A, K, arg, obs.chisq, parallel, conf)
+    cv.pval(x, times, status, 
+            cvtype, 
+            varsign, varnz, initcutpts, 
+            A, K, arg, obs.chisq, 
+            parallel, conf)
 }
 
 \arguments{
@@ -24,6 +28,15 @@
   }
   \item{cvtype}{
     \code{Character} \code{vector} describing the cross-validation technique in \{"none", "averaged", "combined"\}.
+  }
+  \item{varsign}{
+    \code{numeric} \code{vector} in \{-1,+1\} of directions of peeling for all variables.
+  } 
+  \item{varnz}{
+    \code{numeric} \code{vector} giving the selected variable by regularized (Elastic-Net) Cox-regression.
+  }
+  \item{initcutpts}{
+    \code{numeric} \code{vector} of initial box boundaries for each dimension.
   }
   \item{A}{
     Positive \code{integer} scalar of the number of permutations for the computation of cross-validated p-values. Defaults to 1000.

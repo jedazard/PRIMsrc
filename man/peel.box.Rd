@@ -11,21 +11,12 @@
 }
 
 \usage{
-    peel.box(x, times, status, 
-             traindata, traintime, trainstatus, 
-             wt, arg, seed)
+    peel.box(traindata, traintime, trainstatus, 
+             varsign, varnz, initcutpts, 
+             arg, seed)
 }
 
 \arguments{
-  \item{x}{
-    \code{Numeric} \code{matrix} of original covariates.
-  }
-  \item{times}{
-    \code{Numeric} \code{vector} of original survival times.
-  }
-  \item{status}{
-    \code{Logical} \code{vector} of original event indicators.
-  }
   \item{traindata}{
     \code{Numeric} \code{matrix} of training covariates.
   }
@@ -35,8 +26,14 @@
   \item{trainstatus}{
     \code{Logical} \code{vector} of training event indicators.
   }
-  \item{wt}{
-    \code{Numeric} \code{vector} of weights.
+  \item{varsign}{
+    \code{numeric} \code{vector} in \{-1,+1\} of directions of peeling for all variables.
+  } 
+  \item{varnz}{
+    \code{numeric} \code{vector} giving the selected variable by regularized (Elastic-Net) Cox-regression.
+  }
+  \item{initcutpts}{
+    \code{numeric} \code{vector} of initial box boundaries for each dimension.
   }
   \item{arg}{
     \code{Character} \code{vector} describing the parameters to use:
