@@ -7,7 +7,9 @@ univariate response variable can be discrete (Classification), continuous (Regre
 possibly censored (Survival). It is intended to handle high-dimensional multivariate datasets,
 where the number of variables far exceeds that of the samples (p >> n paradigm).
 
-The current version is the development release that only includes the case of a survival response. Ultimately, it will include all the features described above. New features will be added soon as they are available.
+The current version is a development release that only includes the case of a survival response. Ultimately, it will include all the features described above. New features will be added soon as they are available. At this
+point, the main function sbh() depends on a internal cross-validated variable selection procedure by
+regularized Cox-regression from the R package glmnet.
 
 See also below the package news with the R command: PrimSRC.news().
 
@@ -29,7 +31,7 @@ See also below on how to cite the package with the R command: citation("PrimSRC"
 =========================
 Documentation and Manual: 
 =========================
-All the codes are in the R folder and a manual (PrimSRC.pdf) details the end-user (and internal) functions. At this stage and for simplicity, there are only one end-user function (sbh), 5 end-user plotting functions (plot_****). There are also 5 datasets (synthetic and real) available, including low and high-dimensional situations. See the "PrimSRC-package" introduction section of the manual for more details and examples of use.
+All the codes are in the R folder and a manual (PrimSRC.pdf) details the end-user (and internal) functions. At this stage and for simplicity, there are only one end-user function (sbh), 5 end-user plotting functions (plot_****). There are 5 synthetic datasets and 2 real datasets available including low and high-dimensional situations (for p < n and p > n cases). See the "PrimSRC-package" introduction section of the manual for more details and examples of use.
 
 =============
 Installation: 
