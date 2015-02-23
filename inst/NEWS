@@ -14,15 +14,19 @@ Date   : 2015-02-01
 o RELEASE 0.3.0
 - Minor updates in the manual, email and version number.
 ---------------------------------------------------------------------------------
-Date   : 2015-02-22
+Date   : 2015-02-23
 o RELEASE 0.4.0
 - Extension to high-dimensional covariates and p > n case
 - Added dependency to glmnet package for initial variable selection.
 - Added synthetic dataset #5 and example with p > n.
 - Added real dataset #2 and example with p >> n.
-- Added new ouput of selected variables in main function sbh(). 
-- Corrected stepwise variable selection procedure in peel.box() in the case of missing values. 
-- Minor code improvements in sbh() and peel.box() without consequences on user.
+- Added new ouput of selected variables in main function sbh().
+- Removed returned values of box vertices that was redudant with the returned rules.
+- Changed return value of variable traces: now also returns the matrix of traces by replication.
+- Removed superfluous codes in the parallelization section, before clusterCall() in sbh().
+- Corrected number of replications in sbh() in case of parallelization. 
+- Corrected stepwise variable selection procedure in peel.box() to account for missing values.
+- Minor updates, bugs and code improvements in sbh() and peel.box() and plotting functions.
 - Updated manual, version number.
 - Test build under 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
