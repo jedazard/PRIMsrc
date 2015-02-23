@@ -21,7 +21,7 @@ o RELEASE 0.4.0
 - Added synthetic dataset #5 and example with p > n.
 - Added real dataset #2 and example with p >> n.
 - Added new ouput of selected variables in main function sbh().
-- Removed returned values of box vertices that was redudant with the returned rules.
+- Removed returned values of box vertices that were redudant with the returned rules.
 - Changed return value of variable traces: now also returns the matrix of traces by replication.
 - Removed superfluous codes in the parallelization section, before clusterCall() in sbh().
 - Corrected number of replications in sbh() in case of parallelization. 
