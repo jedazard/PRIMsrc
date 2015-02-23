@@ -5,8 +5,10 @@
 \title{Function for Visualization of Peeling Trajectory/Profiles}
 
 \description{
-  Plot the cross-validated peeling trajectories/profiles of covariates and other statistical quantities of interest
-  at each iteration of the peeling sequence (inner loop of our PRSP algorithm). Plot up to three "PRSP"" objects.
+  Plot the cross-validated peeling trajectories/profiles of covariates used for peeling 
+  and other statistical quantities of interest at each iteration of the peeling sequence 
+  (inner loop of our PRSP algorithm). 
+  Plot up to three "PRSP" objects.
 }
 
 \usage{
@@ -99,6 +101,8 @@
 }
 
 \details{
+  The plot limits the display of trajectories to those only covariates that are used for peeling.
+  
   The plot includes box descriptive statistics (such as support), survival endpoint statistics
   (such as Maximum Event-Free Time (MEFT), Minimum Event-Free Probability (MEVP), LHR, LRT)
   and prediction performance (such as CER).
@@ -153,16 +157,10 @@
 #===================================================
 library("PrimSRC")
 
-#===================================================
-# Loading of the Synthetic and Real datasets
-# (see description of datasets)
-#===================================================
-data("Synthetic.1", "Real", package="PrimSRC")
-
 \dontrun{
     #=================================================================================
+    # Simulated dataset #1 (n=250, p=3)
     # Replicated Combined Cross-Validation (RCCV)
-    # Simulated Synthetic.1 from model #1 (n=250, p=3)
     # Peeling criterion = LRT
     # Optimization criterion = LRT
     #=================================================================================

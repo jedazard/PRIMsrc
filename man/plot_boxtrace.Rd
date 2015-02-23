@@ -5,8 +5,9 @@
 \title{Function for Visualization of Covariates Traces}
 
 \description{
- Plot the cross-validated trace curves of covariates variable importance and variable usage at each iteration of the peeling sequence
- (inner loop of our PRSP algorithm). Plot up to three "PRSP"" objects.
+ Plot the cross-validated modal trace curves of variable importance and variable usage of covariates used for peeling 
+ at each iteration of the peeling sequence (inner loop of our PRSP algorithm). 
+ Plot up to three "PRSP" objects.
 }
 
 \usage{
@@ -102,9 +103,15 @@
 }
 
 \details{
-  The top plot shows the overlay of variable importance curves for each covariate
+  The trace plots limit the display of traces to those only covariates that are used for peeling.
+  
+  Due to the variability induced by cross-validation and replication, it is possible that more than one variable be used for peeling at a given step.
+  So, for simplicity of the trace plots, only the modal or majority vote trace value (over the folds and replications of the cross-validation) is plotted. 
+  
+  The top plot shows the overlay of variable importance curves for each covariate.
   The bottom plot shows the overlay of variable usage curves for each covariate. It is a dicretized view of variable importance.
-  Both point to the magnitude and order in which covariates are used along the peeling sequence.
+  
+  Both point to the magnitude and order with which covariates are used along the peeling sequence.
 }
 
 \value{
@@ -156,16 +163,10 @@
 #===================================================
 library("PrimSRC")
 
-#===================================================
-# Loading of the Synthetic and Real datasets
-# (see description of datasets)
-#===================================================
-data("Synthetic.1", "Real", package="PrimSRC")
-
 \dontrun{
     #=================================================================================
+    # Simulated dataset #1 (n=250, p=3)
     # Replicated Combined Cross-Validation (RCCV)
-    # Simulated Synthetic.1 from model #1 (n=250, p=3)
     # Peeling criterion = LRT
     # Optimization criterion = LRT
     #=================================================================================

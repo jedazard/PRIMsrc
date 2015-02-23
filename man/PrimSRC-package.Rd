@@ -13,8 +13,9 @@
 \details{
     The current version is the initial development release that only includes the case of a survival response in either low (\eqn{p \le n}) 
     or high-dimensional situations (\eqn{p > n}). Ultimately, it will include all the features described above. 
-    New features will be added soon as they are available.
-
+    New features will be added soon as they are available. At this point, the main function \code{sbh} depends on a 
+    internal cross-validated variable selection procedure by regularized Cox-regression from the R package \pkg{glmnet}.
+    
     The following describes only the end-user functions that are needed to run a complete procedure.
     The other internal subroutines are briefly documented in the manual, but are not to be called by the end-user at any time. 
     For computational efficiency, some end-user functions offer a parallelization option that is done by passing a few parameters 
@@ -57,15 +58,16 @@
             The scatterplot is drawn on a graphical device with geometrically equal scales on the \eqn{X} and \eqn{Y} axes. \cr
       \code{\link[PrimSRC]{plot_boxtraj}}
       \bold{Function for Visualization of Peeling Trajectory/Profiles} \cr
-            Plot the cross-validated peeling trajectories/profiles of covariates and other statistical quantities of interest
-            at each iteration of the peeling sequence (inner loop of our PRSP algorithm).
+            Plot the cross-validated peeling trajectories/profiles of covariates used for peeling 
+            and other statistical quantities of interest at each iteration of the peeling sequence (inner loop of our PRSP algorithm).
             The plot includes box descriptive statistics (such as support), survival endpoint statistics
             (such as Maximum Event-Free Time (MEFT), Minimum Event-Free Probability (MEVP), LHR, LRT)
             and prediction performance (such as CER). \cr
       \code{\link[PrimSRC]{plot_boxtrace}}
       \bold{Function for Visualization of Covariates Traces} \cr
-            Plot the cross-validated trace curves of covariates variable importance and variable usage at each iteration of the peeling sequence
-            (inner loop of our PRSP algorithm). The top plot shows the overlay of variable importance curves for each covariate
+            Plot the cross-validated trace curves of variable importance and variable usage of covariates used for peeling 
+            at each iteration of the peeling sequence (inner loop of our PRSP algorithm). 
+            The top plot shows the overlay of variable importance curves for each covariate.
             The bottom plot shows the overlay of variable usage curves for each covariate. It is a dicretized view of variable importance.
             Both point to the magnitude and order in which covariates are used along the peeling sequence. \cr
       \code{\link[PrimSRC]{plot_boxkm}}
@@ -77,19 +79,6 @@
             with the corresponding peeling step. P-values are lower-bounded by the precision limit given by 1/#number of permutations (A). \cr
 
       \item{END-USER DATASETS} \cr
-      \code{\link[PrimSRC]{Real}}
-      \bold{Clinical Dataset} \cr
-            Publicly available dataset from the Women's Interagency HIV cohort Study (WIHS).
-            Inclusion criteria of the study were that women at enrolment were (i) alive, (ii) HIV-1 infected, and 
-            (iii) free of clinical AIDS symptoms. Women were followed until the first of the following occurred: 
-            (i) treatment initiation (HAART), (ii) AIDS diagnosis, (iii) death, or administrative censoring. 
-            The studied outcomes were the competing risks "AIDS/Death (before HAART)" and "Treatment Initiation (HAART)".
-            However, here, for simplification purposes, only the first of the two competing events (i.e. the time to AIDS/Death), 
-            was used in this dataset example. Likewise, the entire study enrolled 1164 women, but only the complete cases were used 
-            in this dataset example for simplification. Variables included history of Injection Drug Use ("IDU") at enrollment,
-            African American ethnicity ("Race"), age ("Age"), and baseline CD4 count ("CD4"). The question in this dataset example 
-            is whether it is possible to achieve a prognostication of patients for AIDS and HAART. \cr
-
       \code{\link[PrimSRC]{Synthetic.1}},
       \code{\link[PrimSRC]{Synthetic.2}},
       \code{\link[PrimSRC]{Synthetic.3}}, 
@@ -105,6 +94,29 @@
             Censoring indicator were generated from a uniform distribution on [0,3] (models #1-4) or [0,2] (model #5).
             In these synthetic examples, all covariates are continuous, i.i.d. from a multivariate uniform distribution on [0,1] (models #1-4)
             or from a multivariate standard normal distribution (model #5).
+            
+      \code{\link[PrimSRC]{Real.1}}
+      \bold{Clinical Dataset} \cr
+            Publicly available dataset from the Women's Interagency HIV cohort Study (WIHS).
+            Inclusion criteria of the study were that women at enrolment were (i) alive, (ii) HIV-1 infected, and 
+            (iii) free of clinical AIDS symptoms. Women were followed until the first of the following occurred: 
+            (i) treatment initiation (HAART), (ii) AIDS diagnosis, (iii) death, or administrative censoring. 
+            The studied outcomes were the competing risks "AIDS/Death (before HAART)" and "Treatment Initiation (HAART)".
+            However, here, for simplification purposes, only the first of the two competing events (i.e. the time to AIDS/Death), 
+            was used in this dataset example. Likewise, the entire study enrolled 1164 women, but only the complete cases were used 
+            in this dataset example for simplification. Variables included history of Injection Drug Use ("IDU") at enrollment,
+            African American ethnicity ("Race"), age ("Age"), and baseline CD4 count ("CD4"). The question in this dataset example 
+            was whether it is possible to achieve a prognostication of patients for AIDS and HAART.
+
+      \code{\link[PrimSRC]{Real.2}}
+      \bold{Large Gene Expression Dataset} \cr
+            Publicly available breast cancer gene expression profiling dataset from the Uppsala cohort study that enrolled 249 women.
+            It is entitled: "Genetic Reclassification of Histologic Grade Delineates New Clinical Subtypes of Breast Cancer".   
+             The goal of the study was to provide a more objective measure of grade with prognostic benefit for patients with 
+            moderately differentiated grade II (G2) tumors. To that end, expression profiles of primary invasive breast tumors 
+            were analyzed on microarrays to find a gene expression signature capable of discerning tumors of grade I (G1) and grade III (G3) histology.
+            In this dataset, only the Uppsala cohort and only the gene expression data was included although other clinical covariates are available as well.
+            It represents a situation where the number of variables (\eqn{p=22645}) dominates the number of observations (\eqn{p=249}), or \eqn{p >> n} case. \cr
     }
     Known Bugs/Problems : None at this time.
 }
@@ -148,6 +160,7 @@
     \itemize{
         \item \code{makeCluster} (R package \pkg{parallel})
         \item \code{plot.survfit} (R package \pkg{survival})
-        \item \code{wihs} (R package \pkg{randomForestSRC})
+        \item \code{cv.glmnet} (R package \pkg{glmnet})
+        \item \code{glmnet} (R package \pkg{glmnet})
     }
 }

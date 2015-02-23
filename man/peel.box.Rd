@@ -12,7 +12,7 @@
 
 \usage{
     peel.box(traindata, traintime, trainstatus, 
-             varsign, varnz, initcutpts, 
+             varsign, selected, initcutpts, 
              arg, seed)
 }
 
@@ -29,7 +29,7 @@
   \item{varsign}{
     \code{numeric} \code{vector} in \{-1,+1\} of directions of peeling for all variables.
   } 
-  \item{varnz}{
+  \item{selected}{
     \code{numeric} \code{vector} giving the selected variable by regularized (Elastic-Net) Cox-regression.
   }
   \item{initcutpts}{

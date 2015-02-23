@@ -123,16 +123,10 @@
 #===================================================
 library("PrimSRC")
 
-#===================================================
-# Loading of the Synthetic and Real datasets
-# (see description of datasets)
-#===================================================
-data("Synthetic.1", "Real", package="PrimSRC")
-
 \dontrun{
     #=================================================================================
+    # Simulated dataset #1 (n=250, p=3)
     # Replicated Combined Cross-Validation (RCCV)
-    # Simulated Synthetic.1 from model #1 (n=250, p=3)
     # Peeling criterion = LRT
     # Optimization criterion = LRT
     #=================================================================================

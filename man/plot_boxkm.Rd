@@ -7,6 +7,7 @@
 \description{
   Plot the cross-validated Kaplan-Meir estimates of survival distributions for the highest risk (inbox) versus
   lower-risk (outbox) groups of samples at each iteration of the peeling sequence (inner loop of our PRSP algorithm).
+  
   Some plotting parameters are further defined in the function \code{plot.survfit} (R package \pkg{survival}).
 
 }
@@ -125,16 +126,10 @@
 #===================================================
 library("PrimSRC")
 
-#===================================================
-# Loading of the Synthetic and Real datasets
-# (see description of datasets)
-#===================================================
-data("Synthetic.1", "Real", package="PrimSRC")
-
 \dontrun{
     #=================================================================================
+    # Simulated dataset #1 (n=250, p=3)
     # Replicated Combined Cross-Validation (RCCV)
-    # Simulated Synthetic.1 from model #1 (n=250, p=3)
     # Peeling criterion = LRT
     # Optimization criterion = LRT
     #=================================================================================

@@ -20,7 +20,7 @@
 
 \arguments{
   \item{dataset}{
-    Input dataset containing the observed survival and status indicator variables in the first two columns, respectively.
+    \code{data.frame} or \code{numeric} \code{matrix} of input dataset containing the observed survival and status indicator variables in the first two columns, respectively.
   }
   \item{discr}{
     \code{Logical} \code{vector} describing what covariates are discrete.\cr
@@ -49,7 +49,7 @@
     Defaults to "lrt". Automatically set to \code{NULL} if cvtype="none".
   }
   \item{arg}{
-    \code{Character} \code{vector} describing the parameters to use:
+    \code{Character} \code{vector} describing the PRSP parameters:
     \itemize{
         \item{\code{alpha}} = fraction to peel off at each step. Defaults to 0.1.
         \item{\code{beta}} = minimum support size resulting from the peeling sequence. Defaults to 0.05.
@@ -57,7 +57,9 @@
         \item{\code{L}} = fixed peeling length. Defaults to \code{NULL}.
         \item{\code{peelcriterion}} in \{"hr" (LHR), "lr" (LRT)\}. Defaults to "lr".
     }
-  }
+    Note that the parameters in \code{arg} come as a string of charaters between double quotes, 
+    where all parameter evaluations are separated by comas (see example).
+  } 
   \item{probval}{
     \code{Numeric} scalar of the survival probability at which we want to get the endpoint box survival time. Defaults to NULL.
   }
@@ -78,6 +80,9 @@
 }
 
 \details{
+  The function depends at this point on an internal cross-validated variable selection procedure by regularized Cox-regression 
+  from the R package \pkg{glmnet}. 
+  
   The PRSP object contains cross-validated estimates of all the decision-rules of covariates and other statistical quantities of interest.
   It also enables displaying results graphically of/for model tuning/selection, all peeling trajectories, variable traces,
   and survival distributions (see plotting functions below for more details).
@@ -91,9 +96,12 @@
 
   The use of a seed allows to reproduce the results within the same type of session: the same seed will reproduce the same results 
   within a non-parallel session or within a parallel session, but it will not necessarily give the exact same results (up to sampling variability)
-  between a non-parallelized and parallelized session due to the different management of the seed between the two (see parallel RNG and 
+  between a non-parallelized and parallelized session due to the difference of management of the seed between the two (see parallel RNG and 
   value of retuned seed below).
-
+  
+  It is required to use the parallelization and a hyperperformance cluster of workstations to run the computation of cross-validated p-values
+  in the case of large \code{n} and/or large (\eqn{p > n}) or very large (\eqn{p >> n}) datasets.
+  
   To run a parallel session (and parallel RNG) of the PrimSRC procedures (\code{parallel}=\code{TRUE}), argument \code{conf}
   is to be specified (i.e. non \code{NULL}). It must list the specifications of the folowing parameters for cluster configuration:
   "names", "cpus", "type", "homo", "verbose", "outfile". These match the arguments described in function \code{makeCluster}
@@ -130,17 +138,17 @@
     \item{cvtype}{\code{character} \code{vector} of the cross-validation technique used.}
     \item{cvcriterion}{\code{character} \code{vector} of cross-validation optimization criterion used.}
     \item{varsign}{\code{numeric} \code{vector} in \{-1,+1\} of directions of peeling for all variables.} 
-    \item{varnz}{\code{numeric} \code{vector} giving the selected variable by regularized (Elastic-Net) Cox-regression.}
+    \item{selected}{\code{numeric} \code{vector} giving the selected variable by regularized (Elastic-Net) Cox-regression.}
+    \item{used}{\code{numeric} \code{vector} giving the variables used for peeling.}
     \item{arg}{\code{character} \code{vector} of the parameters used:}
     \item{probval}{\code{Numeric} scalar of survival probability used.}
     \item{timeval}{\code{Numeric} scalar of survival time used.}
-    \item{cvfit}{\code{List} with 8 fields of cross-validated estimates:
+    \item{cvfit}{\code{List} with 7 fields of cross-validated estimates:
     \itemize{
         \item{cv.maxsteps}: \code{numeric} scalar of maximal ceiled-mean of number of peeling steps over the replicates
         \item{cv.nsteps}: \code{numeric} scalar of optimal number of peeling steps according to the optimization criterion
-        \item{cv.trace}: \code{numeric} \code{vector} of variable usage traces at each step
+        \item{cv.trace}: \code{list} of \code{numeric} \code{matrix} and \code{numeric} \code{vector} of variable usage traces or modal trace values at each step
         \item{cv.boxind}: \code{logical} \code{matrix} in {\code{TRUE}, \code{FALSE}} of sample box membership indicator (columns) by peeling steps (rows)
-        \item{cv.vertices}: \code{numeric} \code{matrix} of box vertices. LB=Lower Bound and UB=Upper Bound by rows. Dimensions by columns
         \item{cv.rules}: \code{data.frame} of decision rules on the variable (columns) by peeling steps (rows)
         \item{cv.stats}: \code{numeric} \code{matrix} of box quantities of interest (columns) by peeling steps (rows)
         \item{cv.pval}: \code{numeric} \code{vector} of cross-validated log-rank p-values of sepraration of survival distributions}
@@ -196,6 +204,8 @@
 \seealso{
     \itemize{
         \item \code{makeCluster} (R package \pkg{parallel})
+        \item \code{cv.glmnet} (R package \pkg{glmnet})
+        \item \code{glmnet} (R package \pkg{glmnet})
     }
 }
 
@@ -205,29 +215,35 @@
 #===================================================
 library("PrimSRC")
 
-#===================================================
-# PrimSRC package news
-#===================================================
-PrimSRC.news()
+\dontrun{
+    #===================================================
+    # PrimSRC package news
+    #===================================================
+    PrimSRC.news()
+    
+    #===================================================
+    # PrimSRC package citation
+    #===================================================
+    citation("PrimSRC")
+    
+    #===================================================
+    # Use of two synthetic and two real datasets
+    # Use help for descriptions
+    #===================================================
+    data("Synthetic.1", "Synthetic.5", "Real.1", "Real.2", package="PrimSRC")
+    ?Synthetic.1
+    ?Synthetic.5
+    ?Real.1
+    ?Real.2
+}
 
-#================================================
-# PrimSRC package citation
-#================================================
-citation("PrimSRC")
-
 #===================================================
-# Loading of the Synthetic and Real datasets
-# (see description of datasets)
-#===================================================
-data("Synthetic.1", "Synthetic.5", "Real", package="PrimSRC")
-
-#===================================================
-# Simulated dataset example from model #1 (n=250, p=3)
+# Simulated dataset #1 (n=250, p=3)
 # Replicated Combined Cross-Validation (RCCV)
 # Peeling criterion = LRT
 # Optimization criterion = LRT
-# No parallelization
-# No computation of cross-validated p-values
+# Without parallelization
+# Without computation of cross-validated p-values
 #===================================================
 CVCOMBREP.synt1 <- sbh(dataset = Synthetic.1, 
                        cvtype = "combined", cvcriterion = "lrt",
@@ -239,23 +255,26 @@ CVCOMBREP.synt1 <- sbh(dataset = Synthetic.1,
                               peelcriterion=\"lr\"",
                        parallel = FALSE, conf = NULL, seed = 123)
 
+# selected variables:
+selected <- CVCOMBREP.synt1$selected
+selected
 # variables used for peeling:
-nzv <- sort(unique(CVCOMBREP.synt1$cvfit$cv.trace))[-1]
-nzv
+used <- CVCOMBREP.synt1$used
+used
 # some output results:
 CVCOMBREP.synt1$cvfit$cv.maxsteps
 CVCOMBREP.synt1$cvfit$cv.nsteps
-CVCOMBREP.synt1$cvfit$cv.rules$frame
 CVCOMBREP.synt1$cvfit$cv.trace
+CVCOMBREP.synt1$cvfit$cv.rules$frame[,used]
 round(CVCOMBREP.synt1$cvfit$cv.stats$mean,2)
 
 #===================================================
-# Simulated dataset example from model #5 (n=100, p=1000)
+# Simulated dataset #5 (n=100, p=1000)
 # Replicated Combined Cross-Validation (RCCV)
 # Peeling criterion = LRT
 # Optimization criterion = LRT
-# No parallelization
-# No computation of cross-validated p-values
+# Without parallelization
+# Without computation of cross-validated p-values
 #===================================================
 CVCOMBREP.synt5 <- sbh(dataset = Synthetic.5, 
                        cvtype = "combined", cvcriterion = "lrt",
@@ -267,59 +286,60 @@ CVCOMBREP.synt5 <- sbh(dataset = Synthetic.5,
                               peelcriterion=\"lr\"",
                        parallel = FALSE, conf = NULL, seed = 123)
 
+# selected variables:
+selected <- CVCOMBREP.synt5$selected
+selected
 # variables used for peeling:
-nzv <- sort(unique(CVCOMBREP.synt5$cvfit$cv.trace))[-1]
-nzv
+used <- CVCOMBREP.synt5$used
+used
 # some output results:
 CVCOMBREP.synt5$cvfit$cv.maxsteps
 CVCOMBREP.synt5$cvfit$cv.nsteps
-CVCOMBREP.synt5$cvfit$cv.rules$frame[,nzv]
 CVCOMBREP.synt5$cvfit$cv.trace
+CVCOMBREP.synt5$cvfit$cv.rules$frame[,used]
 round(CVCOMBREP.synt5$cvfit$cv.stats$mean,2)
 
 #===================================================
-# Real dataset example (n=485, p=4)
+# Real dataset #1 (n=485, p=4)
 # Replicated Combined Cross-Validation (RCCV)
 # Peeling criterion = LRT
 # Optimization criterion = LRT
-# No parallelization
-# No computation of cross-validated p-values
+# Without parallelization
+# Without computation of cross-validated p-values
 #===================================================
-CVCOMBREP.real <- sbh(dataset = Real, 
-                      discr = c(0,1,1,0),
-                      cvtype = "combined", cvcriterion = "lrt",
-                      B = 5, K = 5, cpv = FALSE, probval = 0.5, 
-                      arg = "beta=0.05,
-                             alpha=0.1,
-                             minn=10,
-                             L=NULL,
-                             peelcriterion=\"lr\"",
-                      parallel = FALSE, conf = NULL, seed = 123)
+CVCOMBREP.real1 <- sbh(dataset = Real.1, 
+                       discr = c(0,1,1,0),
+                       cvtype = "combined", cvcriterion = "lrt",
+                       B = 5, K = 5, cpv = FALSE, probval = 0.5, 
+                       arg = "beta=0.05,
+                              alpha=0.1,
+                              minn=10,
+                              L=NULL,
+                              peelcriterion=\"lr\"",
+                       parallel = FALSE, conf = NULL, seed = 123)
 
+# selected variables:
+selected <- CVCOMBREP.real1$selected
+selected
 # variables used for peeling:
-nzv <- sort(unique(CVCOMBREP.real$cvfit$cv.trace))[-1]
-nzv
+used <- CVCOMBREP.real1$used
+used
 # some output results:
-CVCOMBREP.real$cvfit$cv.maxsteps
-CVCOMBREP.real$cvfit$cv.nsteps
-CVCOMBREP.real$cvfit$cv.rules$frame[,nzv]
-CVCOMBREP.real$cvfit$cv.trace
-round(CVCOMBREP.real$cvfit$cv.stats$mean,2)
+CVCOMBREP.real1$cvfit$cv.maxsteps
+CVCOMBREP.real1$cvfit$cv.nsteps
+CVCOMBREP.real1$cvfit$cv.trace
+CVCOMBREP.real1$cvfit$cv.rules$frame[,used]
+round(CVCOMBREP.real1$cvfit$cv.stats$mean,2)
 
 \dontrun{
-    #=================================================================================
-    # Replicated Combined Cross-Validation
-    # Simulated Synthetic.1 from model #1 (n=250, p=3)
-    # Peeling criterion = LRT
-    # Optimization criterion = LRT
-    # With parallelization
-    # With computation of cross-validated p-values
-    # For cluster configuration of a:
+    #===================================================
+    # Examples below with parallelization
+    # For cluster configuration:
     #   1- WINDOWS multicore PC => use SOCKET communication
     #   2- LINUX cluster        => use MPI    communication
     #      Here, a file named ".nodes" (e.g. in the home directory)
     #      must contain the list of nodes of the cluster
-    #=================================================================================
+    #===================================================
     if (.Platform$OS.type == "windows") {
         cpus <- detectCores()
         conf <- list("names" = rep("localhost", cpus),
@@ -343,7 +363,15 @@ round(CVCOMBREP.real$cvfit$cv.stats$mean,2)
     } else {
         warning("OS not recognized \n")
     }
-    
+
+    #===================================================
+    # Simulated dataset #1 (n=250, p=3)
+    # Replicated Combined Cross-Validation (RCCV)
+    # Peeling criterion = LRT
+    # Optimization criterion = LRT
+    # With parallelization
+    # With computation of cross-validated p-values
+    #===================================================
     CVCOMBREP.synt1 <- sbh(dataset = Synthetic.1, 
                            cvtype = "combined", cvcriterion = "lrt",
                            B = 5, K = 5, A = 1024, cpv = TRUE, probval = 0.5, 
@@ -353,17 +381,53 @@ round(CVCOMBREP.real$cvfit$cv.stats$mean,2)
                                   L=NULL,
                                   peelcriterion=\"lr\"",
                            parallel = TRUE, conf = conf, seed = 123)
-    
+                           
+    # selected variables:
+    selected <- CVCOMBREP.synt1$selected
+    selected
     # variables used for peeling:
-    nzv <- sort(unique(CVCOMBREP.synt1$cvfit$cv.trace))[-1]
-    nzv
+    used <- CVCOMBREP.synt1$used
+    used
     # some output results:
     CVCOMBREP.synt1$cvfit$cv.maxsteps
     CVCOMBREP.synt1$cvfit$cv.nsteps
-    CVCOMBREP.synt1$cvfit$cv.rules$frame[,nzv]
     CVCOMBREP.synt1$cvfit$cv.trace
     CVCOMBREP.synt1$cvfit$cv.pval
+    CVCOMBREP.synt1$cvfit$cv.rules$frame[,used]
     round(CVCOMBREP.synt1$cvfit$cv.stats$mean,2)
+    
+    #===================================================
+    # Real dataset #2 (n=177, p=22577)
+    # Replicated Combined Cross-Validation (RCCV)
+    # Peeling criterion = LRT
+    # Optimization criterion = LRT
+    # With parallelization
+    # Without computation of cross-validated p-values
+    #===================================================
+    p <- ncol(Real.2) - 2
+    CVCOMBREP.real2 <- sbh(dataset = Real.2, 
+                           discr = rep(0,p),
+                           cvtype = "combined", cvcriterion = "lrt",
+                           B = 5, K = 5, cpv = FALSE, probval = 0.5, 
+                           arg = "beta=0.05,
+                                  alpha=0.1,
+                                  minn=10,
+                                  L=NULL,
+                                  peelcriterion=\"lr\"",
+                           parallel = TRUE, conf = conf, seed = 123)
+
+    # selected variables:
+    selected <- CVCOMBREP.real2$selected
+    selected
+    # variables used for peeling:
+    used <- CVCOMBREP.real2$used
+    used
+    # some output results:
+    CVCOMBREP.real2$cvfit$cv.maxsteps
+    CVCOMBREP.real2$cvfit$cv.nsteps
+    CVCOMBREP.real2$cvfit$cv.trace
+    CVCOMBREP.real2$cvfit$cv.rules$frame[,used]
+    round(CVCOMBREP.real2$cvfit$cv.stats$mean,2)
 }
 
 }

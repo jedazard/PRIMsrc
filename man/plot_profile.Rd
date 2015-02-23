@@ -64,6 +64,7 @@
 \details{
   Model validation is done by applying the optimization criterion on the user's choice of specific statistic.
   The goal is to find the optimal value of the K-fold cross-validated number of steps by maximization of LHR or LRT, or minimization of CER.
+  
   Currently, this done internally for visualization purposes, but it will ultimately offer the option to do be
   interactive with the end-user as well for parameter choosing/model selection.
 }
@@ -117,16 +118,10 @@
 #===================================================
 library("PrimSRC")
 
-#===================================================
-# Loading of the Synthetic and Real datasets
-# (see description of datasets)
-#===================================================
-data("Synthetic", "Real", package="PrimSRC")
-
 \dontrun{
     #=================================================================================
+    # Simulated dataset #1 (n=250, p=3)
     # Replicated Combined Cross-Validation (RCCV)
-    # Simulated Synthetic.1 from model #1 (n=250, p=3)
     # Peeling criterion = LRT
     # Optimization criterion = LRT
     #=================================================================================
