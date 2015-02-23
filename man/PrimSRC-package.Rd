@@ -160,7 +160,6 @@
     \itemize{
         \item \code{makeCluster} (R package \pkg{parallel})
         \item \code{plot.survfit} (R package \pkg{survival})
-        \item \code{cv.glmnet} (R package \pkg{glmnet})
         \item \code{glmnet} (R package \pkg{glmnet})
     }
 }
