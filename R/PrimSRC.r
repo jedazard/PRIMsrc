@@ -127,7 +127,11 @@ sbh <- function(dataset, discr,
   # Summary of user options
   if (cvtype != "none") {
     if (B > 1) {
-      cat("Requested replicated ", K, "-fold cross-validation with ", B, " replications \n", sep="")
+      if (parallel) {
+        cat("Requested parallel replicated ", K, "-fold cross-validation with ", conf$cpus*ceiling(B/conf$cpus), " replications \n", sep="")
+      } else {
+        cat("Requested replicated ", K, "-fold cross-validation with ", B, " replications \n", sep="")
+      }
     } else {
       cat("Requested single ", K, "-fold cross-validation with no replications \n", sep="")
     }
@@ -215,6 +219,7 @@ sbh <- function(dataset, discr,
     }
     clusterSetRNGStream(cl=cl, iseed=seed)
     a <- ceiling(B/conf$cpus)
+    B <- a*conf$cpus
     obj.cl <- clusterCall(cl=cl, fun=cv.box.rep,
                           x=x, times=times, status=status,
                           B=a, K=K, arg=arg,
@@ -239,7 +244,7 @@ sbh <- function(dataset, discr,
                            "cv.prob.bar"=vector(mode="list", length=B),
                            "cv.max.time.bar"=vector(mode="list", length=B),
                            "cv.min.prob.bar"=vector(mode="list", length=B))
-    for (b in 1:min(B,conf$cpus)) {
+    for (b in 1:B) {
       CV.box.rep.obj$cv.maxsteps <- c(CV.box.rep.obj$cv.maxsteps, obj.cl[[b]]$cv.maxsteps)
       CV.box.rep.obj$cv.nsteps.lhr <- c(CV.box.rep.obj$cv.nsteps.lhr, obj.cl[[b]]$cv.nsteps.lhr)
       CV.box.rep.obj$cv.nsteps.lrt <- c(CV.box.rep.obj$cv.nsteps.lrt, obj.cl[[b]]$cv.nsteps.lrt)
@@ -364,17 +369,17 @@ sbh <- function(dataset, discr,
     cat("Generating cross-validated variable traces ...\n")
     trace.dist <- lapply.array(X=CV.trace,
                                trunc=CV.nsteps,
-                               FUN=function(x){if (anyNA(x))
-                                              return(NA)
-                                             else
-                                              return(as.numeric(names(which.max(table(x)))))
-                                             },
-                             MARGIN=c(1,3))
+                               FUN=function(x){if (any(is.na(x)))
+                                               return(NA)
+                                              else
+                                               return(as.numeric(names(which.max(table(x)))))
+                                              },
+                               MARGIN=c(1,3))
     dimnames(trace.dist) <- list(paste("step", 0:(CV.nsteps-1), sep=""), 1:B)
     trace.mode <- apply(X=trace.dist,
-                        FUN=function(x){if (anyNA(x))
+                        FUN=function(x){if (any(is.na(x)))
                                          return(NA)
-                                       else
+                                        else
                                          return(as.numeric(names(which.max(table(x)))))
                                        },
                         MARGIN=1)
