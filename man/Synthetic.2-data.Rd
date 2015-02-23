@@ -4,7 +4,7 @@
 
 \alias{Synthetic.2}
 
-\title{\code{Synthetic.2} Dataset}
+\title{Synthetic Dataset #2: \eqn{p < n} case}
 
 \description{
   Modeling survival model #2 as described in Dazard et al. (2015) with censoring.
@@ -19,10 +19,10 @@
 \usage{Synthetic.2}
 
 \format{
-  Each dataset consists of a \code{numeric} \code{matrix} containing \eqn{n=250} observations (samples) by rows
-  and \eqn{p=5} variables by columns (\eqn{p < n} case),
-  including the censoring indicator and (censored) time-to-event variables.
-  Compressed Rda data file.
+  Each dataset consists of a \code{numeric} \code{matrix} containing \eqn{n=250} observations (samples) 
+  by rows and \eqn{p=5} variables by columns (\eqn{p < n} case), including the censoring indicator and 
+  (censored) time-to-event variables.
+  It comes as a compressed Rda data file.
 }
 
 \source{See simulated survival model #2 in Dazard et al., 2015.}

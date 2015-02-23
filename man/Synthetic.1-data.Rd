@@ -4,7 +4,7 @@
 
 \alias{Synthetic.1}
 
-\title{\code{Synthetic.1} Dataset}
+\title{Synthetic Dataset #1: \eqn{p < n} case}
 
 \description{
   Modeling survival model #1 as described in Dazard et al. (2015) with censoring.
@@ -18,10 +18,10 @@
 \usage{Synthetic.1}
 
 \format{
-  Each dataset consists of a \code{numeric} \code{matrix} containing \eqn{n=250} observations (samples) by rows
-  and \eqn{p=5} variables by columns (\eqn{p < n} case),
-  including the censoring indicator and (censored) time-to-event variables.
-  Compressed Rda data file.
+  Each dataset consists of a \code{numeric} \code{matrix} containing \eqn{n=250} observations (samples) 
+  by rows and \eqn{p=5} variables by columns (\eqn{p < n} case), including the censoring indicator and 
+  (censored) time-to-event variables.
+  It comes as a compressed Rda data file.
 }
 
 \source{See simulated survival model #1 in Dazard et al., 2015.}

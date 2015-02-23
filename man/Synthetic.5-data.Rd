@@ -4,7 +4,7 @@
 
 \alias{Synthetic.5}
 
-\title{\code{Synthetic.5} Dataset}
+\title{Synthetic Dataset #5: \eqn{p > n} case}
 
 \description{
   Modeling survival model #5 as described in Dazard et al. (2015) with censoring.
@@ -16,13 +16,13 @@
   In this synthetic example, all covariates are continuous, i.i.d. from a multivariate standard normal distribution.
 }
 
-\usage{Synthetic.2}
+\usage{Synthetic.5}
 
 \format{
-  Each dataset consists of a \code{numeric} \code{matrix} containing \eqn{n=250} observations (samples) by rows
-  and \eqn{p=5} variables by columns (\eqn{p < n} case),
-  including the censoring indicator and (censored) time-to-event variables.
-  Compressed Rda data file.
+  Each dataset consists of a \code{numeric} \code{matrix} containing \eqn{n=100} observations (samples) 
+  by rows and \eqn{p=1000} variables by columns (\eqn{p > n} case), including the censoring indicator and 
+  (censored) time-to-event variables.
+  It comes as a compressed Rda data file.
 }
 
 \source{See simulated survival model #2 in Dazard et al., 2015.}
