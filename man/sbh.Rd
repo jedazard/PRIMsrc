@@ -94,11 +94,6 @@
   and/or remote machine(s), enabling scaling-up with the number of CPU cores specified and efficient parallel execution.
   Discrete (or nominal) variables should be made (or re-arranged into) ordinal variables.
 
-  The use of a seed allows to reproduce the results within the same type of session: the same seed will reproduce the same results 
-  within a non-parallel session or within a parallel session, but it will not necessarily give the exact same results (up to sampling variability)
-  between a non-parallelized and parallelized session due to the difference of management of the seed between the two (see parallel RNG and 
-  value of retuned seed below).
-  
   It is required to use the parallelization and a hyperperformance cluster of workstations to run the computation of cross-validated p-values
   in the case of large \code{n} and/or large (\eqn{p > n}) or very large (\eqn{p >> n}) datasets.
   
@@ -119,10 +114,19 @@
         \item "verbose": \code{verbose} : \code{logical} scalar to be set to \code{FALSE} for quiet mode.
         \item "outfile": \code{outfile} : \code{character} \code{vector} of the output log file name for the workernodes.
   }
-  Note that the actual creation of the cluster, its initialization, and closing are all done internally.
+
+  Note that argument \code{B} is internally reset to \code{conf$cpus}*\code{ceiling}(\code{B}/\code{conf$cpus}) in case the cluster
+  is used (i.e. \code{conf} is non \code{NULL}), where \code{conf$cpus} denotes the total number of CPUs to be used (see below).
+  
+  The actual creation of the cluster, its initialization, and closing are all done internally.
   In addition, when random number generation is needed, the creation of separate streams of parallel RNG per node
   is done internally by distributing the stream states to the nodes (For more details see function \code{makeCluster}
   (R package \pkg{parallel}) and/or \url{http://www.stat.uiowa.edu/~luke/R/cluster/cluster.html}.
+  
+  The use of a seed allows to reproduce the results within the same type of session: the same seed will reproduce the same results 
+  within a non-parallel session or within a parallel session, but it will not necessarily give the exact same results (up to sampling variability)
+  between a non-parallelized and parallelized session due to the difference of management of the seed between the two (see parallel RNG and 
+  value of retuned seed below).
 }
 
 \value{
