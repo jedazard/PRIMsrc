@@ -242,7 +242,7 @@ sbh <- function(dataset, discr,
                            "cv.prob.bar"=vector(mode="list", length=B),
                            "cv.max.time.bar"=vector(mode="list", length=B),
                            "cv.min.prob.bar"=vector(mode="list", length=B))
-    for (b in 1:B) {
+    for (b in 1:conf$cpus) {
       CV.box.rep.obj$cv.maxsteps <- c(CV.box.rep.obj$cv.maxsteps, obj.cl[[b]]$cv.maxsteps)
       CV.box.rep.obj$cv.nsteps.lhr <- c(CV.box.rep.obj$cv.nsteps.lhr, obj.cl[[b]]$cv.nsteps.lhr)
       CV.box.rep.obj$cv.nsteps.lrt <- c(CV.box.rep.obj$cv.nsteps.lrt, obj.cl[[b]]$cv.nsteps.lrt)
