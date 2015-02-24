@@ -38,7 +38,7 @@ Installation:
 =============
 PrimSRC 0.4.0 was built under R version 3.0.2 (2013-09-25).
 Installation has been tested on Windows, Linux and Mac platforms.
-To install this development version 0.4.0, simply type:
+To install PrimSRC, simply type:
 
 library(devtools)
 
