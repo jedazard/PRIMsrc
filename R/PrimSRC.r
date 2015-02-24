@@ -73,12 +73,11 @@
 # arg           :   Character vector of parameters used.
 # probval       :   Survival probability used.
 # timeval       :   Survival time used.
-# cvfit         :   List of 9 fiels of cross-validated estimates:
+# cvfit         :   List of 7 fiels of cross-validated estimates:
 #                     "cv.maxsteps"=numeric scalar of maximal ceiled-mean of number of peeling steps over the replicates
 #                     "cv.nsteps"=numeric scalar of optimal number of peeling steps according to the optimization criterion
 #                     "cv.trace"=list of numeric matrix and numeric vector of variable usage traces or modal trace values at each step
 #                     "cv.boxind"=logical matrix {TRUE, FALSE} of sample box membership indicator (columns) by peeling steps (rows)
-#                     "cv.vertices"=numeric matrix of box vertices. LB=Lower Bound and UB=Upper Bound by rows. Dimensions by columns
 #                     "cv.rules"=data.frame of decision rules on the variable (columns) by peeling steps (rows)
 #                     "cv.stats"=numeric matrix of box quantities of interest (columns) by peeling steps (rows)
 #                     "cv.pval"=numeric vector of cross-validated log-rank p-values of sepraration of survival distributions
@@ -235,7 +234,6 @@ sbh <- function(dataset, discr,
                            "cv.trace"=vector(mode="list", length=B),
                            "cv.boxind"=vector(mode="list", length=B),
                            "cv.boxcut"=vector(mode="list", length=B),
-                           "cv.vertices"=vector(mode="list", length=B),
                            "cv.support"=vector(mode="list", length=B),
                            "cv.lhr"=vector(mode="list", length=B),
                            "cv.lrt"=vector(mode="list", length=B),
@@ -252,7 +250,6 @@ sbh <- function(dataset, discr,
       CV.box.rep.obj$cv.trace[((b-1)*a+1):(b*a)] <- obj.cl[[b]]$cv.trace
       CV.box.rep.obj$cv.boxind[((b-1)*a+1):(b*a)] <- obj.cl[[b]]$cv.boxind
       CV.box.rep.obj$cv.boxcut[((b-1)*a+1):(b*a)] <- obj.cl[[b]]$cv.boxcut
-      CV.box.rep.obj$cv.vertices[((b-1)*a+1):(b*a)] <- obj.cl[[b]]$cv.vertices
       CV.box.rep.obj$cv.support[((b-1)*a+1):(b*a)] <- obj.cl[[b]]$cv.support
       CV.box.rep.obj$cv.lhr[((b-1)*a+1):(b*a)] <- obj.cl[[b]]$cv.lhr
       CV.box.rep.obj$cv.lrt[((b-1)*a+1):(b*a)] <- obj.cl[[b]]$cv.lrt
@@ -273,7 +270,6 @@ sbh <- function(dataset, discr,
   CV.trace <- CV.box.rep.obj$cv.trace
   CV.boxind <- CV.box.rep.obj$cv.boxind
   CV.boxcut <- CV.box.rep.obj$cv.boxcut
-  CV.vertices <- CV.box.rep.obj$cv.vertices
   CV.support <- CV.box.rep.obj$cv.support
   CV.lhr <- CV.box.rep.obj$cv.lhr
   CV.lrt <- CV.box.rep.obj$cv.lrt
@@ -286,7 +282,7 @@ sbh <- function(dataset, discr,
 
   if (!success) {
 
-    cat("Failure! Could not find any bump in this dataset after running ", B ," replications\n", sep="")
+    cat("Failure! Could not find any bump in this dataset \n", sep="")
     bool.plot <- FALSE
 
     # Cross-validated minimum length from all replicates
@@ -306,9 +302,6 @@ sbh <- function(dataset, discr,
 
     # Box membership indicator vector of all observations for each step
     CV.boxind <- NULL
-
-    # List of box vertices for each step
-    CV.vertices <- NULL
 
     # List of box statistics for each step
     CV.stats <- NULL
@@ -363,16 +356,16 @@ sbh <- function(dataset, discr,
       stop("Invalid CV type option \n")
     }
 
-    # Variable traces for each step:
+    # Variable traces for each step
     # Distribution of trace values over the replicates, or
     # Modal or majority vote trace value over the loops and replicates
     cat("Generating cross-validated variable traces ...\n")
     trace.dist <- lapply.array(X=CV.trace,
                                trunc=CV.nsteps,
                                FUN=function(x){if (any(is.na(x)))
-                                               return(NA)
-                                              else
-                                               return(as.numeric(names(which.max(table(x)))))
+                                                return(NA)
+                                               else
+                                                return(as.numeric(names(which.max(table(x)))))
                                               },
                                MARGIN=c(1,3))
     dimnames(trace.dist) <- list(paste("step", 0:(CV.nsteps-1), sep=""), 1:B)
@@ -389,11 +382,11 @@ sbh <- function(dataset, discr,
     # Variables used for peeling
     used <- sort(unique(as.numeric(CV.trace$dist[-1,,drop=FALSE])))
     names(used) <- colnames(x)[used]
-    cat("Used variables for peeling:\n")
+    cat("Variables used for peeling:\n")
     print(used)
 
-    # List of box peeling rules for each step
-    cat("Generating cross-validated box peeling rules for each step ...\n")
+    # List of box rules for each step
+    cat("Generating cross-validated box rules for each step ...\n")
     CV.boxcut.mu <- lapply.array(X=CV.boxcut, trunc=CV.nsteps, FUN=function(x){mean(x, na.rm=TRUE)}, MARGIN=1:2)
     if (any(as.logical(discr))) {
       CV.boxcut.mu[,which(as.logical(discr))] <- myround(CV.boxcut.mu[,which(as.logical(discr)),drop=FALSE], 0)
@@ -416,21 +409,11 @@ sbh <- function(dataset, discr,
     CV.rules <- list("mean"=CV.boxcut.mu, "sd"=CV.boxcut.sd, "frame"=CV.tmp)
 
     # Box membership indicator vector of all observations for each step
-    # (using the modal or majority vote value over the replicates)
+    # using the modal or majority vote value over the replicates
     cat("Generating cross-validated box memberships for each step ...\n")
     CV.boxind <- lapply.array(X=CV.boxind, trunc=CV.nsteps, FUN=function(x){mean(x, na.rm=TRUE) >= 0.5}, MARGIN=1:2)
     rownames(CV.boxind) <- paste("step", 0:(CV.nsteps-1), sep="")
     colnames(CV.boxind) <- rownames(x)
-    # (using the averaged box over the replicates)
-    # CV.boxind <- matrix(NA, nrow=CV.nsteps, ncol=n)
-    # for (l in 1:CV.nsteps) {
-    #    boxcut <- CV.boxcut.mu[l, ] * varsign
-    #    x.cut <- t(t(x) * varsign)
-    #    x.ind <- t(t(x.cut) >= boxcut)
-    #    CV.boxind[l,] <- (rowMeans(x.ind) == 1)  # Set as TRUE which observations are inside the box boudaries for all axes directions
-    # }
-    # rownames(CV.boxind) <- paste("step", 0:(CV.nsteps-1), sep="")
-    # colnames(CV.boxind) <- rownames(x)
 
     # List of box statistics for each step
     cat("Generating cross-validated box statistics for each step ...\n")
@@ -641,8 +624,8 @@ plot_profile <- function(peelobj,
 # Usage         :
 ################
 #                    plot_scatter (peelobj,
-#                                  main=NULL, xlab="", ylab="",
-#                                  proj=c(1,2), boxes=TRUE, steps=peelobj$cvfit$cv.nsteps,
+#                                  main=NULL,
+#                                  proj=c(1,2), boxes=FALSE, steps=peelobj$cvfit$cv.nsteps,
 #                                  add.legend=TRUE, pch=16, cex=0.7, col=1, box.col=2, box.lty=2, box.lwd=1, ...)
 #
 #
@@ -657,12 +640,10 @@ plot_profile <- function(peelobj,
 ################
 # peelobj       :   Object of class "PRSP" as generated by the main function sbh().
 # main          :   Main Title. Defaults to NULL.
-# xlab          :   X axis label. Defaults to "Box Mass".
-# ylab          :   Y axis label. Defaults to "Variable range".
 # proj          :   Integer vector of length two, specifying the dimensions of the projection plane. Defaults to c(1,2).
 # splom         :   Logical. Shall the scatter plot of points inside the box(es) be plotted? Default to TRUE.
-# boxes         :   Logical. Shall the box vertices be plotted or just the scatter of  points? Default to TRUE.
-# steps         :   Integer vector. Vector of peeling steps at which one wants to plot the box vertices.
+# boxes         :   Logical. Shall the box vertices be plotted or just the scatter of  points? Default to FALSE.
+# steps         :   Integer vector. Vector of peeling steps at which to plot the box vertices.
 #                   Defaults to the last peeling step only.
 # add.legend    :   Logical. Shall the legend of steps numbers be plotted? Defaults to TRUE.
 # pch           :   Symbol number for the scatter plot. Defaults to 16.
@@ -680,8 +661,8 @@ plot_profile <- function(peelobj,
 ##########################################################################################################################################
 
 plot_scatter <- function(peelobj,
-                         main=NULL, xlab="", ylab="",
-                         proj=c(1,2), splom=TRUE, boxes=TRUE, steps=peelobj$cvfit$cv.nsteps,
+                         main=NULL,
+                         proj=c(1,2), splom=TRUE, boxes=FALSE, steps=peelobj$cvfit$cv.nsteps,
                          add.legend=TRUE, pch=16, cex=0.7, col=1, box.col=2, box.lty=2, box.lwd=1, ...) {
 
   if ((!is.null(main)) && (add.legend)) {
@@ -692,18 +673,14 @@ plot_scatter <- function(peelobj,
     par(mfrow=c(1, 1), oma=c(0, 0, 1, 0), mar=c(2.5, 2.5, 1.0, 1.5), mgp=c(1.5, 0.5, 0))
   }
 
-  x.names <- colnames(peelobj$x[,proj])
-  if (missing(xlab))  xlab <- x.names[1]
-  if (missing(ylab))  ylab <- x.names[2]
-
+  x <- peelobj$x[,proj]
+  x.names <- colnames(x)
   L <- length(steps)
   if (length(box.col) < L) box.col <- rep(box.col, length=L)
   if (length(box.lty) < L) box.lty <- rep(box.lty, length=L)
   if (length(box.lwd) < L) box.lwd <- rep(box.lwd, length=L)
 
-  eqscplot(peelobj$x[,proj], type="p",
-           range(peelobj$x[,proj], peelobj$cvfit$cv.vertices$mean[[1]]),
-           main=NULL, xlab=xlab, ylab=ylab, ...)
+  eqscplot(x, type="p", main=NULL, xlab=x.names[1], ylab=x.names[2], ...)
 
   if (splom) {
     for (i in 1:L) {
@@ -713,25 +690,34 @@ plot_scatter <- function(peelobj,
   }
 
   if (boxes) {
+    x.range <- apply(X=x, MARGIN=2, FUN=range)
+    boxcut <- peelobj$cvfit$cv.rules$mean[steps,proj,drop=FALSE]
+    varsign <- peelobj$varsign[proj]
+    vertices <- vector(mode="list", length=L)
     for (i in 1:L) {
-      vertices <- peelobj$cvfit$cv.vertices$mean[[steps[i]]][,proj]
-      rect(vertices[1,1], vertices[1,2], vertices[2,1], vertices[2,2], border=box.col[i], col=NA, lty=box.lty[i], lwd=box.lwd[i])
+      vertices[[i]] <- matrix(data=NA, nrow=2, ncol=2, dimnames=list(c("LB","UB"), x.names))
+      for (j in 1:2) {
+        vertices[[i]][1,j] <- ifelse(test=(varsign[j] > 0),
+                                     yes=max(x.range[1,j], boxcut[i,j]),
+                                     no=min(x.range[1,j], boxcut[i,j]))
+        vertices[[i]][2,j] <- ifelse(test=(varsign[j] < 0),
+                                     yes=min(x.range[2,j], boxcut[i,j]),
+                                     no=max(x.range[2,j], boxcut[i,j]))
+      }
+    }
+    for (i in 1:L) {
+      rect(vertices[[i]][1,1], vertices[[i]][1,2], vertices[[i]][2,1], vertices[[i]][2,2], border=box.col[i], col=NA, lty=box.lty[i], lwd=box.lwd[i])
     }
   }
 
   if (!is.null(main)) {
-    if (add.legend) {
-      title(main=main, xlab="", ylab="", line=3, outer=FALSE, xpd=TRUE)
-      legend("top", xpd=TRUE, inset=-0.1, legend=paste("Steps: ", steps, sep=""), col=col, cex=cex)
-    } else {
-      title(main=main, xlab="", ylab="", line=1, outer=FALSE, xpd=TRUE)
-    }
-  } else {
-    if (add.legend) {
-      legend("top", xpd=TRUE, inset=0, legend=paste("Steps: ", steps, sep=""), col=col, cex=cex)
-    }
+    title(main=main, xlab="", ylab="", line=1, outer=FALSE, xpd=TRUE)
   }
-  legend("topright", inset=0.01, legend=c("outbox", "inbox"), pch=c(pch,pch), col=c(col,box.col), cex=cex)
+
+  if (add.legend) {
+    legend("topleft", xpd=TRUE, inset=0.01, legend=paste("Steps: ", steps, sep=""), col=col, cex=cex)
+    legend("topright", inset=0.01, legend=c("outbox", "inbox"), pch=c(pch,pch), col=c(col,box.col), cex=cex)
+  }
 
   invisible()
 }
@@ -744,44 +730,30 @@ plot_scatter <- function(peelobj,
 #################
 # Usage         :
 ################
-#                    plot_boxtraj (peelobj, peelobj2=NULL, peelobj3=NULL,
+#                    plot_boxtraj (peelobj,
 #                                  main=NULL, xlab="Box Mass", ylab="Variable Range",
-#                                  col=1, col2=col, col3=col, lty=1, lty2=lty, lty3=lty, lwd=1, lwd2=lwd, lwd3=lwd, cex=1, cex2=cex, cex3=cex,
-#                                  add=FALSE, add.legend=FALSE, text.legend=NULL, nr=NULL, nc=NULL, ...)
+#                                  col=1, lty=1, lwd=1, cex=1,
+#                                  add.legend=FALSE, text.legend=NULL,
+#                                  nr=NULL, nc=NULL, ...)
 #
 ################
 # Description   :
 ################
-#                   Plot the cross-validated peeling trajectories/profiles of covariates used for peeling and other statistical quantities of interest
-#                   at each iteration of the peeling sequence (inner loop of our PRSP algorithm). Plot up to three "PRSP"" objects.
+#                   Plot the cross-validated peeling trajectories/profiles of covariates used for peeling
+#                   and other statistical quantities of interest at each iteration of the peeling sequence
+#                   (inner loop of our PRSP algorithm).
 #
 ################
 # Arguments     :
 ################
-#                   Three objects of class "PRSP" as generated by the main function sbh().
-# peelobj       :     Required
-# peelobj2      :     Optional
-# peelobj3      :     Optional
-#
+# peelobj       :   Object of class "PRSP" as generated by the main function sbh().
 # main          :   Main Title. Defaults to NULL.
 # xlab          :   X axis label. Defaults to "Box Mass".
 # ylab          :   Y axis label. Defaults to "Variable range".
-#
-#                   Plotting parameters for the three objects
-# col           :     Line color of object peelobj. Defaults to 1.
-# col2          :     Line color of object peelobj2. Defaults to col.
-# col3          :     Line color of object peelobj3. Defaults to col.
-# lty           :     Line type of object peelobj. Defaults to 1.
-# lty2          :     Line type of object peelobj2. Defaults to lty.
-# lty3          :     Line type of object peelobj3. Defaults to lty.
-# lwd           :     Line width of object peelobj. Defaults to 1.
-# lwd2          :     Line width of object peelobj2. Defaults to lwd.
-# lwd3          :     Line width of object peelobj3. Defaults to lwd.
-# cex           :     Symbol expansion. Defaults to 1.
-# cex2          :     Symbol expansion2. Defaults to cex.
-# cex3          :     Symbol expansion3. Defaults to cex.
-#
-# add           :   Logical. Should this plot be added to an open graphics device?. Defaults to FALSE.
+# col           :   Line color of object peelobj. Defaults to 1.
+# lty           :   Line type of object peelobj. Defaults to 1.
+# lwd           :   Line width of object peelobj. Defaults to 1.
+# cex           :   Symbol expansion. Defaults to 1.
 # add.legend    :   Logical. Should the legend be added to the current open graphics device?. Defaults to FALSE.
 # text.legend   :   Character vector of legend content. Defaults to NULL.
 # nr            :   numeric scalar of the number of rows in the plot.  If NULL, defaults to 3.
@@ -794,10 +766,11 @@ plot_scatter <- function(peelobj,
 #
 ##########################################################################################################################################
 
-plot_boxtraj <- function(peelobj, peelobj2=NULL, peelobj3=NULL,
+plot_boxtraj <- function(peelobj,
                          main=NULL, xlab="Box Mass", ylab="Variable Range",
-                         col=1, col2=col, col3=col, lty=1, lty2=lty, lty3=lty, lwd=1, lwd2=lwd, lwd3=lwd, cex=1, cex2=cex, cex3=cex,
-                         add=FALSE, add.legend=FALSE, text.legend=NULL, nr=NULL, nc=NULL, ...) {
+                         col=1, lty=1, lwd=1, cex=1,
+                         add.legend=FALSE, text.legend=NULL,
+                         nr=NULL, nc=NULL, ...) {
 
   used <- peelobj$used
   p <- length(used)
@@ -819,140 +792,61 @@ plot_boxtraj <- function(peelobj, peelobj2=NULL, peelobj3=NULL,
     par(mfrow=c(nr, nc), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 0.0, 1.5), mgp=c(1.5, 0.5, 0))
   }
 
-  if (add) {
-    for (j in used) {
-      plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.rules$mean[,j], type='s', col=col, lty=lty, lwd=lwd,
-           main=paste(varnames[j], " variable trajectory", sep=""),
-           xlim=range(0,1), ylim=range(peelobj$x[,j], peelobj2$x[,j], peelobj3$x[,j], na.rm=TRUE),
-           xlab=xlab, ylab=ylab, cex.main=cex)
-      points(peelobj2$cvfit$cv.stats$mean$cv.support, peelobj2$cvfit$cv.rules$mean[,j], type='s', col=col2, lty=lty2, lwd=lwd2)
-      points(peelobj3$cvfit$cv.stats$mean$cv.support, peelobj3$cvfit$cv.rules$mean[,j], type='s', col=col3, lty=lty3, lwd=lwd3)
-      if (add.legend)
-        legend("bottomleft", inset=0.01, legend=text.legend, lty=c(lty,lty2,lty3), col=c(col,col2,col3), lwd=c(lwd,lwd2,lwd3), cex=0.7)
-    }
-  } else {
-    for (j in used) {
-      plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.rules$mean[,j], type='s', col=col, lty=lty,
-           main=paste(varnames[j], " variable trajectory", sep=""),
-           xlim=range(0,1), ylim=range(peelobj$x[,j], na.rm=TRUE),
-           xlab=xlab, ylab=ylab, cex.main=cex)
-      if (add.legend)
-        legend("bottomleft", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
-    }
+  for (j in used) {
+    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.rules$mean[,j], type='s', col=col, lty=lty,
+         main=paste(varnames[j], " variable trajectory", sep=""),
+         xlim=range(0,1), ylim=range(peelobj$x[,j], na.rm=TRUE),
+         xlab=xlab, ylab=ylab, cex.main=cex)
+    if (add.legend)
+      legend("bottomleft", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
   }
 
   par(mfg=c(nr-1, 1))
-  if (add) {
-    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.support, type='s', col=col, lty=lty, lwd=lwd,
-         main="Box support trajectory",
-         xlim=range(0,1), ylim=range(0, 1),
-         xlab=xlab, ylab=expression(paste("Support (", beta, ")", sep="")), cex.main=cex)
-    points(peelobj2$cvfit$cv.stats$mean$cv.support, peelobj2$cvfit$cv.stats$mean$cv.support, type='s', col=col2, lty=lty2, lwd=lwd2)
-    points(peelobj3$cvfit$cv.stats$mean$cv.support, peelobj3$cvfit$cv.stats$mean$cv.support, type='s', col=col3, lty=lty3, lwd=lwd3)
-    if (add.legend)
-      legend("bottomright", inset=0.01, legend=text.legend, lty=c(lty,lty2,lty3), col=c(col,col2,col3), lwd=c(lwd,lwd2,lwd3), cex=0.7)
-  } else {
-    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.support, type='s', col=col, lty=lty, lwd=lwd,
-         main="Box support trajectory",
-         xlim=range(0,1), ylim=range(0, 1),
-         xlab=xlab, ylab=expression(paste("Support (", beta, ")", sep="")), cex.main=cex)
-    if (add.legend)
-      legend("bottomright", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
-  }
+  plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.support, type='s', col=col, lty=lty, lwd=lwd,
+       main="Box support trajectory",
+       xlim=range(0,1), ylim=range(0, 1),
+       xlab=xlab, ylab=expression(paste("Support (", beta, ")", sep="")), cex.main=cex)
+  if (add.legend)
+    legend("bottomright", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
 
   par(mfg=c(nr-1, 2))
-  if (add) {
-    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.max.time.bar, type='s', col=col, lty=lty, lwd=lwd,
-         main="MEFT trajectory",
-         xlim=range(0,1), ylim=range(0, peelobj$cvfit$cv.stats$mean$cv.max.time.bar, peelobj2$cvfit$cv.stats$mean$cv.max.time.bar, peelobj3$cvfit$cv.stats$mean$cv.max.time.bar, na.rm=TRUE),
-         xlab=xlab, ylab="Time", cex.main=cex)
-    points(peelobj2$cvfit$cv.stats$mean$cv.support, peelobj2$cvfit$cv.stats$mean$cv.max.time.bar, type='s', col=col2, lty=lty2, lwd=lwd2)
-    points(peelobj3$cvfit$cv.stats$mean$cv.support, peelobj3$cvfit$cv.stats$mean$cv.max.time.bar, type='s', col=col3, lty=lty3, lwd=lwd3)
-    if (add.legend)
-      legend("bottomright", inset=0.01, legend=text.legend, lty=c(lty,lty2,lty3), col=c(col,col2,col3), lwd=c(lwd,lwd2,lwd3), cex=0.7)
-  } else {
-    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.max.time.bar, type='s', col=col, lty=lty, lwd=lwd,
-         main="MEFT trajectory",
-         xlim=range(0,1), ylim=range(0, peelobj$cvfit$cv.stats$mean$cv.max.time.bar, na.rm=TRUE),
-         xlab=xlab, ylab="Time", cex.main=cex)
-    if (add.legend)
-      legend("bottomright", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
-  }
+  plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.max.time.bar, type='s', col=col, lty=lty, lwd=lwd,
+       main="MEFT trajectory",
+       xlim=range(0,1), ylim=range(0, peelobj$cvfit$cv.stats$mean$cv.max.time.bar, na.rm=TRUE),
+       xlab=xlab, ylab="Time", cex.main=cex)
+  if (add.legend)
+    legend("bottomright", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
 
   par(mfg=c(nr-1, 3))
-  if (add) {
-    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.min.prob.bar, type='s', col=col, lty=lty, lwd=lwd,
-         main="MEFP trajectory",
-         xlim=range(0,1), ylim=range(0,1),
-         xlab=xlab, ylab="Probability", cex.main=cex)
-    points(peelobj2$cvfit$cv.stats$mean$cv.support, peelobj2$cvfit$cv.stats$mean$cv.min.prob.bar, type='s', col=col2, lty=lty2, lwd=lwd2)
-    points(peelobj3$cvfit$cv.stats$mean$cv.support, peelobj3$cvfit$cv.stats$mean$cv.min.prob.bar, type='s', col=col3, lty=lty3, lwd=lwd3)
-    if (add.legend)
-      legend("bottomright", inset=0.01, legend=text.legend, lty=c(lty,lty2,lty3), col=c(col,col2,col3), lwd=c(lwd,lwd2,lwd3), cex=0.7)
-  } else {
-    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.min.prob.bar, type='s', col=col, lty=lty, lwd=lwd,
-         main="MEFP trajectory",
-         xlim=range(0,1), ylim=range(0,1),
-         xlab=xlab, ylab="Probability", cex.main=cex)
-    if (add.legend)
-      legend("bottomright", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
-  }
+  plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.min.prob.bar, type='s', col=col, lty=lty, lwd=lwd,
+       main="MEFP trajectory",
+       xlim=range(0,1), ylim=range(0,1),
+       xlab=xlab, ylab="Probability", cex.main=cex)
+  if (add.legend)
+    legend("bottomright", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
 
   par(mfg=c(nr, 1))
-  if (add) {
-    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.lhr, type='s', col=col, lty=lty, lwd=lwd,
-         main="LHR trajectory",
-         xlim=range(0,1), ylim=range(0, peelobj$cvfit$cv.stats$mean$cv.lhr, peelobj2$cvfit$cv.stats$mean$cv.lhr, peelobj3$cvfit$cv.stats$mean$cv.lhr, na.rm=TRUE),
-         xlab=xlab, ylab=expression(paste("Log-Hazard Ratio (", lambda,")", sep="")), cex.main=cex)
-    points(peelobj2$cvfit$cv.stats$mean$cv.support, peelobj2$cvfit$cv.stats$mean$cv.lhr, type='s', col=col2, lty=lty2, lwd=lwd2)
-    points(peelobj3$cvfit$cv.stats$mean$cv.support, peelobj3$cvfit$cv.stats$mean$cv.lhr, type='s', col=col3, lty=lty3, lwd=lwd3)
-    if (add.legend)
-      legend("top", inset=0.01, legend=text.legend, lty=c(lty,lty2,lty3), col=c(col,col2,col3), lwd=c(lwd,lwd2,lwd3), cex=0.7)
-  } else {
-    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.lhr, type='s', col=col, lty=lty, lwd=lwd,
-         main="LHR trajectory", xlim=range(0,1), ylim=range(0, peelobj$cvfit$cv.stats$mean$cv.lhr, na.rm=TRUE),
-         xlab=xlab, ylab=expression(paste("Log-Hazard Ratio (", lambda,")", sep="")), cex.main=cex)
-    if (add.legend)
-      legend("top", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
-  }
+  plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.lhr, type='s', col=col, lty=lty, lwd=lwd,
+       main="LHR trajectory", xlim=range(0,1), ylim=range(0, peelobj$cvfit$cv.stats$mean$cv.lhr, na.rm=TRUE),
+       xlab=xlab, ylab=expression(paste("Log-Hazard Ratio (", lambda,")", sep="")), cex.main=cex)
+  if (add.legend)
+    legend("top", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
 
   par(mfg=c(nr, 2))
-  if (add) {
-    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.lrt, type='s', col=col, lty=lty, lwd=lwd,
-         main="LRT trajectory",
-         xlim=range(0,1), ylim=range(0, peelobj$cvfit$cv.stats$mean$cv.lrt, peelobj2$cvfit$cv.stats$mean$cv.lrt, peelobj3$cvfit$cv.stats$mean$cv.lrt, na.rm=TRUE),
-         xlab=xlab, ylab=expression(paste("Log-rank test (", chi^2 ,")", sep="")), cex.main=cex)
-    points(peelobj2$cvfit$cv.stats$mean$cv.support, peelobj2$cvfit$cv.stats$mean$cv.lrt, type='s', col=col2, lty=lty2, lwd=lwd2)
-    points(peelobj3$cvfit$cv.stats$mean$cv.support, peelobj3$cvfit$cv.stats$mean$cv.lrt, type='s', col=col3, lty=lty3, lwd=lwd3)
-    if (add.legend)
-      legend("top", inset=0.01, legend=text.legend, lty=c(lty,lty2,lty3), col=c(col,col2,col3), lwd=c(lwd,lwd2,lwd3), cex=0.7)
-  } else {
-    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.lrt, type='s', col=col, lty=lty, lwd=lwd,
-         main="LRT trajectory",
-         xlim=range(0,1), ylim=range(0, peelobj$cvfit$cv.stats$mean$cv.lrt, na.rm=TRUE),
-         xlab=xlab, ylab=expression(paste("Log-rank test (", chi^2 ,")", sep="")), cex.main=cex)
-    if (add.legend)
-      legend("top", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
-  }
+  plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.lrt, type='s', col=col, lty=lty, lwd=lwd,
+       main="LRT trajectory",
+       xlim=range(0,1), ylim=range(0, peelobj$cvfit$cv.stats$mean$cv.lrt, na.rm=TRUE),
+       xlab=xlab, ylab=expression(paste("Log-rank test (", chi^2 ,")", sep="")), cex.main=cex)
+  if (add.legend)
+    legend("top", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
 
   par(mfg=c(nr, 3))
-  if (add) {
-    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.cer, type='s', col=col, lty=lty, lwd=lwd,
-         main="CER trajectory",
-         xlim=range(0,1), ylim=range(0, 1),
-         xlab=xlab, ylab=expression(paste("1-C (", theta,")", sep="")), cex.main=cex)
-    points(peelobj2$cvfit$cv.stats$mean$cv.support, peelobj2$cvfit$cv.stats$mean$cv.cer, type='s', col=col2, lty=lty2, lwd=lwd2)
-    points(peelobj3$cvfit$cv.stats$mean$cv.support, peelobj3$cvfit$cv.stats$mean$cv.cer, type='s', col=col3, lty=lty3, lwd=lwd3)
-    if (add.legend)
-      legend("top", inset=0.01, legend=text.legend, lty=c(lty,lty2,lty3), col=c(col,col2,col3), lwd=c(lwd,lwd2,lwd3), cex=0.7)
-  } else {
-    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.cer, type='s', col=col, lty=lty, lwd=lwd,
-         main="CER trajectory",
-         xlim=range(0,1), ylim=range(0, 1),
-         xlab=xlab, ylab=expression(paste("1-C (", theta,")", sep="")), cex.main=cex)
-    if (add.legend)
-      legend("top", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
-  }
+  plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.cer, type='s', col=col, lty=lty, lwd=lwd,
+       main="CER trajectory",
+       xlim=range(0,1), ylim=range(0, 1),
+       xlab=xlab, ylab=expression(paste("1-C (", theta,")", sep="")), cex.main=cex)
+  if (add.legend)
+    legend("top", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
 
   mtext(text=main, cex=1, side=3, outer=TRUE)
   invisible()
@@ -967,11 +861,11 @@ plot_boxtraj <- function(peelobj, peelobj2=NULL, peelobj3=NULL,
 #################
 # Usage         :
 ################
-#                    plot_boxtrace (peelobj, peelobj2=NULL, peelobj3=NULL,
-#                                   main=NULL, xlab="Box Mass", ylab="Variable Range",
+#                    plot_boxtrace (peelobj,
+#                                   main=NULL,
 #                                   center=FALSE, scale=FALSE, hline=NULL,
-#                                   col=1, col2=col, col3=col, lty=1, lty2=lty, lty3=lty, lwd=1, lwd2=lwd, lwd3=lwd, cex=1, cex2=cex, cex3=cex,
-#                                   add=FALSE, add.legend=FALSE, text.legend=NULL, ...)
+#                                   col=1, lty=1, lwd=1, cex=1,
+#                                   add.legend=FALSE, text.legend=NULL, ...)
 #
 ################
 # Description   :
@@ -979,39 +873,20 @@ plot_boxtraj <- function(peelobj, peelobj2=NULL, peelobj3=NULL,
 #                    Plot the cross-validated modal trace curves of variable importance and variable usage
 #                    of covariates used for peeling at each iteration of the peeling sequence
 #                    (inner loop of our PRSP algorithm).
-#                    Plot up to three "PRSP"" objects.
 #
 ################
 # Arguments     :
 ################
-#                   Three objects of class "PRSP" as generated by the main function sbh().
-# peelobj       :     Required
-# peelobj2      :     Optional
-# peelobj3      :     Optional
-#
+# peelobj       :   Object of class "PRSP" as generated by the main function sbh().
 # main          :   Main Title. Defaults to NULL.
-# xlab          :   X axis label. Defaults to "Box Mass".
-# ylab          :   Y axis label. Defaults to "Variable range".
 # center        :   Logical. Shall the data be centered before?
 # scale         :   Logical. Shall the data be scaled before?
 # hline         :   numeric scalar of where the data is centred.
 #                   If specified (i.e. not NULL), an horizontal line about this value is added to the plot.
-#
-#                   Plotting parameters for the three objects:
-# col           :     Line color of object peelobj. Defaults to 1.
-# col2          :     Line color of object peelobj2. Defaults to col.
-# col3          :     Line color of object peelobj3. Defaults to col.
-# lty           :     Line type of object peelobj. Defaults to 1.
-# lty2          :     Line type of object peelobj2. Defaults to lty.
-# lty3          :     Line type of object peelobj3. Defaults to lty.
-# lwd           :     Line width of object peelobj. Defaults to 1.
-# lwd2          :     Line width of object peelobj2. Defaults to lwd.
-# lwd3          :     Line width of object peelobj3. Defaults to lwd.
-# cex           :     Symbol expansion. Defaults to 1.
-# cex2          :     Symbol expansion2. Defaults to cex.
-# cex3          :     Symbol expansion3. Defaults to cex.
-#
-# add           :   Logical. Should all the PRSP trace plots be overlaid?. Defaults to FALSE.
+# col           :   Line color of object peelobj. Defaults to 1.
+# lty           :   Line type of object peelobj. Defaults to 1.
+# lwd           :   Line width of object peelobj. Defaults to 1.
+# cex           :   Symbol expansion. Defaults to 1.
 # add.legend    :   Logical. Should the legend be added to the current open graphics device?. Defaults to FALSE.
 # text.legend   :   Character vector of legend content. Defaults to NULL.
 # ...           :   Generic arguments passed to other plotting functions.
@@ -1022,11 +897,11 @@ plot_boxtraj <- function(peelobj, peelobj2=NULL, peelobj3=NULL,
 #
 ##########################################################################################################################################
 
-plot_boxtrace <- function(peelobj, peelobj2=NULL, peelobj3=NULL,
-                          main=NULL, xlab="Box Mass", ylab="Variable Range",
+plot_boxtrace <- function(peelobj,
+                          main=NULL,
                           center=FALSE, scale=FALSE, hline=NULL,
-                          col=1, col2=col, col3=col, lty=1, lty2=lty, lty3=lty, lwd=1, lwd2=lwd, lwd3=lwd, cex=1, cex2=cex, cex3=cex,
-                          add=FALSE, add.legend=FALSE, text.legend=NULL, ...) {
+                          col=1, lty=1, lwd=1, cex=1,
+                          add.legend=FALSE, text.legend=NULL, ...) {
 
   used <- peelobj$used
   p <- length(used)
@@ -1036,72 +911,35 @@ plot_boxtrace <- function(peelobj, peelobj2=NULL, peelobj3=NULL,
   ticknames[used] <- paste(varnames[used], " -", sep="")
 
   if (!is.null(main)) {
-    par(mfrow=c(2, 1), oma=c(0, 0, 2, 0), mar=c(2.5, 4.0, 2.0, 0), mgp=c(1.5, 0.5, 0))
+    par(mfrow=c(2, 1), oma=c(0, 0, 2, 0), mar=c(2.5, 4.0, 2.0, 0.0), mgp=c(1.5, 0.5, 0))
   } else {
-    par(mfrow=c(2, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 4.0, 0.0, 0), mgp=c(1.5, 0.5, 0))
+    par(mfrow=c(2, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 4.0, 0.0, 0.0), mgp=c(1.5, 0.5, 0))
   }
 
-  if (add) {
-    x1 <- scale(x=peelobj$cvfit$cv.rules$mean, center=center, scale=scale)
-    x2 <- scale(x=peelobj2$cvfit$cv.rules$mean, center=center, scale=scale)
-    x3 <- scale(x=peelobj3$cvfit$cv.rules$mean, center=center, scale=scale)
-    plot(peelobj$cvfit$cv.stats$mean$cv.support, x1[,1], type='n',
-         xlim=range(0,1), ylim=range(x1, x2, x3, hline),
-         main="Variable Importance", xlab="", ylab="", cex.main=cex)
-    for (j in used) {
-      lines(peelobj$cvfit$cv.stats$mean$cv.support, x1[,j], type='l', col=col[j], lty=lty[j], lwd=lwd[j])
-      lines(peelobj2$cvfit$cv.stats$mean$cv.support, x2[,j], type='l', col=col2[j], lty=lty2[j], lwd=lwd2[j])
-      lines(peelobj3$cvfit$cv.stats$mean$cv.support, x3[,j], type='l', col=col3[j], lty=lty3[j], lwd=lwd3[j])
-      abline(h=hline[j], lty=1, col=1, lwd=0.3, xpd=FALSE)
-      legend("topleft", inset=0.01, legend=varnames[used], lty=lty, col=col, lwd=lwd, cex=0.5*cex)
-      legend("top", inset=0.01, legend=varnames[used], lty=lty2, col=col2, lwd=lwd2, cex=0.5*cex)
-      legend("topright", inset=0.01, legend=varnames[used], lty=lty3, col=col3, lwd=lwd3, cex=0.5*cex)
-    }
-    if (add.legend)
-      legend("bottom", inset=0.01, legend=text.legend, lty=c(lty[1],lty2[1],lty3[1]), col=c(1,1,1), lwd=c(lwd[1],lwd2[1],lwd3[1]), cex=0.5*cex)
-    mtext(text=xlab, cex=cex, side=1, line=1, outer=FALSE)
-    mtext(text=ylab, cex=cex, side=2, line=2, outer=FALSE)
-  } else {
-    x1 <- scale(x=peelobj$cvfit$cv.rules$mean, center=center, scale=scale)
-    plot(peelobj$cvfit$cv.stats$mean$cv.support, x1[,1], type='n',
-         xlim=range(0,1), ylim=range(x1, hline),
-         main="Variable Importance", xlab="", ylab="", cex.main=cex)
-    for (j in used) {
-      lines(peelobj$cvfit$cv.stats$mean$cv.support, x1[,j], type='l', col=col[j], lty=lty[j], lwd=lwd[j])
-      abline(h=hline[j], lty=1, col=1, lwd=0.3, xpd=FALSE)
-      legend("top", inset=0.01, legend=varnames[used], lty=lty, col=col, lwd=lwd, cex=0.5*cex)
-    }
-    if (add.legend)
-      legend("bottom", inset=0.01, legend=text.legend, lty=lty[1], col=1, lwd=lwd[1], cex=0.5*cex)
-    mtext(text=xlab, cex=cex, side=1, line=1, outer=FALSE)
-    mtext(text=ylab, cex=cex, side=2, line=2, outer=FALSE)
+  boxcut.scaled <- scale(x=peelobj$cvfit$cv.rules$mean, center=center, scale=scale)
+  plot(peelobj$cvfit$cv.stats$mean$cv.support, boxcut.scaled[,1], type='n',
+       xlim=range(0,1), ylim=range(boxcut.scaled, hline),
+       main="Variable Importance", xlab="", ylab="", cex.main=cex)
+  for (j in used) {
+    lines(peelobj$cvfit$cv.stats$mean$cv.support, boxcut.scaled[,j], type='l', col=col[j], lty=lty[j], lwd=lwd[j])
+    abline(h=hline[j], lty=1, col=1, lwd=0.3, xpd=FALSE)
+    legend("top", inset=0.01, legend=varnames[used], lty=lty, col=col, lwd=lwd, cex=0.5*cex)
   }
+  if (add.legend)
+    legend("bottom", inset=0.01, legend=text.legend, lty=lty[1], col=1, lwd=lwd[1], cex=0.5*cex)
+  mtext(text="Box Mass", cex=cex, side=1, line=1, outer=FALSE)
+  mtext(text="Variable Range", cex=cex, side=2, line=2, outer=FALSE)
 
-  if (add) {
-    plot(peelobj$cvfit$cv.stats$mean$cv.support[-peelobj$cvfit$cv.nsteps], peelobj$cvfit$cv.trace$mode[-1],
-         type='s', yaxt="n", col=1, lty=lty[1], lwd=lwd[1],
-         xlim=range(0,1), ylim=range(0, maxtick),
-         main="Variable Usage", xlab="", ylab="", cex.main=cex)
-    points(peelobj2$cvfit$cv.stats$mean$cv.support[-peelobj2$cvfit$cv.nsteps], peelobj2$cvfit$cv.trace$mode[-1], type='s', col=1, lty=lty2[1], lwd=lwd2[1])
-    points(peelobj3$cvfit$cv.stats$mean$cv.support[-peelobj3$cvfit$cv.nsteps], peelobj3$cvfit$cv.trace$mode[-1], type='s', col=1, lty=lty3[1], lwd=lwd3[1])
-    par(mgp=c(1.5, 0, 0))
-    axis(side=2, at=1:maxtick, labels=ticknames, tick=FALSE, las=1, line=NA, cex.axis=0.5*cex, outer=FALSE)
-    if (add.legend)
-      legend("bottom", inset=0.01, legend=text.legend, lty=c(lty[1],lty2[1],lty3[1]), col=c(1,1,1), lwd=c(lwd[1],lwd2[1],lwd3[1]), cex=0.5*cex)
-    mtext(text=xlab, cex=cex, side=1, line=1, outer=FALSE)
-    mtext(text="Variables", cex=cex, side=2, line=3, outer=FALSE)
-  } else {
-    plot(peelobj$cvfit$cv.stats$mean$cv.support[-peelobj$cvfit$cv.nsteps], peelobj$cvfit$cv.trace$mode[-1],
-         type='s', yaxt="n", col=1, lty=lty[1], lwd=lwd[1],
-         xlim=range(0,1), ylim=range(0, maxtick),
-         main="Variable Usage", xlab="", ylab="", cex.main=cex)
-    par(mgp=c(1.5, 0, 0))
-    axis(side=2, at=1:maxtick, labels=ticknames, tick=FALSE, las=1, line=NA, cex.axis=0.5*cex, outer=FALSE)
-    if (add.legend)
-      legend("bottom", inset=0.01, legend=text.legend, lty=lty[1], col=1, lwd=lwd[1], cex=0.5*cex)
-    mtext(text=xlab, cex=cex, side=1, line=1, outer=FALSE)
-    mtext(text="Variables", cex=cex, side=2, line=3, outer=FALSE)
-  }
+  plot(peelobj$cvfit$cv.stats$mean$cv.support[-peelobj$cvfit$cv.nsteps], peelobj$cvfit$cv.trace$mode[-1],
+       type='s', yaxt="n", col=1, lty=lty[1], lwd=lwd[1],
+       xlim=range(0,1), ylim=range(0, maxtick),
+       main="Variable Usage", xlab="", ylab="", cex.main=cex)
+  par(mgp=c(1.5, 0, 0))
+  axis(side=2, at=1:maxtick, labels=ticknames, tick=FALSE, las=1, line=NA, cex.axis=0.5*cex, outer=FALSE)
+  if (add.legend)
+    legend("bottom", inset=0.01, legend=text.legend, lty=lty[1], col=1, lwd=lwd[1], cex=0.5*cex)
+  mtext(text="Box Mass", cex=cex, side=1, line=1, outer=FALSE)
+  mtext(text="Variables Used", cex=cex, side=2, line=3, outer=FALSE)
 
   mtext(text=main, cex=1, side=3, outer=TRUE)
   invisible()
@@ -1130,7 +968,7 @@ plot_boxtrace <- function(peelobj, peelobj2=NULL, peelobj3=NULL,
 ################
 # Arguments     :
 ################
-# peelobj       :   An object of class "PRSP" as generated by the main function sbh().
+# peelobj       :   Object of class "PRSP" as generated by the main function sbh().
 # main          :   Main Title. Defaults to NULL.
 # xlab          :   X axis label. Defaults to "Time".
 # ylab          :   Y axis label. Defaults to "Probability"
@@ -1300,7 +1138,6 @@ cv.box.rep <- function(x, times, status,
   CV.trace <- vector(mode="list", length=B)
   CV.boxind <- vector(mode="list", length=B)
   CV.boxcut <- vector(mode="list", length=B)
-  CV.vertices <- vector(mode="list", length=B)
   CV.support <- vector(mode="list", length=B)
   CV.lhr <- vector(mode="list", length=B)
   CV.lrt <- vector(mode="list", length=B)
@@ -1347,7 +1184,6 @@ cv.box.rep <- function(x, times, status,
       CV.trace[[b]] <- CVBOX$cvfit$cv.trace
       CV.boxind[[b]] <- CVBOX$cvfit$cv.boxind
       CV.boxcut[[b]] <- CVBOX$cvfit$cv.boxcut
-      CV.vertices[[b]] <- CVBOX$cvfit$cv.vertices
       CV.support[[b]] <- CVBOX$cvfit$cv.stats$cv.support
       CV.lhr[[b]] <- CVBOX$cvfit$cv.stats$cv.lhr
       CV.lrt[[b]] <- CVBOX$cvfit$cv.stats$cv.lrt
@@ -1377,7 +1213,6 @@ cv.box.rep <- function(x, times, status,
               "cv.trace"=CV.trace,
               "cv.boxind"=CV.boxind,
               "cv.boxcut"=CV.boxcut,
-              "cv.vertices"=CV.vertices,
               "cv.support"=CV.support,
               "cv.lhr"=CV.lhr,
               "cv.lrt"=CV.lrt,
@@ -1672,18 +1507,6 @@ cv.ave.box <- function(x, times, status,
   rownames(CV.boxind) <- paste("step", 0:(CV.Lm-1), sep="")
   colnames(CV.boxind) <- rownames(x)
 
-  # Box vertices for each step
-  x.range <- apply(X=x, MARGIN=2, FUN=range)
-  CV.vertices <- vector(mode="list", length=CV.Lm)
-  names(CV.vertices) <- paste("step", 0:(CV.Lm-1), sep="")
-  for (l in 1:CV.Lm) {
-    CV.vertices[[l]] <- matrix(data=NA, nrow=2, ncol=p, dimnames=list(c("LB","UB"), colnames(x)))
-    for (j in 1:p) {
-      CV.vertices[[l]][1,j] <- ifelse(test=(varsign[j] > 0), yes=max(x.range[1,j], CV.boxcut[l,j]), no=min(x.range[1,j], CV.boxcut[l,j]))
-      CV.vertices[[l]][2,j] <- ifelse(test=(varsign[j] < 0), yes=min(x.range[2,j], CV.boxcut[l,j]), no=max(x.range[2,j], CV.boxcut[l,j]))
-    }
-  }
-
   # Applying the cross-validation criterion to the profiles
   # Cross-validated optimal length from all folds
   # By maximization of the LHR (between in and out box test samples)
@@ -1725,8 +1548,7 @@ cv.ave.box <- function(x, times, status,
                  "cv.rules"=CV.rules,
                  "cv.stats"=CV.stats,
                  "cv.trace"=CV.trace,
-                 "cv.boxind"=CV.boxind,
-                 "cv.vertices"=CV.vertices)
+                 "cv.boxind"=CV.boxind)
 
   return(list("x"=x, "times"=times, "status"=status,
               "cvfit"=CV.fit, "drop"=drop, "seed"=seed))
@@ -1792,14 +1614,25 @@ cv.comb.box <- function(x, times, status,
   CV.trace <- t(CV.trace)
   dimnames(CV.trace) <- list(paste("step", 0:(CV.Lm-1), sep=""), 1:K)
 
-  # Get the combined box mincuts for each step from all the folds and truncate to the same x-validated length
+
+  # Get the test box membership indicator vector of all observations for each step from all the folds
+  # Based on the combined membership indicator vectors over the folds
+  # Re-ordered by initial order of observations
+  CV.boxind <- cbindlist(boxind.list, trunc=CV.Lm)[,ord]
+  rownames(CV.boxind) <- paste("step", 0:(CV.Lm-1), sep="")
+  colnames(CV.boxind) <- rownames(x)
+
+  # Get the combined boxcut (truncated to the same x-validated length) for each step from all the folds
+  # using the circumscribing box to the conmbined test set in-box samples over all the folds
   CV.boxcut <- matrix(data=NA, nrow=CV.Lm, ncol=p, dimnames=list(paste("step", 0:(CV.Lm-1), sep=""), colnames(x)))
   tmparray <- list2array(list=boxcut.list, trunc=CV.Lm)
-  for (j in 1:p) {
-    if (varsign[j] >= 0) {
-      CV.boxcut[,j] <- apply(X=tmparray[,j,,drop=FALSE], MARGIN=1, FUN=max, na.rm=TRUE)
-    } else {
-      CV.boxcut[,j] <- apply(X=tmparray[,j,,drop=FALSE], MARGIN=1, FUN=min, na.rm=TRUE)
+  for (l in 1:CV.Lm) {
+    for (j in 1:p) {
+        if (varsign[j] > 0) {
+          CV.boxcut[l,j] <- min(x[CV.boxind[l,],j])
+        } else {
+          CV.boxcut[l,j] <- max(x[CV.boxind[l,],j])
+        }
     }
   }
 
@@ -1812,29 +1645,6 @@ cv.comb.box <- function(x, times, status,
       ss <- "<="
     }
     CV.rules[, j] <- paste(colnames(x)[j], ss, format(x=CV.boxcut[, j], digits=3, nsmall=3), sep="")
-  }
-
-  # Get the test box membership indicator vector of all observations for each step from all the folds
-  # Based on the combined membership indicator vectors over the folds
-  # Re-ordered by initial order of observations
-  CV.boxind <- cbindlist(boxind.list, trunc=CV.Lm)[,ord]
-  rownames(CV.boxind) <- paste("step", 0:(CV.Lm-1), sep="")
-  colnames(CV.boxind) <- rownames(x)
-
-  # Computation of box vertices for each step
-  x.range <- apply(X=x, MARGIN=2, FUN=range)
-  CV.vertices <- vector(mode="list", length=CV.Lm)
-  names(CV.vertices) <- paste("step", 0:(CV.Lm-1), sep="")
-  for (l in 1:CV.Lm) {
-    CV.vertices[[l]] <- matrix(data=NA, nrow=2, ncol=p, dimnames=list(c("LB","UB"), colnames(x)))
-    for (j in 1:p) {
-      CV.vertices[[l]][1,j] <- ifelse(test=(varsign[j] > 0),
-                                      yes=max(x.range[1,j], CV.boxcut[l,j]),
-                                      no=min(x.range[1,j], CV.boxcut[l,j]))
-      CV.vertices[[l]][2,j] <- ifelse(test=(varsign[j] < 0),
-                                      yes=min(x.range[2,j], CV.boxcut[l,j]),
-                                      no=max(x.range[2,j], CV.boxcut[l,j]))
-    }
   }
 
   # Compute the combined test box statistics from all folds for all steps, each entry or row signifies a step
@@ -1959,8 +1769,7 @@ cv.comb.box <- function(x, times, status,
                  "cv.rules"=CV.rules,
                  "cv.stats"=CV.stats,
                  "cv.trace"=CV.trace,
-                 "cv.boxind"=CV.boxind,
-                 "cv.vertices"=CV.vertices)
+                 "cv.boxind"=CV.boxind)
 
   return(list("x"=x, "times"=times, "status"=status,
               "cvfit"=CV.fit, "drop"=drop, "seed"=seed))
