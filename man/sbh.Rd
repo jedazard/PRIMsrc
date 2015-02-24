@@ -115,8 +115,8 @@
         \item "outfile": \code{outfile} : \code{character} \code{vector} of the output log file name for the workernodes.
   }
 
-  Note that argument \code{B} is internally reset to \code{conf$cpus}*\code{ceiling}(\code{B}/\code{conf$cpus}) in case the cluster
-  is used (i.e. \code{conf} is non \code{NULL}), where \code{conf$cpus} denotes the total number of CPUs to be used (see below).
+  Note that argument \code{B} is internally reset to \code{conf$cpus}*\code{ceiling}(\code{B}/\code{conf$cpus}) in case the parallelization
+  is used (i.e. \code{conf} is non \code{NULL}), where \code{conf$cpus} denotes the total number of CPUs to be used (see above).
   
   The actual creation of the cluster, its initialization, and closing are all done internally.
   In addition, when random number generation is needed, the creation of separate streams of parallel RNG per node

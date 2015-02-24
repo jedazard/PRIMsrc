@@ -11,8 +11,8 @@
 
 \usage{
   plot_scatter(peelobj,
-               main = NULL, xlab = "", ylab = "",
-               proj = c(1,2), splom = TRUE, boxes = TRUE,
+               main = NULL,
+               proj = c(1,2), splom = TRUE, boxes = FALSE,
                steps = peelobj$cvfit$cv.nsteps,
                add.legend = TRUE, pch = 16, cex = 0.7, col = 1, 
                box.col = 2, box.lty = 2, box.lwd = 1, ...)
@@ -25,20 +25,14 @@
   \item{main}{
     \code{Character} \code{vector}. Main Title. Defaults to \code{NULL}.
   }
-  \item{xlab}{
-    \code{Character} \code{vector}. X axis label. Defaults to "".
-  }
-  \item{ylab}{
-    \code{Character} \code{vector}. Y axis label. Defaults to "".
-  } 
   \item{proj}{
-    \code{Integer} \code{vector} of length two, specifying the dimensions of the projection plane. Defaults to c(1,2).
+    \code{Integer} \code{vector} of length two, specifying the two dimensions of the projection plane. Defaults to c(1,2).
   }
   \item{splom}{
     \code{Logical} scalar. Shall the scatter plot of points inside the box(es) be plotted? Default to \code{TRUE}.
   }
   \item{boxes}{
-    \code{Logical} scalar. Shall the box vertices be plotted or just the scatter of  points? Default to \code{TRUE}.
+    \code{Logical} scalar. Shall the box vertices be plotted or just the scatter of  points? Default to \code{FALSE}.
   }
   \item{steps}{
     \code{Integer} \code{vector}. Vector of peeling steps at which one wants to plot the box vertices. 
