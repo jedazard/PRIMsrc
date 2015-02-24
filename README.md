@@ -7,7 +7,7 @@ univariate response variable can be discrete (Classification), continuous (Regre
 possibly censored (Survival). It is intended to handle high-dimensional multivariate datasets,
 where the number of variables far exceeds that of the samples (p >> n paradigm).
 
-The current version is a development release that only includes the case of a survival response. Ultimately, it will include all the features described above. New features will be added soon as they are available. At this
+The current version is a developmental release that only includes the case of a survival response. Ultimately, it will include all the features described above. New features will be added soon as they are available. At this
 point, the main function sbh() depends on a internal cross-validated variable selection procedure by
 regularized Cox-regression from the R package glmnet.
 
