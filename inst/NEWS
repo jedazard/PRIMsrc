@@ -14,20 +14,22 @@ Date   : 2015-02-01
 o RELEASE 0.3.0
 - Minor updates in the manual, email and version number.
 ---------------------------------------------------------------------------------
-Date   : 2015-02-24
+Date   : 2015-02-27
 o RELEASE 0.4.0
 - Extension to high-dimensional covariates and p > n case
 - Added dependency to glmnet package for initial variable selection.
 - Added synthetic dataset #5 and example with p > n.
 - Added real dataset #2 and example with p >> n.
 - Added new ouput of selected variables in main function sbh().
+- Removed (temporarily) interactive option in sbh() in case no variables are selected by glmnet().
 - Removed returned values of box vertices that were redudant with the returned rules.
-- removed option for multiple PRSP objects plotting in plot_boxtrace() and plot_boxtraj().
+- Removed option for multiple PRSP objects plotting in plot_boxtrace() and plot_boxtraj().
 - Changed return value of variable traces: now also returns the matrix of traces by replication.
 - Corrected superfluous codes in the parallelization section, before clusterCall() in sbh().
 - Corrected number of replications in sbh() in case of parallelization. 
 - Corrected stepwise variable selection procedure in peel.box() to account for missing values.
 - Corrected definition of the cross-validated box vertices (definition) in the case of "combined CV" technique.
+- Corrected generation of random seed when none is provided. 
 - Minor updates, bugs and code improvements in sbh() and peel.box() and plotting functions.
 - Updated manual, version number.
 - Test build under 3.0.2 and release update to GitHub.
