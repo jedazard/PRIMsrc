@@ -161,22 +161,21 @@ sbh <- function(dataset, discr,
       k <- k + 1
       seed <- floor(runif(n=1, min=0, max=1) * 10^(min(digits,9)))
       if (k == 10) {
-        cat("Could not complete fit a regularized Cox-regression mode after 10 successive trials. Exiting...\n", sep="")
         success <- FALSE
       }
     } else {
       k <- 10
-      names(selected) <- colnames(x)[selected]
-      cat("Selected variables:\n")
-      print(selected)
       success <- TRUE
     }
   }
   
   if (!success) {
 
-    cat("Could not complete fit a regularized Cox-regression mode after 10 successive trials. Exiting...\n", sep="")
+    cat("Could not select any variable from the regularized Cox-regression model after 10 successive trials. Exiting...\n", sep="")
     bool.plot <- FALSE
+    varsign <- NULL 
+    selected <- NULL 
+    used <- NULL
     # Cross-validated minimum length from all replicates
     CV.maxsteps <- NULL
     # List of CV profiles
@@ -195,11 +194,17 @@ sbh <- function(dataset, discr,
     CV.pval <- NULL
   
   } else {
-  
+    
+    # Selected variables
+    names(selected) <- colnames(x)[selected]
+    cat("Selected variables:\n")
+    print(selected)
+    
     # Directions of directed peeling by selected variable and initial box boundaries
     varsign <- sign(cv.coef)
     names(varsign) <- colnames(x)
 
+    # Initial box boundaries
     initcutpts <- numeric(p)
     for(j in 1:p){
         if ((varsign[j] == 0) || (varsign[j] == 1)) {
@@ -310,6 +315,9 @@ sbh <- function(dataset, discr,
 
         cat("Failure! Could not find any bump in this dataset. Exiting... \n", sep="")
         bool.plot <- FALSE
+        varsign <- NULL 
+        selected <- NULL 
+        used <- NULL
         # Cross-validated minimum length from all replicates
         CV.maxsteps <- NULL
         # List of CV profiles
@@ -485,6 +493,7 @@ sbh <- function(dataset, discr,
         }
     }
   }
+  
   # Create the return object 'CV.fit'
   CV.fit <- list("cv.maxsteps"=CV.maxsteps,
                  "cv.nsteps"=CV.nsteps,
