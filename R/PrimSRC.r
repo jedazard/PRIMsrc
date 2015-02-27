@@ -2204,6 +2204,7 @@ peel.box <- function(traindata, traintime, trainstatus,
   sel <- rep(TRUE, n)                                    # Initial logical vector of selected samples
   xsel <- traindata                                      # Initial selection of samples from training data
   varpeel <- (apply(traindata, 2, "var") > 10^(-digits)) # Initial selection of variables for peeling
+  continue <- TRUE
   if (!(is.null(L))) {
     switch <- 1
   } else {
@@ -2214,7 +2215,7 @@ peel.box <- function(traindata, traintime, trainstatus,
   lhrlj <- matrix(NA, ncut, p)
   lrtlj <- matrix(NA, ncut, p)
 
-  while ((boxmass >= beta) & (l*switch < L) & (sum(varpeel) > 0)) {
+  while ((boxmass >= beta) & (l*switch < L) & (continue)) {
     l <- l + 1
     xsign <- t(t(xsel) * varsign)
 
@@ -2254,8 +2255,8 @@ peel.box <- function(traindata, traintime, trainstatus,
       }
     }
 
-    # If the last attempted peeling succeeded
-    if (sum(varpeel) > 0) {
+    # If the previous attempted peeling succeeded
+    if (sum(varpeel) > 0 && (!is.empty(vmd[(!is.nan(vmd)) & (!is.infinite(vmd)) & (!is.na(vmd))]))) {
       # Maximizing the rate of increase of LHR or LRT (peeling criterion).
       # Only one variable (the first one in rank) is selected in case of ties
       varj <- which(vmd == max(vmd[(!is.nan(vmd)) & (!is.infinite(vmd))], na.rm=TRUE))[1]
@@ -2268,8 +2269,9 @@ peel.box <- function(traindata, traintime, trainstatus,
       # Saving trained box quantities of interest for the current peeling step
       boxcut[l, ] <- boxcutpts
       vartrace[l] <- varj
-    # Else exiting the loop and decrementing the last peeling step number since the last attempted peeling failed in that case
+    # Else exiting the loop and decrementing the peeling step number since the last attempted failed in that case
     } else {
+      continue <- FALSE
       l <- l - 1
     }
   }
