@@ -146,7 +146,7 @@ sbh <- function(dataset, discr,
 
   # Variable selection by regularized Cox-regression
   cat("Variable selection by regularized Cox-regression ... \n")
-  k <- 0 
+  k <- 0
   while (k < 10) {
     if (is.null(seed)) {
       seed <- floor(runif(n=1, min=0, max=1) * 10^(min(digits,9)))
@@ -168,13 +168,13 @@ sbh <- function(dataset, discr,
       success <- TRUE
     }
   }
-  
+
   if (!success) {
 
     cat("Could not select any variable from the regularized Cox-regression model after 10 successive trials. Exiting...\n", sep="")
     bool.plot <- FALSE
-    varsign <- NULL 
-    selected <- NULL 
+    varsign <- NULL
+    selected <- NULL
     used <- NULL
     # Cross-validated minimum length from all replicates
     CV.maxsteps <- NULL
@@ -192,14 +192,14 @@ sbh <- function(dataset, discr,
     CV.stats <- NULL
     # List of p-values for each step
     CV.pval <- NULL
-  
+
   } else {
-    
+
     # Selected variables
     names(selected) <- colnames(x)[selected]
     cat("Selected variables:\n")
     print(selected)
-    
+
     # Directions of directed peeling by selected variable and initial box boundaries
     varsign <- sign(cv.coef)
     names(varsign) <- colnames(x)
@@ -315,8 +315,8 @@ sbh <- function(dataset, discr,
 
         cat("Failure! Could not find any bump in this dataset. Exiting... \n", sep="")
         bool.plot <- FALSE
-        varsign <- NULL 
-        selected <- NULL 
+        varsign <- NULL
+        selected <- NULL
         used <- NULL
         # Cross-validated minimum length from all replicates
         CV.maxsteps <- NULL
@@ -493,7 +493,7 @@ sbh <- function(dataset, discr,
         }
     }
   }
-  
+
   # Create the return object 'CV.fit'
   CV.fit <- list("cv.maxsteps"=CV.maxsteps,
                  "cv.nsteps"=CV.nsteps,
@@ -574,71 +574,76 @@ plot_profile <- function(peelobj,
                          add.sd=TRUE, add.legend=TRUE, add.profiles=TRUE,
                          pch=20, col=1, lty=1, lwd=2, cex=2, ...) {
 
-  if (is.null(peelobj$cvcriterion)) {
-    cat("No CV here, so no cross-validated tuning profile to plot!\n")
-  } else {
-    if (peelobj$cvcriterion == "lhr") {
-      txt <- "LHR"
-      profiles <- peelobj$cvprofiles$lhr
-      ylim <- range(0, profiles, na.rm=TRUE)
-    } else if (peelobj$cvcriterion == "lrt") {
-      txt <- "LRT"
-      profiles <- peelobj$cvprofiles$lrt
-      ylim <- range(0, profiles, na.rm=TRUE)
-    } else if (peelobj$cvcriterion == "cer") {
-      txt <- "CER"
-      profiles <- peelobj$cvprofiles$cer
-      ylim <- range(0, 1, profiles, na.rm=TRUE)
+  if (peelobj$plot) {
+    if (is.null(peelobj$cvcriterion)) {
+      cat("No CV here, so no cross-validated tuning profile to plot!\n")
     } else {
-      stop("Invalid CV criterion.\n")
-    }
-
-    if ((!is.null(main)) && (add.legend)) {
-      par(mfrow=c(1, 1), oma=c(0, 0, 4, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
-    } else if ((is.null(main)) && (!add.legend)) {
-      par(mfrow=c(1, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 0.0, 1.5), mgp=c(1.5, 0.5, 0))
-    } else {
-      par(mfrow=c(1, 1), oma=c(0, 0, 1, 0), mar=c(2.5, 2.5, 1.0, 1.5), mgp=c(1.5, 0.5, 0))
-    }
-
-    Lm <- peelobj$cvfit$cv.maxsteps
-    mean.profile <- apply(profiles, 2, mean, na.rm=TRUE)
-    se.profile <- apply(profiles, 2, sd, na.rm=TRUE)
-
-    if (add.profiles) {
-      matplot(t(profiles), axes=FALSE, type="b",
-              xlab="", ylab="", main="", ylim=ylim,
-              pch=pch, lty=1, lwd=lwd/4, cex=cex/4)
-      par(new=TRUE)
-    }
-
-    plot(0:(Lm-1), mean.profile, axes=FALSE, type="b",
-         xlab=xlab, ylab=paste(txt ," ", ylab, sep=""), main=NULL, ylim=ylim,
-         pch=pch, col=col, lty=lty, lwd=lwd, cex=cex)
-    axis(side=1, pos=min(ylim), at=0:(Lm-1), labels=0:(Lm-1), cex.axis=1, line=NA)
-    axis(side=2, pos=0, at=pretty(ylim), cex.axis=1, line=NA)
-    segments(x0=peelobj$cvfit$cv.nsteps-1, y0=min(ylim), x1=peelobj$cvfit$cv.nsteps-1, y1=mean.profile[peelobj$cvfit$cv.nsteps], col=col, lty=2, lwd=lwd)
-
-    if (add.sd) {
-      arrows(0:(Lm-1), mean.profile, 0:(Lm-1), mean.profile - se.profile, length=0.1, angle=90, code=2, col=col, lwd=lwd)
-      arrows(0:(Lm-1), mean.profile, 0:(Lm-1), mean.profile + se.profile, length=0.1, angle=90, code=2, col=col, lwd=lwd)
-    }
-
-    if (!is.null(main)) {
-      if (add.legend) {
-        title(main=main, xlab="", ylab="", line=3, outer=FALSE, xpd=TRUE)
-        legend("top", xpd=TRUE, inset=-0.1, legend=c("Sample Mean", "Std. Error"), pch=pch, col=col, lty=lty, lwd=lwd, cex=0.6, pt.cex=cex/2)
+      if (peelobj$cvcriterion == "lhr") {
+        txt <- "LHR"
+        profiles <- peelobj$cvprofiles$lhr
+        ylim <- range(0, profiles, na.rm=TRUE)
+      } else if (peelobj$cvcriterion == "lrt") {
+        txt <- "LRT"
+        profiles <- peelobj$cvprofiles$lrt
+        ylim <- range(0, profiles, na.rm=TRUE)
+      } else if (peelobj$cvcriterion == "cer") {
+        txt <- "CER"
+        profiles <- peelobj$cvprofiles$cer
+        ylim <- range(0, 1, profiles, na.rm=TRUE)
       } else {
-        title(main=main, xlab="", ylab="", line=1, outer=FALSE, xpd=TRUE)
+        stop("Invalid CV criterion.\n")
       }
-    } else {
-      if (add.legend) {
-        legend("top", xpd=TRUE, inset=0, legend=c("Sample Mean", "Std. Error"), pch=pch, col=col, lty=lty, lwd=lwd, cex=0.6, pt.cex=cex/2)
+
+      if ((!is.null(main)) && (add.legend)) {
+        par(mfrow=c(1, 1), oma=c(0, 0, 4, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
+      } else if ((is.null(main)) && (!add.legend)) {
+        par(mfrow=c(1, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 0.0, 1.5), mgp=c(1.5, 0.5, 0))
+      } else {
+        par(mfrow=c(1, 1), oma=c(0, 0, 1, 0), mar=c(2.5, 2.5, 1.0, 1.5), mgp=c(1.5, 0.5, 0))
+      }
+
+      Lm <- peelobj$cvfit$cv.maxsteps
+      mean.profile <- apply(profiles, 2, mean, na.rm=TRUE)
+      se.profile <- apply(profiles, 2, sd, na.rm=TRUE)
+
+      if (add.profiles) {
+        matplot(t(profiles), axes=FALSE, type="b",
+                xlab="", ylab="", main="", ylim=ylim,
+                pch=pch, lty=1, lwd=lwd/4, cex=cex/4)
+        par(new=TRUE)
+      }
+
+      plot(0:(Lm-1), mean.profile, axes=FALSE, type="b",
+           xlab=xlab, ylab=paste(txt ," ", ylab, sep=""), main=NULL, ylim=ylim,
+           pch=pch, col=col, lty=lty, lwd=lwd, cex=cex)
+      axis(side=1, pos=min(ylim), at=0:(Lm-1), labels=0:(Lm-1), cex.axis=1, line=NA)
+      axis(side=2, pos=0, at=pretty(ylim), cex.axis=1, line=NA)
+      segments(x0=peelobj$cvfit$cv.nsteps-1, y0=min(ylim), x1=peelobj$cvfit$cv.nsteps-1, y1=mean.profile[peelobj$cvfit$cv.nsteps], col=col, lty=2, lwd=lwd)
+
+      if (add.sd) {
+        arrows(0:(Lm-1), mean.profile, 0:(Lm-1), mean.profile - se.profile, length=0.1, angle=90, code=2, col=col, lwd=lwd)
+        arrows(0:(Lm-1), mean.profile, 0:(Lm-1), mean.profile + se.profile, length=0.1, angle=90, code=2, col=col, lwd=lwd)
+      }
+
+      if (!is.null(main)) {
+        if (add.legend) {
+          title(main=main, xlab="", ylab="", line=3, outer=FALSE, xpd=TRUE)
+          legend("top", xpd=TRUE, inset=-0.1, legend=c("Sample Mean", "Std. Error"), pch=pch, col=col, lty=lty, lwd=lwd, cex=0.6, pt.cex=cex/2)
+        } else {
+          title(main=main, xlab="", ylab="", line=1, outer=FALSE, xpd=TRUE)
+        }
+      } else {
+        if (add.legend) {
+          legend("top", xpd=TRUE, inset=0, legend=c("Sample Mean", "Std. Error"), pch=pch, col=col, lty=lty, lwd=lwd, cex=0.6, pt.cex=cex/2)
+        }
       }
     }
+  } else {
+    cat("Either the regularized Cox regression modeling or the Survival Bump Hunting modeling failed for this dataset.\n
+        So, there is nothing plot here.\n")
   }
-
   invisible()
+
 }
 ##########################################################################################################################################
 
@@ -692,61 +697,66 @@ plot_scatter <- function(peelobj,
                          proj=c(1,2), splom=TRUE, boxes=FALSE, steps=peelobj$cvfit$cv.nsteps,
                          add.legend=TRUE, pch=16, cex=0.7, col=1, box.col=2, box.lty=2, box.lwd=1, ...) {
 
-  if ((!is.null(main)) && (add.legend)) {
-    par(mfrow=c(1, 1), oma=c(0, 0, 4, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
-  } else if ((is.null(main)) && (!add.legend)) {
-    par(mfrow=c(1, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 0.0, 1.5), mgp=c(1.5, 0.5, 0))
-  } else {
-    par(mfrow=c(1, 1), oma=c(0, 0, 1, 0), mar=c(2.5, 2.5, 1.0, 1.5), mgp=c(1.5, 0.5, 0))
-  }
-
-  x <- peelobj$x[,proj]
-  x.names <- colnames(x)
-  L <- length(steps)
-  if (length(box.col) < L) box.col <- rep(box.col, length=L)
-  if (length(box.lty) < L) box.lty <- rep(box.lty, length=L)
-  if (length(box.lwd) < L) box.lwd <- rep(box.lwd, length=L)
-
-  eqscplot(x, type="p", main=NULL, xlab=x.names[1], ylab=x.names[2], ...)
-
-  if (splom) {
-    for (i in 1:L) {
-      w <- peelobj$cvfit$cv.boxind[steps[i],]
-      points(peelobj$x[w,proj], type="p", pch=pch, cex=cex, col=box.col, ...)
+  if (peelobj$plot) {
+    if ((!is.null(main)) && (add.legend)) {
+      par(mfrow=c(1, 1), oma=c(0, 0, 4, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
+    } else if ((is.null(main)) && (!add.legend)) {
+      par(mfrow=c(1, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 0.0, 1.5), mgp=c(1.5, 0.5, 0))
+    } else {
+      par(mfrow=c(1, 1), oma=c(0, 0, 1, 0), mar=c(2.5, 2.5, 1.0, 1.5), mgp=c(1.5, 0.5, 0))
     }
-  }
 
-  if (boxes) {
-    x.range <- apply(X=x, MARGIN=2, FUN=range)
-    boxcut <- peelobj$cvfit$cv.rules$mean[steps,proj,drop=FALSE]
-    varsign <- peelobj$varsign[proj]
-    vertices <- vector(mode="list", length=L)
-    for (i in 1:L) {
-      vertices[[i]] <- matrix(data=NA, nrow=2, ncol=2, dimnames=list(c("LB","UB"), x.names))
-      for (j in 1:2) {
-        vertices[[i]][1,j] <- ifelse(test=(varsign[j] > 0),
-                                     yes=max(x.range[1,j], boxcut[i,j]),
-                                     no=min(x.range[1,j], boxcut[i,j]))
-        vertices[[i]][2,j] <- ifelse(test=(varsign[j] < 0),
-                                     yes=min(x.range[2,j], boxcut[i,j]),
-                                     no=max(x.range[2,j], boxcut[i,j]))
+    x <- peelobj$x[,proj]
+    x.names <- colnames(x)
+    L <- length(steps)
+    if (length(box.col) < L) box.col <- rep(box.col, length=L)
+    if (length(box.lty) < L) box.lty <- rep(box.lty, length=L)
+    if (length(box.lwd) < L) box.lwd <- rep(box.lwd, length=L)
+
+    eqscplot(x, type="p", main=NULL, xlab=x.names[1], ylab=x.names[2], ...)
+
+    if (splom) {
+      for (i in 1:L) {
+        w <- peelobj$cvfit$cv.boxind[steps[i],]
+        points(peelobj$x[w,proj], type="p", pch=pch, cex=cex, col=box.col, ...)
       }
     }
-    for (i in 1:L) {
-      rect(vertices[[i]][1,1], vertices[[i]][1,2], vertices[[i]][2,1], vertices[[i]][2,2], border=box.col[i], col=NA, lty=box.lty[i], lwd=box.lwd[i])
+
+    if (boxes) {
+      x.range <- apply(X=x, MARGIN=2, FUN=range)
+      boxcut <- peelobj$cvfit$cv.rules$mean[steps,proj,drop=FALSE]
+      varsign <- peelobj$varsign[proj]
+      vertices <- vector(mode="list", length=L)
+      for (i in 1:L) {
+        vertices[[i]] <- matrix(data=NA, nrow=2, ncol=2, dimnames=list(c("LB","UB"), x.names))
+        for (j in 1:2) {
+          vertices[[i]][1,j] <- ifelse(test=(varsign[j] > 0),
+                                       yes=max(x.range[1,j], boxcut[i,j]),
+                                       no=min(x.range[1,j], boxcut[i,j]))
+          vertices[[i]][2,j] <- ifelse(test=(varsign[j] < 0),
+                                       yes=min(x.range[2,j], boxcut[i,j]),
+                                       no=max(x.range[2,j], boxcut[i,j]))
+        }
+      }
+      for (i in 1:L) {
+        rect(vertices[[i]][1,1], vertices[[i]][1,2], vertices[[i]][2,1], vertices[[i]][2,2], border=box.col[i], col=NA, lty=box.lty[i], lwd=box.lwd[i])
+      }
     }
-  }
 
-  if (!is.null(main)) {
-    title(main=main, xlab="", ylab="", line=1, outer=FALSE, xpd=TRUE)
-  }
+    if (!is.null(main)) {
+      title(main=main, xlab="", ylab="", line=1, outer=FALSE, xpd=TRUE)
+    }
 
-  if (add.legend) {
-    legend("topleft", xpd=TRUE, inset=0.01, legend=paste("Steps: ", steps, sep=""), col=col, cex=cex)
-    legend("topright", inset=0.01, legend=c("outbox", "inbox"), pch=c(pch,pch), col=c(col,box.col), cex=cex)
+    if (add.legend) {
+      legend("topleft", xpd=TRUE, inset=0.01, legend=paste("Steps: ", steps, sep=""), col=col, cex=cex)
+      legend("topright", inset=0.01, legend=c("outbox", "inbox"), pch=c(pch,pch), col=c(col,box.col), cex=cex)
+    }
+  } else {
+    cat("Either the regularized Cox regression modeling or the Survival Bump Hunting modeling failed for this dataset.\n
+        So, there is nothing plot here.\n")
   }
-
   invisible()
+
 }
 ##########################################################################################################################################
 
@@ -799,84 +809,91 @@ plot_boxtraj <- function(peelobj,
                          add.legend=FALSE, text.legend=NULL,
                          nr=NULL, nc=NULL, ...) {
 
-  used <- peelobj$used
-  p <- length(used)
-  varnames <- colnames(peelobj$x)
+  if (peelobj$plot) {
+    used <- peelobj$used
+    p <- length(used)
+    varnames <- colnames(peelobj$x)
 
-  if (is.null(nc))
-    nc <- 3
-  if (is.null(nr)) {
-    if (p %% nc == 0) {
-      nr <- p%/%nc + 2
-    } else {
-      nr <- ((p+(1:nc))[which((p+(1:nc)) %% nc == 0)])%/%nc + 2
+    if (is.null(nc))
+      nc <- 3
+    if (is.null(nr)) {
+      if (p %% nc == 0) {
+        nr <- p%/%nc + 2
+      } else {
+        nr <- ((p+(1:nc))[which((p+(1:nc)) %% nc == 0)])%/%nc + 2
+      }
     }
-  }
 
-  if (!is.null(main)) {
-    par(mfrow=c(nr, nc), oma=c(0, 0, 2, 0), mar=c(2.5, 2.5, 2.0, 1.5), mgp=c(1.5, 0.5, 0))
-  } else {
-    par(mfrow=c(nr, nc), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 0.0, 1.5), mgp=c(1.5, 0.5, 0))
-  }
+    if (!is.null(main)) {
+      par(mfrow=c(nr, nc), oma=c(0, 0, 2, 0), mar=c(2.5, 2.5, 2.0, 1.5), mgp=c(1.5, 0.5, 0))
+    } else {
+      par(mfrow=c(nr, nc), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 0.0, 1.5), mgp=c(1.5, 0.5, 0))
+    }
 
-  for (j in used) {
-    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.rules$mean[,j], type='s', col=col, lty=lty,
-         main=paste(varnames[j], " variable trajectory", sep=""),
-         xlim=range(0,1), ylim=range(peelobj$x[,j], na.rm=TRUE),
-         xlab=xlab, ylab=ylab, cex.main=cex)
+    for (j in used) {
+      plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.rules$mean[,j], type='s', col=col, lty=lty,
+           main=paste(varnames[j], " variable trajectory", sep=""),
+           xlim=range(0,1), ylim=range(peelobj$x[,j], na.rm=TRUE),
+           xlab=xlab, ylab=ylab, cex.main=cex)
+      if (add.legend)
+        legend("bottomleft", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
+    }
+
+    par(mfg=c(nr-1, 1))
+    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.support, type='s', col=col, lty=lty, lwd=lwd,
+         main="Box support trajectory",
+         xlim=range(0,1), ylim=range(0, 1),
+         xlab=xlab, ylab=expression(paste("Support (", beta, ")", sep="")), cex.main=cex)
     if (add.legend)
-      legend("bottomleft", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
+      legend("bottomright", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
+
+    par(mfg=c(nr-1, 2))
+    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.max.time.bar, type='s', col=col, lty=lty, lwd=lwd,
+         main="MEFT trajectory",
+         xlim=range(0,1), ylim=range(0, peelobj$cvfit$cv.stats$mean$cv.max.time.bar, na.rm=TRUE),
+         xlab=xlab, ylab="Time", cex.main=cex)
+    if (add.legend)
+      legend("bottomright", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
+
+    par(mfg=c(nr-1, 3))
+    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.min.prob.bar, type='s', col=col, lty=lty, lwd=lwd,
+         main="MEFP trajectory",
+         xlim=range(0,1), ylim=range(0,1),
+         xlab=xlab, ylab="Probability", cex.main=cex)
+    if (add.legend)
+      legend("bottomright", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
+
+    par(mfg=c(nr, 1))
+    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.lhr, type='s', col=col, lty=lty, lwd=lwd,
+         main="LHR trajectory", xlim=range(0,1), ylim=range(0, peelobj$cvfit$cv.stats$mean$cv.lhr, na.rm=TRUE),
+         xlab=xlab, ylab=expression(paste("Log-Hazard Ratio (", lambda,")", sep="")), cex.main=cex)
+    if (add.legend)
+      legend("top", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
+
+    par(mfg=c(nr, 2))
+    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.lrt, type='s', col=col, lty=lty, lwd=lwd,
+         main="LRT trajectory",
+         xlim=range(0,1), ylim=range(0, peelobj$cvfit$cv.stats$mean$cv.lrt, na.rm=TRUE),
+         xlab=xlab, ylab=expression(paste("Log-rank test (", chi^2 ,")", sep="")), cex.main=cex)
+    if (add.legend)
+      legend("top", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
+
+    par(mfg=c(nr, 3))
+    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.cer, type='s', col=col, lty=lty, lwd=lwd,
+         main="CER trajectory",
+         xlim=range(0,1), ylim=range(0, 1),
+         xlab=xlab, ylab=expression(paste("1-C (", theta,")", sep="")), cex.main=cex)
+    if (add.legend)
+      legend("top", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
+
+    mtext(text=main, cex=1, side=3, outer=TRUE)
+
+  } else {
+    cat("Either the regularized Cox regression modeling or the Survival Bump Hunting modeling failed for this dataset.\n
+        So, there is nothing plot here.\n")
   }
-
-  par(mfg=c(nr-1, 1))
-  plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.support, type='s', col=col, lty=lty, lwd=lwd,
-       main="Box support trajectory",
-       xlim=range(0,1), ylim=range(0, 1),
-       xlab=xlab, ylab=expression(paste("Support (", beta, ")", sep="")), cex.main=cex)
-  if (add.legend)
-    legend("bottomright", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
-
-  par(mfg=c(nr-1, 2))
-  plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.max.time.bar, type='s', col=col, lty=lty, lwd=lwd,
-       main="MEFT trajectory",
-       xlim=range(0,1), ylim=range(0, peelobj$cvfit$cv.stats$mean$cv.max.time.bar, na.rm=TRUE),
-       xlab=xlab, ylab="Time", cex.main=cex)
-  if (add.legend)
-    legend("bottomright", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
-
-  par(mfg=c(nr-1, 3))
-  plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.min.prob.bar, type='s', col=col, lty=lty, lwd=lwd,
-       main="MEFP trajectory",
-       xlim=range(0,1), ylim=range(0,1),
-       xlab=xlab, ylab="Probability", cex.main=cex)
-  if (add.legend)
-    legend("bottomright", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
-
-  par(mfg=c(nr, 1))
-  plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.lhr, type='s', col=col, lty=lty, lwd=lwd,
-       main="LHR trajectory", xlim=range(0,1), ylim=range(0, peelobj$cvfit$cv.stats$mean$cv.lhr, na.rm=TRUE),
-       xlab=xlab, ylab=expression(paste("Log-Hazard Ratio (", lambda,")", sep="")), cex.main=cex)
-  if (add.legend)
-    legend("top", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
-
-  par(mfg=c(nr, 2))
-  plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.lrt, type='s', col=col, lty=lty, lwd=lwd,
-       main="LRT trajectory",
-       xlim=range(0,1), ylim=range(0, peelobj$cvfit$cv.stats$mean$cv.lrt, na.rm=TRUE),
-       xlab=xlab, ylab=expression(paste("Log-rank test (", chi^2 ,")", sep="")), cex.main=cex)
-  if (add.legend)
-    legend("top", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
-
-  par(mfg=c(nr, 3))
-  plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.cer, type='s', col=col, lty=lty, lwd=lwd,
-       main="CER trajectory",
-       xlim=range(0,1), ylim=range(0, 1),
-       xlab=xlab, ylab=expression(paste("1-C (", theta,")", sep="")), cex.main=cex)
-  if (add.legend)
-    legend("top", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
-
-  mtext(text=main, cex=1, side=3, outer=TRUE)
   invisible()
+
 }
 ##########################################################################################################################################
 
@@ -930,46 +947,53 @@ plot_boxtrace <- function(peelobj,
                           col=1, lty=1, lwd=1, cex=1,
                           add.legend=FALSE, text.legend=NULL, ...) {
 
-  used <- peelobj$used
-  p <- length(used)
-  varnames <- colnames(peelobj$x)
-  maxtick <- max(used)
-  ticknames <- rep("", maxtick)
-  ticknames[used] <- paste(varnames[used], " -", sep="")
+  if (peelobj$plot) {
+    used <- peelobj$used
+    p <- length(used)
+    varnames <- colnames(peelobj$x)
+    maxtick <- max(used)
+    ticknames <- rep("", maxtick)
+    ticknames[used] <- paste(varnames[used], " -", sep="")
 
-  if (!is.null(main)) {
-    par(mfrow=c(2, 1), oma=c(0, 0, 2, 0), mar=c(2.5, 4.0, 2.0, 0.0), mgp=c(1.5, 0.5, 0))
+    if (!is.null(main)) {
+      par(mfrow=c(2, 1), oma=c(0, 0, 2, 0), mar=c(2.5, 4.0, 2.0, 0.0), mgp=c(1.5, 0.5, 0))
+    } else {
+      par(mfrow=c(2, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 4.0, 0.0, 0.0), mgp=c(1.5, 0.5, 0))
+    }
+
+    boxcut.scaled <- scale(x=peelobj$cvfit$cv.rules$mean, center=center, scale=scale)
+    plot(peelobj$cvfit$cv.stats$mean$cv.support, boxcut.scaled[,1], type='n',
+         xlim=range(0,1), ylim=range(boxcut.scaled, hline),
+         main="Variable Importance", xlab="", ylab="", cex.main=cex)
+    for (j in used) {
+      lines(peelobj$cvfit$cv.stats$mean$cv.support, boxcut.scaled[,j], type='l', col=col[j], lty=lty[j], lwd=lwd[j])
+      abline(h=hline[j], lty=1, col=1, lwd=0.3, xpd=FALSE)
+      legend("top", inset=0.01, legend=varnames[used], lty=lty, col=col, lwd=lwd, cex=0.5*cex)
+    }
+    if (add.legend)
+      legend("bottom", inset=0.01, legend=text.legend, lty=lty[1], col=1, lwd=lwd[1], cex=0.5*cex)
+    mtext(text="Box Mass", cex=cex, side=1, line=1, outer=FALSE)
+    mtext(text="Variable Range", cex=cex, side=2, line=2, outer=FALSE)
+
+    plot(peelobj$cvfit$cv.stats$mean$cv.support[-peelobj$cvfit$cv.nsteps], peelobj$cvfit$cv.trace$mode[-1],
+         type='s', yaxt="n", col=1, lty=lty[1], lwd=lwd[1],
+         xlim=range(0,1), ylim=range(0, maxtick),
+         main="Variable Usage", xlab="", ylab="", cex.main=cex)
+    par(mgp=c(1.5, 0, 0))
+    axis(side=2, at=1:maxtick, labels=ticknames, tick=FALSE, las=1, line=NA, cex.axis=0.5*cex, outer=FALSE)
+    if (add.legend)
+      legend("bottom", inset=0.01, legend=text.legend, lty=lty[1], col=1, lwd=lwd[1], cex=0.5*cex)
+    mtext(text="Box Mass", cex=cex, side=1, line=1, outer=FALSE)
+    mtext(text="Variables Used", cex=cex, side=2, line=3, outer=FALSE)
+
+    mtext(text=main, cex=1, side=3, outer=TRUE)
+
   } else {
-    par(mfrow=c(2, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 4.0, 0.0, 0.0), mgp=c(1.5, 0.5, 0))
+    cat("Either the regularized Cox regression modeling or the Survival Bump Hunting modeling failed for this dataset.\n
+        So, there is nothing plot here.\n")
   }
-
-  boxcut.scaled <- scale(x=peelobj$cvfit$cv.rules$mean, center=center, scale=scale)
-  plot(peelobj$cvfit$cv.stats$mean$cv.support, boxcut.scaled[,1], type='n',
-       xlim=range(0,1), ylim=range(boxcut.scaled, hline),
-       main="Variable Importance", xlab="", ylab="", cex.main=cex)
-  for (j in used) {
-    lines(peelobj$cvfit$cv.stats$mean$cv.support, boxcut.scaled[,j], type='l', col=col[j], lty=lty[j], lwd=lwd[j])
-    abline(h=hline[j], lty=1, col=1, lwd=0.3, xpd=FALSE)
-    legend("top", inset=0.01, legend=varnames[used], lty=lty, col=col, lwd=lwd, cex=0.5*cex)
-  }
-  if (add.legend)
-    legend("bottom", inset=0.01, legend=text.legend, lty=lty[1], col=1, lwd=lwd[1], cex=0.5*cex)
-  mtext(text="Box Mass", cex=cex, side=1, line=1, outer=FALSE)
-  mtext(text="Variable Range", cex=cex, side=2, line=2, outer=FALSE)
-
-  plot(peelobj$cvfit$cv.stats$mean$cv.support[-peelobj$cvfit$cv.nsteps], peelobj$cvfit$cv.trace$mode[-1],
-       type='s', yaxt="n", col=1, lty=lty[1], lwd=lwd[1],
-       xlim=range(0,1), ylim=range(0, maxtick),
-       main="Variable Usage", xlab="", ylab="", cex.main=cex)
-  par(mgp=c(1.5, 0, 0))
-  axis(side=2, at=1:maxtick, labels=ticknames, tick=FALSE, las=1, line=NA, cex.axis=0.5*cex, outer=FALSE)
-  if (add.legend)
-    legend("bottom", inset=0.01, legend=text.legend, lty=lty[1], col=1, lwd=lwd[1], cex=0.5*cex)
-  mtext(text="Box Mass", cex=cex, side=1, line=1, outer=FALSE)
-  mtext(text="Variables Used", cex=cex, side=2, line=3, outer=FALSE)
-
-  mtext(text=main, cex=1, side=3, outer=TRUE)
   invisible()
+
 }
 ##########################################################################################################################################
 
@@ -1025,94 +1049,100 @@ plot_boxkm <- function(peelobj,
                        precision, mark=3, col=1, lty=1, lwd=1, cex=1,
                        only.last=FALSE, nr=NULL, nc=NULL, ...) {
 
-  # set default values for missing parameters
-  if (missing(precision)) {
-    precision <- 1/peelobj$A
-  }
-  if (missing(mark) || length(mark) == 1) {
-    mark <- c(mark, mark+1)
-  }
-  if (missing(col) || length(col) == 1) {
-    col <- c(col, col+1)
-  }
-  if (missing(lty) || length(lty) == 1) {
-    lty <- c(lty, lty+1)
-  }
-
-  used <- peelobj$used
-  p <- length(used)
-
-  if (is.null(nc))
-    nc <- 4
-  if (is.null(nr)) {
-    if (p %% nc == 0) {
-      nr <- p%/%nc + 2
-    } else {
-      nr <- ((p+(1:nc))[which((p+(1:nc)) %% nc == 0)])%/%nc + 2
+  if (peelobj$plot) {
+    # set default values for missing parameters
+    if (missing(precision)) {
+      precision <- 1/peelobj$A
     }
-  }
-
-  times <- peelobj$times
-  status <- peelobj$status
-  L <- peelobj$cvfit$cv.nsteps
-
-  if (only.last) {
-    steps <- L
-  } else {
-    steps <- 1:L
-    if (!is.null(main)) {
-      par(mfrow=c(nr, nc), oma=c(0, 0, 2, 0), mar=c(2.5, 2.5, 1.5, 1.5), mgp=c(1.5, 0.5, 0))
-    } else {
-      par(mfrow=c(nr, nc), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 0.0, 1.5), mgp=c(1.5, 0.5, 0))
+    if (missing(mark) || length(mark) == 1) {
+      mark <- c(mark, mark+1)
     }
-  }
+    if (missing(col) || length(col) == 1) {
+      col <- c(col, col+1)
+    }
+    if (missing(lty) || length(lty) == 1) {
+      lty <- c(lty, lty+1)
+    }
 
-  for (l in steps) {
-    boxind <- peelobj$cvfit$cv.boxind[l,]
-    ng <- length(unique(boxind[!is.na(boxind)]))
-    if (ng == 1) {
-      boxind <- 1*boxind
-    } else {
-      boxind <- 2 - 1*boxind
-    }
-    surv <- survfit(Surv(times, status) ~ 1 + boxind)
-    if (l == 1) {
-      plot(surv, main="", conf.int=TRUE, mark.time=TRUE, lty=2, col=2, xlab=xlab, ylab=ylab, cex=cex, ...)
-      par(new=TRUE)
-      plot(surv, main="", conf.int=FALSE, mark.time=TRUE, lty=1, col=2, xlab=xlab, ylab=ylab, cex=cex, ...)
-    } else {
-      plot(surv, main="", conf.int=TRUE, mark.time=TRUE, lty=c(2,2), col=c(2,1), xlab=xlab, ylab=ylab, cex=cex, ...)
-      par(new=TRUE)
-      plot(surv, main="", conf.int=FALSE, mark.time=TRUE, lty=c(1,1), col=c(2,1), xlab=xlab, ylab=ylab, cex=cex, ...)
-    }
-    legend("topright", inset=0.01, legend=c("outbox", "inbox"), lty=c(1,1), col=c(1,2), cex=0.9*cex)
-    if (peelobj$cpv) {
-      if (peelobj$cvfit$cv.pval[l] <= precision) {
-        legend("bottom", inset=0.11, col="black", cex=0.9*cex, bty="n",
-               legend=bquote(italic(p) <= .(precision)))
+    used <- peelobj$used
+    p <- length(used)
+
+    if (is.null(nc))
+      nc <- 4
+    if (is.null(nr)) {
+      if (p %% nc == 0) {
+        nr <- p%/%nc + 2
       } else {
-        legend("bottom", inset=0.11, col="black", cex=0.9*cex, bty="n",
-               legend=bquote(italic(p) == .(format(x=peelobj$cvfit$cv.pval[l], scientific=FALSE, digits=4, nsmall=4))))
+        nr <- ((p+(1:nc))[which((p+(1:nc)) %% nc == 0)])%/%nc + 2
       }
     }
-    legend("bottom", inset=0.01, col="black", cex=0.9*cex, bty="n",
-           legend=substitute(group("", list(paste(italic(LHR) == x, sep="")), ""), list(x=format(x=peelobj$cvfit$cv.stats$mean$cv.lhr[l], digits=3, nsmall=3))))
-    legend("bottom", inset=0.06, col="black", cex=0.9*cex, bty="n",
-           legend=substitute(group("", list(paste(italic(LRT) == x, sep="")), ""), list(x=format(x=peelobj$cvfit$cv.stats$mean$cv.lrt[l], digits=3, nsmall=3))))
-    legend("bottom", inset=0.16, legend=paste("Step ", l-1, sep=""), col=1, cex=0.9*cex, bty="n")
-  }
 
-  if (only.last) {
-    if (!is.null(main)) {
-      mtext(text=main, cex=cex, side=3, line=1, outer=FALSE)
+    times <- peelobj$times
+    status <- peelobj$status
+    L <- peelobj$cvfit$cv.nsteps
+
+    if (only.last) {
+      steps <- L
+    } else {
+      steps <- 1:L
+      if (!is.null(main)) {
+        par(mfrow=c(nr, nc), oma=c(0, 0, 2, 0), mar=c(2.5, 2.5, 1.5, 1.5), mgp=c(1.5, 0.5, 0))
+      } else {
+        par(mfrow=c(nr, nc), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 0.0, 1.5), mgp=c(1.5, 0.5, 0))
+      }
     }
+
+    for (l in steps) {
+      boxind <- peelobj$cvfit$cv.boxind[l,]
+      ng <- length(unique(boxind[!is.na(boxind)]))
+      if (ng == 1) {
+        boxind <- 1*boxind
+      } else {
+        boxind <- 2 - 1*boxind
+      }
+      surv <- survfit(Surv(times, status) ~ 1 + boxind)
+      if (l == 1) {
+        plot(surv, main="", conf.int=TRUE, mark.time=TRUE, lty=2, col=2, xlab=xlab, ylab=ylab, cex=cex, ...)
+        par(new=TRUE)
+        plot(surv, main="", conf.int=FALSE, mark.time=TRUE, lty=1, col=2, xlab=xlab, ylab=ylab, cex=cex, ...)
+      } else {
+        plot(surv, main="", conf.int=TRUE, mark.time=TRUE, lty=c(2,2), col=c(2,1), xlab=xlab, ylab=ylab, cex=cex, ...)
+        par(new=TRUE)
+        plot(surv, main="", conf.int=FALSE, mark.time=TRUE, lty=c(1,1), col=c(2,1), xlab=xlab, ylab=ylab, cex=cex, ...)
+      }
+      legend("topright", inset=0.01, legend=c("outbox", "inbox"), lty=c(1,1), col=c(1,2), cex=0.9*cex)
+      if (peelobj$cpv) {
+        if (peelobj$cvfit$cv.pval[l] <= precision) {
+          legend("bottom", inset=0.11, col="black", cex=0.9*cex, bty="n",
+                 legend=bquote(italic(p) <= .(precision)))
+        } else {
+          legend("bottom", inset=0.11, col="black", cex=0.9*cex, bty="n",
+                 legend=bquote(italic(p) == .(format(x=peelobj$cvfit$cv.pval[l], scientific=FALSE, digits=4, nsmall=4))))
+        }
+      }
+      legend("bottom", inset=0.01, col="black", cex=0.9*cex, bty="n",
+             legend=substitute(group("", list(paste(italic(LHR) == x, sep="")), ""), list(x=format(x=peelobj$cvfit$cv.stats$mean$cv.lhr[l], digits=3, nsmall=3))))
+      legend("bottom", inset=0.06, col="black", cex=0.9*cex, bty="n",
+             legend=substitute(group("", list(paste(italic(LRT) == x, sep="")), ""), list(x=format(x=peelobj$cvfit$cv.stats$mean$cv.lrt[l], digits=3, nsmall=3))))
+      legend("bottom", inset=0.16, legend=paste("Step ", l-1, sep=""), col=1, cex=0.9*cex, bty="n")
+    }
+
+    if (only.last) {
+      if (!is.null(main)) {
+        mtext(text=main, cex=cex, side=3, line=1, outer=FALSE)
+      }
+    } else {
+      if (!is.null(main)) {
+        mtext(text=main, cex=cex, side=3, outer=TRUE)
+      }
+    }
+
   } else {
-    if (!is.null(main)) {
-      mtext(text=main, cex=cex, side=3, outer=TRUE)
-    }
+    cat("Either the regularized Cox regression modeling or the Survival Bump Hunting modeling failed for this dataset.\n
+        So, there is nothing plot here.\n")
   }
-
   invisible()
+
 }
 ##########################################################################################################################################
 
