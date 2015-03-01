@@ -1,8 +1,8 @@
 ##########################################################################################################################################
-# PrimSRC
+# PRIMsrc
 ##########################################################################################################################################
 
-PrimSRC.news <- function(...) {
-    newsfile <- file.path(system.file(package="PrimSRC"), "NEWS")
+PRIMsrc.news <- function(...) {
+    newsfile <- file.path(system.file(package="PRIMsrc"), "NEWS")
     file.show(newsfile)
 }
