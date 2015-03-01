@@ -1,4 +1,4 @@
-export(PrimSRC.news,
+export(PRIMsrc.news,
        sbh,
        plot_boxkm,
        plot_boxtraj,
