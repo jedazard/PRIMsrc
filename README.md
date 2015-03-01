@@ -30,14 +30,14 @@ See also below on how to cite the package with the R command: citation("PRIMsrc"
 =========================
 Documentation and Manual: 
 =========================
-All the codes are in the R folder and a manual (PRIMsrc.pdf) details the end-user (and internal) functions. At this stage and for simplicity, there are only one end-user main function (sbh) and 5 end-user plotting functions (plot_****). There are 5 synthetic datasets and 2 real datasets available including low and high-dimensional situations (for p < n, p > and p >> n cases). See the "PrimSRC-package" introduction section of the manual for more details and examples of use.
+All the codes are in the R folder and a manual (PRIMsrc.pdf) details the end-user (and internal) functions. At this stage and for simplicity, there are only one end-user main function (sbh) and 5 end-user plotting functions (plot_****). There are 5 synthetic datasets and 2 real datasets available including low and high-dimensional situations (for p < n, p > and p >> n cases). See the "PRIMsrc-package" introduction section of the manual for more details and examples of use.
 
 =============
 Installation: 
 =============
-PrimSRC 0.4.0 was built under R version 3.0.2 (2013-09-25).
+PRIMsrc 0.5.0 was built under R version 3.0.2 (2013-09-25).
 Installation has been tested on Windows, Linux and Mac platforms.
-To install PrimSRC, simply type:
+To install PRIMsrc, simply type:
 
 library(devtools)
 
