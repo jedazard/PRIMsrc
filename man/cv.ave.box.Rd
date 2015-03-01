@@ -5,8 +5,8 @@
 \title{Internal Subroutine (never to be called by end-user)}
 
 \description{Internal Subroutine of:
-    \code{\link[PrimSRC]{cv.box.rep}} and
-    \code{\link[PrimSRC]{cv.null}}
+    \code{\link[PRIMsrc]{cv.box.rep}} and
+    \code{\link[PRIMsrc]{cv.null}}
 }
 
 \usage{

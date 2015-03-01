@@ -1,15 +1,15 @@
-\name{PrimSRC.news}
+\name{PRIMsrc.news}
 
-\alias{PrimSRC.news}
+\alias{PRIMsrc.news}
 
 \title{Function to Display the NEWS File}
 
 \description{
-    Function to display the log file of updates of the \pkg{PrimSRC} package.
+    Function to display the log file of updates of the \pkg{PRIMsrc} package.
 }
 
 \usage{
-    PrimSRC.news(...)
+    PRIMsrc.news(...)
 }
 
 \arguments{

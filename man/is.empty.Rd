@@ -6,10 +6,10 @@
 
 \description{
     Internal Subroutine of:
-    \code{\link[PrimSRC]{endpoints}}, 
-    \code{\link[PrimSRC]{list2array}}, 
-    \code{\link[PrimSRC]{list2mat}} and 
-    \code{\link[PrimSRC]{cbindlist}}. 
+    \code{\link[PRIMsrc]{endpoints}}, 
+    \code{\link[PRIMsrc]{list2array}}, 
+    \code{\link[PRIMsrc]{list2mat}} and 
+    \code{\link[PRIMsrc]{cbindlist}}. 
     Checks if object is empty. Represents the empty array, matrix, or vector of zero dimension or length. 
     Often returned by expressions and functions whose value is undefined.
     It returns a \code{ogical}: \code{TRUE} if its argument is empty and \code{FALSE} otherwise.

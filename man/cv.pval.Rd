@@ -5,7 +5,7 @@
 \title{Internal Subroutine (never to be called by end-user)}
 
 \description{Internal Subroutine of:
-    \code{\link[PrimSRC]{sbh}}
+    \code{\link[PRIMsrc]{sbh}}
 }
 
 \usage{

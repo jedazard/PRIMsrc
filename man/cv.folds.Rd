@@ -5,8 +5,8 @@
 \title{Internal Subroutine (never to be called by end-user)}
 
 \description{Internal Subroutine of:
-    \code{\link[PrimSRC]{cv.ave.fold}} and
-    \code{\link[PrimSRC]{cv.comb.fold}}
+    \code{\link[PRIMsrc]{cv.ave.fold}} and
+    \code{\link[PRIMsrc]{cv.comb.fold}}
 }
 
 \usage{

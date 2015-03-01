@@ -97,7 +97,7 @@
   It is required to use the parallelization and a hyperperformance cluster of workstations to run the computation of cross-validated p-values
   in the case of large \code{n} and/or large (\eqn{p > n}) or very large (\eqn{p >> n}) datasets.
   
-  To run a parallel session (and parallel RNG) of the PrimSRC procedures (\code{parallel}=\code{TRUE}), argument \code{conf}
+  To run a parallel session (and parallel RNG) of the PRIMsrc procedures (\code{parallel}=\code{TRUE}), argument \code{conf}
   is to be specified (i.e. non \code{NULL}). It must list the specifications of the folowing parameters for cluster configuration:
   "names", "cpus", "type", "homo", "verbose", "outfile". These match the arguments described in function \code{makeCluster}
   of the R package \pkg{parallel}. All fields are required to properly configure the cluster, except for "names" and "cpus",
@@ -217,24 +217,24 @@
 #===================================================
 # Loading the library and its dependencies
 #===================================================
-library("PrimSRC")
+library("PRIMsrc")
 
 \dontrun{
     #===================================================
-    # PrimSRC package news
+    # PRIMsrc package news
     #===================================================
-    PrimSRC.news()
+    PRIMsrc.news()
     
     #===================================================
-    # PrimSRC package citation
+    # PRIMsrc package citation
     #===================================================
-    citation("PrimSRC")
+    citation("PRIMsrc")
     
     #===================================================
     # Use of two synthetic and two real datasets
     # Use help for descriptions
     #===================================================
-    data("Synthetic.1", "Synthetic.5", "Real.1", "Real.2", package="PrimSRC")
+    data("Synthetic.1", "Synthetic.5", "Real.1", "Real.2", package="PRIMsrc")
     ?Synthetic.1
     ?Synthetic.5
     ?Real.1

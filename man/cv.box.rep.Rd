@@ -6,7 +6,7 @@
 
 \description{
     Internal Subroutine of:
-    \code{\link[PrimSRC]{sbh}}
+    \code{\link[PRIMsrc]{sbh}}
 }
 
 \usage{

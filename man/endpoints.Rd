@@ -5,8 +5,8 @@
 \title{Internal Subroutine (never to be called by end-user)}
 
 \description{Internal Subroutine of:
-    \code{\link[PrimSRC]{cv.ave.peel}} and
-    \code{\link[PrimSRC]{cv.comb.peel}}. 
+    \code{\link[PRIMsrc]{cv.ave.peel}} and
+    \code{\link[PRIMsrc]{cv.comb.peel}}. 
     Returns the maximum time value and the corresponding minimum survival probability
     for every box of the trajectory (box peeling sequence). Also returns the time value
     and/or the corresponding survival probability depending on what is specified by the user.

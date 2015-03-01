@@ -5,9 +5,9 @@
 \title{Internal Subroutine (never to be called by end-user)}
 
 \description{Internal Subroutine of:
-    \code{\link[PrimSRC]{sbh}}, 
-    \code{\link[PrimSRC]{cv.comb.box}} and 
-    \code{\link[PrimSRC]{cv.ave.box}}. 
+    \code{\link[PRIMsrc]{sbh}}, 
+    \code{\link[PRIMsrc]{cv.comb.box}} and 
+    \code{\link[PRIMsrc]{cv.ave.box}}. 
     Compute FUN element-wise on entries of a list of vectors (even of different lengths).
 }
 

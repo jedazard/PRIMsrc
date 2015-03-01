@@ -5,7 +5,7 @@
 \title{Internal Subroutine (never to be called by end-user)}
 
 \description{Internal Subroutine of:
-    \code{\link[PrimSRC]{cv.ave.box}}
+    \code{\link[PRIMsrc]{cv.ave.box}}
 }
 
 \usage{

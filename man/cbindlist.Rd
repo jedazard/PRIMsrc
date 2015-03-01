@@ -5,8 +5,8 @@
 \title{Internal Subroutine (never to be called by end-user)}
 
 \description{Internal Subroutine of:
-    \code{\link[PrimSRC]{cv.pval}} and
-    \code{\link[PrimSRC]{cv.comb.box}}.
+    \code{\link[PRIMsrc]{cv.pval}} and
+    \code{\link[PRIMsrc]{cv.comb.box}}.
     It is used to bind a list of matrices by columns (even of different number of rows)
     into a single matrix.
 }

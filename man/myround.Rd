@@ -6,7 +6,7 @@
 
 \description{
     Internal Subroutine of:
-    \code{\link[PrimSRC]{sbh}}. 
+    \code{\link[PRIMsrc]{sbh}}. 
     Go to the nearest digit rounding.
     Note that for rounding off a 0.5, the "go to the even digit" standard is NOT used here.
 }

@@ -6,8 +6,8 @@
 
 \description{
     Internal Subroutine of:
-    \code{\link[PrimSRC]{cv.ave.peel}} and 
-    \code{\link[PrimSRC]{cv.comb.peel}}.
+    \code{\link[PRIMsrc]{cv.ave.peel}} and 
+    \code{\link[PRIMsrc]{cv.comb.peel}}.
 }
 
 \usage{

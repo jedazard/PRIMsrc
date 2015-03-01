@@ -6,9 +6,9 @@
 
 \description{
     Internal Subroutine of:
-    \code{\link[PrimSRC]{sbh}}, 
-    \code{\link[PrimSRC]{cv.null}} and 
-    \code{\link[PrimSRC]{lapply.mat}}. 
+    \code{\link[PRIMsrc]{sbh}}, 
+    \code{\link[PRIMsrc]{cv.null}} and 
+    \code{\link[PRIMsrc]{lapply.mat}}. 
     Used to bind a list of vectors (even of different length) 
     by rows into a single matrix.
 }

@@ -5,8 +5,8 @@
 \title{Internal Subroutine (never to be called by end-user)}
 
 \description{Internal Subroutine of:
-    \code{\link[PrimSRC]{sbh}} and 
-    \code{\link[PrimSRC]{cv.comb.box}}. 
+    \code{\link[PRIMsrc]{sbh}} and 
+    \code{\link[PRIMsrc]{cv.comb.box}}. 
     Computes FUN element-wise on entries of a list of matrices (even of different row or column numbers).
 }
 

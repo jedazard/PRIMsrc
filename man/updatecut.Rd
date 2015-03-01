@@ -6,7 +6,7 @@
 
 \description{
     Internal Subroutine of:
-    \code{\link[PrimSRC]{peel.box}}
+    \code{\link[PRIMsrc]{peel.box}}
     Update the splitpoints in the calling function.
 }
 
