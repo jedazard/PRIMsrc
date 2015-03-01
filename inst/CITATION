@@ -1,4 +1,4 @@
-citHeader("To cite PrimSRC in publications use:")
+citHeader("To cite PRIMsrc in publications use:")
 
 titl <- paste(meta$Package, ":", meta$Title, sep=" ")
 year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
@@ -13,8 +13,8 @@ citEntry(entry       = "Manual",
          publisher   = "CRAN",
          year        = year,
          note        = vers,
-         url         = "http://cran.r-project.org/web/packages/PrimSRC/",
-         pdf         = "http://cran.r-project.org/web/packages/PrimSRC/PrimSRC.pdf",
+         url         = "http://cran.r-project.org/web/packages/PRIMsrc/",
+         pdf         = "http://cran.r-project.org/web/packages/PRIMsrc/PRIMsrc.pdf",
          textVersion = paste("Dazard J-E., Choe M., LeBlanc M. and Santana A. (", year ,"). ", titl, ", ", vers, ".", sep=""))
 
 citEntry(entry       = "Article",
