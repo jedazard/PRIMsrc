@@ -33,7 +33,7 @@ o RELEASE 0.4.0
 - Updated manual, version number.
 - Test build under 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2015-03-01
+Date   : 2015-03-03
 o RELEASE 0.5.0
 - Change of package name and GitHub repository name from PrimSRC to PRIMsrc.
 _ Added CRAN/GitHub subfolder doc for PDF documentation files (including manual and applied study abstract)
