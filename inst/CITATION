@@ -27,7 +27,8 @@ citEntry(entry       = "Article",
          number      = "4",
          pages       = "900-929",
          textVersion = "Dazard J-E. and Rao J.S. (2010).
-                        J. Comp Graph. Statistics, 19(4):900-92.")
+                        Local Sparse Bump Hunting
+				   J. Comp Graph. Statistics, 19(4):900-92.")
 
 citEntry(entry       = "Proceedings",
          title       = "Optimization of PRIM under Normality",
