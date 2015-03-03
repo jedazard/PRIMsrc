@@ -14,7 +14,9 @@
   plot_profile(peelobj,
                main = NULL, xlab = "Peeling Steps", ylab = "Mean Profiles",
                add.sd = TRUE, add.legend = TRUE, add.profiles = TRUE,
-               pch = 20, col = 1, lty = 1, lwd = 2, cex = 2, ...)
+               pch = 20, col = 1, lty = 1, lwd = 2, cex = 2,
+               device = NULL, file = "Profile Plot", path=getwd(), 
+               horizontal = FALSE, width = 8.5, height = 5, ...)
 }
 
 \arguments{
@@ -55,6 +57,25 @@
   }
   \item{cex}{
     Symbol expansion for all the profiles. Defaults to 2.
+  }
+  \item{device}{
+    Graphic display device in \{NULL, "PS", "PDF"\}. Defaults to NULL (standard output screen).
+    Currently implemented graphic display devices are "PS" (Postscript) or "PDF" (Portable Document Format).
+  }
+  \item{file}{
+    File name for output graphic. Defaults to "Profile Plot".
+  }
+  \item{path}{
+    Absolute path (without final (back)slash separator). Defaults to working directory path.
+  }
+  \item{horizontal}{
+    \code{Logical} scalar. Orientation of the printed image. Defaults to \code{FALSE}, that is potrait orientation.
+  }
+  \item{width}{
+    \code{Numeric} scalar. Width of the graphics region in inches. Defaults to 8.5.
+  }
+  \item{height}{
+    \code{Numeric} scalar. Height of the graphics region in inches. Defaults to 5.
   }
   \item{\dots}{
     Generic arguments passed to other plotting functions.
@@ -102,7 +123,7 @@
 }
 
 \note{
-  End-user plotiing function.
+  End-user plotting function.
 }
 
 \keyword{Exploratory Survival/Risk Analysis}
@@ -125,14 +146,13 @@ library("PRIMsrc")
     # Peeling criterion = LRT
     # Optimization criterion = LRT
     #=================================================================================
-    postscript(file=paste(getwd(), "/RCCV tuning profiles for model #1.ps", sep=""),
-               horizontal = FALSE, width = 8.5, height = 5)
     plot_profile(peelobj = CVCOMBREP.synt1, 
                  main = "RCCV tuning profiles for model #1",
                  xlab = "Peeling Steps", ylab = "Mean Profiles",
                  pch=20, col="black", lty=1, lwd=2, cex=2,
-                 add.sd = TRUE, add.legend = TRUE, add.profiles = TRUE)
-    dev.off()
+                 add.sd = TRUE, add.legend = TRUE, add.profiles = TRUE,
+                 device = NULL, file = "Profile Plot", path=getwd(),
+                 horizontal = FALSE, width = 8.5, height = 5)
 }
 
 }

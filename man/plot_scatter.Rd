@@ -15,7 +15,9 @@
                proj = c(1,2), splom = TRUE, boxes = FALSE,
                steps = peelobj$cvfit$cv.nsteps,
                add.legend = TRUE, pch = 16, cex = 0.7, col = 1, 
-               box.col = 2, box.lty = 2, box.lwd = 1, ...)
+               box.col = 2, box.lty = 2, box.lwd = 1,
+               device = NULL, file = "Scatter Plot", path=getwd(), 
+               horizontal = FALSE, width = 5, height = 5, ...)
 }
 
 \arguments{
@@ -58,6 +60,25 @@
   }
   \item{box.lwd}{
     Line width of box vertices. Defaults to 1.
+  }
+  \item{device}{
+    Graphic display device in \{NULL, "PS", "PDF"\}. Defaults to NULL (standard output screen).
+    Currently implemented graphic display devices are "PS" (Postscript) or "PDF" (Portable Document Format).
+  }
+  \item{file}{
+    File name for output graphic. Defaults to "Scatter Plot".
+  }
+  \item{path}{
+    Absolute path (without final (back)slash separator). Defaults to working directory path.
+  }
+  \item{horizontal}{
+    \code{Logical} scalar. Orientation of the printed image. Defaults to \code{FALSE}, that is potrait orientation.
+  }
+  \item{width}{
+    \code{Numeric} scalar. Width of the graphics region in inches. Defaults to 5.
+  }
+  \item{height}{
+    \code{Numeric} scalar. Height of the graphics region in inches. Defaults to 5.
   }
   \item{\dots}{
     Generic arguments passed to other plotting functions.
@@ -124,15 +145,14 @@ library("PRIMsrc")
     # Peeling criterion = LRT
     # Optimization criterion = LRT
     #=================================================================================
-    postscript(file=paste(getwd(), "/Scatterplot for model #1.ps", sep=""),
-               horizontal = FALSE, width = 5, height = 5)
     plot_scatter(peelobj=CVCOMBREP.synt1, 
                  main = paste("Scatter plot for model #1", sep=""),
                  proj = c(1,2), splom = TRUE, boxes = TRUE,
                  steps = CVCOMBREP.synt1$cvfit$cv.nsteps, 
                  add.legend = TRUE, cex = 0.5, 
-                 box.col = "red", box.lty = 3, box.lwd = 1)
-    dev.off()
+                 box.col = "red", box.lty = 3, box.lwd = 1,
+                 device = NULL, file = "Scatter Plot", path=getwd(),
+                 horizontal = FALSE, width = 5, height = 5)
 }
 
 }

@@ -14,7 +14,9 @@
                 main = NULL,
                 center = FALSE, scale = FALSE, hline = NULL,
                 col = 1, lty = 1, lwd = 1, cex = 1, 
-                add.legend = FALSE, text.legend = NULL, ...)
+                add.legend = FALSE, text.legend = NULL,
+                device = NULL, file = "Covariate Trace Plots", path=getwd(), 
+                horizontal = FALSE, width = 8.5, height = 8.5, ...)
 }
 
 \arguments{
@@ -51,6 +53,25 @@
   }
   \item{text.legend}{
     \code{Character} \code{vector} of legend content. Defaults to \code{NULL}.
+  }
+  \item{device}{
+    Graphic display device in \{NULL, "PS", "PDF"\}. Defaults to NULL (standard output screen).
+    Currently implemented graphic display devices are "PS" (Postscript) or "PDF" (Portable Document Format).
+  }
+  \item{file}{
+    File name for output graphic. Defaults to "Covariate Trace Plots".
+  }
+  \item{path}{
+    Absolute path (without final (back)slash separator). Defaults to working directory path.
+  }
+  \item{horizontal}{
+    \code{Logical} scalar. Orientation of the printed image. Defaults to \code{FALSE}, that is potrait orientation.
+  }
+  \item{width}{
+    \code{Numeric} scalar. Width of the graphics region in inches. Defaults to 8.5.
+  }
+  \item{height}{
+    \code{Numeric} scalar. Height of the graphics region in inches. Defaults to 8.5.
   }
   \item{\dots}{
     Generic arguments passed to other plotting functions.
@@ -125,15 +146,12 @@ library("PRIMsrc")
     # Peeling criterion = LRT
     # Optimization criterion = LRT
     #=================================================================================
-    if (CVCOMBREP.synt1$plot) {
-        postscript(file=paste(getwd(), "/RCCV trace plots for model #1.ps", sep=""),
-                   horizontal = FALSE, width = 8.5, height = 5)
-        plot_boxtrace(peelobj = CVCOMBREP.synt1,
-                      main = paste("RCCV trace plots for model #1", sep=""),
-                      center = TRUE, scale = FALSE, 
-                      hline = c(0,0,0), col = 2:4, lty = c(1,1,1))
-        dev.off()
-    }
+    plot_boxtrace(peelobj = CVCOMBREP.synt1,
+                  main = paste("RCCV trace plots for model #1", sep=""),
+                  center = TRUE, scale = FALSE, 
+                  hline = c(0,0,0), col = 2:4, lty = c(1,1,1),
+                  device = NULL, file = "Covariate Trace Plots", path=getwd(),
+                  horizontal = FALSE, width = 8.5, height = 8.5)
 }
 
 }

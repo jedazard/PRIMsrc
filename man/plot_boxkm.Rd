@@ -16,7 +16,9 @@
   plot_boxkm(peelobj,
              main = NULL, xlab = "Time", ylab = "Probability",
              precision, mark = 3, col = 1, lty = 1, lwd = 1, cex = 1,
-             only.last = FALSE, nr = NULL, nc = NULL, ...)
+             only.last = FALSE, nr = NULL, nc = NULL,
+             device = NULL, file = "Survival Plots", path=getwd(), 
+             horizontal = TRUE, width = 11.5, height = 8.5, ...)
 }
 
 \arguments{
@@ -49,7 +51,7 @@
     \code{Numeric} \code{vector} of values for line widths. Defaults to 1.
   }
   \item{cex}{
-    \code{Numeric} scalar specifying the size of the marks. Defults to 1.
+    \code{Numeric} scalar specifying the size of the marks. Defaults to 1.
   }
   \item{only.last}{
     \code{Logical} scalar defining whether only the last step of the peeling sequence should be plotted. Defaults to \code{FALSE}.
@@ -59,6 +61,25 @@
   }
   \item{nc}{
     \code{Integer} scalar of the number of columns in the plot. If \code{NULL}, defaults to 4.
+  }
+  \item{device}{
+    Graphic display device in \{NULL, "PS", "PDF"\}. Defaults to NULL (standard output screen).
+    Currently implemented graphic display devices are "PS" (Postscript) or "PDF" (Portable Document Format).
+  }
+  \item{file}{
+    File name for output graphic. Defaults to "Survival Plots".
+  }
+  \item{path}{
+    Absolute path (without final (back)slash separator). Defaults to working directory path.
+  }
+  \item{horizontal}{
+    \code{Logical} scalar. Orientation of the printed image. Defaults to \code{TRUE}, that is potrait orientation.
+  }
+  \item{width}{
+    \code{Numeric} scalar. Width of the graphics region in inches. Defaults to 11.5.
+  }
+  \item{height}{
+    \code{Numeric} scalar. Height of the graphics region in inches. Defaults to 8.5.
   }
   \item{\dots}{
     Generic arguments passed to other plotting functions, including \code{plot.survfit} (R package \pkg{survival}).
@@ -133,13 +154,12 @@ library("PRIMsrc")
     # Peeling criterion = LRT
     # Optimization criterion = LRT
     #=================================================================================
-    postscript(file=paste(getwd(), "/RCCV probability curves for model #1.ps", sep=""),
-               horizontal = TRUE, width = 11.5, height = 8.5)
     plot_boxkm(peelobj = CVCOMBREP.synt1, 
                main = paste("RCCV probability curves for model #1", sep=""),
                xlab = "Time", ylab = "Probability",
-               cex = 1, yscale = 1, precision = 1/CVCOMBREP.synt1$A)
-    dev.off()
+               cex = 1, yscale = 1, precision = 1/CVCOMBREP.synt1$A,
+               device = NULL, file = "Survival Plots", path=getwd(),
+               horizontal = TRUE, width = 11.5, height = 8.5)
 }
 
 }

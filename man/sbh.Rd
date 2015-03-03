@@ -337,12 +337,11 @@ round(CVCOMBREP.real1$cvfit$cv.stats$mean,2)
 
 \dontrun{
     #===================================================
-    # Examples below with parallelization
-    # For cluster configuration:
-    #   1- WINDOWS multicore PC => use SOCKET communication
-    #   2- LINUX cluster        => use MPI    communication
-    #      Here, a file named ".nodes" (e.g. in the home directory)
-    #      must contain the list of nodes of the cluster
+    # Examples of parallelization below with 
+    # a SOCKET or MPI cluster configuration
+    #===================================================
+    # 1- WINDOWS multicores PC with SOCKET communication
+    #    With a 2-Quad (8-CPUs) PC
     #===================================================
     if (.Platform$OS.type == "windows") {
         cpus <- detectCores()
@@ -352,7 +351,33 @@ round(CVCOMBREP.real1$cvfit$cv.stats$mean,2)
                      "homo" = TRUE,
                      "verbose" = TRUE,
                      "outfile" = "")
-    } else if (.Platform$OS.type == "unix") {
+    }
+    #===================================================
+    # 2- LINUX multinodes cluster with SOCKET communication
+    #    with 4-nodes (32-CPUs) cluster
+    #    with 1 masternode and 3 workernodes
+    #    All hosts run identical setups
+    #    Same number of core CPUs (8) per node
+    #===================================================
+    if (.Platform$OS.type == "unix") {
+        masterhost <- Sys.getenv("HOSTNAME")
+        slavehosts <- c("compute-0-0", "compute-0-1", "compute-0-2")
+        nodes <- length(slavehosts) + 1
+        cpus <- 8
+        conf <- list("names" = c(rep(masterhost, cpus),
+                                 rep(slavehosts, cpus)),
+                     "cpus" = nodes * cpus,
+                     "type" = "SOCK",
+                     "homo" = TRUE,
+                     "verbose" = TRUE,
+                     "outfile" = "")
+    }
+    #===================================================
+    # 3- LINUX multinodes cluster with MPI communication
+    #    Here, a file named ".nodes" (e.g. in the home directory)
+    #    must contain the list of nodes of the cluster
+    #===================================================
+    if (.Platform$OS.type == "unix") {
         hosts <- scan(file=paste(Sys.getenv("HOME"), "/.nodes", sep=""), 
                       what="", 
                       sep="\n")
@@ -364,10 +389,8 @@ round(CVCOMBREP.real1$cvfit$cv.stats$mean,2)
                      "homo" = TRUE,
                      "verbose" = TRUE,
                      "outfile" = "")
-    } else {
-        warning("OS not recognized \n")
     }
-
+    
     #===================================================
     # Simulated dataset #1 (n=250, p=3)
     # Replicated Combined Cross-Validation (RCCV)
