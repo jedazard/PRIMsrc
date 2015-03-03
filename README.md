@@ -30,7 +30,7 @@ See also below on how to cite the package with the R command: citation("PRIMsrc"
 =========================
 Documentation and Manual: 
 =========================
-All the codes are in the R folder and a manual (PRIMsrc.pdf) details the end-user (and internal) functions. At this stage and for simplicity, there are only one end-user main function (sbh) and 5 end-user plotting functions (plot_****). There are 5 synthetic datasets and 2 real datasets available including low and high-dimensional situations (for p < n, p > and p >> n cases). See the "PRIMsrc-package" introduction section of the manual for more details and examples of use.
+All the codes are in the R folder and a manual (PRIMsrc.pdf) details the end-user functions. At this stage and for simplicity, there is a unique end-user main function for fitting a cross-validated survival bump hunting model (sbh). There are 5 end-user S3 plotting functions (plot.****). Available are also 5 synthetic datasets and 2 real datasets including altogether low and high-dimensional situations (for p < n, p > and p >> n cases). See the "PRIMsrc-package" introduction section of the manual for more details and examples.
 
 =============
 Installation: 
