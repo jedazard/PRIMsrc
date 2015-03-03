@@ -1,5 +1,5 @@
 ##########################################################################################################################################
-# PrimSRC
+# PRIMsrc
 ##########################################################################################################################################
 
 ##########################################################################################################################################
@@ -529,7 +529,9 @@ sbh <- function(dataset, discr,
 #                    plot_profile (peelobj,
 #                                  main=NULL, xlab="Peeling Steps", ylab="Mean Profiles",
 #                                  add.sd=TRUE, add.legend=TRUE, add.profiles=TRUE,
-#                                  pch=20, col=1, lty=1, lwd=2, cex=2, ...) {
+#                                  pch=20, col=1, lty=1, lwd=2, cex=2,
+#                                  device=NULL, file="Profile Plot", path=getwd(),
+#                                  horizontal=FALSE, width=8.5, height=5, ...) {
 #
 #
 ################
@@ -561,6 +563,13 @@ sbh <- function(dataset, discr,
 #                   If more than eight profiles are plotted, line colors will be recycled.
 # lty           :   Line type of the mean profile. Defaults to 1.
 # lwd           :   Line width of the mean profile. Defaults to 2.
+# device        :   Display device in {NULL, "PS", "PDF"}. Defaults to NULL (standard output screen).
+#                   Currently implemented display device are "PS" (Postscript) or "PDF" (Portable Document Format).
+# file          :   File name for outputting display device. Defaults to "Profile Plot".
+# path          :   Absolute path (without final (back)slash separator). Defaults to working directory path.
+# horizontal    :   Orientation of the printed image, a logical. Defaults to FALSE, that is potrait orientation.
+# width         :   Width of the graphics region in inches. Defaults to 8.5.
+# height        :   Height of the graphics region in inches. Defaults to 5.
 # ...           :   Generic arguments passed to other plotting functions.
 #
 ################
@@ -572,71 +581,111 @@ sbh <- function(dataset, discr,
 plot_profile <- function(peelobj,
                          main=NULL, xlab="Peeling Steps", ylab="Mean Profiles",
                          add.sd=TRUE, add.legend=TRUE, add.profiles=TRUE,
-                         pch=20, col=1, lty=1, lwd=2, cex=2, ...) {
+                         pch=20, col=1, lty=1, lwd=2, cex=2,
+                         device=NULL, file="Profile Plot", path=getwd(),
+                         horizontal=FALSE, width=8.5, height=5, ...) {
 
   if (peelobj$plot) {
     if (is.null(peelobj$cvcriterion)) {
       cat("No CV here, so no cross-validated tuning profile to plot!\n")
     } else {
-      if (peelobj$cvcriterion == "lhr") {
-        txt <- "LHR"
-        profiles <- peelobj$cvprofiles$lhr
-        ylim <- range(0, profiles, na.rm=TRUE)
-      } else if (peelobj$cvcriterion == "lrt") {
-        txt <- "LRT"
-        profiles <- peelobj$cvprofiles$lrt
-        ylim <- range(0, profiles, na.rm=TRUE)
-      } else if (peelobj$cvcriterion == "cer") {
-        txt <- "CER"
-        profiles <- peelobj$cvprofiles$cer
-        ylim <- range(0, 1, profiles, na.rm=TRUE)
-      } else {
-        stop("Invalid CV criterion.\n")
-      }
 
-      if ((!is.null(main)) && (add.legend)) {
-        par(mfrow=c(1, 1), oma=c(0, 0, 4, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
-      } else if ((is.null(main)) && (!add.legend)) {
-        par(mfrow=c(1, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 0.0, 1.5), mgp=c(1.5, 0.5, 0))
-      } else {
-        par(mfrow=c(1, 1), oma=c(0, 0, 1, 0), mar=c(2.5, 2.5, 1.0, 1.5), mgp=c(1.5, 0.5, 0))
-      }
+      profileplot <- function(peelobj, main, xlab, ylab,
+                              add.sd, add.legend, add.profiles,
+                              pch, col, lty, lwd, cex, ...) {
 
-      Lm <- peelobj$cvfit$cv.maxsteps
-      mean.profile <- apply(profiles, 2, mean, na.rm=TRUE)
-      se.profile <- apply(profiles, 2, sd, na.rm=TRUE)
-
-      if (add.profiles) {
-        matplot(t(profiles), axes=FALSE, type="b",
-                xlab="", ylab="", main="", ylim=ylim,
-                pch=pch, lty=1, lwd=lwd/4, cex=cex/4)
-        par(new=TRUE)
-      }
-
-      plot(0:(Lm-1), mean.profile, axes=FALSE, type="b",
-           xlab=xlab, ylab=paste(txt ," ", ylab, sep=""), main=NULL, ylim=ylim,
-           pch=pch, col=col, lty=lty, lwd=lwd, cex=cex)
-      axis(side=1, pos=min(ylim), at=0:(Lm-1), labels=0:(Lm-1), cex.axis=1, line=NA)
-      axis(side=2, pos=0, at=pretty(ylim), cex.axis=1, line=NA)
-      segments(x0=peelobj$cvfit$cv.nsteps-1, y0=min(ylim), x1=peelobj$cvfit$cv.nsteps-1, y1=mean.profile[peelobj$cvfit$cv.nsteps], col=col, lty=2, lwd=lwd)
-
-      if (add.sd) {
-        arrows(0:(Lm-1), mean.profile, 0:(Lm-1), mean.profile - se.profile, length=0.1, angle=90, code=2, col=col, lwd=lwd)
-        arrows(0:(Lm-1), mean.profile, 0:(Lm-1), mean.profile + se.profile, length=0.1, angle=90, code=2, col=col, lwd=lwd)
-      }
-
-      if (!is.null(main)) {
-        if (add.legend) {
-          title(main=main, xlab="", ylab="", line=3, outer=FALSE, xpd=TRUE)
-          legend("top", xpd=TRUE, inset=-0.1, legend=c("Sample Mean", "Std. Error"), pch=pch, col=col, lty=lty, lwd=lwd, cex=0.6, pt.cex=cex/2)
+        if (peelobj$cvcriterion == "lhr") {
+            txt <- "LHR"
+            profiles <- peelobj$cvprofiles$lhr
+            ylim <- range(0, profiles, na.rm=TRUE)
+        } else if (peelobj$cvcriterion == "lrt") {
+            txt <- "LRT"
+            profiles <- peelobj$cvprofiles$lrt
+            ylim <- range(0, profiles, na.rm=TRUE)
+        } else if (peelobj$cvcriterion == "cer") {
+            txt <- "CER"
+            profiles <- peelobj$cvprofiles$cer
+            ylim <- range(0, 1, profiles, na.rm=TRUE)
         } else {
-          title(main=main, xlab="", ylab="", line=1, outer=FALSE, xpd=TRUE)
+            stop("Invalid CV criterion.\n")
         }
-      } else {
-        if (add.legend) {
-          legend("top", xpd=TRUE, inset=0, legend=c("Sample Mean", "Std. Error"), pch=pch, col=col, lty=lty, lwd=lwd, cex=0.6, pt.cex=cex/2)
+        if ((!is.null(main)) && (add.legend)) {
+            par(mfrow=c(1, 1), oma=c(0, 0, 4, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
+        } else if ((is.null(main)) && (!add.legend)) {
+            par(mfrow=c(1, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 0.0, 1.5), mgp=c(1.5, 0.5, 0))
+        } else {
+            par(mfrow=c(1, 1), oma=c(0, 0, 1, 0), mar=c(2.5, 2.5, 1.0, 1.5), mgp=c(1.5, 0.5, 0))
+        }
+        Lm <- peelobj$cvfit$cv.maxsteps
+        mean.profile <- apply(profiles, 2, mean, na.rm=TRUE)
+        se.profile <- apply(profiles, 2, sd, na.rm=TRUE)
+        if (add.profiles) {
+            matplot(t(profiles), axes=FALSE, type="b",
+                    xlab="", ylab="", main="", ylim=ylim,
+                    pch=pch, lty=1, lwd=lwd/4, cex=cex/4)
+            par(new=TRUE)
+        }
+        plot(0:(Lm-1), mean.profile, axes=FALSE, type="b",
+             xlab=xlab, ylab=paste(txt ," ", ylab, sep=""), main=NULL, ylim=ylim,
+             pch=pch, col=col, lty=lty, lwd=lwd, cex=cex)
+        axis(side=1, pos=min(ylim), at=0:(Lm-1), labels=0:(Lm-1), cex.axis=1, line=NA)
+        axis(side=2, pos=0, at=pretty(ylim), cex.axis=1, line=NA)
+        segments(x0=peelobj$cvfit$cv.nsteps-1, y0=min(ylim), x1=peelobj$cvfit$cv.nsteps-1, y1=mean.profile[peelobj$cvfit$cv.nsteps], col=col, lty=2, lwd=lwd)
+        if (add.sd) {
+            arrows(0:(Lm-1), mean.profile, 0:(Lm-1), mean.profile - se.profile, length=0.1, angle=90, code=2, col=col, lwd=lwd)
+            arrows(0:(Lm-1), mean.profile, 0:(Lm-1), mean.profile + se.profile, length=0.1, angle=90, code=2, col=col, lwd=lwd)
+        }
+        if (!is.null(main)) {
+            if (add.legend) {
+                title(main=main, xlab="", ylab="", line=3, outer=FALSE, xpd=TRUE)
+                legend("top", xpd=TRUE, inset=-0.1, legend=c("Sample Mean", "Std. Error"), pch=pch, col=col, lty=lty, lwd=lwd, cex=0.6, pt.cex=cex/2)
+            } else {
+                title(main=main, xlab="", ylab="", line=1, outer=FALSE, xpd=TRUE)
+            }
+        } else {
+            if (add.legend) {
+                legend("top", xpd=TRUE, inset=0, legend=c("Sample Mean", "Std. Error"), pch=pch, col=col, lty=lty, lwd=lwd, cex=0.6, pt.cex=cex/2)
+            }
         }
       }
+
+      if (is.null(device)) {
+        if (.Platform$OS.type == "windows") {
+            windows(width=width, height=height, title="Profile Plot")
+        } else if (.Platform$OS.type == "unix") {
+            X11(width=width, height=height, title="Profile Plot")
+        } else {
+            stop("OS not recognized \n")
+        }
+        profileplot(peelobj=peelobj, main=main, xlab=xlab, ylab=ylab,
+                    add.sd=add.sd, add.legend=add.legend, add.profiles=add.profiles,
+                    pch=pch, col=col, lty=lty, lwd=lwd, cex=cex)
+      } else if (device == "PS") {
+        path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
+        file <- paste(file, ".ps", sep="")
+        cat("\nOUTPUT: \n")
+        cat("Filename : ", file, "\n")
+        cat("Directory: ", path, "\n")
+        postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
+        profileplot(peelobj=peelobj, main=main, xlab=xlab, ylab=ylab,
+                    add.sd=add.sd, add.legend=add.legend, add.profiles=add.profiles,
+                    pch=pch, col=col, lty=lty, lwd=lwd, cex=cex)
+        dev.off()
+      } else if (device == "PDF") {
+        path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
+        file <- paste(file, ".pdf", sep="")
+        cat("\nOUTPUT: \n")
+        cat("Filename : ", file, "\n")
+        cat("Directory: ", path, "\n")
+        pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
+        profileplot(peelobj=peelobj, main=main, xlab=xlab, ylab=ylab,
+                    add.sd=add.sd, add.legend=add.legend, add.profiles=add.profiles,
+                    pch=pch, col=col, lty=lty, lwd=lwd, cex=cex)
+        dev.off()
+      } else {
+        stop("Currently allowed display device are \"PS\" (Postscript) or \"PDF\" (Portable Document Format) \n")
+      }
+
     }
   } else {
     cat("Either the regularized Cox regression modeling or the Survival Bump Hunting modeling failed for this dataset.\n
@@ -658,7 +707,9 @@ plot_profile <- function(peelobj,
 #                    plot_scatter (peelobj,
 #                                  main=NULL,
 #                                  proj=c(1,2), boxes=FALSE, steps=peelobj$cvfit$cv.nsteps,
-#                                  add.legend=TRUE, pch=16, cex=0.7, col=1, box.col=2, box.lty=2, box.lwd=1, ...)
+#                                  add.legend=TRUE, pch=16, cex=0.7, col=1, box.col=2, box.lty=2, box.lwd=1,
+#                                  device=NULL, file="Scatter Plot", path=getwd(),
+#                                  horizontal=FALSE, width=5, height=5, ...)
 #
 #
 ################
@@ -684,6 +735,13 @@ plot_profile <- function(peelobj,
 # box.col       :   Line color of the box vertices. Defaults to 2.
 # box.lty       :   Line type of box vertices. Defaults to 2.
 # box.lwd       :   Line width of box vertices. Defaults to 1.
+# device        :   Display device in {NULL, "PS", "PDF"}. Defaults to NULL (standard output screen).
+#                   Currently implemented display device are "PS" (Postscript) or "PDF" (Portable Document Format).
+# file          :   File name for outputting display device. Defaults to "Scatter Plot".
+# path          :   Absolute path (without final (back)slash separator). Defaults to working directory path.
+# horizontal    :   Orientation of the printed image, a logical. Defaults to FALSE, that is potrait orientation.
+# width         :   Width of the graphics region in inches. Defaults to 5.
+# height        :   Height of the graphics region in inches. Defaults to 5.
 # ...           :   Generic arguments passed to other plotting functions.
 #
 ################
@@ -695,62 +753,106 @@ plot_profile <- function(peelobj,
 plot_scatter <- function(peelobj,
                          main=NULL,
                          proj=c(1,2), splom=TRUE, boxes=FALSE, steps=peelobj$cvfit$cv.nsteps,
-                         add.legend=TRUE, pch=16, cex=0.7, col=1, box.col=2, box.lty=2, box.lwd=1, ...) {
+                         add.legend=TRUE, pch=16, cex=0.7, col=1, box.col=2, box.lty=2, box.lwd=1,
+                         device=NULL, file="Scatter Plot", path=getwd(),
+                         horizontal=FALSE, width=5, height=5, ...) {
 
   if (peelobj$plot) {
-    if ((!is.null(main)) && (add.legend)) {
-      par(mfrow=c(1, 1), oma=c(0, 0, 4, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
-    } else if ((is.null(main)) && (!add.legend)) {
-      par(mfrow=c(1, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 0.0, 1.5), mgp=c(1.5, 0.5, 0))
-    } else {
-      par(mfrow=c(1, 1), oma=c(0, 0, 1, 0), mar=c(2.5, 2.5, 1.0, 1.5), mgp=c(1.5, 0.5, 0))
-    }
 
-    x <- peelobj$x[,proj]
-    x.names <- colnames(x)
-    L <- length(steps)
-    if (length(box.col) < L) box.col <- rep(box.col, length=L)
-    if (length(box.lty) < L) box.lty <- rep(box.lty, length=L)
-    if (length(box.lwd) < L) box.lwd <- rep(box.lwd, length=L)
+    scatterplot <- function(peelobj, main,
+                            proj, splom, boxes, steps,
+                            add.legend, pch, cex, col,
+                            box.col, box.lty, box.lwd, ...) {
 
-    eqscplot(x, type="p", main=NULL, xlab=x.names[1], ylab=x.names[2], ...)
-
-    if (splom) {
-      for (i in 1:L) {
-        w <- peelobj$cvfit$cv.boxind[steps[i],]
-        points(peelobj$x[w,proj], type="p", pch=pch, cex=cex, col=box.col, ...)
-      }
-    }
-
-    if (boxes) {
-      x.range <- apply(X=x, MARGIN=2, FUN=range)
-      boxcut <- peelobj$cvfit$cv.rules$mean[steps,proj,drop=FALSE]
-      varsign <- peelobj$varsign[proj]
-      vertices <- vector(mode="list", length=L)
-      for (i in 1:L) {
-        vertices[[i]] <- matrix(data=NA, nrow=2, ncol=2, dimnames=list(c("LB","UB"), x.names))
-        for (j in 1:2) {
-          vertices[[i]][1,j] <- ifelse(test=(varsign[j] > 0),
-                                       yes=max(x.range[1,j], boxcut[i,j]),
-                                       no=min(x.range[1,j], boxcut[i,j]))
-          vertices[[i]][2,j] <- ifelse(test=(varsign[j] < 0),
-                                       yes=min(x.range[2,j], boxcut[i,j]),
-                                       no=max(x.range[2,j], boxcut[i,j]))
+        if ((!is.null(main)) && (add.legend)) {
+            par(mfrow=c(1, 1), oma=c(0, 0, 4, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
+        } else if ((is.null(main)) && (!add.legend)) {
+            par(mfrow=c(1, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 0.0, 1.5), mgp=c(1.5, 0.5, 0))
+        } else {
+            par(mfrow=c(1, 1), oma=c(0, 0, 1, 0), mar=c(2.5, 2.5, 1.0, 1.5), mgp=c(1.5, 0.5, 0))
         }
-      }
-      for (i in 1:L) {
-        rect(vertices[[i]][1,1], vertices[[i]][1,2], vertices[[i]][2,1], vertices[[i]][2,2], border=box.col[i], col=NA, lty=box.lty[i], lwd=box.lwd[i])
-      }
+        x <- peelobj$x[,proj]
+        x.names <- colnames(x)
+        L <- length(steps)
+        if (length(box.col) < L) box.col <- rep(box.col, length=L)
+        if (length(box.lty) < L) box.lty <- rep(box.lty, length=L)
+        if (length(box.lwd) < L) box.lwd <- rep(box.lwd, length=L)
+        eqscplot(x, type="p", main=NULL, xlab=x.names[1], ylab=x.names[2], ...)
+        if (splom) {
+            for (i in 1:L) {
+                w <- peelobj$cvfit$cv.boxind[steps[i],]
+                points(peelobj$x[w,proj], type="p", pch=pch, cex=cex, col=box.col, ...)
+            }
+        }
+        if (boxes) {
+            x.range <- apply(X=x, MARGIN=2, FUN=range)
+            boxcut <- peelobj$cvfit$cv.rules$mean[steps,proj,drop=FALSE]
+            varsign <- peelobj$varsign[proj]
+            vertices <- vector(mode="list", length=L)
+            for (i in 1:L) {
+                vertices[[i]] <- matrix(data=NA, nrow=2, ncol=2, dimnames=list(c("LB","UB"), x.names))
+                for (j in 1:2) {
+                    vertices[[i]][1,j] <- ifelse(test=(varsign[j] > 0),
+                                                 yes=max(x.range[1,j], boxcut[i,j]),
+                                                 no=min(x.range[1,j], boxcut[i,j]))
+                    vertices[[i]][2,j] <- ifelse(test=(varsign[j] < 0),
+                                                 yes=min(x.range[2,j], boxcut[i,j]),
+                                                 no=max(x.range[2,j], boxcut[i,j]))
+                }
+            }
+            for (i in 1:L) {
+                rect(vertices[[i]][1,1], vertices[[i]][1,2], vertices[[i]][2,1], vertices[[i]][2,2], border=box.col[i], col=NA, lty=box.lty[i], lwd=box.lwd[i])
+            }
+        }
+        if (!is.null(main)) {
+            title(main=main, xlab="", ylab="", line=1, outer=FALSE, xpd=TRUE)
+        }
+        if (add.legend) {
+            legend("topleft", xpd=TRUE, inset=0.01, legend=paste("Steps: ", steps, sep=""), col=col, cex=cex)
+            legend("topright", inset=0.01, legend=c("outbox", "inbox"), pch=c(pch,pch), col=c(col,box.col), cex=cex)
+        }
     }
 
-    if (!is.null(main)) {
-      title(main=main, xlab="", ylab="", line=1, outer=FALSE, xpd=TRUE)
+    if (is.null(device)) {
+        if (.Platform$OS.type == "windows") {
+            windows(width=width, height=height, title="Scatter Plot")
+        } else if (.Platform$OS.type == "unix") {
+            X11(width=width, height=height, title="Scatter Plot")
+        } else {
+            stop("OS not recognized \n")
+        }
+        scatterplot(peelobj=peelobj, main=main,
+                    proj=proj, splom=splom, boxes=boxes, steps=steps,
+                    add.legend=add.legend, pch=pch, cex=cex, col=col,
+                    box.col=box.col, box.lty=box.lty, box.lwd=box.lwd)
+    } else if (device == "PS") {
+        path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
+        file <- paste(file, ".ps", sep="")
+        cat("\nOUTPUT: \n")
+        cat("Filename : ", file, "\n")
+        cat("Directory: ", path, "\n")
+        postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
+        scatterplot(peelobj=peelobj, main=main,
+                    proj=proj, splom=splom, boxes=boxes, steps=steps,
+                    add.legend=add.legend, pch=pch, cex=cex, col=col,
+                    box.col=box.col, box.lty=box.lty, box.lwd=box.lwd)
+        dev.off()
+    } else if (device == "PDF") {
+        path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
+        file <- paste(file, ".pdf", sep="")
+        cat("\nOUTPUT: \n")
+        cat("Filename : ", file, "\n")
+        cat("Directory: ", path, "\n")
+        pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
+        scatterplot(peelobj=peelobj, main=main,
+                    proj=proj, splom=splom, boxes=boxes, steps=steps,
+                    add.legend=add.legend, pch=pch, cex=cex, col=col,
+                    box.col=box.col, box.lty=box.lty, box.lwd=box.lwd)
+        dev.off()
+    } else {
+        stop("Currently allowed display device are \"PS\" (Postscript) or \"PDF\" (Portable Document Format) \n")
     }
 
-    if (add.legend) {
-      legend("topleft", xpd=TRUE, inset=0.01, legend=paste("Steps: ", steps, sep=""), col=col, cex=cex)
-      legend("topright", inset=0.01, legend=c("outbox", "inbox"), pch=c(pch,pch), col=c(col,box.col), cex=cex)
-    }
   } else {
     cat("Either the regularized Cox regression modeling or the Survival Bump Hunting modeling failed for this dataset.\n
         So, there is nothing plot here.\n")
@@ -771,7 +873,9 @@ plot_scatter <- function(peelobj,
 #                                  main=NULL, xlab="Box Mass", ylab="Variable Range",
 #                                  col=1, lty=1, lwd=1, cex=1,
 #                                  add.legend=FALSE, text.legend=NULL,
-#                                  nr=NULL, nc=NULL, ...)
+#                                  nr=NULL, nc=NULL,
+#                                  device=NULL, file="Covariate Trajectory Plots", path=getwd())
+#                                  horizontal=FALSE, width=8.5, height=8.5, ...)
 #
 ################
 # Description   :
@@ -795,6 +899,13 @@ plot_scatter <- function(peelobj,
 # text.legend   :   Character vector of legend content. Defaults to NULL.
 # nr            :   numeric scalar of the number of rows in the plot.  If NULL, defaults to 3.
 # nc            :   numeric scalar of the number of columns in the plot. If NULL, defaults to 3.
+# device        :   Display device in {NULL, "PS", "PDF"}. Defaults to NULL (standard output screen).
+#                   Currently implemented display device are "PS" (Postscript) or "PDF" (Portable Document Format).
+# file          :   File name for outputting display device. Defaults to "Covariate Trajectory Plots".
+# path          :   Absolute path (without final (back)slash separator). Defaults to working directory path.
+# horizontal    :   Orientation of the printed image, a logical. Defaults to FALSE, that is potrait orientation.
+# width         :   Width of the graphics region in inches. Defaults to 8.5.
+# height        :   Height of the graphics region in inches. Defaults to 8.5.
 # ...           :   Generic arguments passed to other plotting functions.
 #
 ################
@@ -807,86 +918,129 @@ plot_boxtraj <- function(peelobj,
                          main=NULL, xlab="Box Mass", ylab="Variable Range",
                          col=1, lty=1, lwd=1, cex=1,
                          add.legend=FALSE, text.legend=NULL,
-                         nr=NULL, nc=NULL, ...) {
+                         nr=NULL, nc=NULL,
+                         device=NULL, file="Covariate Trajectory Plots", path=getwd(),
+                         horizontal=FALSE, width=8.5, height=8.5, ...) {
 
   if (peelobj$plot) {
-    used <- peelobj$used
-    p <- length(used)
-    varnames <- colnames(peelobj$x)
 
-    if (is.null(nc))
-      nc <- 3
-    if (is.null(nr)) {
-      if (p %% nc == 0) {
-        nr <- p%/%nc + 2
-      } else {
-        nr <- ((p+(1:nc))[which((p+(1:nc)) %% nc == 0)])%/%nc + 2
-      }
+    boxtrajplot <- function(peelobj,
+                            main, xlab, ylab,
+                            col, lty, lwd, cex,
+                            add.legend, text.legend,
+                            nr, nc, ...) {
+
+        used <- peelobj$used
+        p <- length(used)
+        varnames <- colnames(peelobj$x)
+        if (is.null(nc))
+            nc <- 3
+        if (is.null(nr)) {
+            if (p %% nc == 0) {
+                nr <- p%/%nc + 2
+            } else {
+                nr <- ((p+(1:nc))[which((p+(1:nc)) %% nc == 0)])%/%nc + 2
+            }
+        }
+        if (!is.null(main)) {
+            par(mfrow=c(nr, nc), oma=c(0, 0, 2, 0), mar=c(2.5, 2.5, 2.0, 1.5), mgp=c(1.5, 0.5, 0))
+        } else {
+            par(mfrow=c(nr, nc), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 0.0, 1.5), mgp=c(1.5, 0.5, 0))
+        }
+        for (j in used) {
+            plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.rules$mean[,j], type='s', col=col, lty=lty,
+                 main=paste(varnames[j], " variable trajectory", sep=""),
+                 xlim=range(0,1), ylim=range(peelobj$x[,j], na.rm=TRUE),
+                 xlab=xlab, ylab=ylab, cex.main=cex)
+            if (add.legend)
+                legend("bottomleft", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
+        }
+        par(mfg=c(nr-1, 1))
+        plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.support, type='s', col=col, lty=lty, lwd=lwd,
+             main="Box support trajectory",
+             xlim=range(0,1), ylim=range(0, 1),
+             xlab=xlab, ylab=expression(paste("Support (", beta, ")", sep="")), cex.main=cex)
+        if (add.legend)
+            legend("bottomright", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
+        par(mfg=c(nr-1, 2))
+        plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.max.time.bar, type='s', col=col, lty=lty, lwd=lwd,
+             main="MEFT trajectory",
+             xlim=range(0,1), ylim=range(0, peelobj$cvfit$cv.stats$mean$cv.max.time.bar, na.rm=TRUE),
+             xlab=xlab, ylab="Time", cex.main=cex)
+        if (add.legend)
+            legend("bottomright", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
+        par(mfg=c(nr-1, 3))
+        plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.min.prob.bar, type='s', col=col, lty=lty, lwd=lwd,
+             main="MEFP trajectory",
+             xlim=range(0,1), ylim=range(0,1),
+             xlab=xlab, ylab="Probability", cex.main=cex)
+        if (add.legend)
+            legend("bottomright", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
+        par(mfg=c(nr, 1))
+        plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.lhr, type='s', col=col, lty=lty, lwd=lwd,
+             main="LHR trajectory", xlim=range(0,1), ylim=range(0, peelobj$cvfit$cv.stats$mean$cv.lhr, na.rm=TRUE),
+             xlab=xlab, ylab=expression(paste("Log-Hazard Ratio (", lambda,")", sep="")), cex.main=cex)
+        if (add.legend)
+            legend("top", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
+        par(mfg=c(nr, 2))
+        plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.lrt, type='s', col=col, lty=lty, lwd=lwd,
+             main="LRT trajectory",
+             xlim=range(0,1), ylim=range(0, peelobj$cvfit$cv.stats$mean$cv.lrt, na.rm=TRUE),
+             xlab=xlab, ylab=expression(paste("Log-rank test (", chi^2 ,")", sep="")), cex.main=cex)
+        if (add.legend)
+            legend("top", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
+        par(mfg=c(nr, 3))
+        plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.cer, type='s', col=col, lty=lty, lwd=lwd,
+             main="CER trajectory",
+             xlim=range(0,1), ylim=range(0, 1),
+             xlab=xlab, ylab=expression(paste("1-C (", theta,")", sep="")), cex.main=cex)
+        if (add.legend)
+            legend("top", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
+        mtext(text=main, cex=1, side=3, outer=TRUE)
     }
 
-    if (!is.null(main)) {
-      par(mfrow=c(nr, nc), oma=c(0, 0, 2, 0), mar=c(2.5, 2.5, 2.0, 1.5), mgp=c(1.5, 0.5, 0))
+    if (is.null(device)) {
+        if (.Platform$OS.type == "windows") {
+            windows(width=width, height=height, title="Covariate Trajectory Plots")
+        } else if (.Platform$OS.type == "unix") {
+            X11(width=width, height=height, title="Covariate Trajectory Plots")
+        } else {
+            stop("OS not recognized \n")
+        }
+        boxtrajplot(peelobj=peelobj,
+                    main=main, xlab=xlab, ylab=ylab,
+                    col=col, lty=lty, lwd=lwd, cex=cex,
+                    add.legend=add.legend, text.legend=text.legend,
+                    nr=nr, nc=nc)
+    } else if (device == "PS") {
+        path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
+        file <- paste(file, ".ps", sep="")
+        cat("\nOUTPUT: \n")
+        cat("Filename : ", file, "\n")
+        cat("Directory: ", path, "\n")
+        postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
+        boxtrajplot(peelobj=peelobj,
+                    main=main, xlab=xlab, ylab=ylab,
+                    col=col, lty=lty, lwd=lwd, cex=cex,
+                    add.legend=add.legend, text.legend=text.legend,
+                    nr=nr, nc=nc)
+        dev.off()
+    } else if (device == "PDF") {
+        path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
+        file <- paste(file, ".pdf", sep="")
+        cat("\nOUTPUT: \n")
+        cat("Filename : ", file, "\n")
+        cat("Directory: ", path, "\n")
+        pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
+        boxtrajplot(peelobj=peelobj,
+                    main=main, xlab=xlab, ylab=ylab,
+                    col=col, lty=lty, lwd=lwd, cex=cex,
+                    add.legend=add.legend, text.legend=text.legend,
+                    nr=nr, nc=nc)
+        dev.off()
     } else {
-      par(mfrow=c(nr, nc), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 0.0, 1.5), mgp=c(1.5, 0.5, 0))
+        stop("Currently allowed display device are \"PS\" (Postscript) or \"PDF\" (Portable Document Format) \n")
     }
-
-    for (j in used) {
-      plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.rules$mean[,j], type='s', col=col, lty=lty,
-           main=paste(varnames[j], " variable trajectory", sep=""),
-           xlim=range(0,1), ylim=range(peelobj$x[,j], na.rm=TRUE),
-           xlab=xlab, ylab=ylab, cex.main=cex)
-      if (add.legend)
-        legend("bottomleft", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
-    }
-
-    par(mfg=c(nr-1, 1))
-    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.support, type='s', col=col, lty=lty, lwd=lwd,
-         main="Box support trajectory",
-         xlim=range(0,1), ylim=range(0, 1),
-         xlab=xlab, ylab=expression(paste("Support (", beta, ")", sep="")), cex.main=cex)
-    if (add.legend)
-      legend("bottomright", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
-
-    par(mfg=c(nr-1, 2))
-    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.max.time.bar, type='s', col=col, lty=lty, lwd=lwd,
-         main="MEFT trajectory",
-         xlim=range(0,1), ylim=range(0, peelobj$cvfit$cv.stats$mean$cv.max.time.bar, na.rm=TRUE),
-         xlab=xlab, ylab="Time", cex.main=cex)
-    if (add.legend)
-      legend("bottomright", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
-
-    par(mfg=c(nr-1, 3))
-    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.min.prob.bar, type='s', col=col, lty=lty, lwd=lwd,
-         main="MEFP trajectory",
-         xlim=range(0,1), ylim=range(0,1),
-         xlab=xlab, ylab="Probability", cex.main=cex)
-    if (add.legend)
-      legend("bottomright", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
-
-    par(mfg=c(nr, 1))
-    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.lhr, type='s', col=col, lty=lty, lwd=lwd,
-         main="LHR trajectory", xlim=range(0,1), ylim=range(0, peelobj$cvfit$cv.stats$mean$cv.lhr, na.rm=TRUE),
-         xlab=xlab, ylab=expression(paste("Log-Hazard Ratio (", lambda,")", sep="")), cex.main=cex)
-    if (add.legend)
-      legend("top", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
-
-    par(mfg=c(nr, 2))
-    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.lrt, type='s', col=col, lty=lty, lwd=lwd,
-         main="LRT trajectory",
-         xlim=range(0,1), ylim=range(0, peelobj$cvfit$cv.stats$mean$cv.lrt, na.rm=TRUE),
-         xlab=xlab, ylab=expression(paste("Log-rank test (", chi^2 ,")", sep="")), cex.main=cex)
-    if (add.legend)
-      legend("top", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
-
-    par(mfg=c(nr, 3))
-    plot(peelobj$cvfit$cv.stats$mean$cv.support, peelobj$cvfit$cv.stats$mean$cv.cer, type='s', col=col, lty=lty, lwd=lwd,
-         main="CER trajectory",
-         xlim=range(0,1), ylim=range(0, 1),
-         xlab=xlab, ylab=expression(paste("1-C (", theta,")", sep="")), cex.main=cex)
-    if (add.legend)
-      legend("top", inset=0.01, legend=text.legend, lty=lty, col=col, lwd=lwd, cex=0.7)
-
-    mtext(text=main, cex=1, side=3, outer=TRUE)
 
   } else {
     cat("Either the regularized Cox regression modeling or the Survival Bump Hunting modeling failed for this dataset.\n
@@ -909,7 +1063,9 @@ plot_boxtraj <- function(peelobj,
 #                                   main=NULL,
 #                                   center=FALSE, scale=FALSE, hline=NULL,
 #                                   col=1, lty=1, lwd=1, cex=1,
-#                                   add.legend=FALSE, text.legend=NULL, ...)
+#                                   add.legend=FALSE, text.legend=NULL,
+#                                   device=NULL, file="Covariate Trace Plots", path=getwd(),
+#                                   horizontal=FALSE, width=8.5, height=8.5, ...)
 #
 ################
 # Description   :
@@ -933,6 +1089,13 @@ plot_boxtraj <- function(peelobj,
 # cex           :   Symbol expansion. Defaults to 1.
 # add.legend    :   Logical. Should the legend be added to the current open graphics device?. Defaults to FALSE.
 # text.legend   :   Character vector of legend content. Defaults to NULL.
+# device        :   Display device in {NULL, "PS", "PDF"}. Defaults to NULL (standard output screen).
+#                   Currently implemented display device are "PS" (Postscript) or "PDF" (Portable Document Format).
+# file          :   File name for outputting display device. Defaults to "Covariate Trace Plots".
+# path          :   Absolute path (without final (back)slash separator). Defaults to working directory path.
+# horizontal    :   Orientation of the printed image, a logical. Defaults to FALSE, that is potrait orientation.
+# width         :   Width of the graphics region in inches. Defaults to 8.5.
+# height        :   Height of the graphics region in inches. Defaults to 8.5.
 # ...           :   Generic arguments passed to other plotting functions.
 #
 ################
@@ -945,48 +1108,97 @@ plot_boxtrace <- function(peelobj,
                           main=NULL,
                           center=FALSE, scale=FALSE, hline=NULL,
                           col=1, lty=1, lwd=1, cex=1,
-                          add.legend=FALSE, text.legend=NULL, ...) {
+                          add.legend=FALSE, text.legend=NULL,
+                          device=NULL, file="Covariate Trace Plots", path=getwd(),
+                          horizontal=FALSE, width=8.5, height=8.5, ...) {
 
   if (peelobj$plot) {
-    used <- peelobj$used
-    p <- length(used)
-    varnames <- colnames(peelobj$x)
-    maxtick <- max(used)
-    ticknames <- rep("", maxtick)
-    ticknames[used] <- paste(varnames[used], " -", sep="")
 
-    if (!is.null(main)) {
-      par(mfrow=c(2, 1), oma=c(0, 0, 2, 0), mar=c(2.5, 4.0, 2.0, 0.0), mgp=c(1.5, 0.5, 0))
+    boxtraceplot <- function(peelobj,
+                             main,
+                             center, scale, hline,
+                             col, lty, lwd, cex,
+                             add.legend, text.legend, ...) {
+
+        used <- peelobj$used
+        p <- length(used)
+        varnames <- colnames(peelobj$x)
+        maxtick <- max(used)
+        ticknames <- rep("", maxtick)
+        ticknames[used] <- paste(varnames[used], " -", sep="")
+        if (!is.null(main)) {
+            par(mfrow=c(2, 1), oma=c(0, 0, 2, 0), mar=c(2.5, 4.0, 2.0, 0.0), mgp=c(1.5, 0.5, 0))
+        } else {
+            par(mfrow=c(2, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 4.0, 0.0, 0.0), mgp=c(1.5, 0.5, 0))
+        }
+        boxcut.scaled <- scale(x=peelobj$cvfit$cv.rules$mean, center=center, scale=scale)
+        plot(peelobj$cvfit$cv.stats$mean$cv.support, boxcut.scaled[,1], type='n',
+             xlim=range(0,1), ylim=range(boxcut.scaled, hline),
+             main="Variable Importance", xlab="", ylab="", cex.main=cex)
+        for (j in used) {
+            lines(peelobj$cvfit$cv.stats$mean$cv.support, boxcut.scaled[,j], type='l', col=col[j], lty=lty[j], lwd=lwd[j])
+            abline(h=hline[j], lty=1, col=1, lwd=0.3, xpd=FALSE)
+            legend("top", inset=0.01, legend=varnames[used], lty=lty, col=col, lwd=lwd, cex=0.5*cex)
+        }
+        if (add.legend)
+            legend("bottom", inset=0.01, legend=text.legend, lty=lty[1], col=1, lwd=lwd[1], cex=0.5*cex)
+        mtext(text="Box Mass", cex=cex, side=1, line=1, outer=FALSE)
+        mtext(text="Variable Range", cex=cex, side=2, line=2, outer=FALSE)
+        plot(peelobj$cvfit$cv.stats$mean$cv.support[-peelobj$cvfit$cv.nsteps], peelobj$cvfit$cv.trace$mode[-1],
+             type='s', yaxt="n", col=1, lty=lty[1], lwd=lwd[1],
+             xlim=range(0,1), ylim=range(0, maxtick),
+             main="Variable Usage", xlab="", ylab="", cex.main=cex)
+        par(mgp=c(1.5, 0, 0))
+        axis(side=2, at=1:maxtick, labels=ticknames, tick=FALSE, las=1, line=NA, cex.axis=0.5*cex, outer=FALSE)
+        if (add.legend)
+            legend("bottom", inset=0.01, legend=text.legend, lty=lty[1], col=1, lwd=lwd[1], cex=0.5*cex)
+        mtext(text="Box Mass", cex=cex, side=1, line=1, outer=FALSE)
+        mtext(text="Variables Used", cex=cex, side=2, line=3, outer=FALSE)
+        mtext(text=main, cex=1, side=3, outer=TRUE)
+    }
+
+    if (is.null(device)) {
+        if (.Platform$OS.type == "windows") {
+            windows(width=width, height=height, title="Covariate Trace Plots")
+        } else if (.Platform$OS.type == "unix") {
+            X11(width=width, height=height, title="Covariate Trace Plots")
+        } else {
+            stop("OS not recognized \n")
+        }
+        boxtraceplot(peelobj=peelobj,
+                     main=main,
+                     center=center, scale=scale, hline=hline,
+                     col=col, lty=lty, lwd=lwd, cex=cex,
+                     add.legend=add.legend, text.legend=text.legend)
+    } else if (device == "PS") {
+        path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
+        file <- paste(file, ".ps", sep="")
+        cat("\nOUTPUT: \n")
+        cat("Filename : ", file, "\n")
+        cat("Directory: ", path, "\n")
+        postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
+        boxtraceplot(peelobj=peelobj,
+                     main=main,
+                     center=center, scale=scale, hline=hline,
+                     col=col, lty=lty, lwd=lwd, cex=cex,
+                     add.legend=add.legend, text.legend=text.legend)
+        dev.off()
+    } else if (device == "PDF") {
+        path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
+        file <- paste(file, ".pdf", sep="")
+        cat("\nOUTPUT: \n")
+        cat("Filename : ", file, "\n")
+        cat("Directory: ", path, "\n")
+        pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
+        boxtraceplot(peelobj=peelobj,
+                     main=main,
+                     center=center, scale=scale, hline=hline,
+                     col=col, lty=lty, lwd=lwd, cex=cex,
+                     add.legend=add.legend, text.legend=text.legend)
+        dev.off()
     } else {
-      par(mfrow=c(2, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 4.0, 0.0, 0.0), mgp=c(1.5, 0.5, 0))
+        stop("Currently allowed display device are \"PS\" (Postscript) or \"PDF\" (Portable Document Format) \n")
     }
-
-    boxcut.scaled <- scale(x=peelobj$cvfit$cv.rules$mean, center=center, scale=scale)
-    plot(peelobj$cvfit$cv.stats$mean$cv.support, boxcut.scaled[,1], type='n',
-         xlim=range(0,1), ylim=range(boxcut.scaled, hline),
-         main="Variable Importance", xlab="", ylab="", cex.main=cex)
-    for (j in used) {
-      lines(peelobj$cvfit$cv.stats$mean$cv.support, boxcut.scaled[,j], type='l', col=col[j], lty=lty[j], lwd=lwd[j])
-      abline(h=hline[j], lty=1, col=1, lwd=0.3, xpd=FALSE)
-      legend("top", inset=0.01, legend=varnames[used], lty=lty, col=col, lwd=lwd, cex=0.5*cex)
-    }
-    if (add.legend)
-      legend("bottom", inset=0.01, legend=text.legend, lty=lty[1], col=1, lwd=lwd[1], cex=0.5*cex)
-    mtext(text="Box Mass", cex=cex, side=1, line=1, outer=FALSE)
-    mtext(text="Variable Range", cex=cex, side=2, line=2, outer=FALSE)
-
-    plot(peelobj$cvfit$cv.stats$mean$cv.support[-peelobj$cvfit$cv.nsteps], peelobj$cvfit$cv.trace$mode[-1],
-         type='s', yaxt="n", col=1, lty=lty[1], lwd=lwd[1],
-         xlim=range(0,1), ylim=range(0, maxtick),
-         main="Variable Usage", xlab="", ylab="", cex.main=cex)
-    par(mgp=c(1.5, 0, 0))
-    axis(side=2, at=1:maxtick, labels=ticknames, tick=FALSE, las=1, line=NA, cex.axis=0.5*cex, outer=FALSE)
-    if (add.legend)
-      legend("bottom", inset=0.01, legend=text.legend, lty=lty[1], col=1, lwd=lwd[1], cex=0.5*cex)
-    mtext(text="Box Mass", cex=cex, side=1, line=1, outer=FALSE)
-    mtext(text="Variables Used", cex=cex, side=2, line=3, outer=FALSE)
-
-    mtext(text=main, cex=1, side=3, outer=TRUE)
 
   } else {
     cat("Either the regularized Cox regression modeling or the Survival Bump Hunting modeling failed for this dataset.\n
@@ -1008,13 +1220,14 @@ plot_boxtrace <- function(peelobj,
 #                    plot_boxkm (peelobj,
 #                                main=NULL, xlab="Time", ylab="Probability",
 #                                precision, mark=3, col=1, lty=1, lwd=1, cex=1,
-#                                only.last=FALSE, nr=NULL, nc=NULL, ...)
+#                                only.last=FALSE, nr=NULL, nc=NULL,
+#                                device=NULL, file="Survival Plots", path=getwd(),
+#                                horizontal=TRUE, width=11.5, height=8.5, ...)
 #
 ################
 # Description   :
 ################
 #                   Plotting function of Kaplan-Meier survival curves.
-#                   See survival::plot.survfit() for additioal details.
 #
 ################
 # Arguments     :
@@ -1027,15 +1240,23 @@ plot_boxtrace <- function(peelobj,
 #                     Lower bounded by the value 1/A of the number of replication A.
 #
 #                   The following are further defined in package "survival":
+#                   See survival::plot.survfit() for additioal details.
 # mark          :     vector of mark parameters, which will be used to label the curves. Defaults to 3.
 # col           :     vector of integers specifying colors for each curve. Defaults to 1.
 # lty           :     vector of integers specifying line types for each curve. Defaults to 1.
 # lwd           :     vector of numeric values for line widths. Defaults to 1.
-# cex           :     numeric value specifying the size of the marks. Defults to 1.
+# cex           :     numeric value specifying the size of the marks. Defaults to 1.
 #
 # only.last     :   Logical defining whether only the last step of the peeling sequence should be plotted. Defaults to FALSE.
 # nr            :   numeric scalar of the number of rows in the plot. If NULL, defaults to 3.
 # nc            :   numeric scalar of the number of columns in the plot. If NULL, defaults to 4.
+# device        :   Display device in {NULL, "PS", "PDF"}. Defaults to NULL (standard output screen).
+#                   Currently implemented display device are "PS" (Postscript) or "PDF" (Portable Document Format).
+# file          :   File name for outputting display device. Defaults to "Survival Plots".
+# path          :   Absolute path (without final (back)slash separator). Defaults to working directory path.
+# horizontal    :   Orientation of the printed image, a logical. Defaults to TRUE, that is potrait orientation.
+# width         :   Width of the graphics region in inches. Defaults to 11.5.
+# height        :   Height of the graphics region in inches. Defaults to 8.5.
 # ...           :   Generic arguments passed to other functions, including survival::plot.survfit().
 #
 ################
@@ -1047,94 +1268,140 @@ plot_boxtrace <- function(peelobj,
 plot_boxkm <- function(peelobj,
                        main=NULL, xlab="Time", ylab="Probability",
                        precision, mark=3, col=1, lty=1, lwd=1, cex=1,
-                       only.last=FALSE, nr=NULL, nc=NULL, ...) {
+                       only.last=FALSE, nr=NULL, nc=NULL,
+                       device=NULL, file="Survival Plots", path=getwd(),
+                       horizontal=TRUE, width=11.5, height=8.5, ...) {
 
   if (peelobj$plot) {
-    # set default values for missing parameters
-    if (missing(precision)) {
-      precision <- 1/peelobj$A
-    }
-    if (missing(mark) || length(mark) == 1) {
-      mark <- c(mark, mark+1)
-    }
-    if (missing(col) || length(col) == 1) {
-      col <- c(col, col+1)
-    }
-    if (missing(lty) || length(lty) == 1) {
-      lty <- c(lty, lty+1)
-    }
 
-    used <- peelobj$used
-    p <- length(used)
+    boxkmplot <- function(peelobj,
+                          main, xlab, ylab,
+                          precision, mark, col, lty, lwd, cex,
+                          only.last, nr, nc, ...) {
 
-    if (is.null(nc))
-      nc <- 4
-    if (is.null(nr)) {
-      if (p %% nc == 0) {
-        nr <- p%/%nc + 2
-      } else {
-        nr <- ((p+(1:nc))[which((p+(1:nc)) %% nc == 0)])%/%nc + 2
-      }
-    }
-
-    times <- peelobj$times
-    status <- peelobj$status
-    L <- peelobj$cvfit$cv.nsteps
-
-    if (only.last) {
-      steps <- L
-    } else {
-      steps <- 1:L
-      if (!is.null(main)) {
-        par(mfrow=c(nr, nc), oma=c(0, 0, 2, 0), mar=c(2.5, 2.5, 1.5, 1.5), mgp=c(1.5, 0.5, 0))
-      } else {
-        par(mfrow=c(nr, nc), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 0.0, 1.5), mgp=c(1.5, 0.5, 0))
-      }
-    }
-
-    for (l in steps) {
-      boxind <- peelobj$cvfit$cv.boxind[l,]
-      ng <- length(unique(boxind[!is.na(boxind)]))
-      if (ng == 1) {
-        boxind <- 1*boxind
-      } else {
-        boxind <- 2 - 1*boxind
-      }
-      surv <- survfit(Surv(times, status) ~ 1 + boxind)
-      if (l == 1) {
-        plot(surv, main="", conf.int=TRUE, mark.time=TRUE, lty=2, col=2, xlab=xlab, ylab=ylab, cex=cex, ...)
-        par(new=TRUE)
-        plot(surv, main="", conf.int=FALSE, mark.time=TRUE, lty=1, col=2, xlab=xlab, ylab=ylab, cex=cex, ...)
-      } else {
-        plot(surv, main="", conf.int=TRUE, mark.time=TRUE, lty=c(2,2), col=c(2,1), xlab=xlab, ylab=ylab, cex=cex, ...)
-        par(new=TRUE)
-        plot(surv, main="", conf.int=FALSE, mark.time=TRUE, lty=c(1,1), col=c(2,1), xlab=xlab, ylab=ylab, cex=cex, ...)
-      }
-      legend("topright", inset=0.01, legend=c("outbox", "inbox"), lty=c(1,1), col=c(1,2), cex=0.9*cex)
-      if (peelobj$cpv) {
-        if (peelobj$cvfit$cv.pval[l] <= precision) {
-          legend("bottom", inset=0.11, col="black", cex=0.9*cex, bty="n",
-                 legend=bquote(italic(p) <= .(precision)))
-        } else {
-          legend("bottom", inset=0.11, col="black", cex=0.9*cex, bty="n",
-                 legend=bquote(italic(p) == .(format(x=peelobj$cvfit$cv.pval[l], scientific=FALSE, digits=4, nsmall=4))))
+        # set default values for missing parameters
+        if (missing(precision)) {
+            precision <- 1/peelobj$A
         }
-      }
-      legend("bottom", inset=0.01, col="black", cex=0.9*cex, bty="n",
-             legend=substitute(group("", list(paste(italic(LHR) == x, sep="")), ""), list(x=format(x=peelobj$cvfit$cv.stats$mean$cv.lhr[l], digits=3, nsmall=3))))
-      legend("bottom", inset=0.06, col="black", cex=0.9*cex, bty="n",
-             legend=substitute(group("", list(paste(italic(LRT) == x, sep="")), ""), list(x=format(x=peelobj$cvfit$cv.stats$mean$cv.lrt[l], digits=3, nsmall=3))))
-      legend("bottom", inset=0.16, legend=paste("Step ", l-1, sep=""), col=1, cex=0.9*cex, bty="n")
+        if (missing(mark) || length(mark) == 1) {
+            mark <- c(mark, mark+1)
+        }
+        if (missing(col) || length(col) == 1) {
+            col <- c(col, col+1)
+        }
+        if (missing(lty) || length(lty) == 1) {
+            lty <- c(lty, lty+1)
+        }
+        used <- peelobj$used
+        p <- length(used)
+        if (is.null(nc))
+            nc <- 4
+        if (is.null(nr)) {
+            if (p %% nc == 0) {
+                nr <- p%/%nc + 2
+            } else {
+                nr <- ((p+(1:nc))[which((p+(1:nc)) %% nc == 0)])%/%nc + 2
+            }
+        }
+        times <- peelobj$times
+        status <- peelobj$status
+        L <- peelobj$cvfit$cv.nsteps
+        if (only.last) {
+            steps <- L
+        } else {
+            steps <- 1:L
+            if (!is.null(main)) {
+                par(mfrow=c(nr, nc), oma=c(0, 0, 2, 0), mar=c(2.5, 2.5, 1.5, 1.5), mgp=c(1.5, 0.5, 0))
+            } else {
+                par(mfrow=c(nr, nc), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 0.0, 1.5), mgp=c(1.5, 0.5, 0))
+            }
+        }
+        for (l in steps) {
+            boxind <- peelobj$cvfit$cv.boxind[l,]
+            ng <- length(unique(boxind[!is.na(boxind)]))
+            if (ng == 1) {
+                boxind <- 1*boxind
+            } else {
+                boxind <- 2 - 1*boxind
+            }
+            surv <- survfit(Surv(times, status) ~ 1 + boxind)
+            if (l == 1) {
+                plot(surv, main="", conf.int=TRUE, mark.time=TRUE, lty=2, col=2, xlab=xlab, ylab=ylab, cex=cex, ...)
+                par(new=TRUE)
+                plot(surv, main="", conf.int=FALSE, mark.time=TRUE, lty=1, col=2, xlab=xlab, ylab=ylab, cex=cex, ...)
+            } else {
+                plot(surv, main="", conf.int=TRUE, mark.time=TRUE, lty=c(2,2), col=c(2,1), xlab=xlab, ylab=ylab, cex=cex, ...)
+                par(new=TRUE)
+                plot(surv, main="", conf.int=FALSE, mark.time=TRUE, lty=c(1,1), col=c(2,1), xlab=xlab, ylab=ylab, cex=cex, ...)
+            }
+            legend("topright", inset=0.01, legend=c("outbox", "inbox"), lty=c(1,1), col=c(1,2), cex=0.9*cex)
+            if (peelobj$cpv) {
+                if (peelobj$cvfit$cv.pval[l] <= precision) {
+                    legend("bottom", inset=0.11, col="black", cex=0.9*cex, bty="n",
+                           legend=bquote(italic(p) <= .(precision)))
+                } else {
+                    legend("bottom", inset=0.11, col="black", cex=0.9*cex, bty="n",
+                           legend=bquote(italic(p) == .(format(x=peelobj$cvfit$cv.pval[l], scientific=FALSE, digits=4, nsmall=4))))
+                }
+            }
+            legend("bottom", inset=0.01, col="black", cex=0.9*cex, bty="n",
+                   legend=substitute(group("", list(paste(italic(LHR) == x, sep="")), ""), list(x=format(x=peelobj$cvfit$cv.stats$mean$cv.lhr[l], digits=3, nsmall=3))))
+            legend("bottom", inset=0.06, col="black", cex=0.9*cex, bty="n",
+                   legend=substitute(group("", list(paste(italic(LRT) == x, sep="")), ""), list(x=format(x=peelobj$cvfit$cv.stats$mean$cv.lrt[l], digits=3, nsmall=3))))
+            legend("bottom", inset=0.16, legend=paste("Step ", l-1, sep=""), col=1, cex=0.9*cex, bty="n")
+        }
+        if (only.last) {
+            if (!is.null(main)) {
+                mtext(text=main, cex=cex, side=3, line=1, outer=FALSE)
+            }
+        } else {
+            if (!is.null(main)) {
+                mtext(text=main, cex=cex, side=3, outer=TRUE)
+            }
+        }
     }
 
-    if (only.last) {
-      if (!is.null(main)) {
-        mtext(text=main, cex=cex, side=3, line=1, outer=FALSE)
-      }
+    if (is.null(device)) {
+        if (.Platform$OS.type == "windows") {
+            windows(width=width, height=height, title="Survival Plots")
+        } else if (.Platform$OS.type == "unix") {
+            X11(width=width, height=height, title="Survival Plots")
+        } else {
+            stop("OS not recognized \n")
+        }
+        boxkmplot(peelobj=peelobj,
+                  main=main, xlab=xlab, ylab=ylab,
+                  precision=precision, mark=mark,
+                  col=col, lty=lty, lwd=lwd, cex=cex,
+                  only.last=only.last, nr=nr, nc=nc)
+    } else if (device == "PS") {
+        path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
+        file <- paste(file, ".ps", sep="")
+        cat("\nOUTPUT: \n")
+        cat("Filename : ", file, "\n")
+        cat("Directory: ", path, "\n")
+        postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
+        boxkmplot(peelobj=peelobj,
+                  main=main, xlab=xlab, ylab=ylab,
+                  precision=precision, mark=mark,
+                  col=col, lty=lty, lwd=lwd, cex=cex,
+                  only.last=only.last, nr=nr, nc=nc)
+        dev.off()
+    } else if (device == "PDF") {
+        path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
+        file <- paste(file, ".pdf", sep="")
+        cat("\nOUTPUT: \n")
+        cat("Filename : ", file, "\n")
+        cat("Directory: ", path, "\n")
+        pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
+        boxkmplot(peelobj=peelobj,
+                  main=main, xlab=xlab, ylab=ylab,
+                  precision=precision, mark=mark,
+                  col=col, lty=lty, lwd=lwd, cex=cex,
+                  only.last=only.last, nr=nr, nc=nc)
+        dev.off()
     } else {
-      if (!is.null(main)) {
-        mtext(text=main, cex=cex, side=3, outer=TRUE)
-      }
+        stop("Currently allowed display device are \"PS\" (Postscript) or \"PDF\" (Portable Document Format) \n")
     }
 
   } else {
