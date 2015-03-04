@@ -1,5 +1,6 @@
 \name{plot.boxtraj.PRSP}
 
+\alias{plot.boxtraj}
 \alias{plot.boxtraj.PRSP}
 
 \title{Visualization of Peeling Trajectories/Profiles}

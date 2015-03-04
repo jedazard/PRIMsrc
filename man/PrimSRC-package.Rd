@@ -1,6 +1,6 @@
 \name{PRIMsrc-package}
 
-\alias{PRIMsrc-package}
+\alias{PRIMsrc}
 
 \docType{package}
 
