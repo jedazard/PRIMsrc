@@ -1,4 +1,4 @@
-\name{plot.scatter.PRSP}
+\name{plot.scatter}
 
 \alias{plot.scatter.PRSP}
 \alias{plot.scatter}
@@ -13,24 +13,24 @@
 
 \usage{
   \method{plot.scatter}{PRSP}(x,
-                              main = NULL,
-                              proj = c(1,2), 
-                              splom = TRUE, 
-                              boxes = FALSE,
-                              steps = x$cvfit$cv.nsteps,
-                              add.legend = TRUE, 
-                              pch = 16, 
-                              cex = 0.7, 
-                              col = 1, 
-                              box.col = 2, 
-                              box.lty = 2, 
-                              box.lwd = 1,
-                              device = NULL, 
-                              file = "Scatter Plot", 
-                              path=getwd(), 
-                              horizontal = FALSE, 
-                              width = 5, 
-                              height = 5, ...)
+             main = NULL,
+             proj = c(1,2), 
+             splom = TRUE, 
+             boxes = FALSE,
+             steps = x$cvfit$cv.nsteps,
+             add.legend = TRUE, 
+             pch = 16, 
+             cex = 0.7, 
+             col = 1, 
+             box.col = 2, 
+             box.lty = 2, 
+             box.lwd = 1,
+             device = NULL, 
+             file = "Scatter Plot", 
+             path=getwd(), 
+             horizontal = FALSE, 
+             width = 5, 
+             height = 5, ...)
 }
 
 \arguments{

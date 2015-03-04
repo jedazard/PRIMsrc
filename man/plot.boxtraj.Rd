@@ -1,4 +1,4 @@
-\name{plot.boxtraj.PRSP}
+\name{plot.boxtraj}
 
 \alias{plot.boxtraj.PRSP}
 \alias{plot.boxtraj}
@@ -13,23 +13,23 @@
 
 \usage{
   \method{plot.boxtraj}{PRSP}(x,
-                              main = NULL, 
-                              xlab = "Box Mass", 
-                              ylab = "Variable Range",
-                              col = 1, 
-                              lty = 1, 
-                              lwd = 1, 
-                              cex = 1, 
-                              add.legend = FALSE, 
-                              text.legend = NULL, 
-                              nr = NULL, 
-                              nc = NULL,
-                              device = NULL, 
-                              file = "Covariate Trajectory Plots", 
-                              path=getwd(), 
-                              horizontal = FALSE, 
-                              width = 8.5, 
-                              height = 8.5, ...)
+             main = NULL, 
+             xlab = "Box Mass", 
+             ylab = "Variable Range",
+             col = 1, 
+             lty = 1, 
+             lwd = 1, 
+             cex = 1, 
+             add.legend = FALSE, 
+             text.legend = NULL, 
+             nr = NULL, 
+             nc = NULL,
+             device = NULL, 
+             file = "Covariate Trajectory Plots", 
+             path=getwd(), 
+             horizontal = FALSE, 
+             width = 8.5, 
+             height = 8.5, ...)
 }
 
 \arguments{

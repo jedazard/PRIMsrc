@@ -1,4 +1,4 @@
-\name{plot.boxtrace.PRSP}
+\name{plot.boxtrace}
 
 \alias{plot.boxtrace.PRSP}
 \alias{plot.boxtrace}
@@ -14,22 +14,22 @@
 
 \usage{
   \method{plot.boxtrace}{PRSP}(x,
-                               main = NULL,
-                               center = FALSE, 
-                               scale = FALSE, 
-                               hline = NULL,
-                               col = 1, 
-                               lty = 1, 
-                               lwd = 1, 
-                               cex = 1, 
-                               add.legend = FALSE, 
-                               text.legend = NULL,
-                               device = NULL, 
-                               file = "Covariate Trace Plots", 
-                               path=getwd(), 
-                               horizontal = FALSE, 
-                               width = 8.5, 
-                               height = 8.5, ...)
+              main = NULL,
+              center = FALSE, 
+              scale = FALSE, 
+              hline = NULL,
+              col = 1, 
+              lty = 1, 
+              lwd = 1, 
+              cex = 1, 
+              add.legend = FALSE, 
+              text.legend = NULL,
+              device = NULL, 
+              file = "Covariate Trace Plots", 
+              path=getwd(), 
+              horizontal = FALSE, 
+              width = 8.5, 
+              height = 8.5, ...)
 }
 
 \arguments{

@@ -1,4 +1,4 @@
-\name{summary.PRSP}
+\name{summary}
 
 \alias{summary.PRSP}
 

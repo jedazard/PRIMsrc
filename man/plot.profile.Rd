@@ -1,4 +1,4 @@
-\name{plot.profile.PRSP}
+\name{plot.profile}
 
 \alias{plot.profile.PRSP}
 \alias{plot.profile}
@@ -14,23 +14,23 @@
 
 \usage{
   \method{plot.profile}{PRSP}(x,
-                              main = NULL, 
-                              xlab = "Peeling Steps", 
-                              ylab = "Mean Profiles",
-                              add.sd = TRUE, 
-                              add.legend = TRUE, 
-                              add.profiles = TRUE,
-                              pch = 20, 
-                              col = 1, 
-                              lty = 1, 
-                              lwd = 2, 
-                              cex = 2,
-                              device = NULL, 
-                              file = "Profile Plot", 
-                              path=getwd(), 
-                              horizontal = FALSE, 
-                              width = 8.5, 
-                              height = 5, ...)
+             main = NULL, 
+             xlab = "Peeling Steps", 
+             ylab = "Mean Profiles",
+             add.sd = TRUE, 
+             add.legend = TRUE, 
+             add.profiles = TRUE,
+             pch = 20, 
+             col = 1, 
+             lty = 1, 
+             lwd = 2, 
+             cex = 2,
+             device = NULL, 
+             file = "Profile Plot", 
+             path=getwd(), 
+             horizontal = FALSE, 
+             width = 8.5, 
+             height = 5, ...)
 }
 
 \arguments{

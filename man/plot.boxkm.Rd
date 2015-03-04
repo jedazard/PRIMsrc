@@ -1,4 +1,4 @@
-\name{plot.boxkm.PRSP}
+\name{plot.boxkm}
 
 \alias{plot.boxkm.PRSP}
 \alias{plot.boxkm}
@@ -13,24 +13,24 @@
 
 \usage{
   \method{plot.boxkm}{PRSP}(x,
-                            main = NULL, 
-                            xlab = "Time", 
-                            ylab = "Probability",
-                            precision, 
-                            mark = 3, 
-                            col = 1, 
-                            lty = 1, 
-                            lwd = 1, 
-                            cex = 1,
-                            only.last = FALSE, 
-                            nr = NULL, 
-                            nc = NULL,
-                            device = NULL, 
-                            file = "Survival Plots", 
-                            path=getwd(), 
-                            horizontal = TRUE, 
-                            width = 11.5, 
-                            height = 8.5, ...)
+           main = NULL, 
+           xlab = "Time", 
+           ylab = "Probability",
+           precision, 
+           mark = 3, 
+           col = 1, 
+           lty = 1, 
+           lwd = 1, 
+           cex = 1,
+           only.last = FALSE, 
+           nr = NULL, 
+           nc = NULL,
+           device = NULL, 
+           file = "Survival Plots", 
+           path=getwd(), 
+           horizontal = TRUE, 
+           width = 11.5, 
+           height = 8.5, ...)
 }
 
 \arguments{
