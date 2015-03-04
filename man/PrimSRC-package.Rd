@@ -2,8 +2,6 @@
 
 \alias{PRIMsrc-package}
 
-\alias{PRIMsrc}
-
 \docType{package}
 
 \title{Bump Hunting by Patient Rule Induction Method in Survival, Regression and Classification settings}
@@ -24,7 +22,7 @@
 
     \enumerate{
 
-      \item{END-USER FUNCTION} \cr
+      \item{END-USER FUNCTIONS} \cr
       \code{\link[PRIMsrc]{PRIMsrc.news}}
       \bold{Display the \pkg{PRIMsrc} Package News}\cr
             Function to display the log file \code{NEWS} of updates of the \pkg{PRIMsrc} package.\cr
@@ -48,7 +46,7 @@
             cluster of workstations on a local and/or remote machine(s), enabling scaling-up to the number of specified CPU cores.
             Discrete (or nominal) variables should be made (or re-arranged into) ordinal variables.\cr
 
-      \item{END-USER PLOTS FOR MODEL VALIDATION AND VISUALIZATION OF RESULTS} \cr
+      \item{END-USER FUNCTIONS FOR MODEL VALIDATION AND VISUALIZATION OF RESULTS} \cr
       \code{\link[PRIMsrc]{plot.profile}}
       \bold{Visualization for Model Selection/Validation} \cr
             S3 generic function for plotting the cross-validated profiles of a \code{"PRSP"} object.

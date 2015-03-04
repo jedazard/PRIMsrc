@@ -1,7 +1,6 @@
-\name{plot.boxtrace}
+\name{plot.boxtrace.PRSP}
 
 \alias{plot.boxtrace.PRSP}
-\alias{plot.boxtrace}
 
 \title{Visualization of Covariates Traces}
 

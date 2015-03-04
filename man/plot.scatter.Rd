@@ -1,7 +1,6 @@
-\name{plot.scatter}
+\name{plot.scatter.PRSP}
 
 \alias{plot.scatter.PRSP}
-\alias{plot.scatter}
 
 \title{2D Visualization of Data Scatter and Box Vertices}
 
