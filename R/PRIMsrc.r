@@ -601,7 +601,7 @@ summary.PRSP <- function(object, ...) {
 
 
 ##########################################################################################################################################
-# 3. END-USER PLOTS FOR MODEL VALIDATION AND VISUALIZATION OF RESULTS
+# 3. END-USER FUNCTIONS FOR MODEL VALIDATION AND VISUALIZATION OF RESULTS
 ##########################################################################################################################################
 
 ##########################################################################################################################################
@@ -732,13 +732,7 @@ plot.profile.PRSP <- function(x,
       }
 
       if (is.null(device)) {
-        if (.Platform$OS.type == "windows") {
-            windows(width=width, height=height, title="Profile Plot")
-        } else if (.Platform$OS.type == "unix") {
-            X11(width=width, height=height, title="Profile Plot")
-        } else {
-            stop("OS not recognized \n")
-        }
+        dev.new(width=width, height=height, title="Profile Plot", noRStudioGD = TRUE)        
         profileplot(object=x, main=main, xlab=xlab, ylab=ylab,
                     add.sd=add.sd, add.legend=add.legend, add.profiles=add.profiles,
                     pch=pch, col=col, lty=lty, lwd=lwd, cex=cex)
@@ -903,13 +897,7 @@ plot.scatter.PRSP <- function(x,
     }
 
     if (is.null(device)) {
-        if (.Platform$OS.type == "windows") {
-            windows(width=width, height=height, title="Scatter Plot")
-        } else if (.Platform$OS.type == "unix") {
-            X11(width=width, height=height, title="Scatter Plot")
-        } else {
-            stop("OS not recognized \n")
-        }
+        dev.new(width=width, height=height, title="Scatter Plot", noRStudioGD = TRUE)        
         scatterplot(object=x, main=main,
                     proj=proj, splom=splom, boxes=boxes, steps=steps,
                     add.legend=add.legend, pch=pch, cex=cex, col=col,
@@ -1096,19 +1084,14 @@ plot.boxtraj.PRSP <- function(x,
     }
 
     if (is.null(device)) {
-        if (.Platform$OS.type == "windows") {
-            windows(width=width, height=height, title="Covariate Trajectory Plots")
-        } else if (.Platform$OS.type == "unix") {
-            X11(width=width, height=height, title="Covariate Trajectory Plots")
-        } else {
-            stop("OS not recognized \n")
-        }
+        dev.new(width=width, height=height, title="Covariate Trajectory Plots", noRStudioGD = TRUE)        
         boxtrajplot(object=x,
                     main=main, xlab=xlab, ylab=ylab,
                     col=col, lty=lty, lwd=lwd, cex=cex,
                     add.legend=add.legend, text.legend=text.legend,
                     nr=nr, nc=nc)
     } else if (device == "PS") {
+     
         path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
         file <- paste(file, ".ps", sep="")
         cat("\nOUTPUT: \n")
@@ -1262,13 +1245,7 @@ plot.boxtrace.PRSP <- function(x,
     }
 
     if (is.null(device)) {
-        if (.Platform$OS.type == "windows") {
-            windows(width=width, height=height, title="Covariate Trace Plots")
-        } else if (.Platform$OS.type == "unix") {
-            X11(width=width, height=height, title="Covariate Trace Plots")
-        } else {
-            stop("OS not recognized \n")
-        }
+        dev.new(width=width, height=height, title="Covariate Trace Plots", noRStudioGD = TRUE)        
         boxtraceplot(object=x,
                      main=main,
                      center=center, scale=scale, hline=hline,
@@ -1474,13 +1451,7 @@ plot.boxkm.PRSP <- function(x,
     }
 
     if (is.null(device)) {
-        if (.Platform$OS.type == "windows") {
-            windows(width=width, height=height, title="Survival Plots")
-        } else if (.Platform$OS.type == "unix") {
-            X11(width=width, height=height, title="Survival Plots")
-        } else {
-            stop("OS not recognized \n")
-        }
+        dev.new(width=width, height=height, title="Survival Plots", noRStudioGD = TRUE)        
         boxkmplot(object=x,
                   main=main, xlab=xlab, ylab=ylab,
                   precision=precision, mark=mark,
