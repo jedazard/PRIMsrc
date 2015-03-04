@@ -39,10 +39,9 @@ o RELEASE 0.5.0
 _ Added CRAN/GitHub subfolder doc for PDF documentation files (including manual and applied study abstract).
 _ Added S3-class generic summary function.
 - Made all plotting functions S3-class functions and renamed them as plot.xxx().
-- Removed option for plotting multiple PRSP objects in plot.boxtrace() and plot.boxtraj().
-- Corrected managemet of plots in case of failed peeling (empty PRSP object) in all plotting functions.
-- Management of plotting device now internal to all plotting functions.
-- Removed internal functions from the manual.
-- Updated manual, version number.
+- Removed option for overlaying plots of multiple PRSP objects in plot.boxtrace() and plot.boxtraj().
+- Corrected handling of empty PRSP object (failed peeling) in all plotting functions.
+- Implementation of plotting device now internal to all plotting functions.
+- Removed internal functions from the manual, updated manual, version number.
 - Test build under 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
