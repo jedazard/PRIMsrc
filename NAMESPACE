@@ -1,9 +1,16 @@
-export(PRIMsrc.news,
-       sbh,
-       plot_boxkm,
-       plot_boxtraj,
-       plot_boxtrace,
-       plot_scatter,
-       plot_profile)
+export(PRIMsrc.news, 
+	  sbh, 
+       plot.profile,
+	  plot.scatter,
+	  plot.boxtraj,
+	  plot.boxtrace,
+	  plot.boxkm)
 
-import(parallel, survival, Hmisc, glmnet, MASS) 
+import(parallel, survival, Hmisc, glmnet, MASS)
+
+S3method("summary","PRSP")
+S3method("plot.profile","PRSP")
+S3method("plot.scatter","PRSP")
+S3method("plot.boxtraj","PRSP")
+S3method("plot.boxtrace","PRSP")
+S3method("plot.boxkm","PRSP")
