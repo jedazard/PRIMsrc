@@ -36,7 +36,7 @@ All the codes are in the R folder and a manual (PRIMsrc.pdf) details the end-use
 =============
 Installation: 
 =============
-PRIMsrc 0.5.0 was built under R version 3.0.2 (2013-09-25).
+PRIMsrc 0.5.3 was built under R version 3.0.2 (2013-09-25).
 Installation has been tested on Windows, Linux and Mac platforms.
 To install PRIMsrc, simply type:
 
