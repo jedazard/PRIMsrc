@@ -31,6 +31,11 @@
       \bold{Summary Function}\cr
             S3 generic summary function to display the main parameters of a \code{"PRSP"} object.\cr
             
+      \code{\link[PRIMsrc]{predict}}
+      \bold{Predict Function}\cr
+            S3 generic predict function to predict the box membership and box vertices 
+            on an independent set from a \code{"PRSP"} object trained by a SBH model.\cr
+  
       \item{END-USER SURVIVAL BUMP HUNTING FUNCTION} \cr
       \code{\link[PRIMsrc]{sbh}} (*)
       \bold{Cross-Validated Survival Bump Hunting} \cr
@@ -89,7 +94,7 @@
             according to a Cox-PH model with hazard exp(eta), where eta(.) is the regression function.
             Censoring indicator were generated from a uniform distribution on [0,3] (models #1-4) or [0,2] (model #5).
             In these synthetic examples, all covariates are continuous, i.i.d. from a multivariate uniform distribution on [0,1] (models #1-4)
-            or from a multivariate standard normal distribution (model #5).
+            or from a multivariate standard normal distribution (model #5).\cr
             
       \code{\link[PRIMsrc]{Real.1}}
       \bold{Clinical Dataset} \cr
@@ -102,7 +107,7 @@
             was used in this dataset example. Likewise, the entire study enrolled 1164 women, but only the complete cases were used 
             in this dataset example for simplification. Variables included history of Injection Drug Use ("IDU") at enrollment,
             African American ethnicity ("Race"), age ("Age"), and baseline CD4 count ("CD4"). The question in this dataset example 
-            was whether it is possible to achieve a prognostication of patients for AIDS and HAART.
+            was whether it is possible to achieve a prognostication of patients for AIDS and HAART.\cr
 
       \code{\link[PRIMsrc]{Real.2}}
       \bold{Large Gene Expression Dataset} \cr

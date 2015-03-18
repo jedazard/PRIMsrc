@@ -17,12 +17,12 @@
              proj = c(1,2), 
              splom = TRUE, 
              boxes = FALSE,
-             steps = x$cvfit$cv.nsteps,
+             steps,
              add.legend = TRUE, 
              pch = 16, 
              cex = 0.7, 
              col = 1, 
-             box.col = 2, 
+             box.col = 1, 
              box.lty = 2, 
              box.lwd = 1,
              device = NULL, 
@@ -47,11 +47,11 @@
     \code{Logical} scalar. Shall the scatter plot of points inside the box(es) be plotted? Default to \code{TRUE}.
   }
   \item{boxes}{
-    \code{Logical} scalar. Shall the box vertices be plotted or just the scatter of  points? Default to \code{FALSE}.
+    \code{Logical} scalar. Shall the box vertices be plotted or just the scatter of points? Default to \code{FALSE}.
   }
   \item{steps}{
-    \code{Integer} \code{vector}. Vector of peeling steps at which one wants to plot the box vertices. 
-    Defaults to the last peeling step only.
+    \code{Integer} \code{vector}. Vector of peeling steps at which to plot the in-box samples and box vertices. 
+    Defaults to the last peeling step.
   }
   \item{add.legend}{
     \code{Logical} scalar. Shall the legend of steps numbers be plotted? Defaults to \code{TRUE}.
@@ -63,10 +63,10 @@
     Symbol expansion. Defaults to 0.7.
   }
   \item{col}{
-    Symbol color. Defaults to 1.
+    \code{Integer} \code{vector} of symbol color. Defaults to 1.
   }
   \item{box.col}{
-    Line color of the box vertices. Defaults to 2.
+    \code{Integer} \code{vector} of line color of the box vertices. Defaults to 1.
   }
   \item{box.lty}{
     Line type of box vertices. Defaults to 2.
