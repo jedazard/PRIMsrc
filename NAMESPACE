@@ -9,6 +9,7 @@ export(PRIMsrc.news,
 import(parallel, survival, Hmisc, glmnet, MASS)
 
 S3method("summary","PRSP")
+S3method("predict","PRSP")
 S3method("plot.profile","PRSP")
 S3method("plot.scatter","PRSP")
 S3method("plot.boxtraj","PRSP")
