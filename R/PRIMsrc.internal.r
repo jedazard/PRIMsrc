@@ -294,7 +294,6 @@ cv.null <- function(x, times, status,
 ################
 # Description   :
 ################
-#                   Return averaged K-fold cross-validated test boxes and quantities of interest
 #
 ################
 # Arguments     :
@@ -479,7 +478,6 @@ cv.ave.box <- function(x, times, status,
 ################
 # Description   :
 ################
-#                   Return combined K-fold cross-validated boxes and quantities of interest
 #
 ################
 # Arguments     :
@@ -521,7 +519,6 @@ cv.comb.box <- function(x, times, status,
   CV.trace <- list2mat(list=trace.list, trunc=CV.Lm)
   CV.trace <- t(CV.trace)
   dimnames(CV.trace) <- list(paste("step", 0:(CV.Lm-1), sep=""), 1:K)
-
 
   # Get the test box membership indicator vector of all observations for each step from all the folds
   # Based on the combined membership indicator vectors over the folds
@@ -699,7 +696,6 @@ cv.comb.box <- function(x, times, status,
 ################
 # Description   :
 ################
-#                    Return averaged K-fold cross-validated quantities over the test sets
 #
 ################
 # Arguments     :
@@ -769,7 +765,6 @@ cv.ave.fold <- function(x, times, status,
 ################
 # Description   :
 ################
-#                    Return combined K-fold cross-validated quantities from a 'combined' test set
 #
 ################
 # Arguments     :
