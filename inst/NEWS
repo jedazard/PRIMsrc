@@ -43,10 +43,12 @@ _ Added CRAN/GitHub subfolder doc for PDF documentation files (including manual 
 - Removed internal functions from the manual, updated manual, version number.
 - Test build under 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2015-03-17
+Date   : 2015-03-18
 o RELEASE 0.5.3
 _ Added S3-class generic summary function.
 _ Added S3-class generic predict function.
 - Made all plotting functions S3-class functions and renamed them as plot.xxx().
+- Corrected treatment of missing values in case of replications for the variable traces.
+- Minor bugs corrected in plotting functions.
 - Test build under 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
