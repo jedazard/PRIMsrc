@@ -18,9 +18,7 @@
            ylab = "Probability",
            precision, 
            mark = 3, 
-           col = 1, 
-           lty = 1, 
-           lwd = 1, 
+           col = 2, 
            cex = 1,
            only.last = FALSE, 
            nr = NULL, 
@@ -51,16 +49,10 @@
     Lower bounded by the value \eqn{\frac{1}{A}} of the number of replication \eqn{A}.
   }
   \item{mark}{
-    \code{Integer} \code{vector} of mark parameters, which will be used to label the curves. Defaults to 3.
+    \code{Integer} scalar of mark parameter, which will be used to label the inbox and out-of-box curves. Defaults to 3.
   }
   \item{col}{
-    \code{Integer} \code{vector} of specifying colors for each curve. Defaults to 1.
-  }
-  \item{lty}{
-    \code{Integer} \code{vector} of specifying line types for each curve. Defaults to 1.
-  }
-  \item{lwd}{
-    \code{Numeric} \code{vector} of values for line widths. Defaults to 1.
+    \code{Integer} scalar specifying the color of the inbox curve. Defaults to 2.
   }
   \item{cex}{
     \code{Numeric} scalar specifying the size of the marks. Defaults to 1.

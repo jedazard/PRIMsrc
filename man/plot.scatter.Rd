@@ -63,10 +63,10 @@
     Symbol expansion. Defaults to 0.7.
   }
   \item{col}{
-    \code{Integer} \code{vector} of symbol color. Defaults to 1.
+    \code{Integer} \code{vector} of symbol color for each step. Defaults to 1.
   }
   \item{box.col}{
-    \code{Integer} \code{vector} of line color of the box vertices. Defaults to 1.
+    \code{Integer} \code{vector} of line color of the box vertices for each step. Defaults to 1.
   }
   \item{box.lty}{
     Line type of box vertices. Defaults to 2.

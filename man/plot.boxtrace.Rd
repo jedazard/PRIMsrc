@@ -15,12 +15,13 @@
 \usage{
   \method{plot.boxtrace}{PRSP}(x,
               main = NULL,
+              xlab = "Box Mass", 
+              ylab = "Variable Range",
               center = FALSE, 
               scale = FALSE, 
-              hline = NULL,
-              col = 1, 
-              lty = 1, 
-              lwd = 1, 
+              col = 1:length(x$used)), 
+              lty = rep(1,length(x$used)), 
+              lwd = rep(1,length(x$used)), 
               cex = 1, 
               add.legend = FALSE, 
               text.legend = NULL,
@@ -39,27 +40,35 @@
   \item{main}{
     \code{Character} \code{vector}. Main Title. Defaults to \code{NULL}.
   }
+  \item{xlab}{
+    \code{Character} \code{vector}. X axis label. Defaults to "Box Mass".
+  }
+  \item{ylab}{
+    \code{Character} \code{vector}. Y axis label. Defaults to "Variable Range".
+  }
   \item{center}{
-    \code{Logical} scalar. Shall the data be centered before?
+    \code{Logical} scalar. Shall the data be centered?. Defaults to \code{FALSE}.
   }
   \item{scale}{
-    \code{Logical} scalar. Shall the data be scaled before?
-  }
-  \item{hline}{
-    \code{Numeric} scalar of where the data is centred.
-    If specified (i.e. not \code{NULL}), an horizontal line about this value is added to the plot.
+    \code{Logical} scalar. Shall the data be scaled? Defaults to \code{FALSE}.
   }
   \item{col}{
-    Line color. Defaults to 1.
+    \code{Integer} \code{vector} specifying the line colors for the variable importance curves of each used covariate. 
+    Defaults to vector of colors of length the number of used covariates. 
+    The vector is reused cyclically if it is shorter than the number of curves.
   }
   \item{lty}{
-    Line type. Defaults to 1.
+    \code{Integer} \code{vector} specifying the line types for the variable importance curves of each used covariate. 
+    Defaults to vector of 1's of length the number of used covariates. 
+    The vector is reused cyclically if it is shorter than the number of curves.
   }
   \item{lwd}{
-    Line width. Defaults to 1.
+    \code{Integer} \code{vector} specifying the line widths for the variable importance curves of each used covariate. 
+    Defaults to vector of 1's of length the number of used covariates. 
+    The vector is reused cyclically if it is shorter than the number of curves.
   }
   \item{cex}{
-    Symbol expansion. Defaults to 1.
+    \code{Integer} scalar for the symbol expansion used for titles, legends, and axis labels. Defaults to 1.
   }
   \item{add.legend}{
     \code{Logical} scalar. Should the legend be added to the current open graphics device?. Defaults to \code{FALSE}.
@@ -92,8 +101,9 @@
 }
 
 \details{
-  The trace plots limit the display of traces to those only covariates that are used for peeling.
-  
+  The trace plots limit the display of traces to those only covariates that are used for peeling. 
+  If centered, an horizontal black dotted line about 0 is added to the plot.
+ 
   Due to the variability induced by cross-validation and replication, it is possible that more than one variable be used for peeling at a given step.
   So, for simplicity of the trace plots, only the modal or majority vote trace value (over the folds and replications of the cross-validation) is plotted. 
   

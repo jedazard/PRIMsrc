@@ -16,7 +16,7 @@
              main = NULL, 
              xlab = "Box Mass", 
              ylab = "Variable Range",
-             col = 1, 
+             col = 2, 
              lty = 1, 
              lwd = 1, 
              cex = 1, 
@@ -29,7 +29,7 @@
              path=getwd(), 
              horizontal = FALSE, 
              width = 8.5, 
-             height = 8.5, ...)
+             height = 11.5, ...)
 }
 
 \arguments{
@@ -46,16 +46,19 @@
     \code{Character} \code{vector}. Y axis label. Defaults to "Variable Range".
   }
   \item{col}{
-    Line color. Defaults to 1.
+    \code{Integer} scalar specifying the line color for the variable trajectory curve of each used covariate. 
+    Defaults to 2.
   }
   \item{lty}{
-    Line type. Defaults to 1.
+    \code{Integer} scalar specifying the line type for the variable trajectory curve of each used covariate. 
+    Defaults to 1.
   }
   \item{lwd}{
-    Line width. Defaults to 1.
+    \code{Integer} scalar specifying the line width for the variable trajectory curve of each used covariate. 
+    Defaults to 1.
   }
   \item{cex}{
-    Symbol expansion. Defaults to 1.
+    \code{Integer} scalar for the symbol expansion used for titles, legends, and axis labels. Defaults to 1.
   }
   \item{add.legend}{
     \code{Logical} scalar. Should the legend be added to the current open graphics device?. Defaults to \code{FALSE}.
