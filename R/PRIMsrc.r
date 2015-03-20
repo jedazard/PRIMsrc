@@ -383,8 +383,8 @@ sbh <- function(dataset, discr,
         }
 
         # Variable traces for each step
-        # Distribution of trace values over the replicates, or
-        # Modal or majority vote trace value over the loops and replicates
+        # Distribution of trace values over the replicates (by step)
+        # Modal trace values over the replicates (by step)
         cat("Generating cross-validated variable traces ...\n")
         trace.dist <- lapply.array(X=CV.trace,
                                    trunc=CV.nsteps,
@@ -401,8 +401,8 @@ sbh <- function(dataset, discr,
         names(trace.mode) <- paste("step", 0:(CV.nsteps-1), sep="")
         CV.trace <- list("dist"=trace.dist, "mode"=trace.mode)
 
-        # Variables used for peeling
-        used <- sort(unique(as.numeric(CV.trace$dist[-1,,drop=FALSE])))
+        # Variables used for peeling based on variable trace modal values
+        used <- sort(unique(as.numeric(CV.trace$mode[-1])))
         names(used) <- colnames(x)[used]
         cat("Variables used for peeling:\n")
         print(used)
@@ -1049,8 +1049,8 @@ plot.boxtraj.PRSP <- function(x,
             par(mfrow=c(nr, nc), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 2.0, 1.5), mgp=c(1.5, 0.5, 0))
         }
         for (j in used) {
-            plot(object$cvfit$cv.stats$mean$cv.support, 
-                 object$cvfit$cv.rules$mean[,j], 
+            plot(object$cvfit$cv.stats$mean$cv.support,
+                 object$cvfit$cv.rules$mean[,j],
                  type='s', col=col, lty=lty,
                  main=paste(varnames[j], " variable trajectory", sep=""),
                  xlim=range(0,1), ylim=range(object$x[,j], na.rm=TRUE),
@@ -1059,8 +1059,8 @@ plot.boxtraj.PRSP <- function(x,
                 legend("bottomleft", inset=0.01, legend=text.legend, cex=0.7)
         }
         par(mfg=c(nr-1, 1))
-        plot(object$cvfit$cv.stats$mean$cv.support, 
-             object$cvfit$cv.stats$mean$cv.support, 
+        plot(object$cvfit$cv.stats$mean$cv.support,
+             object$cvfit$cv.stats$mean$cv.support,
              type='s', col=col, lty=lty, lwd=lwd,
              main="Box support trajectory",
              xlim=range(0,1), ylim=range(0, 1),
@@ -1068,8 +1068,8 @@ plot.boxtraj.PRSP <- function(x,
         if (add.legend)
             legend("bottomright", inset=0.01, legend=text.legend, cex=0.7)
         par(mfg=c(nr-1, 2))
-        plot(object$cvfit$cv.stats$mean$cv.support, 
-             object$cvfit$cv.stats$mean$cv.max.time.bar, 
+        plot(object$cvfit$cv.stats$mean$cv.support,
+             object$cvfit$cv.stats$mean$cv.max.time.bar,
              type='s', col=col, lty=lty, lwd=lwd,
              main="MEFT trajectory",
              xlim=range(0,1), ylim=range(0, object$cvfit$cv.stats$mean$cv.max.time.bar, na.rm=TRUE),
@@ -1077,8 +1077,8 @@ plot.boxtraj.PRSP <- function(x,
         if (add.legend)
             legend("bottomright", inset=0.01, legend=text.legend, cex=0.7)
         par(mfg=c(nr-1, 3))
-        plot(object$cvfit$cv.stats$mean$cv.support, 
-             object$cvfit$cv.stats$mean$cv.min.prob.bar, 
+        plot(object$cvfit$cv.stats$mean$cv.support,
+             object$cvfit$cv.stats$mean$cv.min.prob.bar,
              type='s', col=col, lty=lty, lwd=lwd,
              main="MEFP trajectory",
              xlim=range(0,1), ylim=range(0,1),
@@ -1086,16 +1086,16 @@ plot.boxtraj.PRSP <- function(x,
         if (add.legend)
             legend("bottomright", inset=0.01, legend=text.legend, cex=0.7)
         par(mfg=c(nr, 1))
-        plot(object$cvfit$cv.stats$mean$cv.support, 
-             object$cvfit$cv.stats$mean$cv.lhr, 
+        plot(object$cvfit$cv.stats$mean$cv.support,
+             object$cvfit$cv.stats$mean$cv.lhr,
              type='s', col=col, lty=lty, lwd=lwd,
              main="LHR trajectory", xlim=range(0,1), ylim=range(0, object$cvfit$cv.stats$mean$cv.lhr, na.rm=TRUE),
              xlab=xlab, ylab=expression(paste("Log-Hazard Ratio (", lambda,")", sep="")), cex.main=cex)
         if (add.legend)
             legend("top", inset=0.01, legend=text.legend, cex=0.7)
         par(mfg=c(nr, 2))
-        plot(object$cvfit$cv.stats$mean$cv.support, 
-             object$cvfit$cv.stats$mean$cv.lrt, 
+        plot(object$cvfit$cv.stats$mean$cv.support,
+             object$cvfit$cv.stats$mean$cv.lrt,
              type='s', col=col, lty=lty, lwd=lwd,
              main="LRT trajectory",
              xlim=range(0,1), ylim=range(0, object$cvfit$cv.stats$mean$cv.lrt, na.rm=TRUE),
@@ -1103,8 +1103,8 @@ plot.boxtraj.PRSP <- function(x,
         if (add.legend)
             legend("top", inset=0.01, legend=text.legend, cex=0.7)
         par(mfg=c(nr, 3))
-        plot(object$cvfit$cv.stats$mean$cv.support, 
-             object$cvfit$cv.stats$mean$cv.cer, 
+        plot(object$cvfit$cv.stats$mean$cv.support,
+             object$cvfit$cv.stats$mean$cv.cer,
              type='s', col=col, lty=lty, lwd=lwd,
              main="CER trajectory",
              xlim=range(0,1), ylim=range(0, 1),
@@ -1228,8 +1228,8 @@ plot.boxtrace.PRSP <- function(x,
         } else {
             par(mfrow=c(2, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 4.0, 2.0, 0.0), mgp=c(1.5, 0.5, 0))
         }
-        
-        plot(x=object$cvfit$cv.stats$mean$cv.support, 
+
+        plot(x=object$cvfit$cv.stats$mean$cv.support,
              y=boxcut.scaled[,1], type='n',
              xlim=range(0,1), ylim=range(boxcut.scaled),
              main="Variable Importance", xlab="", ylab="", cex.main=cex)
@@ -1243,8 +1243,8 @@ plot.boxtrace.PRSP <- function(x,
             legend("bottom", inset=0.01, legend=text.legend, cex=0.5*cex)
         mtext(text=xlab, cex=cex, side=1, line=1, outer=FALSE)
         mtext(text=ylab, cex=cex, side=2, line=2, outer=FALSE)
-        
-        plot(x=object$cvfit$cv.stats$mean$cv.support[-object$cvfit$cv.nsteps], 
+
+        plot(x=object$cvfit$cv.stats$mean$cv.support[-object$cvfit$cv.nsteps],
              y=usedtrace,
              type='s', yaxt="n", col=1, lty=lty[1], lwd=lwd[1],
              xlim=range(0, 1), ylim=range(0, p),
@@ -1257,7 +1257,7 @@ plot.boxtrace.PRSP <- function(x,
         mtext(text="Variables Used", cex=cex, side=2, line=3, outer=FALSE)
         mtext(text=main, cex=1, side=3, outer=TRUE)
     }
-    
+
     if (is.null(device)) {
         dev.new(width=width, height=height, title="Covariate Trace Plots", noRStudioGD = TRUE)
         boxtraceplot(object=x,
