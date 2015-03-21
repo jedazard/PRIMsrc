@@ -1221,7 +1221,7 @@ plot.boxtrace.PRSP <- function(x,
         p <- length(used)
         varnames <- colnames(object$x)
         ticknames <- paste(varnames[used], " -", sep="")
-        usedtrace <- pmatch(x=object$cvfit$cv.trace$mode[-1], table=used)
+        usedtrace <- pmatch(x=object$cvfit$cv.trace$mode[-1], table=used, duplicates.ok = TRUE)
         boxcut.scaled <- scale(x=object$cvfit$cv.rules$mean[,used], center=center, scale=scale)
         if (!is.null(main)) {
             par(mfrow=c(2, 1), oma=c(0, 0, 2, 0), mar=c(2.5, 4.0, 2.0, 0.0), mgp=c(1.5, 0.5, 0))
@@ -1236,7 +1236,7 @@ plot.boxtrace.PRSP <- function(x,
         for (j in 1:p) {
             lines(object$cvfit$cv.stats$mean$cv.support, boxcut.scaled[,j], type='l', col=col[j], lty=lty[j], lwd=lwd[j])
         }
-        legend("top", inset=0.01, legend=varnames[used], col=col, lty=lty, lwd=lwd, cex=0.5*cex)
+        legend("topleft", inset=0.01, legend=varnames[used], col=col, lty=lty, lwd=lwd, cex=0.5*cex)
         if (center)
             abline(h=0, lty=2, col=1, lwd=0.3, xpd=FALSE)
         if (add.legend)
