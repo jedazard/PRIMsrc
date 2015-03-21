@@ -1178,7 +1178,7 @@ plot.boxtraj <- function(x,
 ################
 #                    plot.boxtrace (x,
 #                                   main=NULL, xlab="Box Mass", ylab="Variable Range",
-#                                   center=FALSE, scale=FALSE,
+#                                   center=TRUE, scale=FALSE,
 #                                   col=rep(1,length(x$used)), lty=rep(1,length(x$used)), lwd=rep(1,length(x$used)),
 #                                   cex=1, add.legend=FALSE, text.legend=NULL,
 #                                   device=NULL, file="Covariate Trace Plots", path=getwd(),
@@ -1203,7 +1203,7 @@ plot.boxtraj <- function(x,
 
 plot.boxtrace.PRSP <- function(x,
                                main=NULL, xlab="Box Mass", ylab="Variable Range",
-                               center=FALSE, scale=FALSE,
+                               center=TRUE, scale=FALSE,
                                col=1:length(x$used), lty=rep(1,length(x$used)), lwd=rep(1,length(x$used)),
                                cex=1, add.legend=FALSE, text.legend=NULL,
                                device=NULL, file="Covariate Trace Plots", path=getwd(),
@@ -1221,7 +1221,8 @@ plot.boxtrace.PRSP <- function(x,
         p <- length(used)
         varnames <- colnames(object$x)
         ticknames <- paste(varnames[used], " -", sep="")
-        usedtrace <- pmatch(x=object$cvfit$cv.trace$mode[-1], table=used, duplicates.ok = TRUE)
+        pointtrace <- c(object$cvfit$cv.trace$mode[2], object$cvfit$cv.trace$mode[-1])
+        matchtrace <- pmatch(x=pointtrace, table=used, duplicates.ok = TRUE)
         boxcut.scaled <- scale(x=object$cvfit$cv.rules$mean[,used], center=center, scale=scale)
         if (!is.null(main)) {
             par(mfrow=c(2, 1), oma=c(0, 0, 2, 0), mar=c(2.5, 4.0, 2.0, 0.0), mgp=c(1.5, 0.5, 0))
@@ -1244,8 +1245,8 @@ plot.boxtrace.PRSP <- function(x,
         mtext(text=xlab, cex=cex, side=1, line=1, outer=FALSE)
         mtext(text=ylab, cex=cex, side=2, line=2, outer=FALSE)
 
-        plot(x=object$cvfit$cv.stats$mean$cv.support[-object$cvfit$cv.nsteps],
-             y=usedtrace,
+        plot(x=object$cvfit$cv.stats$mean$cv.support,
+             y=matchtrace,
              type='s', yaxt="n", col=1, lty=lty[1], lwd=lwd[1],
              xlim=range(0, 1), ylim=range(0, p),
              main="Variable Usage", xlab="", ylab="", cex.main=cex)
@@ -1303,7 +1304,7 @@ plot.boxtrace.PRSP <- function(x,
 
 plot.boxtrace <- function(x,
                           main=NULL, xlab="Box Mass", ylab="Variable Range",
-                          center=FALSE, scale=FALSE,
+                          center=TRUE, scale=FALSE,
                           col=1:length(x$used), lty=rep(1,length(x$used)), lwd=rep(1,length(x$used)),
                           cex=1, add.legend=FALSE, text.legend=NULL,
                           device=NULL, file="Covariate Trace Plots", path=getwd(),
