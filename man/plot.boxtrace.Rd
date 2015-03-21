@@ -17,7 +17,7 @@
               main = NULL,
               xlab = "Box Mass", 
               ylab = "Variable Range",
-              center = FALSE, 
+              center = TRUE, 
               scale = FALSE, 
               col = 1:length(x$used)), 
               lty = rep(1,length(x$used)), 
@@ -47,7 +47,7 @@
     \code{Character} \code{vector}. Y axis label. Defaults to "Variable Range".
   }
   \item{center}{
-    \code{Logical} scalar. Shall the data be centered?. Defaults to \code{FALSE}.
+    \code{Logical} scalar. Shall the data be centered?. Defaults to \code{TRUE}.
   }
   \item{scale}{
     \code{Logical} scalar. Shall the data be scaled? Defaults to \code{FALSE}.
