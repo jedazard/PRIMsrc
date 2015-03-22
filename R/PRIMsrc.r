@@ -691,7 +691,7 @@ predict.PRSP <- function (object, newdata, steps, na.action = na.omit, ...) {
 #                                 add.sd=TRUE, add.legend=TRUE, add.profiles=TRUE,
 #                                 pch=20, col=1, lty=1, lwd=2, cex=2,
 #                                 device=NULL, file="Profile Plot", path=getwd(),
-#                                 horizontal=FALSE, width=8.5, height=5, ...) {
+#                                 horizontal=FALSE, width=8.5, height=5.0, ...) {
 #
 ################
 # Description   :
@@ -721,7 +721,7 @@ plot.profile.PRSP <- function(x,
                               add.sd=TRUE, add.legend=TRUE, add.profiles=TRUE,
                               pch=20, col=1, lty=1, lwd=2, cex=2,
                               device=NULL, file="Profile Plot", path=getwd(),
-                              horizontal=FALSE, width=8.5, height=5, ...) {
+                              horizontal=FALSE, width=8.5, height=5.0, ...) {
 
   if (x$plot) {
     if (is.null(x$cvcriterion)) {
@@ -845,8 +845,10 @@ plot.profile <- function(x,
 ################
 #                    plot.scatter(x,
 #                                 main=NULL,
-#                                 proj=c(1,2), boxes=FALSE, steps,
-#                                 add.legend=TRUE, pch=16, cex=0.7, col=1, box.col=1, box.lty=2, box.lwd=1,
+#                                 proj=c(1,2), splom=TRUE, boxes=FALSE, 
+#                                 steps=x$cvfit$cv.nsteps,
+#                                 add.legend=TRUE, pch=16, cex=0.5, col=1,
+#                                 col.box=2, lty.box=2, lwd.box=1,
 #                                 device=NULL, file="Scatter Plot", path=getwd(),
 #                                 horizontal=FALSE, width=5, height=5, ...)
 #
@@ -868,17 +870,21 @@ plot.profile <- function(x,
 
 plot.scatter.PRSP <- function(x,
                               main=NULL,
-                              proj=c(1,2), splom=TRUE, boxes=FALSE, steps,
-                              add.legend=TRUE, pch=16, cex=0.7, col=1, box.col=1, box.lty=2, box.lwd=1,
+                              proj=c(1,2), splom=TRUE, boxes=FALSE, 
+                              steps=x$cvfit$cv.nsteps,
+                              add.legend=TRUE, pch=16, cex=0.5, col=1,
+                              col.box=2, lty.box=2, lwd.box=1,
                               device=NULL, file="Scatter Plot", path=getwd(),
                               horizontal=FALSE, width=5, height=5, ...) {
 
   if (x$plot) {
 
-    scatterplot <- function(object, main,
-                            proj, splom, boxes, steps,
+    scatterplot <- function(object, 
+                            main,
+                            proj, splom, boxes, 
+                            steps,
                             add.legend, pch, cex, col,
-                            box.col, box.lty, box.lwd, ...) {
+                            col.box, lty.box, lwd.box, ...) {
 
         if ((!is.null(main)) && (add.legend)) {
             par(mfrow=c(1, 1), oma=c(0, 0, 4, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
@@ -895,9 +901,9 @@ plot.scatter.PRSP <- function(x,
           steps <- object$cvfit$cv.nsteps
 
         L <- length(steps)
-        if (length(box.col) < L) box.col <- rep(box.col, length=L)
-        if (length(box.lty) < L) box.lty <- rep(box.lty, length=L)
-        if (length(box.lwd) < L) box.lwd <- rep(box.lwd, length=L)
+        if (length(col.box) < L) col.box <- rep(col.box, length=L)
+        if (length(lty.box) < L) lty.box <- rep(lty.box, length=L)
+        if (length(lwd.box) < L) lwd.box <- rep(lwd.box, length=L)
         eqscplot(x=X, col=1, type="p", main=NULL, xlab=X.names[1], ylab=X.names[2], ...)
         if (splom) {
             for (i in 1:L) {
@@ -922,7 +928,7 @@ plot.scatter.PRSP <- function(x,
                 }
             }
             for (i in 1:L) {
-                rect(vertices[[i]][1,1], vertices[[i]][1,2], vertices[[i]][2,1], vertices[[i]][2,2], border=box.col[i], col=NA, lty=box.lty[i], lwd=box.lwd[i])
+                rect(vertices[[i]][1,1], vertices[[i]][1,2], vertices[[i]][2,1], vertices[[i]][2,2], border=col.box[i], col=NA, lty=lty.box[i], lwd=lwd.box[i])
             }
         }
         if (!is.null(main)) {
@@ -935,10 +941,11 @@ plot.scatter.PRSP <- function(x,
 
     if (is.null(device)) {
         dev.new(width=width, height=height, title="Scatter Plot", noRStudioGD = TRUE)
-        scatterplot(object=x, main=main,
+        scatterplot(object=x, 
+                    main=main,
                     proj=proj, splom=splom, boxes=boxes, steps=steps,
                     add.legend=add.legend, pch=pch, cex=cex, col=col,
-                    box.col=box.col, box.lty=box.lty, box.lwd=box.lwd)
+                    col.box=col.box, lty.box=lty.box, lwd.box=lwd.box)
     } else if (device == "PS") {
         path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
         file <- paste(file, ".ps", sep="")
@@ -946,10 +953,11 @@ plot.scatter.PRSP <- function(x,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
-        scatterplot(object=x, main=main,
+        scatterplot(object=x, 
+                    main=main,
                     proj=proj, splom=splom, boxes=boxes, steps=steps,
                     add.legend=add.legend, pch=pch, cex=cex, col=col,
-                    box.col=box.col, box.lty=box.lty, box.lwd=box.lwd)
+                    col.box=col.box, lty.box=lty.box, lwd.box=lwd.box)
         dev.off()
     } else if (device == "PDF") {
         path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
@@ -958,10 +966,11 @@ plot.scatter.PRSP <- function(x,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
-        scatterplot(object=x, main=main,
+        scatterplot(object=x, 
+                    main=main,
                     proj=proj, splom=splom, boxes=boxes, steps=steps,
                     add.legend=add.legend, pch=pch, cex=cex, col=col,
-                    box.col=box.col, box.lty=box.lty, box.lwd=box.lwd)
+                    col.box=col.box, lty.box=lty.box, lwd.box=lwd.box)
         dev.off()
     } else {
         stop("Currently allowed display devices are \"PS\" (Postscript) or \"PDF\" (Portable Document Format) \n")
@@ -975,8 +984,10 @@ plot.scatter.PRSP <- function(x,
 
 plot.scatter <- function(x,
                          main=NULL,
-                         proj=c(1,2), splom=TRUE, boxes=FALSE, steps=x$cvfit$cv.nsteps,
-                         add.legend=TRUE, pch=16, cex=0.7, col=1, box.col=2, box.lty=2, box.lwd=1,
+                         proj=c(1,2), splom=TRUE, boxes=FALSE, 
+                         steps=x$cvfit$cv.nsteps,
+                         add.legend=TRUE, pch=16, cex=0.5, col=1, 
+                         col.box=2, lty.box=2, lwd.box=1,
                          device=NULL, file="Scatter Plot", path=getwd(),
                          horizontal=FALSE, width=5, height=5, ...) {
     UseMethod(generic="plot.scatter", object=x)
@@ -992,7 +1003,8 @@ plot.scatter <- function(x,
 ################
 #                    plot.boxtraj (x,
 #                                  main=NULL, xlab="Box Mass", ylab="Variable Range",
-#                                  col=2, lty=1, lwd=1,
+#                                  col.cov=2:(length(x$used)+1), lty.cov=rep(1,length(x$used)), lwd.cov=rep(1,length(x$used)),
+#                                  col=1, lty=1, lwd=1,
 #                                  cex=1, add.legend=FALSE, text.legend=NULL,
 #                                  nr=NULL, nc=NULL,
 #                                  device=NULL, file="Covariate Trajectory Plots", path=getwd())
@@ -1017,7 +1029,8 @@ plot.scatter <- function(x,
 
 plot.boxtraj.PRSP <- function(x,
                               main=NULL, xlab="Box Mass", ylab="Variable Range",
-                              col=2, lty=1, lwd=1,
+                              col.cov=2:(length(x$used)+1), lty.cov=rep(1,length(x$used)), lwd.cov=rep(1,length(x$used)),
+                              col=1, lty=1, lwd=1,
                               cex=1, add.legend=FALSE, text.legend=NULL,
                               nr=NULL, nc=NULL,
                               device=NULL, file="Covariate Trajectory Plots", path=getwd(),
@@ -1027,6 +1040,7 @@ plot.boxtraj.PRSP <- function(x,
 
     boxtrajplot <- function(object,
                             main, xlab, ylab,
+                            col.cov, lty.cov, lwd.cov,
                             col, lty, lwd,
                             cex, add.legend, text.legend,
                             nr, nc, ...) {
@@ -1043,21 +1057,24 @@ plot.boxtraj.PRSP <- function(x,
                 nr <- ((p+(1:nc))[which((p+(1:nc)) %% nc == 0)])%/%nc + 2
             }
         }
+
         if (!is.null(main)) {
-            par(mfrow=c(nr, nc), oma=c(0, 0, 2, 0), mar=c(2.5, 2.5, 2.0, 1.5), mgp=c(1.5, 0.5, 0))
+            par(mfrow=c(nr, nc), oma=c(0, 0, 3, 0), mar=c(2.5, 2.5, 2.0, 1.5), mgp=c(1.5, 0.5, 0))
         } else {
             par(mfrow=c(nr, nc), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 2.0, 1.5), mgp=c(1.5, 0.5, 0))
         }
-        for (j in used) {
-            plot(object$cvfit$cv.stats$mean$cv.support,
-                 object$cvfit$cv.rules$mean[,j],
-                 type='s', col=col, lty=lty,
-                 main=paste(varnames[j], " variable trajectory", sep=""),
-                 xlim=range(0,1), ylim=range(object$x[,j], na.rm=TRUE),
+
+        for (j in 1:p) {
+            plot(x=object$cvfit$cv.stats$mean$cv.support,
+                 y=object$cvfit$cv.rules$mean[,used[j]],
+                 type='s', col=col.cov[j], lty=lty.cov[j], lwd=lwd.cov[j],
+                 main=paste(varnames[used[j]], " variable trajectory", sep=""),
+                 xlim=range(0,1), ylim=range(object$x[,used[j]], na.rm=TRUE),
                  xlab=xlab, ylab=ylab, cex.main=cex)
-            if (add.legend)
-                legend("bottomleft", inset=0.01, legend=text.legend, cex=0.7)
         }
+        if (add.legend)
+          legend("bottomleft", inset=0.01, legend=text.legend, cex=0.7)
+
         par(mfg=c(nr-1, 1))
         plot(object$cvfit$cv.stats$mean$cv.support,
              object$cvfit$cv.stats$mean$cv.support,
@@ -1067,6 +1084,7 @@ plot.boxtraj.PRSP <- function(x,
              xlab=xlab, ylab=expression(paste("Support (", beta, ")", sep="")), cex.main=cex)
         if (add.legend)
             legend("bottomright", inset=0.01, legend=text.legend, cex=0.7)
+
         par(mfg=c(nr-1, 2))
         plot(object$cvfit$cv.stats$mean$cv.support,
              object$cvfit$cv.stats$mean$cv.max.time.bar,
@@ -1076,6 +1094,7 @@ plot.boxtraj.PRSP <- function(x,
              xlab=xlab, ylab="Time", cex.main=cex)
         if (add.legend)
             legend("bottomright", inset=0.01, legend=text.legend, cex=0.7)
+
         par(mfg=c(nr-1, 3))
         plot(object$cvfit$cv.stats$mean$cv.support,
              object$cvfit$cv.stats$mean$cv.min.prob.bar,
@@ -1085,6 +1104,7 @@ plot.boxtraj.PRSP <- function(x,
              xlab=xlab, ylab="Probability", cex.main=cex)
         if (add.legend)
             legend("bottomright", inset=0.01, legend=text.legend, cex=0.7)
+
         par(mfg=c(nr, 1))
         plot(object$cvfit$cv.stats$mean$cv.support,
              object$cvfit$cv.stats$mean$cv.lhr,
@@ -1093,6 +1113,7 @@ plot.boxtraj.PRSP <- function(x,
              xlab=xlab, ylab=expression(paste("Log-Hazard Ratio (", lambda,")", sep="")), cex.main=cex)
         if (add.legend)
             legend("top", inset=0.01, legend=text.legend, cex=0.7)
+
         par(mfg=c(nr, 2))
         plot(object$cvfit$cv.stats$mean$cv.support,
              object$cvfit$cv.stats$mean$cv.lrt,
@@ -1102,6 +1123,7 @@ plot.boxtraj.PRSP <- function(x,
              xlab=xlab, ylab=expression(paste("Log-rank test (", chi^2 ,")", sep="")), cex.main=cex)
         if (add.legend)
             legend("top", inset=0.01, legend=text.legend, cex=0.7)
+
         par(mfg=c(nr, 3))
         plot(object$cvfit$cv.stats$mean$cv.support,
              object$cvfit$cv.stats$mean$cv.cer,
@@ -1118,6 +1140,7 @@ plot.boxtraj.PRSP <- function(x,
         dev.new(width=width, height=height, title="Covariate Trajectory Plots", noRStudioGD = TRUE)
         boxtrajplot(object=x,
                     main=main, xlab=xlab, ylab=ylab,
+                    col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
                     col=col, lty=lty, lwd=lwd,
                     cex=cex, add.legend=add.legend, text.legend=text.legend,
                     nr=nr, nc=nc)
@@ -1130,6 +1153,7 @@ plot.boxtraj.PRSP <- function(x,
         postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
         boxtrajplot(object=x,
                     main=main, xlab=xlab, ylab=ylab,
+                    col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
                     col=col, lty=lty, lwd=lwd,
                     cex=cex, add.legend=add.legend, text.legend=text.legend,
                     nr=nr, nc=nc)
@@ -1143,6 +1167,7 @@ plot.boxtraj.PRSP <- function(x,
         pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
         boxtrajplot(object=x,
                     main=main, xlab=xlab, ylab=ylab,
+                    col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
                     col=col, lty=lty, lwd=lwd,
                     cex=cex, add.legend=add.legend, text.legend=text.legend,
                     nr=nr, nc=nc)
@@ -1159,7 +1184,8 @@ plot.boxtraj.PRSP <- function(x,
 
 plot.boxtraj <- function(x,
                          main=NULL, xlab="Box Mass", ylab="Variable Range",
-                         col=2, lty=1, lwd=1,
+                         col.cov=2:(length(x$used)+1), lty.cov=rep(1,length(x$used)), lwd.cov=rep(1,length(x$used)),
+                         col=1, lty=1, lwd=1,
                          cex=1, add.legend=FALSE, text.legend=NULL,
                          nr=NULL, nc=NULL,
                          device=NULL, file="Covariate Trajectory Plots", path=getwd(),
@@ -1177,9 +1203,10 @@ plot.boxtraj <- function(x,
 # Usage         :
 ################
 #                    plot.boxtrace (x,
-#                                   main=NULL, xlab="Box Mass", ylab="Variable Range",
+#                                   main=NULL, xlab="Box Mass", ylab="Variable Range (centered)",
 #                                   center=TRUE, scale=FALSE,
-#                                   col=rep(1,length(x$used)), lty=rep(1,length(x$used)), lwd=rep(1,length(x$used)),
+#                                   col.cov=2:(length(x$used)+1), lty.cov=rep(1,length(x$used)), lwd.cov=rep(1,length(x$used)),
+#                                   col=1, lty=1, lwd=1,
 #                                   cex=1, add.legend=FALSE, text.legend=NULL,
 #                                   device=NULL, file="Covariate Trace Plots", path=getwd(),
 #                                   horizontal=FALSE, width=8.5, height=8.5, ...)
@@ -1202,9 +1229,10 @@ plot.boxtraj <- function(x,
 ##########################################################################################################################################
 
 plot.boxtrace.PRSP <- function(x,
-                               main=NULL, xlab="Box Mass", ylab="Variable Range",
+                               main=NULL, xlab="Box Mass", ylab="Variable Range (centered)",
                                center=TRUE, scale=FALSE,
-                               col=1:length(x$used), lty=rep(1,length(x$used)), lwd=rep(1,length(x$used)),
+                               col.cov=2:(length(x$used)+1), lty.cov=rep(1,length(x$used)), lwd.cov=rep(1,length(x$used)),
+                               col=1, lty=1, lwd=1,
                                cex=1, add.legend=FALSE, text.legend=NULL,
                                device=NULL, file="Covariate Trace Plots", path=getwd(),
                                horizontal=FALSE, width=8.5, height=8.5, ...) {
@@ -1214,6 +1242,7 @@ plot.boxtrace.PRSP <- function(x,
     boxtraceplot <- function(object,
                              main, xlab, ylab,
                              center, scale,
+                             col.cov, lty.cov, lwd.cov,
                              col, lty, lwd,
                              cex, add.legend, text.legend, ...) {
 
@@ -1223,21 +1252,24 @@ plot.boxtrace.PRSP <- function(x,
         ticknames <- paste(varnames[used], " -", sep="")
         pointtrace <- c(object$cvfit$cv.trace$mode[2], object$cvfit$cv.trace$mode[-1])
         matchtrace <- pmatch(x=pointtrace, table=used, duplicates.ok = TRUE)
-        boxcut.scaled <- scale(x=object$cvfit$cv.rules$mean[,used], center=center, scale=scale)
+
         if (!is.null(main)) {
             par(mfrow=c(2, 1), oma=c(0, 0, 2, 0), mar=c(2.5, 4.0, 2.0, 0.0), mgp=c(1.5, 0.5, 0))
         } else {
             par(mfrow=c(2, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 4.0, 2.0, 0.0), mgp=c(1.5, 0.5, 0))
         }
 
+        boxcut.scaled <- scale(x=object$cvfit$cv.rules$mean[,used], center=center, scale=scale)
         plot(x=object$cvfit$cv.stats$mean$cv.support,
              y=boxcut.scaled[,1], type='n',
              xlim=range(0,1), ylim=range(boxcut.scaled),
              main="Variable Importance", xlab="", ylab="", cex.main=cex)
         for (j in 1:p) {
-            lines(object$cvfit$cv.stats$mean$cv.support, boxcut.scaled[,j], type='l', col=col[j], lty=lty[j], lwd=lwd[j])
+            lines(x=object$cvfit$cv.stats$mean$cv.support,
+                  y=boxcut.scaled[,j],
+                  type='l', col=col.cov[j], lty=lty.cov[j], lwd=lwd.cov[j])
         }
-        legend("topleft", inset=0.01, legend=varnames[used], col=col, lty=lty, lwd=lwd, cex=0.5*cex)
+        legend("topleft", inset=0.01, legend=varnames[used], col=col.cov, lty=lty.cov, lwd=lwd.cov, cex=0.5*cex)
         if (center)
             abline(h=0, lty=2, col=1, lwd=0.3, xpd=FALSE)
         if (add.legend)
@@ -1247,7 +1279,7 @@ plot.boxtrace.PRSP <- function(x,
 
         plot(x=object$cvfit$cv.stats$mean$cv.support,
              y=matchtrace,
-             type='s', yaxt="n", col=1, lty=lty[1], lwd=lwd[1],
+             type='S', yaxt="n", col=col, lty=lty, lwd=lwd,
              xlim=range(0, 1), ylim=range(0, p),
              main="Variable Usage", xlab="", ylab="", cex.main=cex)
         par(mgp=c(1.5, 0, 0))
@@ -1264,6 +1296,7 @@ plot.boxtrace.PRSP <- function(x,
         boxtraceplot(object=x,
                      main=main, xlab=xlab, ylab=ylab,
                      center=center, scale=scale,
+                     col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
                      col=col, lty=lty, lwd=lwd,
                      cex=cex, add.legend=add.legend, text.legend=text.legend)
     } else if (device == "PS") {
@@ -1276,6 +1309,7 @@ plot.boxtrace.PRSP <- function(x,
         boxtraceplot(object=x,
                      main=main, xlab=xlab, ylab=ylab,
                      center=center, scale=scale,
+                     col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
                      col=col, lty=lty, lwd=lwd,
                      cex=cex, add.legend=add.legend, text.legend=text.legend)
         dev.off()
@@ -1289,6 +1323,7 @@ plot.boxtrace.PRSP <- function(x,
         boxtraceplot(object=x,
                      main=main, xlab=xlab, ylab=ylab,
                      center=center, scale=scale,
+                     col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
                      col=col, lty=lty, lwd=lwd,
                      cex=cex, add.legend=add.legend, text.legend=text.legend)
         dev.off()
@@ -1303,9 +1338,10 @@ plot.boxtrace.PRSP <- function(x,
 }
 
 plot.boxtrace <- function(x,
-                          main=NULL, xlab="Box Mass", ylab="Variable Range",
+                          main=NULL, xlab="Box Mass", ylab="Variable Range (centered)",
                           center=TRUE, scale=FALSE,
-                          col=1:length(x$used), lty=rep(1,length(x$used)), lwd=rep(1,length(x$used)),
+                          col.cov=2:(length(x$used)+1), lty.cov=rep(1,length(x$used)), lwd.cov=rep(1,length(x$used)),
+                          col=1, lty=1, lwd=1,
                           cex=1, add.legend=FALSE, text.legend=NULL,
                           device=NULL, file="Covariate Trace Plots", path=getwd(),
                           horizontal=FALSE, width=8.5, height=8.5, ...) {
