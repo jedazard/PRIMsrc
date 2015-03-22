@@ -30,7 +30,7 @@
              path=getwd(), 
              horizontal = FALSE, 
              width = 8.5, 
-             height = 5, ...)
+             height = 5.0, ...)
 }
 
 \arguments{
@@ -57,20 +57,19 @@
     Defaults to \code{TRUE}.
   }
   \item{pch}{
-    Symbol number for all the profiles. Defaults to 20.
+    \code{Integer} scalar of symbol number for all the profiles. Defaults to 20.
   }
   \item{col}{
-    Line color of the mean profile. Defaults to 1.
-     If more than eight profiles are plotted, line colors will be recycled.
+    \code{Integer} scalar of line color of the mean profile. Defaults to 1.
   }
   \item{lty}{
-    Line type of the mean profile. Defaults to 1.
+    \code{Integer} scalar of line type of the mean profile. Defaults to 1.
   }
   \item{lwd}{
-    Line width of the mean profile. Defaults to 2.
+    \code{Integer} scalar of line width of the mean profile. Defaults to 2.
   }
   \item{cex}{
-    Symbol expansion for all the profiles. Defaults to 2.
+    \code{Integer} scalar of symbol expansion for all the profiles. Defaults to 2.
   }
   \item{device}{
     Graphic display device in \{NULL, "PS", "PDF"\}. Defaults to NULL (standard output screen).

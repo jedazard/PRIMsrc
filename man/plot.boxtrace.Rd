@@ -16,12 +16,15 @@
   \method{plot.boxtrace}{PRSP}(x,
               main = NULL,
               xlab = "Box Mass", 
-              ylab = "Variable Range",
+              ylab = "Variable Range (centered)",
               center = TRUE, 
               scale = FALSE, 
-              col = 1:length(x$used)), 
-              lty = rep(1,length(x$used)), 
-              lwd = rep(1,length(x$used)), 
+              col.cov = 2:(length(x$used)+1), 
+              lty.cov = rep(1,length(x$used)), 
+              lwd.cov = rep(1,length(x$used)), 
+              col = 1, 
+              lty = 1, 
+              lwd = 1, 
               cex = 1, 
               add.legend = FALSE, 
               text.legend = NULL,
@@ -44,7 +47,7 @@
     \code{Character} \code{vector}. X axis label. Defaults to "Box Mass".
   }
   \item{ylab}{
-    \code{Character} \code{vector}. Y axis label. Defaults to "Variable Range".
+    \code{Character} \code{vector}. Y axis label. Defaults to "Variable Range (centered)".
   }
   \item{center}{
     \code{Logical} scalar. Shall the data be centered?. Defaults to \code{TRUE}.
@@ -52,20 +55,32 @@
   \item{scale}{
     \code{Logical} scalar. Shall the data be scaled? Defaults to \code{FALSE}.
   }
-  \item{col}{
-    \code{Integer} \code{vector} specifying the line colors for the variable importance curves of each used covariate. 
+  \item{col.cov}{
+    \code{Integer} \code{vector} specifying the line color for the variable importance curve of each used covariate. 
     Defaults to vector of colors of length the number of used covariates. 
     The vector is reused cyclically if it is shorter than the number of curves.
   }
-  \item{lty}{
-    \code{Integer} \code{vector} specifying the line types for the variable importance curves of each used covariate. 
+  \item{lty.cov}{
+    \code{Integer} \code{vector} specifying the line type for the variable importance curve of each used covariate. 
     Defaults to vector of 1's of length the number of used covariates. 
     The vector is reused cyclically if it is shorter than the number of curves.
   }
-  \item{lwd}{
-    \code{Integer} \code{vector} specifying the line widths for the variable importance curves of each used covariate. 
+  \item{lwd.cov}{
+    \code{Integer} \code{vector} specifying the line width for the variable importance curve of each used covariate. 
     Defaults to vector of 1's of length the number of used covariates. 
     The vector is reused cyclically if it is shorter than the number of curves.
+  }
+  \item{col}{
+    \code{Integer} scalar specifying the line color for the variable trace curve. 
+    Defaults to 1.
+  }
+  \item{lty}{
+    \code{Integer} scalar specifying the line type for the variable trace curve. 
+    Defaults to 1.
+  }
+  \item{lwd}{
+    \code{Integer} scalar specifying the line width for the variable trace curve. 
+    Defaults to 1.
   }
   \item{cex}{
     \code{Integer} scalar for the symbol expansion used for titles, legends, and axis labels. Defaults to 1.
@@ -170,11 +185,11 @@ library("PRIMsrc")
     # Optimization criterion = LRT
     #=================================================================================
     plot.boxtrace(x = CVCOMBREP.synt1,
-                  main = paste("RCCV trace plots for model #1", sep=""),
-                  center = TRUE, scale = FALSE, 
-                  hline = c(0,0,0), col = 2:4, lty = c(1,1,1),
-                  device = NULL, file = "Covariate Trace Plots", path=getwd(),
-                  horizontal = FALSE, width = 8.5, height = 8.5)
+              main = paste("RCCV trace plots for model #1", sep=""),
+              xlab = "Box Mass", ylab = "Variable Range (centered)",
+              center = TRUE, scale = FALSE,
+              device = NULL, file = "Covariate Trace Plots", path=getwd(),
+              horizontal = FALSE, width = 8.5, height = 8.5)
 }
 
 }

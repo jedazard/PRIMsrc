@@ -16,7 +16,10 @@
              main = NULL, 
              xlab = "Box Mass", 
              ylab = "Variable Range",
-             col = 2, 
+             col.cov = 2:(length(x$used)+1), 
+             lty.cov = rep(1,length(x$used)), 
+             lwd.cov = rep(1,length(x$used)),
+             col = 1, 
              lty = 1, 
              lwd = 1, 
              cex = 1, 
@@ -45,23 +48,38 @@
   \item{ylab}{
     \code{Character} \code{vector}. Y axis label. Defaults to "Variable Range".
   }
+  \item{col.cov}{
+    \code{Integer} \code{vector} specifying the line color for the variable trajectory curve of each used covariate. 
+    Defaults to vector of colors of length the number of used covariates. 
+    The vector is reused cyclically if it is shorter than the number of curves.
+  }
+  \item{lty.cov}{
+    \code{Integer} \code{vector} specifying the line type for the variable trajectory curve of each used covariate. 
+    Defaults to vector of 1's of length the number of used covariates. 
+    The vector is reused cyclically if it is shorter than the number of curves.
+  }
+  \item{lwd.cov}{
+    \code{Integer} \code{vector} specifying the line width for the variable trajectory curve of each used covariate. 
+    Defaults to vector of 1's of length the number of used covariates. 
+    The vector is reused cyclically if it is shorter than the number of curves.
+  }
   \item{col}{
-    \code{Integer} scalar specifying the line color for the variable trajectory curve of each used covariate. 
-    Defaults to 2.
+    \code{Integer} scalar specifying the line color for the trajectory curve of each statistical quantity of interest. 
+    Defaults to 1.
   }
   \item{lty}{
-    \code{Integer} scalar specifying the line type for the variable trajectory curve of each used covariate. 
+    \code{Integer} scalar specifying the line type for the trajectory curve of each statistical quantity of interest. 
     Defaults to 1.
   }
   \item{lwd}{
-    \code{Integer} scalar specifying the line width for the variable trajectory curve of each used covariate. 
+    \code{Integer} scalar specifying the line width for the trajectory curve of each statistical quantity of interest. 
     Defaults to 1.
   }
   \item{cex}{
     \code{Integer} scalar for the symbol expansion used for titles, legends, and axis labels. Defaults to 1.
   }
   \item{add.legend}{
-    \code{Logical} scalar. Should the legend be added to the current open graphics device?. Defaults to \code{FALSE}.
+    \code{Logical} scalar. Should the legend be added to the current open graphics device? Defaults to \code{FALSE}.
   }
   \item{text.legend}{
     \code{Character} \code{vector} of legend content. Defaults to \code{NULL}.
@@ -162,9 +180,10 @@ library("PRIMsrc")
     #=================================================================================
     plot.boxtraj(x = CVCOMBREP.synt1,
                  main = paste("RCCV peeling trajectories for model #1", sep=""),
-                 col = 2:4, lty = c(1,1,1),
+                 xlab="Box Mass", ylab="Variable Range",
                  device = NULL, file = "Covariate Trajectory Plots", path=getwd(),
                  horizontal = FALSE, width = 8.5, height = 8.5)
+
 }
 
 }

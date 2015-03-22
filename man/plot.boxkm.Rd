@@ -58,7 +58,8 @@
     \code{Numeric} scalar specifying the size of the marks. Defaults to 1.
   }
   \item{only.last}{
-    \code{Logical} scalar defining whether only the last step of the peeling sequence should be plotted. Defaults to \code{FALSE}.
+    \code{Logical} scalar for whether only the last step of the peeling sequence should be plotted. 
+    Defaults to \code{FALSE}.
   }
   \item{nr}{
     \code{Integer} scalar of the number of rows in the plot. If \code{NULL}, defaults to 3.
@@ -159,12 +160,12 @@ library("PRIMsrc")
     # Peeling criterion = LRT
     # Optimization criterion = LRT
     #=================================================================================
-    plot.boxkm(x = CVCOMBREP.synt1, 
-               main = paste("RCCV probability curves for model #1", sep=""),
-               xlab = "Time", ylab = "Probability",
-               cex = 1, yscale = 1, precision = 1/CVCOMBREP.synt1$A,
-               device = NULL, file = "Survival Plots", path=getwd(),
-               horizontal = TRUE, width = 11.5, height = 8.5)
+    plot.boxkm(x = CVCOMBREP.synt1,
+           main = paste("RCCV probability curves for model #1", sep=""),
+           xlab = "Time", ylab = "Probability",
+           precision = 1/CVCOMBREP.synt1$A, mark = 3, col = 2, cex = 1,
+           device = NULL, file = "Survival Plots", path=getwd(),
+           horizontal = TRUE, width = 11.5, height = 8.5)
 }
 
 }

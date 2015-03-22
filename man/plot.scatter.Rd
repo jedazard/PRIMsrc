@@ -17,14 +17,14 @@
              proj = c(1,2), 
              splom = TRUE, 
              boxes = FALSE,
-             steps,
+             steps = x$cvfit$cv.nsteps,
              add.legend = TRUE, 
              pch = 16, 
-             cex = 0.7, 
+             cex = 0.5, 
              col = 1, 
-             box.col = 1, 
-             box.lty = 2, 
-             box.lwd = 1,
+             col.box = 2, 
+             lty.box = 2, 
+             lwd.box = 1,
              device = NULL, 
              file = "Scatter Plot", 
              path=getwd(), 
@@ -51,28 +51,28 @@
   }
   \item{steps}{
     \code{Integer} \code{vector}. Vector of peeling steps at which to plot the in-box samples and box vertices. 
-    Defaults to the last peeling step.
+    Defaults to the last peeling step of \code{"PRSP"} object \code{x}.
   }
   \item{add.legend}{
     \code{Logical} scalar. Shall the legend of steps numbers be plotted? Defaults to \code{TRUE}.
   }
   \item{pch}{
-    Symbol number for the scatter plot. Defaults to 16.
+    \code{Integer} scalar of symbol number for the scatter plot. Defaults to 16.
   }
   \item{cex}{
-    Symbol expansion. Defaults to 0.7.
+    \code{Integer} scalar of symbol expansion. Defaults to 0.5.
   }
   \item{col}{
     \code{Integer} \code{vector} of symbol color for each step. Defaults to 1.
   }
-  \item{box.col}{
-    \code{Integer} \code{vector} of line color of the box vertices for each step. Defaults to 1.
+  \item{col.box}{
+    \code{Integer} \code{vector} of line color of box vertices for each step. Defaults to 2.
   }
-  \item{box.lty}{
-    Line type of box vertices. Defaults to 2.
+  \item{lty.box}{
+    \code{Integer} scalar of line type of box vertices. Defaults to 2.
   }
-  \item{box.lwd}{
-    Line width of box vertices. Defaults to 1.
+  \item{lwd.box}{
+    \code{Integer} scalar of line width of box vertices. Defaults to 1.
   }
   \item{device}{
     Graphic display device in \{NULL, "PS", "PDF"\}. Defaults to NULL (standard output screen).
@@ -158,12 +158,12 @@ library("PRIMsrc")
     # Peeling criterion = LRT
     # Optimization criterion = LRT
     #=================================================================================
-    plot.scatter(x=CVCOMBREP.synt1, 
+    plot.scatter(x = CVCOMBREP.synt1,
                  main = paste("Scatter plot for model #1", sep=""),
                  proj = c(1,2), splom = TRUE, boxes = TRUE,
-                 steps = CVCOMBREP.synt1$cvfit$cv.nsteps, 
-                 add.legend = TRUE, cex = 0.5, 
-                 box.col = "red", box.lty = 3, box.lwd = 1,
+                 steps = CVCOMBREP.synt1$cvfit$cv.nsteps,
+                 add.legend = TRUE, pch = 16, cex = 0.5, col = 1,
+                 col.box = 2, lty.box = 2, lwd.box = 1,
                  device = NULL, file = "Scatter Plot", path=getwd(),
                  horizontal = FALSE, width = 5, height = 5)
 }
