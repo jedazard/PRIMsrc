@@ -1,8 +1,8 @@
 Package: PRIMsrc
 Type: Package
 Title: PRIM Survival Regression Classification
-Version: 0.5.3
-Date: 2015-03-21
+Version: 0.5.5
+Date: 2015-03-23
 Authors@R: c(person("Jean-Eudes", "Dazard",
                     role = c("aut", "cre"),
                     email = "jxd101@case.edu"),
