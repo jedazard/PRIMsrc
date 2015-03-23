@@ -1,15 +1,9 @@
 =======
 PRIMsrc
 =======
-Performs a unified treatment of Bump Hunting by Patient Rule Induction Method in Survival, Regression and Classification settings (SRC). The method generates decision rules delineating a region in the predictor space, where the response is larger than its average over the entire space. The region is shaped as a hyperdimensional box or hyperrectangle that is not necessarily contiguous. Assumptions are that the multivariate input variables can be discrete or continuous and the
-univariate response variable can be discrete (Classification), continuous (Regression) or a time-to event,
-possibly censored (Survival). It is intended to handle low and high-dimensional multivariate datasets, including
-the situation where the number of variables far exceeds that of the samples (p >> n paradigm).
+Performs a unified treatment of Bump Hunting by Patient Rule Induction Method in Survival, Regression and Classification settings (SRC). The method generates decision rules delineating a region in the predictor space, where the response is larger than its average over the entire space. The region is shaped as a hyperdimensional box or hyperrectangle that is not necessarily contiguous. Assumptions are that the multivariate input variables can be discrete or continuous and the univariate response variable can be discrete (Classification), continuous (Regression) or a time-to event, possibly censored (Survival). It is intended to handle low and high-dimensional multivariate datasets (p < n and p > n cases), including the situation where the number of variables far exceeds that of the samples (p >> n paradigm).
 
-The current version is a developmental release that only includes the case of a survival response. 
-Ultimately, it will include all the features described above. New features will be added soon as they are available. 
-At this point, the main function sbh() depends on a internal cross-validated variable selection procedure by regularized Cox-regression 
-from the R package glmnet.
+The current version is a developmental release that only includes the case of a survival response. Ultimately, it will include all the features described above. New features will be added soon as they are available. At this time, the main function for fitting a Survival Bump Hunting Model (see below) in high dimensional data relies on a internal cross-validated variable selection procedure by regularized Cox-regression from the R package glmnet. This variable selection procedure is made optional and recommended only for situation where the number of variables exceeds that of the samples (p > n and p >> n cases).  
 
 See also below the package news with the R command: PRIMsrc.news().
 
@@ -31,7 +25,7 @@ See also below on how to cite the package with the R command: citation("PRIMsrc"
 =========================
 Documentation and Manual: 
 =========================
-All the codes are in the R folder and a manual (PRIMsrc.pdf) details the end-user functions. At this stage and for simplicity, there is a end-user main function for fitting a cross-validated survival bump hunting model (sbh). There are 5 end-user S3 generic plotting functions (plot.****) along with two S3 generic functions: summary and predict. Available are also 5 synthetic datasets and 2 real datasets including altogether low and high-dimensional situations (for p < n, p > and p >> n cases). See the "PRIMsrc-package" introduction section of the manual for more details and examples.
+All the codes are in the R folder and a manual (PRIMsrc.pdf) details the end-user functions. At this stage and for simplicity, there is a unique end-user main function for fitting a cross-validated Survival Bump Hunting model (sbh(...)). There are 5 end-user S3 generic plotting functions (plot.****(...)) along with two S3 generic functions: summary(...) and predict(...). Available are also 5 synthetic datasets and 2 real datasets including altogether low and high-dimensional situations (for p < n, p > n and p >> n cases). See the "PRIMsrc-package" introduction section of the manual for more details and examples.
 
 =============
 Installation: 
