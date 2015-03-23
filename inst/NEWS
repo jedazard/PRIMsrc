@@ -16,40 +16,46 @@ o RELEASE 0.3.0
 ---------------------------------------------------------------------------------
 Date   : 2015-02-27
 o RELEASE 0.4.0
-- Extension to high-dimensional covariates and p > n case
+- Extension to high-dimensional p > n and p >> n cases by adding an internal variable selection procedure 
+  using the Elasticnet-Regularized Cox Regression function of the 'glmnet' package.
+- Removed (temporarily) interactive option in sbh() in case no variables are selected by glmnet(...).
 - Added dependency to glmnet package for initial variable selection.
 - Added synthetic dataset #5 and example with p > n.
 - Added real dataset #2 and example with p >> n.
-- Added new ouput of selected and used variables in main function sbh().
-- Removed (temporarily) interactive option in sbh() in case no variables are selected by glmnet().
+- Added new ouputs 'selected' and 'used' in main function sbh(...) for variables effectively selected and used for peeling. 
 - Removed returned values of box vertices that were redudant with the returned rules.
 - Changed return value of variable traces: now also returns the matrix of traces by replication.
-- Corrected superfluous codes in the parallelization section, before clusterCall() in sbh().
-- Corrected number of replications in sbh() in case of parallelization. 
+- Corrected superfluous codes in the parallelization section, before clusterCall(...) in sbh(...).
+- Corrected number of replications in sbh(...) in case of parallelization. 
 - Corrected stepwise variable selection procedure in peel.box() to account for missing values.
 - Corrected definition of the cross-validated box vertices (definition) in the case of "combined CV" technique.
 - Corrected generation of random seed when none is provided. 
-- Minor updates, bugs and code improvements in sbh() and peel.box() functions.
+- Minor updates, bugs and code improvements in sbh(...) and peel.box(...) functions.
 - Updated manual, version number.
 - Test build under 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
 Date   : 2015-03-04
 o RELEASE 0.5.0
 - Change of package name and GitHub repository name from PrimSRC to PRIMsrc.
-_ Added CRAN/GitHub subfolder doc for PDF documentation files (including manual and applied study abstract).
-- Removed option for overlaying plots of multiple PRSP objects in plot.boxtrace() and plot.boxtraj().
+- Added CRAN/GitHub subfolder doc for PDF documentation files (including manual and applied study abstract).
+- Removed option for overlaying plots of multiple PRSP objects in plot.boxtrace(...) and plot.boxtraj(...).
 - Corrected handling of empty PRSP object (failed peeling) in all plotting functions.
 - Implementation of plotting device now internal to all plotting functions.
 - Removed internal functions from the manual, updated manual, version number.
 - Test build under 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2015-03-21
+Date   : 2015-03-16
 o RELEASE 0.5.3
-_ Added S3-class generic summary function.
-_ Added S3-class generic predict function.
-- Made all plotting functions S3-class functions and renamed them as plot.xxx().
+- Added S3-class generic summary function.
+- Added S3-class generic predict function.
+- Made all plotting functions S3-class functions and renamed them as plot.xxx(...).
+- Test build under 3.0.2 and release update to GitHub.
+---------------------------------------------------------------------------------
+Date   : 2015-03-23
+o RELEASE 0.5.5
+- Made the internal variable selection procedure conditional on whether p <= n or not.
 - Corrected treatment of missing values in case of replications for the variable traces.
 - Corrected output of variables used for peeling now based on variable trace modal values.
-- Minor bugs corrected in plotting functions.
+- Several minor bugs corrected in all plotting functions.
 - Test build under 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
