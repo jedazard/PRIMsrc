@@ -11,7 +11,9 @@
 # Usage         :
 ################
 #                   sbh(dataset, discr,
-#                       B=10, K=5, A=1000, cpv=FALSE, cvtype="combined", cvcriterion="lrt",
+#                       B=10, K=5, A=1000,
+#                       cpv=FALSE,
+#                       cvtype="combined", cvcriterion="lrt",
 #                       arg="beta=0.05,alpha=0.1,minn=10,L=NULL,peelcriterion=\"lr\"",
 #                       probval=NULL, timeval=NULL,
 #                       parallel=FALSE, conf=NULL, seed=NULL)
@@ -26,73 +28,17 @@
 ################
 # Arguments     :
 ################
-# dataset       :   Data.frame or numeric matrix of input dataset containing the observed survival and status indicator variables in the first two columns, respectively.
-# discr         :   Logical vector describing what covariates are discrete. Defaults to logical(ncol(dataset)-2).
-# B             :   Number of replications of the cross-validation procedure. Defaults to 10.
-# K             :   Number of folds for the cross-validation procedure. Defaults to 5.
-# A             :   Number of permutations for the computation of p-values. Defaults to 1000.
-# cpv           :   Logical. Flag for computation of cross-validated p-values. Defaults to FALSE.
-#                   If computation of cross-validated p-value is deired, then running with the parallelization option is
-#                   strongly advised, as it may take a while otherwise.
-# cvtype        :   Character vector describing the cross-validation technique in {"none", "averaged", "combined"}.
-#                   Defaults to "combined".
-# cvcriterion   :   Character vector describing the cross-validation optimization criterion in {"lhr", "lrt", "cer"}.
-#                   Defaults to "lrt". Automatically set to NULL if cvtype="none".
-# arg           :   Character vector describing the parameters to use:
-#                     alpha = fraction to peel off at each step. Defaults to 0.1.
-#                     beta = minimum support size resulting from the peeling sequence. Defaults to 0.05.
-#                     minn = minimum number of observation in a box. Defaults to 10.
-#                     L = fixed peeling length. Defaults to NULL.
-#                     peelcriterion in {"hr", "lr"}. Defaults to "lr".
-# probval       :   Survival probability at which we want to get the endpoint box survival time.
-#                   Defaults to NULL.
-# timeval       :   Survival time at which we want to get the endpoint box survival probability.
-#                   Defaults to NULL.
-# parallel      :   Logical. Is parallel computing to be performed? Optional, defaults to FALSE.
-# conf          :   List of parameters for cluster configuration.
-#                   Inputs for R package parallel function makeCluster() for cluster setup.
-#                   Optional, defaults to NULL. See details for usage.
-# seed          :   User seed to reproduce the results.
 #
 ################
 # Values        :
 ################
-#               :   Object of class "PRSP" (Patient Recursive Survival Peeling), list containing the following fields:
-#
-# x             :   Numeric matrix of original covariates.
-# times         :   Observed failure / survival times.
-# status        :   Observed event indicator \in {1,0}.
-# B             :   Number of replications used in the cross-validation procedure.
-# K             :   Number of folds used for the cross-validation procedure.
-# A             :   Number of permutations used for the computation of p-values.
-# cpv           :   Returned flag of computation of cross-validated p-values.
-# cvtype        :   Cross-validation technique used.
-# cvcriterion   :   Cross-validation optimization criterion used.
-# varsign       :   Numeric vector \in {-1,+1} of directions of peeling for all variables.
-# selected      :   Numeric vector giving the selected variable by regularized (Elastic-Net) Cox-regression.
-# arg           :   Character vector of parameters used.
-# probval       :   Survival probability used.
-# timeval       :   Survival time used.
-# cvfit         :   List of 7 fiels of cross-validated estimates:
-#                     "cv.maxsteps"=numeric scalar of maximal ceiled-mean of number of peeling steps over the replicates
-#                     "cv.nsteps"=numeric scalar of optimal number of peeling steps according to the optimization criterion
-#                     "cv.trace"=list of numeric matrix and numeric vector of variable usage traces or modal trace values at each step
-#                     "cv.boxind"=logical matrix {TRUE, FALSE} of sample box membership indicator (columns) by peeling steps (rows)
-#                     "cv.rules"=data.frame of decision rules on the variable (columns) by peeling steps (rows)
-#                     "cv.stats"=numeric matrix of box quantities of interest (columns) by peeling steps (rows)
-#                     "cv.pval"=numeric vector of cross-validated log-rank p-values of sepraration of survival distributions
-# cvprofiles    :   List (B) of numeric vectors, one for each replicate, of cross-validated statistic
-#                   used in the optimization criterion (setup by user)
-#                   as  function of the number of peeling steps.
-# plot          :   Returned flag for plotting results (TRUE if cross-validation successful)
-# seed          :   User seed(s) used:
-#                   Integer scalar of a single value, if parallelization is used.
-#                   Integer vector of values, one for each replication, if parallelization is not used.
 #
 ##########################################################################################################################################
 
 sbh <- function(dataset, discr,
-                B=10, K=5, A=1000, cpv=FALSE, cvtype="combined", cvcriterion="lrt",
+                B=10, K=5, A=1000,
+                cpv=FALSE,
+                cvtype="combined", cvcriterion="lrt",
                 arg="beta=0.05,alpha=0.1,minn=10,L=NULL,peelcriterion=\"lr\"",
                 probval=NULL, timeval=NULL,
                 parallel=FALSE, conf=NULL, seed=NULL) {
@@ -144,29 +90,36 @@ sbh <- function(dataset, discr,
   cat("Parallelization:", parallel, "\n")
   cat("\n")
 
-  # Variable selection by regularized Cox-regression
-  cat("Variable selection by regularized Cox-regression ... \n")
-  k <- 0
-  while (k < 10) {
-    if (is.null(seed)) {
-      seed <- floor(runif(n=1, min=0, max=1) * 10^(min(digits,9)))
-    } else {
-      set.seed(seed)
-    }
-    cv.fit <- cv.glmnet(x=x, y=Surv(times, status), nfolds=max(3,K), family="cox", maxit=1e5)
-    fit <- glmnet(x=x, y=Surv(times, status), family="cox", maxit=1e5)
-    cv.coef <- as.numeric(coef(fit, s=cv.fit$lambda.min))
-    selected <- which(cv.coef != 0)
-    if (is.empty(selected)) {
-      k <- k + 1
-      seed <- floor(runif(n=1, min=0, max=1) * 10^(min(digits,9)))
-      if (k == 10) {
-        success <- FALSE
+  # Variable selection
+  if (p > n) {
+    cat("Variable selection by Elasticnet Regularized Cox-Regression ... \n")
+    k <- 0
+    while (k < 10) {
+      if (is.null(seed)) {
+        seed <- floor(runif(n=1, min=0, max=1) * 10^(min(digits,9)))
+      } else {
+        set.seed(seed)
       }
-    } else {
-      k <- 10
-      success <- TRUE
+      cv.fit <- cv.glmnet(x=x, y=Surv(times, status), nfolds=max(3,K), family="cox", maxit=1e5)
+      fit <- glmnet(x=x, y=Surv(times, status), family="cox", maxit=1e5)
+      cv.coef <- as.numeric(coef(fit, s=cv.fit$lambda.min))
+      selected <- which(!(is.na(cv.coef)) & (cv.coef != 0))
+      if (is.empty(selected)) {
+        k <- k + 1
+        seed <- NULL
+        if (k == 10) {
+          success <- FALSE
+        }
+      } else {
+        k <- 10
+        success <- TRUE
+      }
     }
+  } else {
+    cat("Variable selection by Cox-Regression ... \n")
+    cv.coef <- coxph(Surv(times, status) ~ x, eps=0.01, singular.ok=T, iter.max=1)$coef
+    selected <- which(!(is.na(cv.coef)) & (cv.coef != 0))
+    success <- TRUE
   }
 
   if (!success) {
@@ -515,7 +468,7 @@ sbh <- function(dataset, discr,
 
 
 ##########################################################################################################################################
-# 2. END-USER FUNCTIONS
+# 2. END-USER FUNCTIONS FOR NEWS, SUMMARY AND PREDICTION
 ##########################################################################################################################################
 
 ##########################################################################################################################################
@@ -537,7 +490,6 @@ sbh <- function(dataset, discr,
 ################
 # Values        :
 ################
-#                   None.
 #
 ##########################################################################################################################################
 
@@ -564,13 +516,10 @@ PRIMsrc.news <- function(...) {
 ################
 # Arguments     :
 ################
-# object        :   Object of class "PRSP" as generated by the main function sbh().
-# ...           :   Further generic arguments passed to the summary function.
 #
 ################
 # Values        :
 ################
-#                   None.
 #
 ##########################################################################################################################################
 
@@ -611,22 +560,10 @@ summary.PRSP <- function(object, ...) {
 ################
 # Arguments     :
 ################
-# object        :   Object of class "PRSP" as generated by the main function sbh().
-# newdata       :   An object containing the new input data: either a numeric matrix or numeric vector.
-#                   A vector will be transformed to a (#sample x 1) matrix.
-# steps         :   Integer vector. Vector of peeling steps at which to predict the box memberships and box vertices.
-#                   Defaults to the last peeling step.
-# na.action     :   A function to specify the action to be taken if NAs are found.
-#                   The default action is na.omit, which leads to rejection of incomplete cases.
-# ...           :   Further generic arguments passed to the predict function.
 #
 ################
 # Values        :
 ################
-# boxind        :   Logical matrix {TRUE, FALSE} of predicted box membership indicator (columns) by peeling steps (rows).
-#                   (TRUE = in-box, FALSE = out-of-box)
-# vertices      :   List of numeric matrix of predicted box vertices: box lower and upper bounds (rows) by variable (columns).
-#                   One entry for each peeling steps.
 #
 ##########################################################################################################################################
 
@@ -845,10 +782,11 @@ plot.profile <- function(x,
 ################
 #                    plot.scatter(x,
 #                                 main=NULL,
-#                                 proj=c(1,2), splom=TRUE, boxes=FALSE, 
+#                                 proj=c(1,2), splom=TRUE, boxes=FALSE,
 #                                 steps=x$cvfit$cv.nsteps,
-#                                 add.legend=TRUE, pch=16, cex=0.5, col=1,
-#                                 col.box=2, lty.box=2, lwd.box=1,
+#                                 pch=16, cex=0.5, col=, col=2:(length(steps)+1),
+#                                 col.box=2:(length(steps)+1), lty.box=rep(2,length(steps)), lwd.box=rep(1,length(steps)),
+#                                 add.legend=TRUE,
 #                                 device=NULL, file="Scatter Plot", path=getwd(),
 #                                 horizontal=FALSE, width=5, height=5, ...)
 #
@@ -870,18 +808,19 @@ plot.profile <- function(x,
 
 plot.scatter.PRSP <- function(x,
                               main=NULL,
-                              proj=c(1,2), splom=TRUE, boxes=FALSE, 
+                              proj=c(1,2), splom=TRUE, boxes=FALSE,
                               steps=x$cvfit$cv.nsteps,
-                              add.legend=TRUE, pch=16, cex=0.5, col=1,
-                              col.box=2, lty.box=2, lwd.box=1,
+                              pch=16, cex=0.5, col=2:(length(steps)+1),
+                              col.box=2:(length(steps)+1), lty.box=rep(2,length(steps)), lwd.box=rep(1,length(steps)),
+                              add.legend=TRUE,
                               device=NULL, file="Scatter Plot", path=getwd(),
                               horizontal=FALSE, width=5, height=5, ...) {
 
   if (x$plot) {
 
-    scatterplot <- function(object, 
+    scatterplot <- function(object,
                             main,
-                            proj, splom, boxes, 
+                            proj, splom, boxes,
                             steps,
                             add.legend, pch, cex, col,
                             col.box, lty.box, lwd.box, ...) {
@@ -897,14 +836,11 @@ plot.scatter.PRSP <- function(x,
         X <- object$x[,proj]
         X.names <- colnames(X)
 
-        if (missing(steps) || is.null(steps))
+        if (is.null(steps))
           steps <- object$cvfit$cv.nsteps
 
         L <- length(steps)
-        if (length(col.box) < L) col.box <- rep(col.box, length=L)
-        if (length(lty.box) < L) lty.box <- rep(lty.box, length=L)
-        if (length(lwd.box) < L) lwd.box <- rep(lwd.box, length=L)
-        eqscplot(x=X, col=1, type="p", main=NULL, xlab=X.names[1], ylab=X.names[2], ...)
+        eqscplot(x=X, type="p", pch=pch, cex=cex, col=1, main=NULL, xlab=X.names[1], ylab=X.names[2], ...)
         if (splom) {
             for (i in 1:L) {
                 w <- object$cvfit$cv.boxind[steps[i],]
@@ -928,20 +864,21 @@ plot.scatter.PRSP <- function(x,
                 }
             }
             for (i in 1:L) {
-                rect(vertices[[i]][1,1], vertices[[i]][1,2], vertices[[i]][2,1], vertices[[i]][2,2], border=col.box[i], col=NA, lty=lty.box[i], lwd=lwd.box[i])
+                rect(vertices[[i]][1,1], vertices[[i]][1,2], vertices[[i]][2,1], vertices[[i]][2,2],
+                     border=col.box[i], col=NA, lty=lty.box[i], lwd=lwd.box[i])
             }
         }
         if (!is.null(main)) {
             title(main=main, xlab="", ylab="", line=1, outer=FALSE, xpd=TRUE)
         }
         if (add.legend) {
-            legend("topleft", xpd=TRUE, inset=0.01, legend=paste("Steps: ", steps, sep=""), pch=pch, col=col, cex=cex)
+            legend("topleft", xpd=TRUE, inset=0.01, legend=paste("Step: ", steps, sep=""), pch=pch, col=col, cex=cex)
         }
     }
 
     if (is.null(device)) {
         dev.new(width=width, height=height, title="Scatter Plot", noRStudioGD = TRUE)
-        scatterplot(object=x, 
+        scatterplot(object=x,
                     main=main,
                     proj=proj, splom=splom, boxes=boxes, steps=steps,
                     add.legend=add.legend, pch=pch, cex=cex, col=col,
@@ -953,7 +890,7 @@ plot.scatter.PRSP <- function(x,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
-        scatterplot(object=x, 
+        scatterplot(object=x,
                     main=main,
                     proj=proj, splom=splom, boxes=boxes, steps=steps,
                     add.legend=add.legend, pch=pch, cex=cex, col=col,
@@ -966,7 +903,7 @@ plot.scatter.PRSP <- function(x,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
-        scatterplot(object=x, 
+        scatterplot(object=x,
                     main=main,
                     proj=proj, splom=splom, boxes=boxes, steps=steps,
                     add.legend=add.legend, pch=pch, cex=cex, col=col,
@@ -984,10 +921,11 @@ plot.scatter.PRSP <- function(x,
 
 plot.scatter <- function(x,
                          main=NULL,
-                         proj=c(1,2), splom=TRUE, boxes=FALSE, 
+                         proj=c(1,2), splom=TRUE, boxes=FALSE,
                          steps=x$cvfit$cv.nsteps,
-                         add.legend=TRUE, pch=16, cex=0.5, col=1, 
-                         col.box=2, lty.box=2, lwd.box=1,
+                         pch=16, cex=0.5, col=2:(length(steps)+1),
+                         col.box=2:(length(steps)+1), lty.box=rep(2,length(steps)), lwd.box=rep(1,length(steps)),
+                         add.legend=TRUE,
                          device=NULL, file="Scatter Plot", path=getwd(),
                          horizontal=FALSE, width=5, height=5, ...) {
     UseMethod(generic="plot.scatter", object=x)
@@ -1068,71 +1006,86 @@ plot.boxtraj.PRSP <- function(x,
             plot(x=object$cvfit$cv.stats$mean$cv.support,
                  y=object$cvfit$cv.rules$mean[,used[j]],
                  type='s', col=col.cov[j], lty=lty.cov[j], lwd=lwd.cov[j],
-                 main=paste(varnames[used[j]], " variable trajectory", sep=""),
-                 xlim=range(0,1), ylim=range(object$x[,used[j]], na.rm=TRUE),
-                 xlab=xlab, ylab=ylab, cex.main=cex)
+                 main=paste(varnames[used[j]], " variable trajectory", sep=""), cex.main=cex,
+                 xlim=range(0,1),
+                 ylim=range(object$x[,used[j]], na.rm=TRUE),
+                 xlab=xlab,
+                 ylab=ylab)
         }
         if (add.legend)
-          legend("bottomleft", inset=0.01, legend=text.legend, cex=0.7)
+          legend("bottomleft", inset=0.01, legend=text.legend, cex=cex)
 
         par(mfg=c(nr-1, 1))
         plot(object$cvfit$cv.stats$mean$cv.support,
              object$cvfit$cv.stats$mean$cv.support,
              type='s', col=col, lty=lty, lwd=lwd,
-             main="Box support trajectory",
-             xlim=range(0,1), ylim=range(0, 1),
-             xlab=xlab, ylab=expression(paste("Support (", beta, ")", sep="")), cex.main=cex)
+             main="Box support trajectory", cex.main=cex,
+             xlim=range(0,1),
+             ylim=range(0,1),
+             xlab=xlab,
+             ylab=expression(paste("Support (", beta, ")", sep="")))
         if (add.legend)
-            legend("bottomright", inset=0.01, legend=text.legend, cex=0.7)
+            legend("bottomright", inset=0.01, legend=text.legend, cex=cex)
 
         par(mfg=c(nr-1, 2))
         plot(object$cvfit$cv.stats$mean$cv.support,
              object$cvfit$cv.stats$mean$cv.max.time.bar,
              type='s', col=col, lty=lty, lwd=lwd,
-             main="MEFT trajectory",
-             xlim=range(0,1), ylim=range(0, object$cvfit$cv.stats$mean$cv.max.time.bar, na.rm=TRUE),
-             xlab=xlab, ylab="Time", cex.main=cex)
+             main="MEFT trajectory", cex.main=cex,
+             xlim=range(0,1),
+             ylim=range(0, object$cvfit$cv.stats$mean$cv.max.time.bar, na.rm=TRUE),
+             xlab=xlab,
+             ylab="Time")
         if (add.legend)
-            legend("bottomright", inset=0.01, legend=text.legend, cex=0.7)
+            legend("bottomright", inset=0.01, legend=text.legend, cex=cex)
 
         par(mfg=c(nr-1, 3))
         plot(object$cvfit$cv.stats$mean$cv.support,
              object$cvfit$cv.stats$mean$cv.min.prob.bar,
              type='s', col=col, lty=lty, lwd=lwd,
-             main="MEFP trajectory",
-             xlim=range(0,1), ylim=range(0,1),
-             xlab=xlab, ylab="Probability", cex.main=cex)
+             main="MEFP trajectory", cex.main=cex,
+             xlim=range(0,1),
+             ylim=range(0,1),
+             xlab=xlab,
+             ylab="Probability")
         if (add.legend)
-            legend("bottomright", inset=0.01, legend=text.legend, cex=0.7)
+            legend("bottomright", inset=0.01, legend=text.legend, cex=cex)
 
         par(mfg=c(nr, 1))
         plot(object$cvfit$cv.stats$mean$cv.support,
              object$cvfit$cv.stats$mean$cv.lhr,
              type='s', col=col, lty=lty, lwd=lwd,
-             main="LHR trajectory", xlim=range(0,1), ylim=range(0, object$cvfit$cv.stats$mean$cv.lhr, na.rm=TRUE),
-             xlab=xlab, ylab=expression(paste("Log-Hazard Ratio (", lambda,")", sep="")), cex.main=cex)
+             main="LHR trajectory", cex.main=cex,
+             xlim=range(0,1),
+             ylim=range(0, object$cvfit$cv.stats$mean$cv.lhr, na.rm=TRUE),
+             xlab=xlab,
+             ylab=expression(paste("Log-Hazard Ratio (", lambda,")", sep="")))
         if (add.legend)
-            legend("top", inset=0.01, legend=text.legend, cex=0.7)
+            legend("top", inset=0.01, legend=text.legend, cex=cex)
 
         par(mfg=c(nr, 2))
         plot(object$cvfit$cv.stats$mean$cv.support,
              object$cvfit$cv.stats$mean$cv.lrt,
              type='s', col=col, lty=lty, lwd=lwd,
-             main="LRT trajectory",
-             xlim=range(0,1), ylim=range(0, object$cvfit$cv.stats$mean$cv.lrt, na.rm=TRUE),
-             xlab=xlab, ylab=expression(paste("Log-rank test (", chi^2 ,")", sep="")), cex.main=cex)
+             main="LRT trajectory", cex.main=cex,
+             xlim=range(0,1),
+             ylim=range(0, object$cvfit$cv.stats$mean$cv.lrt, na.rm=TRUE),
+             xlab=xlab,
+             ylab=expression(paste("Log-rank test (", chi^2 ,")", sep="")))
         if (add.legend)
-            legend("top", inset=0.01, legend=text.legend, cex=0.7)
+            legend("top", inset=0.01, legend=text.legend, cex=cex)
 
         par(mfg=c(nr, 3))
         plot(object$cvfit$cv.stats$mean$cv.support,
              object$cvfit$cv.stats$mean$cv.cer,
              type='s', col=col, lty=lty, lwd=lwd,
-             main="CER trajectory",
-             xlim=range(0,1), ylim=range(0, 1),
-             xlab=xlab, ylab=expression(paste("1-C (", theta,")", sep="")), cex.main=cex)
+             main="CER trajectory", cex.main=cex,
+             xlim=range(0,1),
+             ylim=range(0,1),
+             xlab=xlab,
+             ylab=expression(paste("1-C (", theta,")", sep="")))
         if (add.legend)
-            legend("top", inset=0.01, legend=text.legend, cex=0.7)
+            legend("top", inset=0.01, legend=text.legend, cex=cex)
         mtext(text=main, cex=1, side=3, outer=TRUE)
     }
 
@@ -1262,30 +1215,36 @@ plot.boxtrace.PRSP <- function(x,
         boxcut.scaled <- scale(x=object$cvfit$cv.rules$mean[,used], center=center, scale=scale)
         plot(x=object$cvfit$cv.stats$mean$cv.support,
              y=boxcut.scaled[,1], type='n',
-             xlim=range(0,1), ylim=range(boxcut.scaled),
-             main="Variable Importance", xlab="", ylab="", cex.main=cex)
+             xlim=range(0,1),
+             ylim=range(boxcut.scaled),
+             main="Variable Importance", cex.main=cex,
+             xlab="",
+             ylab="")
         for (j in 1:p) {
             lines(x=object$cvfit$cv.stats$mean$cv.support,
                   y=boxcut.scaled[,j],
                   type='l', col=col.cov[j], lty=lty.cov[j], lwd=lwd.cov[j])
         }
-        legend("topleft", inset=0.01, legend=varnames[used], col=col.cov, lty=lty.cov, lwd=lwd.cov, cex=0.5*cex)
+        legend("topleft", inset=0.01, legend=varnames[used], col=col.cov, lty=lty.cov, lwd=lwd.cov, cex=cex)
         if (center)
             abline(h=0, lty=2, col=1, lwd=0.3, xpd=FALSE)
         if (add.legend)
-            legend("bottom", inset=0.01, legend=text.legend, cex=0.5*cex)
+            legend("bottom", inset=0.01, legend=text.legend, cex=cex)
         mtext(text=xlab, cex=cex, side=1, line=1, outer=FALSE)
         mtext(text=ylab, cex=cex, side=2, line=2, outer=FALSE)
 
         plot(x=object$cvfit$cv.stats$mean$cv.support,
              y=matchtrace,
              type='S', yaxt="n", col=col, lty=lty, lwd=lwd,
-             xlim=range(0, 1), ylim=range(0, p),
-             main="Variable Usage", xlab="", ylab="", cex.main=cex)
+             xlim=range(0, 1),
+             ylim=range(0, p),
+             main="Variable Usage", cex.main=cex,
+             xlab="",
+             ylab="")
         par(mgp=c(1.5, 0, 0))
-        axis(side=2, at=1:p, labels=ticknames, tick=FALSE, las=1, line=NA, cex.axis=0.5*cex, outer=FALSE)
+        axis(side=2, at=1:p, labels=ticknames, tick=FALSE, las=1, line=NA, cex.axis=cex, outer=FALSE)
         if (add.legend)
-            legend("bottom", inset=0.01, legend=text.legend, cex=0.5*cex)
+            legend("bottom", inset=0.01, legend=text.legend, cex=cex)
         mtext(text=xlab, cex=cex, side=1, line=1, outer=FALSE)
         mtext(text="Variables Used", cex=cex, side=2, line=3, outer=FALSE)
         mtext(text=main, cex=1, side=3, outer=TRUE)

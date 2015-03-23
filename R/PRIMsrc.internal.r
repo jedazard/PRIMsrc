@@ -1001,6 +1001,8 @@ cv.comb.peel <- function(traindata, trainstatus, traintime,
 ################
 # Description   :
 ################
+#                    Internal subroutine for fitting a Survival Bump Hunting (SBH) model. Search the first box of the recursive coverage 
+#                    (outer) loop of our Patient Recursive Survival Peeling (PRSP) algorithm for the case of a survival (possibly censored) response.
 #
 ################
 # Arguments     :
@@ -1037,7 +1039,7 @@ peel.box <- function(traindata, traintime, trainstatus,
   p <- ncol(traindata)
   beta <- max(minn/n, beta)                              # Minimal box support thresholded to 10 points
   ncut <- ceiling(log(beta) / log(1 - (1/n)))            # Maximal number of peeling steps
-  pnz <- length(selected)                                   # Number of selected variables
+  pnz <- length(selected)                                # Number of selected variables
 
   # Initializations of variable trace and box boundaries
   vartrace <- numeric(ncut)
@@ -1570,12 +1572,10 @@ cbindlist <- function(list, trunc) {
 ################
 # Arguments     :
 ################
-# x             :   Array, matrix or vector of any type
 #
 ################
 # Values        :
 ################
-#               :   Logical. Returns TRUE if its argument is empty and FALSE otherwise.
 #
 ##########################################################################################################################################
 
@@ -1611,13 +1611,10 @@ is.empty <- function(x) {
 ################
 # Arguments     :
 ################
-# x             :   A numeric vector
-# digits        :   Integer indicating the number of decimal places (precision) to be used (default = 0).
 #
 ################
 # Values        :
 ################
-# x             :   Rounded numeric vector
 #
 ##########################################################################################################################################
 
@@ -1651,13 +1648,10 @@ myround <- function (x, digits = 0) {
 ################
 # Arguments     :
 ################
-# libname       :   Library name
-# pkgname       :   Package name
 #
 ################
 # Values        :
 ################
-#               :   None
 #
 ##########################################################################################################################################
 
