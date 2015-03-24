@@ -38,7 +38,10 @@ Date   : 2015-03-04
 o RELEASE 0.5.0
 - Change of package name and GitHub repository name from PrimSRC to PRIMsrc.
 - Added CRAN/GitHub subfolder doc for PDF documentation files (including manual and applied study abstract).
-- Removed option for overlaying plots of multiple PRSP objects in plot.boxtrace(...) and plot.boxtraj(...).
+- Removed option for overlaying plots of multiple PRSP objects 
+  in plot.boxtrace(...) and plot.boxtraj(...).
+- Added argument "toplot" to choose whether the selected or used covariates should be plotted
+  in plot.boxtrace(...) and plot.boxtraj(...).
 - Corrected handling of empty PRSP object (failed peeling) in all plotting functions.
 - Implementation of plotting device now internal to all plotting functions.
 - Removed internal functions from the manual, updated manual, version number.
@@ -51,7 +54,7 @@ o RELEASE 0.5.3
 - Made all plotting functions S3-class functions and renamed them as plot.xxx(...).
 - Test build under 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2015-03-23
+Date   : 2015-03-24
 o RELEASE 0.5.5
 - Made the internal variable selection procedure conditional on whether p <= n or not.
 - Corrected treatment of missing values in case of replications for the variable traces.
