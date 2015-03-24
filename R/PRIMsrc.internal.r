@@ -1164,26 +1164,10 @@ peel.box <- function(traindata, traintime, trainstatus,
 ################
 # Arguments     :
 ################
-# n             :    Integer giving the number of observations to be split into groups.
-# K	            :    Integer giving the number of groups into which the observations should be randomly split.
-#                       Setting K also specifies the type of folds to be generated:
-#                       Possible types are 'random cross-validation', 'leave-one-out cross-validation', or no cross-validation.
-#                       K \in {2,...,n-1} yields random cross-validation.
-#                       K = 1 yields no cross-validation.
-#                       K = n yields leave-one-out cross-validation.
-# seed          :    Integer seed for RNG of random splitting of the data.
 #
 ################
 # Values        :
 ################
-#                    A list object with the following components:
-# n	            :    Integer giving the number of observations.
-# K	            :    Integer giving the number of folds.
-# subsets	      :    Integer vector containing the permutation of the indices.
-# which	        :    Integer vector giving the fold for each permuted observation.
-# key           :    Integer vector containing the key of the indices to restore the original indices order
-#                       from the permutation of the indices grouped and reordered by fold
-# seed          :    Integer seed used for RNG of random splitting of the data.
 #
 ##########################################################################################################################################
 

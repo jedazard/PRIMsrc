@@ -13,7 +13,8 @@
 #                   sbh(dataset, discr,
 #                       B=10, K=5, A=1000,
 #                       cpv=FALSE,
-#                       cvtype="combined", cvcriterion="lrt",
+#                       cvtype=c("combined", "averaged", "none"), 
+#                       cvcriterion=c("lrt", "cer", "lhr"),
 #                       arg="beta=0.05,alpha=0.1,minn=10,L=NULL,peelcriterion=\"lr\"",
 #                       probval=NULL, timeval=NULL,
 #                       parallel=FALSE, conf=NULL, seed=NULL)
@@ -38,7 +39,8 @@
 sbh <- function(dataset, discr,
                 B=10, K=5, A=1000,
                 cpv=FALSE,
-                cvtype="combined", cvcriterion="lrt",
+                cvtype=c("combined", "averaged", "none"), 
+                cvcriterion=c("lrt", "cer", "lhr"),
                 arg="beta=0.05,alpha=0.1,minn=10,L=NULL,peelcriterion=\"lr\"",
                 probval=NULL, timeval=NULL,
                 parallel=FALSE, conf=NULL, seed=NULL) {
@@ -51,6 +53,9 @@ sbh <- function(dataset, discr,
   peelcriterion <- NULL
   eval(parse( text=unlist(strsplit(x=arg, split=",")) ))
   digits <- getOption("digits")
+
+  cvtype <- match.arg(arg=cvtype, choices=c("combined", "averaged", "none"), several.ok=FALSE)
+  cvcriterion <- match.arg(arg=cvcriterion, choices=c("lrt", "cer", "lhr"), several.ok=FALSE)
 
   # Checks
   if (missing(dataset)) {
@@ -624,7 +629,8 @@ predict.PRSP <- function (object, newdata, steps, na.action = na.omit, ...) {
 # Usage         :
 ################
 #                    plot.profile(x,
-#                                 main=NULL, xlab="Peeling Steps", ylab="Mean Profiles",
+#                                 main=NULL, 
+#                                 xlab="Peeling Steps", ylab="Mean Profiles",
 #                                 add.sd=TRUE, add.legend=TRUE, add.profiles=TRUE,
 #                                 pch=20, col=1, lty=1, lwd=2, cex=2,
 #                                 device=NULL, file="Profile Plot", path=getwd(),
@@ -654,7 +660,8 @@ predict.PRSP <- function (object, newdata, steps, na.action = na.omit, ...) {
 ##########################################################################################################################################
 
 plot.profile.PRSP <- function(x,
-                              main=NULL, xlab="Peeling Steps", ylab="Mean Profiles",
+                              main=NULL, 
+                              xlab="Peeling Steps", ylab="Mean Profiles",
                               add.sd=TRUE, add.legend=TRUE, add.profiles=TRUE,
                               pch=20, col=1, lty=1, lwd=2, cex=2,
                               device=NULL, file="Profile Plot", path=getwd(),
@@ -763,7 +770,8 @@ plot.profile.PRSP <- function(x,
 }
 
 plot.profile <- function(x,
-                         main=NULL, xlab="Peeling Steps", ylab="Mean Profiles",
+                         main=NULL, 
+                         xlab="Peeling Steps", ylab="Mean Profiles",
                          add.sd=TRUE, add.legend=TRUE, add.profiles=TRUE,
                          pch=20, col=1, lty=1, lwd=2, cex=2,
                          device=NULL, file="Profile Plot", path=getwd(),
@@ -940,8 +948,10 @@ plot.scatter <- function(x,
 # Usage         :
 ################
 #                    plot.boxtraj (x,
-#                                  main=NULL, xlab="Box Mass", ylab="Variable Range",
-#                                  col.cov=2:(length(x$used)+1), lty.cov=rep(1,length(x$used)), lwd.cov=rep(1,length(x$used)),
+#                                  main=NULL, 
+#                                  xlab="Box Mass", ylab="Variable Range",
+#                                  toplot=c("used", "selected"), 
+#                                  col.cov, lty.cov, lwd.cov,
 #                                  col=1, lty=1, lwd=1,
 #                                  cex=1, add.legend=FALSE, text.legend=NULL,
 #                                  nr=NULL, nc=NULL,
@@ -966,8 +976,10 @@ plot.scatter <- function(x,
 ##########################################################################################################################################
 
 plot.boxtraj.PRSP <- function(x,
-                              main=NULL, xlab="Box Mass", ylab="Variable Range",
-                              col.cov=2:(length(x$used)+1), lty.cov=rep(1,length(x$used)), lwd.cov=rep(1,length(x$used)),
+                              main=NULL, 
+                              xlab="Box Mass", ylab="Variable Range",
+                              toplot=c("used", "selected"),
+                              col.cov, lty.cov, lwd.cov,
                               col=1, lty=1, lwd=1,
                               cex=1, add.legend=FALSE, text.legend=NULL,
                               nr=NULL, nc=NULL,
@@ -975,16 +987,18 @@ plot.boxtraj.PRSP <- function(x,
                               horizontal=FALSE, width=8.5, height=11.5, ...) {
 
   if (x$plot) {
+    toplot <- match.arg(arg=toplot, choices=c("used", "selected"), several.ok=FALSE)
 
     boxtrajplot <- function(object,
                             main, xlab, ylab,
+                            toplot,
                             col.cov, lty.cov, lwd.cov,
                             col, lty, lwd,
                             cex, add.legend, text.legend,
                             nr, nc, ...) {
 
-        used <- object$used
-        p <- length(used)
+        covtoplot <- object[[toplot]]
+        p <- length(covtoplot)
         varnames <- colnames(object$x)
         if (is.null(nc))
             nc <- 3
@@ -995,7 +1009,16 @@ plot.boxtraj.PRSP <- function(x,
                 nr <- ((p+(1:nc))[which((p+(1:nc)) %% nc == 0)])%/%nc + 2
             }
         }
-
+        if (missing(col.cov)) {
+            col.cov <- 2:(length(object[[toplot]])+1) 
+        }
+        if (missing(lty.cov)) {
+            lty.cov <- rep(1,length(object[[toplot]])) 
+        }
+        if (missing(lwd.cov)) {
+            lwd.cov <- rep(1,length(object[[toplot]]))   
+        }
+        
         if (!is.null(main)) {
             par(mfrow=c(nr, nc), oma=c(0, 0, 3, 0), mar=c(2.5, 2.5, 2.0, 1.5), mgp=c(1.5, 0.5, 0))
         } else {
@@ -1004,11 +1027,11 @@ plot.boxtraj.PRSP <- function(x,
 
         for (j in 1:p) {
             plot(x=object$cvfit$cv.stats$mean$cv.support,
-                 y=object$cvfit$cv.rules$mean[,used[j]],
+                 y=object$cvfit$cv.rules$mean[,covtoplot[j]],
                  type='s', col=col.cov[j], lty=lty.cov[j], lwd=lwd.cov[j],
-                 main=paste(varnames[used[j]], " variable trajectory", sep=""), cex.main=cex,
+                 main=paste(varnames[covtoplot[j]], " variable trajectory", sep=""), cex.main=cex,
                  xlim=range(0,1),
-                 ylim=range(object$x[,used[j]], na.rm=TRUE),
+                 ylim=range(object$x[,covtoplot[j]], na.rm=TRUE),
                  xlab=xlab,
                  ylab=ylab)
         }
@@ -1093,6 +1116,7 @@ plot.boxtraj.PRSP <- function(x,
         dev.new(width=width, height=height, title="Covariate Trajectory Plots", noRStudioGD = TRUE)
         boxtrajplot(object=x,
                     main=main, xlab=xlab, ylab=ylab,
+                    toplot=toplot,
                     col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
                     col=col, lty=lty, lwd=lwd,
                     cex=cex, add.legend=add.legend, text.legend=text.legend,
@@ -1106,6 +1130,7 @@ plot.boxtraj.PRSP <- function(x,
         postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
         boxtrajplot(object=x,
                     main=main, xlab=xlab, ylab=ylab,
+                    toplot=toplot,
                     col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
                     col=col, lty=lty, lwd=lwd,
                     cex=cex, add.legend=add.legend, text.legend=text.legend,
@@ -1120,6 +1145,7 @@ plot.boxtraj.PRSP <- function(x,
         pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
         boxtrajplot(object=x,
                     main=main, xlab=xlab, ylab=ylab,
+                    toplot=toplot,
                     col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
                     col=col, lty=lty, lwd=lwd,
                     cex=cex, add.legend=add.legend, text.legend=text.legend,
@@ -1136,8 +1162,10 @@ plot.boxtraj.PRSP <- function(x,
 }
 
 plot.boxtraj <- function(x,
-                         main=NULL, xlab="Box Mass", ylab="Variable Range",
-                         col.cov=2:(length(x$used)+1), lty.cov=rep(1,length(x$used)), lwd.cov=rep(1,length(x$used)),
+                         main=NULL, 
+                         xlab="Box Mass", ylab="Variable Range",
+                         toplot=c("used", "selected"),
+                         col.cov, lty.cov, lwd.cov,
                          col=1, lty=1, lwd=1,
                          cex=1, add.legend=FALSE, text.legend=NULL,
                          nr=NULL, nc=NULL,
@@ -1156,9 +1184,11 @@ plot.boxtraj <- function(x,
 # Usage         :
 ################
 #                    plot.boxtrace (x,
-#                                   main=NULL, xlab="Box Mass", ylab="Variable Range (centered)",
+#                                   main=NULL, 
+#                                   xlab="Box Mass", ylab="Variable Range (centered)",
+#                                   toplot=c("used", "selected"), 
 #                                   center=TRUE, scale=FALSE,
-#                                   col.cov=2:(length(x$used)+1), lty.cov=rep(1,length(x$used)), lwd.cov=rep(1,length(x$used)),
+#                                   col.cov, lty.cov, lwd.cov,
 #                                   col=1, lty=1, lwd=1,
 #                                   cex=1, add.legend=FALSE, text.legend=NULL,
 #                                   device=NULL, file="Covariate Trace Plots", path=getwd(),
@@ -1183,36 +1213,48 @@ plot.boxtraj <- function(x,
 
 plot.boxtrace.PRSP <- function(x,
                                main=NULL, xlab="Box Mass", ylab="Variable Range (centered)",
+                               toplot=c("used", "selected"),
                                center=TRUE, scale=FALSE,
-                               col.cov=2:(length(x$used)+1), lty.cov=rep(1,length(x$used)), lwd.cov=rep(1,length(x$used)),
+                               col.cov, lty.cov, lwd.cov,
                                col=1, lty=1, lwd=1,
                                cex=1, add.legend=FALSE, text.legend=NULL,
                                device=NULL, file="Covariate Trace Plots", path=getwd(),
                                horizontal=FALSE, width=8.5, height=8.5, ...) {
 
   if (x$plot) {
+    toplot <- match.arg(arg=toplot, choices=c("used", "selected"), several.ok=FALSE)
 
     boxtraceplot <- function(object,
                              main, xlab, ylab,
+                             toplot,
                              center, scale,
                              col.cov, lty.cov, lwd.cov,
                              col, lty, lwd,
                              cex, add.legend, text.legend, ...) {
 
-        used <- object$used
-        p <- length(used)
+        covtoplot <- object[[toplot]]
+        p <- length(covtoplot)
         varnames <- colnames(object$x)
-        ticknames <- paste(varnames[used], " -", sep="")
+        ticknames <- paste(varnames[covtoplot], " -", sep="")
         pointtrace <- c(object$cvfit$cv.trace$mode[2], object$cvfit$cv.trace$mode[-1])
-        matchtrace <- pmatch(x=pointtrace, table=used, duplicates.ok = TRUE)
-
+        matchtrace <- pmatch(x=pointtrace, table=covtoplot, duplicates.ok = TRUE)
+        if (missing(col.cov)) {
+            col.cov <- 2:(length(object[[toplot]])+1) 
+        }
+        if (missing(lty.cov)) {
+            lty.cov <- rep(1,length(object[[toplot]])) 
+        }
+        if (missing(lwd.cov)) {
+            lwd.cov <- rep(1,length(object[[toplot]]))   
+        }
+        
         if (!is.null(main)) {
             par(mfrow=c(2, 1), oma=c(0, 0, 2, 0), mar=c(2.5, 4.0, 2.0, 0.0), mgp=c(1.5, 0.5, 0))
         } else {
             par(mfrow=c(2, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 4.0, 2.0, 0.0), mgp=c(1.5, 0.5, 0))
         }
 
-        boxcut.scaled <- scale(x=object$cvfit$cv.rules$mean[,used], center=center, scale=scale)
+        boxcut.scaled <- scale(x=object$cvfit$cv.rules$mean[,covtoplot], center=center, scale=scale)
         plot(x=object$cvfit$cv.stats$mean$cv.support,
              y=boxcut.scaled[,1], type='n',
              xlim=range(0,1),
@@ -1225,7 +1267,7 @@ plot.boxtrace.PRSP <- function(x,
                   y=boxcut.scaled[,j],
                   type='l', col=col.cov[j], lty=lty.cov[j], lwd=lwd.cov[j])
         }
-        legend("topleft", inset=0.01, legend=varnames[used], col=col.cov, lty=lty.cov, lwd=lwd.cov, cex=cex)
+        legend("topleft", inset=0.01, legend=varnames[covtoplot], col=col.cov, lty=lty.cov, lwd=lwd.cov, cex=cex)
         if (center)
             abline(h=0, lty=2, col=1, lwd=0.3, xpd=FALSE)
         if (add.legend)
@@ -1254,6 +1296,7 @@ plot.boxtrace.PRSP <- function(x,
         dev.new(width=width, height=height, title="Covariate Trace Plots", noRStudioGD = TRUE)
         boxtraceplot(object=x,
                      main=main, xlab=xlab, ylab=ylab,
+                     toplot=toplot,
                      center=center, scale=scale,
                      col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
                      col=col, lty=lty, lwd=lwd,
@@ -1267,6 +1310,7 @@ plot.boxtrace.PRSP <- function(x,
         postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
         boxtraceplot(object=x,
                      main=main, xlab=xlab, ylab=ylab,
+                     toplot=toplot,
                      center=center, scale=scale,
                      col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
                      col=col, lty=lty, lwd=lwd,
@@ -1281,6 +1325,7 @@ plot.boxtrace.PRSP <- function(x,
         pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
         boxtraceplot(object=x,
                      main=main, xlab=xlab, ylab=ylab,
+                     toplot=toplot,
                      center=center, scale=scale,
                      col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
                      col=col, lty=lty, lwd=lwd,
@@ -1297,9 +1342,11 @@ plot.boxtrace.PRSP <- function(x,
 }
 
 plot.boxtrace <- function(x,
-                          main=NULL, xlab="Box Mass", ylab="Variable Range (centered)",
+                          main=NULL, 
+                          xlab="Box Mass", ylab="Variable Range (centered)",
+                          toplot=c("used", "selected"),
                           center=TRUE, scale=FALSE,
-                          col.cov=2:(length(x$used)+1), lty.cov=rep(1,length(x$used)), lwd.cov=rep(1,length(x$used)),
+                          col.cov, lty.cov, lwd.cov,
                           col=1, lty=1, lwd=1,
                           cex=1, add.legend=FALSE, text.legend=NULL,
                           device=NULL, file="Covariate Trace Plots", path=getwd(),
@@ -1317,7 +1364,8 @@ plot.boxtrace <- function(x,
 # Usage         :
 ################
 #                    plot.boxkm (x,
-#                                main=NULL, xlab="Time", ylab="Probability",
+#                                main=NULL, 
+#                                xlab="Time", ylab="Probability",
 #                                precision, mark=3, col=2, cex=1,
 #                                only.last=FALSE, nr=NULL, nc=NULL,
 #                                device=NULL, file="Survival Plots", path=getwd(),
@@ -1339,7 +1387,8 @@ plot.boxtrace <- function(x,
 ##########################################################################################################################################
 
 plot.boxkm.PRSP <- function(x,
-                            main=NULL, xlab="Time", ylab="Probability",
+                            main=NULL, 
+                            xlab="Time", ylab="Probability",
                             precision, mark=3, col=2, cex=1,
                             only.last=FALSE, nr=NULL, nc=NULL,
                             device=NULL, file="Survival Plots", path=getwd(),
@@ -1466,7 +1515,8 @@ plot.boxkm.PRSP <- function(x,
 }
 
 plot.boxkm <- function(x,
-                       main=NULL, xlab="Time", ylab="Probability",
+                       main=NULL, 
+                       xlab="Time", ylab="Probability",
                        precision, mark=3, col=2, cex=1,
                        only.last=FALSE, nr=NULL, nc=NULL,
                        device=NULL, file="Survival Plots", path=getwd(),
