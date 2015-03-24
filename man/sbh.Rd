@@ -12,7 +12,8 @@
 \usage{
   sbh(dataset, discr, B = 10, K = 5, A = 1000, 
       cpv = FALSE,
-      cvtype = "combined", cvcriterion = "lrt",
+      cvtype=c("combined", "averaged", "none"), 
+      cvcriterion=c("lrt", "cer", "lhr"),
       arg = "beta=0.05,alpha=0.1,minn=10,L=NULL,peelcriterion=\"lr\"",
       probval = NULL, timeval = NULL, 
       parallel = FALSE, conf = NULL, seed = NULL)
@@ -39,12 +40,12 @@
     \code{logical} scalar. Flag for computation of cross-validated p-values. Defaults to \code{FALSE}. 
   }
   \item{cvtype}{
-    \code{Character} \code{vector} describing the cross-validation technique in \{"none", "averaged", "combined"\}.
-    Defaults to "combined".
+    \code{Character} \code{vector} describing the cross-validation technique in \{"combined", "averaged", "none"\}.
+    If \code{NULL}, defaults to "combined".
   }
   \item{cvcriterion}{
-    \code{character} \code{vector} describing the cross-validation optimization criterion in \{"lhr", "lrt", "cer"\}.
-    Defaults to "lrt". Automatically set to \code{NULL} if cvtype="none".
+    \code{character} \code{vector} describing the cross-validation optimization criterion in \{"lrt", "cer", "lhr"\}.
+    If \code{NULL}, defaults to "lrt". Automatically reset to \code{NULL} if cvtype="none".
   }
   \item{arg}{
     \code{Character} \code{vector} describing the PRSP parameters:

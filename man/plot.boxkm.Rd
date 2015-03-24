@@ -161,10 +161,10 @@ library("PRIMsrc")
     # Optimization criterion = LRT
     #=================================================================================
     plot.boxkm(x = CVCOMBREP.synt1,
-           main = paste("RCCV probability curves for model #1", sep=""),
-           xlab = "Time", ylab = "Probability",
-           device = NULL, file = "Survival Plots", path=getwd(),
-           horizontal = TRUE, width = 11.5, height = 8.5)
+               main = paste("RCCV probability curves for model #1", sep=""),
+               xlab = "Time", ylab = "Probability",
+               device = NULL, file = "Survival Plots", path=getwd(),
+               horizontal = TRUE, width = 11.5, height = 8.5)
 }
 
 }

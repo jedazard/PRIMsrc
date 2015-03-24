@@ -7,7 +7,7 @@
 
 \description{
   S3 generic function for plotting the cross-validated peeling trajectories/profiles of a \code{PRSP} object.
-  Applies to the covariates used for peeling only and other statistical quantities of interest 
+  Applies to the covariates selected or used for peeling only and other statistical quantities of interest 
   at each iteration of the peeling sequence (inner loop of our PRSP algorithm). 
 }
 
@@ -16,9 +16,10 @@
              main = NULL, 
              xlab = "Box Mass", 
              ylab = "Variable Range",
-             col.cov = 2:(length(x$used)+1), 
-             lty.cov = rep(1,length(x$used)), 
-             lwd.cov = rep(1,length(x$used)),
+             toplot = c("used", "selected"),
+             col.cov, 
+             lty.cov, 
+             lwd.cov,
              col = 1, 
              lty = 1, 
              lwd = 1, 
@@ -48,35 +49,39 @@
   \item{ylab}{
     \code{Character} \code{vector}. Y axis label. Defaults to "Variable Range".
   }
+  \item{toplot}{
+    \code{Character} \code{vector}. What covariates to plot in \{"used", "selected"\}.
+    If \code{NULL}, defaults to "used".
+  }
   \item{col.cov}{
-    \code{Integer} \code{vector} specifying the line color for the variable trajectory curve of each used covariate. 
-    Defaults to vector of colors of length the number of used covariates. 
-    The vector is reused cyclically if it is shorter than the number of used covariates.
+    \code{Integer} \code{vector}. Line color for the variable trajectory curve of each selected or used covariate. 
+    Defaults to vector of colors of length the number of selected or used covariates. 
+    The vector is reused cyclically if it is shorter than the number of selected or used covariates.
   }
   \item{lty.cov}{
-    \code{Integer} \code{vector} specifying the line type for the variable trajectory curve of each used covariate. 
-    Defaults to vector of 1's of length the number of used covariates. 
-    The vector is reused cyclically if it is shorter than the number of used covariates.
+    \code{Integer} \code{vector}. Line type for the variable trajectory curve of each selected or used covariate. 
+    Defaults to vector of 1's of length the number of selected or used covariates. 
+    The vector is reused cyclically if it is shorter than the number of selected or used covariates.
   }
   \item{lwd.cov}{
-    \code{Integer} \code{vector} specifying the line width for the variable trajectory curve of each used covariate. 
-    Defaults to vector of 1's of length the number of used covariates. 
-    The vector is reused cyclically if it is shorter than the number of used covariates.
+    \code{Integer} \code{vector}. Line width for the variable trajectory curve of each selected or used covariate. 
+    Defaults to vector of 1's of length the number of selected or used covariates. 
+    The vector is reused cyclically if it is shorter than the number of selected or used covariates.
   }
   \item{col}{
-    \code{Integer} scalar specifying the line color for the trajectory curve of each statistical quantity of interest. 
+    \code{Integer} scalar. Line color for the trajectory curve of each statistical quantity of interest. 
     Defaults to 1.
   }
   \item{lty}{
-    \code{Integer} scalar specifying the line type for the trajectory curve of each statistical quantity of interest. 
+    \code{Integer} scalar. Line type for the trajectory curve of each statistical quantity of interest. 
     Defaults to 1.
   }
   \item{lwd}{
-    \code{Integer} scalar specifying the line width for the trajectory curve of each statistical quantity of interest. 
+    \code{Integer} scalar. Line width for the trajectory curve of each statistical quantity of interest. 
     Defaults to 1.
   }
   \item{cex}{
-    \code{Integer} scalar for the symbol expansion used for titles, legends, and axis labels. Defaults to 1.
+    \code{Integer} scalar. Symbol expansion used for titles, legends, and axis labels. Defaults to 1.
   }
   \item{add.legend}{
     \code{Logical} scalar. Should the legend be added to the current open graphics device? Defaults to \code{FALSE}.
@@ -181,6 +186,7 @@ library("PRIMsrc")
     plot.boxtraj(x = CVCOMBREP.synt1,
                  main = paste("RCCV peeling trajectories for model #1", sep=""),
                  xlab="Box Mass", ylab="Variable Range",
+                 toplot = "used",
                  device = NULL, file = "Covariate Trajectory Plots", path=getwd(),
                  horizontal = FALSE, width = 8.5, height = 8.5)
 
