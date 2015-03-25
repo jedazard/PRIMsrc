@@ -76,13 +76,13 @@
       \code{\link[PRIMsrc]{plot.boxtraj}}
       \bold{Visualization of Peeling Trajectories/Profiles} \cr
             S3 generic function for plotting the cross-validated peeling trajectories/profiles of a \code{PRSP} object.
-            Applies to the covariates selected or used for peeling only and other statistical quantities of interest 
+            Applies to the user-specified covariates and all other statistical quantities of interest
             at each iteration of the peeling sequence (inner loop of our PRSP algorithm). \cr
       \code{\link[PRIMsrc]{plot.boxtrace}}
       \bold{Visualization of Covariates Traces} \cr
             S3 generic function for plotting the cross-validated covariates traces of a \code{PRSP} object.
-            Plot the cross-validated modal trace curves of variable importance and variable usage of covariates 
-            selected or used for peeling at each iteration of the peeling sequence (inner loop of our PRSP algorithm). \cr
+            Plot the cross-validated modal trace curves of variable importance and variable usage of the user-specified 
+            covariates at each iteration of the peeling sequence (inner loop of our PRSP algorithm). \cr
       \code{\link[PRIMsrc]{plot.boxkm}}
       \bold{Visualization of Survival Distributions} \cr
             S3 generic function for plotting the cross-validated survival distributions of a \code{PRSP} object. 

@@ -7,7 +7,7 @@
 
 \description{
   S3 generic function for plotting the cross-validated peeling trajectories/profiles of a \code{PRSP} object.
-  Applies to the covariates selected or used for peeling only and other statistical quantities of interest 
+  Applies to the user-specified covariates and all other statistical quantities of interest 
   at each iteration of the peeling sequence (inner loop of our PRSP algorithm). 
 }
 
@@ -16,7 +16,7 @@
              main = NULL, 
              xlab = "Box Mass", 
              ylab = "Variable Range",
-             toplot = c("used", "selected"),
+             toplot = x$used,
              col.cov, 
              lty.cov, 
              lwd.cov,
@@ -50,23 +50,23 @@
     \code{Character} \code{vector}. Y axis label. Defaults to "Variable Range".
   }
   \item{toplot}{
-    \code{Character} \code{vector}. What covariates to plot in \{"used", "selected"\}.
-    If \code{NULL}, defaults to "used".
+    \code{Numeric} \code{vector}. Which covariates to plot.
+    Defaults to covariates used for peeling.
   }
   \item{col.cov}{
-    \code{Integer} \code{vector}. Line color for the variable trajectory curve of each selected or used covariate. 
-    Defaults to vector of colors of length the number of selected or used covariates. 
-    The vector is reused cyclically if it is shorter than the number of selected or used covariates.
+    \code{Integer} \code{vector}. Line color for the variable trajectory curve of each selected covariate. 
+    Defaults to vector of colors of length the number of selected covariates. 
+    The vector is reused cyclically if it is shorter than the number of selected covariates.
   }
   \item{lty.cov}{
-    \code{Integer} \code{vector}. Line type for the variable trajectory curve of each selected or used covariate. 
-    Defaults to vector of 1's of length the number of selected or used covariates. 
-    The vector is reused cyclically if it is shorter than the number of selected or used covariates.
+    \code{Integer} \code{vector}. Line type for the variable trajectory curve of each selected covariate. 
+    Defaults to vector of 1's of length the number of selected covariates. 
+    The vector is reused cyclically if it is shorter than the number of selected covariates.
   }
   \item{lwd.cov}{
-    \code{Integer} \code{vector}. Line width for the variable trajectory curve of each selected or used covariate. 
-    Defaults to vector of 1's of length the number of selected or used covariates. 
-    The vector is reused cyclically if it is shorter than the number of selected or used covariates.
+    \code{Integer} \code{vector}. Line width for the variable trajectory curve of each selected covariate. 
+    Defaults to vector of 1's of length the number of selected covariates. 
+    The vector is reused cyclically if it is shorter than the number of selected covariates.
   }
   \item{col}{
     \code{Integer} scalar. Line color for the trajectory curve of each statistical quantity of interest. 
@@ -185,8 +185,8 @@ library("PRIMsrc")
     #=================================================================================
     plot.boxtraj(x = CVCOMBREP.synt1,
                  main = paste("RCCV peeling trajectories for model #1", sep=""),
-                 xlab="Box Mass", ylab="Variable Range",
-                 toplot = "used",
+                 xlab = "Box Mass", ylab = "Variable Range",
+                 toplot = CVCOMBREP.synt1$used,
                  device = NULL, file = "Covariate Trajectory Plots", path=getwd(),
                  horizontal = FALSE, width = 8.5, height = 8.5)
 

@@ -7,8 +7,8 @@
 
 \description{
   S3 generic function for plotting the cross-validated covariates traces of a \code{PRSP} object.
-  Plot the cross-validated modal trace curves of variable importance and variable usage of covariates 
-  selected or used for peeling at each iteration of the peeling sequence (inner loop of our PRSP algorithm). 
+  Plot the cross-validated modal trace curves of variable importance and variable usage of the 
+  user-specified covariates at each iteration of the peeling sequence (inner loop of our PRSP algorithm). 
 }
 
 \usage{
@@ -16,7 +16,7 @@
               main = NULL,
               xlab = "Box Mass", 
               ylab = "Variable Range (centered)",
-              toplot = c("used", "selected"),
+              toplot = x$used,
               center = TRUE, 
               scale = FALSE, 
               col.cov, 
@@ -50,8 +50,8 @@
     \code{Character} \code{vector}. Y axis label. Defaults to "Variable Range (centered)".
   }
   \item{toplot}{
-    \code{Character} \code{vector}. What covariates to plot in \{"used", "selected"\}.
-    If \code{NULL}, defaults to "used".
+    \code{Numeric} \code{vector}. Which covariates to plot.
+    Defaults to covariates used for peeling.
   }
   \item{center}{
     \code{Logical} scalar. Shall the data be centered?. Defaults to \code{TRUE}.
@@ -60,19 +60,19 @@
     \code{Logical} scalar. Shall the data be scaled? Defaults to \code{FALSE}.
   }
   \item{col.cov}{
-    \code{Integer} \code{vector}. Line color for the variable importance curve of each used covariate. 
-    Defaults to vector of colors of length the number of selected or used covariates. 
-    The vector is reused cyclically if it is shorter than the number of selected or used covariates.
+    \code{Integer} \code{vector}. Line color for the variable importance curve of each selected covariate. 
+    Defaults to vector of colors of length the number of selected covariates. 
+    The vector is reused cyclically if it is shorter than the number of selected covariates.
   }
   \item{lty.cov}{
-    \code{Integer} \code{vector}. Line type for the variable importance curve of each used covariate. 
-    Defaults to vector of 1's of length the number of selected or used covariates. 
-    The vector is reused cyclically if it is shorter than the number of selected or used covariates.
+    \code{Integer} \code{vector}. Line type for the variable importance curve of each selected covariate. 
+    Defaults to vector of 1's of length the number of selected covariates. 
+    The vector is reused cyclically if it is shorter than the number of selected covariates.
   }
   \item{lwd.cov}{
-    \code{Integer} \code{vector}. Line width for the variable importance curve of each used covariate. 
-    Defaults to vector of 1's of length the number of selected or used covariates. 
-    The vector is reused cyclically if it is shorter than the number of selected or used covariates.
+    \code{Integer} \code{vector}. Line width for the variable importance curve of each selected covariate. 
+    Defaults to vector of 1's of length the number of selected covariates. 
+    The vector is reused cyclically if it is shorter than the number of selected covariates.
   }
   \item{col}{
     \code{Integer} scalar. Line color for the variable trace curve. 
@@ -191,7 +191,7 @@ library("PRIMsrc")
     plot.boxtrace(x = CVCOMBREP.synt1,
                   main = paste("RCCV trace plots for model #1", sep=""),
                   xlab = "Box Mass", ylab = "Variable Range (centered)",
-                  toplot = "used",
+                  toplot = CVCOMBREP.synt1$used,
                   center = TRUE, scale = FALSE,
                   device = NULL, file = "Covariate Trace Plots", path=getwd(),
                   horizontal = FALSE, width = 8.5, height = 8.5)
