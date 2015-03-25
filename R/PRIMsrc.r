@@ -13,7 +13,7 @@
 #                   sbh(dataset, discr,
 #                       B=10, K=5, A=1000,
 #                       cpv=FALSE,
-#                       cvtype=c("combined", "averaged", "none"), 
+#                       cvtype=c("combined", "averaged", "none"),
 #                       cvcriterion=c("lrt", "cer", "lhr"),
 #                       arg="beta=0.05,alpha=0.1,minn=10,L=NULL,peelcriterion=\"lr\"",
 #                       probval=NULL, timeval=NULL,
@@ -39,7 +39,7 @@
 sbh <- function(dataset, discr,
                 B=10, K=5, A=1000,
                 cpv=FALSE,
-                cvtype=c("combined", "averaged", "none"), 
+                cvtype=c("combined", "averaged", "none"),
                 cvcriterion=c("lrt", "cer", "lhr"),
                 arg="beta=0.05,alpha=0.1,minn=10,L=NULL,peelcriterion=\"lr\"",
                 probval=NULL, timeval=NULL,
@@ -176,6 +176,7 @@ sbh <- function(dataset, discr,
 
     if (cvtype == "none") {
         cvcriterion <- NULL
+        cpv <- FALSE
     }
 
     cat("Fitting and cross-validating the Survival Bump Hunting model using the PRSP algorithm ... \n")
@@ -434,7 +435,7 @@ sbh <- function(dataset, discr,
         CV.stats <- list("mean"=CV.stats.mu, "sd"=CV.stats.sd)
 
         # Vector of p-values for each step
-        if ((cpv) && (cvtype != "none")) {
+        if (cpv) {
             cat("Computation of cross-validated LRT p-values at all steps ... \n")
             arg <- paste("beta=", beta, ",alpha=", alpha, ",minn=", minn, ",L=", CV.nsteps-1, ",peelcriterion=\"", peelcriterion, "\"", sep="")
             CV.pval <- cv.pval(x=x, times=times, status=status,
@@ -629,7 +630,7 @@ predict.PRSP <- function (object, newdata, steps, na.action = na.omit, ...) {
 # Usage         :
 ################
 #                    plot.profile(x,
-#                                 main=NULL, 
+#                                 main=NULL,
 #                                 xlab="Peeling Steps", ylab="Mean Profiles",
 #                                 add.sd=TRUE, add.legend=TRUE, add.profiles=TRUE,
 #                                 pch=20, col=1, lty=1, lwd=2, cex=2,
@@ -660,7 +661,7 @@ predict.PRSP <- function (object, newdata, steps, na.action = na.omit, ...) {
 ##########################################################################################################################################
 
 plot.profile.PRSP <- function(x,
-                              main=NULL, 
+                              main=NULL,
                               xlab="Peeling Steps", ylab="Mean Profiles",
                               add.sd=TRUE, add.legend=TRUE, add.profiles=TRUE,
                               pch=20, col=1, lty=1, lwd=2, cex=2,
@@ -770,7 +771,7 @@ plot.profile.PRSP <- function(x,
 }
 
 plot.profile <- function(x,
-                         main=NULL, 
+                         main=NULL,
                          xlab="Peeling Steps", ylab="Mean Profiles",
                          add.sd=TRUE, add.legend=TRUE, add.profiles=TRUE,
                          pch=20, col=1, lty=1, lwd=2, cex=2,
@@ -948,9 +949,9 @@ plot.scatter <- function(x,
 # Usage         :
 ################
 #                    plot.boxtraj (x,
-#                                  main=NULL, 
+#                                  main=NULL,
 #                                  xlab="Box Mass", ylab="Variable Range",
-#                                  toplot=c("used", "selected"), 
+#                                  toplot=c("used", "selected"),
 #                                  col.cov, lty.cov, lwd.cov,
 #                                  col=1, lty=1, lwd=1,
 #                                  cex=1, add.legend=FALSE, text.legend=NULL,
@@ -976,7 +977,7 @@ plot.scatter <- function(x,
 ##########################################################################################################################################
 
 plot.boxtraj.PRSP <- function(x,
-                              main=NULL, 
+                              main=NULL,
                               xlab="Box Mass", ylab="Variable Range",
                               toplot=c("used", "selected"),
                               col.cov, lty.cov, lwd.cov,
@@ -1010,15 +1011,15 @@ plot.boxtraj.PRSP <- function(x,
             }
         }
         if (missing(col.cov)) {
-            col.cov <- 2:(length(object[[toplot]])+1) 
+            col.cov <- 2:(length(object[[toplot]])+1)
         }
         if (missing(lty.cov)) {
-            lty.cov <- rep(1,length(object[[toplot]])) 
+            lty.cov <- rep(1,length(object[[toplot]]))
         }
         if (missing(lwd.cov)) {
-            lwd.cov <- rep(1,length(object[[toplot]]))   
+            lwd.cov <- rep(1,length(object[[toplot]]))
         }
-        
+
         if (!is.null(main)) {
             par(mfrow=c(nr, nc), oma=c(0, 0, 3, 0), mar=c(2.5, 2.5, 2.0, 1.5), mgp=c(1.5, 0.5, 0))
         } else {
@@ -1162,7 +1163,7 @@ plot.boxtraj.PRSP <- function(x,
 }
 
 plot.boxtraj <- function(x,
-                         main=NULL, 
+                         main=NULL,
                          xlab="Box Mass", ylab="Variable Range",
                          toplot=c("used", "selected"),
                          col.cov, lty.cov, lwd.cov,
@@ -1184,9 +1185,9 @@ plot.boxtraj <- function(x,
 # Usage         :
 ################
 #                    plot.boxtrace (x,
-#                                   main=NULL, 
+#                                   main=NULL,
 #                                   xlab="Box Mass", ylab="Variable Range (centered)",
-#                                   toplot=c("used", "selected"), 
+#                                   toplot=c("used", "selected"),
 #                                   center=TRUE, scale=FALSE,
 #                                   col.cov, lty.cov, lwd.cov,
 #                                   col=1, lty=1, lwd=1,
@@ -1239,15 +1240,15 @@ plot.boxtrace.PRSP <- function(x,
         pointtrace <- c(object$cvfit$cv.trace$mode[2], object$cvfit$cv.trace$mode[-1])
         matchtrace <- pmatch(x=pointtrace, table=covtoplot, duplicates.ok = TRUE)
         if (missing(col.cov)) {
-            col.cov <- 2:(length(object[[toplot]])+1) 
+            col.cov <- 2:(length(object[[toplot]])+1)
         }
         if (missing(lty.cov)) {
-            lty.cov <- rep(1,length(object[[toplot]])) 
+            lty.cov <- rep(1,length(object[[toplot]]))
         }
         if (missing(lwd.cov)) {
-            lwd.cov <- rep(1,length(object[[toplot]]))   
+            lwd.cov <- rep(1,length(object[[toplot]]))
         }
-        
+
         if (!is.null(main)) {
             par(mfrow=c(2, 1), oma=c(0, 0, 2, 0), mar=c(2.5, 4.0, 2.0, 0.0), mgp=c(1.5, 0.5, 0))
         } else {
@@ -1342,7 +1343,7 @@ plot.boxtrace.PRSP <- function(x,
 }
 
 plot.boxtrace <- function(x,
-                          main=NULL, 
+                          main=NULL,
                           xlab="Box Mass", ylab="Variable Range (centered)",
                           toplot=c("used", "selected"),
                           center=TRUE, scale=FALSE,
@@ -1364,10 +1365,11 @@ plot.boxtrace <- function(x,
 # Usage         :
 ################
 #                    plot.boxkm (x,
-#                                main=NULL, 
+#                                main=NULL,
 #                                xlab="Time", ylab="Probability",
-#                                precision, mark=3, col=2, cex=1,
-#                                only.last=FALSE, nr=NULL, nc=NULL,
+#                                precision=1e-3, mark=3, col=2, cex=1,
+#                                steps=1:x$cvfit$cv.nsteps,
+#                                nr=3, nc=4,
 #                                device=NULL, file="Survival Plots", path=getwd(),
 #                                horizontal=TRUE, width=11.5, height=8.5, ...)
 #
@@ -1387,10 +1389,11 @@ plot.boxtrace <- function(x,
 ##########################################################################################################################################
 
 plot.boxkm.PRSP <- function(x,
-                            main=NULL, 
+                            main=NULL,
                             xlab="Time", ylab="Probability",
-                            precision, mark=3, col=2, cex=1,
-                            only.last=FALSE, nr=NULL, nc=NULL,
+                            precision=1e-3, mark=3, col=2, cex=1,
+                            steps=1:x$cvfit$cv.nsteps,
+                            nr=3, nc=4,
                             device=NULL, file="Survival Plots", path=getwd(),
                             horizontal=TRUE, width=11.5, height=8.5, ...) {
 
@@ -1399,36 +1402,17 @@ plot.boxkm.PRSP <- function(x,
     boxkmplot <- function(object,
                           main, xlab, ylab,
                           precision, mark, col, cex,
-                          only.last, nr, nc, ...) {
+                          steps, nr, nc, ...) {
 
-        # set default values for missing parameters
-        if (missing(precision)) {
-            precision <- 1/object$A
+        if (!is.null(main)) {
+            par(mfrow=c(nr, nc), oma=c(0, 0, 3, 0), mar=c(2.5, 2.5, 1.5, 1.5), mgp=c(1.5, 0.5, 0))
+        } else {
+            par(mfrow=c(nr, nc), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 0.0, 1.5), mgp=c(1.5, 0.5, 0))
         }
-        used <- object$used
-        p <- length(used)
-        if (is.null(nc))
-            nc <- 4
-        if (is.null(nr)) {
-            if (p %% nc == 0) {
-                nr <- p%/%nc + 2
-            } else {
-                nr <- ((p+(1:nc))[which((p+(1:nc)) %% nc == 0)])%/%nc + 2
-            }
-        }
+
         times <- object$times
         status <- object$status
         L <- object$cvfit$cv.nsteps
-        if (only.last) {
-            steps <- L
-        } else {
-            steps <- 1:L
-            if (!is.null(main)) {
-                par(mfrow=c(nr, nc), oma=c(0, 0, 2, 0), mar=c(2.5, 2.5, 1.5, 1.5), mgp=c(1.5, 0.5, 0))
-            } else {
-                par(mfrow=c(nr, nc), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 0.0, 1.5), mgp=c(1.5, 0.5, 0))
-            }
-        }
         for (l in steps) {
             boxind <- object$cvfit$cv.boxind[l,]
             ng <- length(unique(boxind[!is.na(boxind)]))
@@ -1463,14 +1447,9 @@ plot.boxkm.PRSP <- function(x,
                    legend=substitute(group("", list(paste(italic(LRT) == x, sep="")), ""), list(x=format(x=object$cvfit$cv.stats$mean$cv.lrt[l], digits=3, nsmall=3))))
             legend("bottom", inset=0.16, legend=paste("Step ", l-1, sep=""), col=1, cex=0.9*cex, bty="n")
         }
-        if (only.last) {
-            if (!is.null(main)) {
-                mtext(text=main, cex=cex, side=3, line=1, outer=FALSE)
-            }
-        } else {
-            if (!is.null(main)) {
-                mtext(text=main, cex=cex, side=3, outer=TRUE)
-            }
+
+        if (!is.null(main)) {
+            mtext(text=main, cex=cex, side=3, outer=TRUE)
         }
     }
 
@@ -1479,7 +1458,8 @@ plot.boxkm.PRSP <- function(x,
         boxkmplot(object=x,
                   main=main, xlab=xlab, ylab=ylab,
                   precision=precision, mark=mark, col=col, cex=cex,
-                  only.last=only.last, nr=nr, nc=nc)
+                  steps=steps,
+                  nr=nr, nc=nc)
     } else if (device == "PS") {
         path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
         file <- paste(file, ".ps", sep="")
@@ -1490,7 +1470,8 @@ plot.boxkm.PRSP <- function(x,
         boxkmplot(object=x,
                   main=main, xlab=xlab, ylab=ylab,
                   precision=precision, mark=mark, col=col, cex=cex,
-                  only.last=only.last, nr=nr, nc=nc)
+                  steps=steps,
+                  nr=nr, nc=nc)
         dev.off()
     } else if (device == "PDF") {
         path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
@@ -1502,7 +1483,8 @@ plot.boxkm.PRSP <- function(x,
         boxkmplot(object=x,
                   main=main, xlab=xlab, ylab=ylab,
                   precision=precision, mark=mark, col=col, cex=cex,
-                  only.last=only.last, nr=nr, nc=nc)
+                  steps=steps,
+                  nr=nr, nc=nc)
         dev.off()
     } else {
         stop("Currently allowed display devices are \"PS\" (Postscript) or \"PDF\" (Portable Document Format) \n")
@@ -1515,10 +1497,11 @@ plot.boxkm.PRSP <- function(x,
 }
 
 plot.boxkm <- function(x,
-                       main=NULL, 
+                       main=NULL,
                        xlab="Time", ylab="Probability",
-                       precision, mark=3, col=2, cex=1,
-                       only.last=FALSE, nr=NULL, nc=NULL,
+                       precision=1e-3, mark=3, col=2, cex=1,
+                       steps=1:x$cvfit$cv.nsteps,
+                       nr=3, nc=4,
                        device=NULL, file="Survival Plots", path=getwd(),
                        horizontal=TRUE, width=11.5, height=8.5, ...) {
     UseMethod(generic="plot.boxkm", object=x)
