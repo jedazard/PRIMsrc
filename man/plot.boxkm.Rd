@@ -16,13 +16,13 @@
            main = NULL, 
            xlab = "Time", 
            ylab = "Probability",
-           precision, 
+           precision = 1e-3, 
            mark = 3, 
            col = 2, 
            cex = 1,
-           only.last = FALSE, 
-           nr = NULL, 
-           nc = NULL,
+           steps = 1:x$cvfit$cv.nsteps,
+           nr = 3, 
+           nc = 4,
            device = NULL, 
            file = "Survival Plots", 
            path=getwd(), 
@@ -46,26 +46,31 @@
   }
   \item{precision}{
     Precision of cross-validated log-rank p-values of separation between two survival curves.
-    Lower bounded by the value \eqn{\frac{1}{A}} of the number of replication \eqn{A}.
+    Defaults to 1e-3.
   }
   \item{mark}{
-    \code{Integer} scalar of mark parameter, which will be used to label the inbox and out-of-box curves. Defaults to 3.
+    \code{Integer} scalar of mark parameter, which will be used to label the inbox and out-of-box curves. 
+    Defaults to 3.
   }
   \item{col}{
-    \code{Integer} scalar specifying the color of the inbox curve. Defaults to 2.
+    \code{Integer} scalar specifying the color of the inbox curve. 
+    Defaults to 2.
   }
   \item{cex}{
-    \code{Numeric} scalar specifying the size of the marks. Defaults to 1.
+    \code{Numeric} scalar specifying the size of the marks. 
+    Defaults to 1.
   }
-  \item{only.last}{
-    \code{Logical} scalar for whether only the last step of the peeling sequence should be plotted. 
-    Defaults to \code{FALSE}.
+  \item{steps}{
+    \code{Integer} \code{vector}. Vector of peeling steps at which to plot the survival curves. 
+    Defaults to all the peeling steps of \code{PRSP} object \code{x}.
   }
   \item{nr}{
-    \code{Integer} scalar of the number of rows in the plot. If \code{NULL}, defaults to 3.
+    \code{Integer} scalar of the number of rows in the plot. 
+    Defaults to 3.
   }
   \item{nc}{
-    \code{Integer} scalar of the number of columns in the plot. If \code{NULL}, defaults to 4.
+    \code{Integer} scalar of the number of columns in the plot. 
+    Defaults to 4.
   }
   \item{device}{
     Graphic display device in \{NULL, "PS", "PDF"\}. Defaults to NULL (standard output screen).
@@ -75,7 +80,7 @@
     File name for output graphic. Defaults to "Survival Plots".
   }
   \item{path}{
-    Absolute path (without final (back)slash separator). Defaults to working directory path.
+    Absolute path (without final (back)slash separator). Defaults to the working directory path.
   }
   \item{horizontal}{
     \code{Logical} scalar. Orientation of the printed image. Defaults to \code{TRUE}, that is potrait orientation.
@@ -95,7 +100,8 @@
   Some of the plotting parameters are further defined in the function \code{plot.survfit} (R package \pkg{survival}).
   Step #0 always corresponds to the situation where the starting box covers the entire test-set data before peeling.
   Cross-validated LRT, LHR of inbox samples and log-rank p-values of separation are shown at the bottom of the plot
-  with the corresponding peeling step. P-values are lower-bounded by the precision limit given by 1/#number of permutations (A).
+  with the corresponding peeling step. P-values are lower-bounded by the precision limit given by \eqn{1/A}, 
+  where \eqn{A} is the number of permutations.
 }
 
 \value{

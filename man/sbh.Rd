@@ -37,7 +37,8 @@
     Positive \code{integer} scalar of the number of permutations for the computation of cross-validated p-values. Defaults to 1000.
   }
   \item{cpv}{
-    \code{logical} scalar. Flag for computation of cross-validated p-values. Defaults to \code{FALSE}. 
+    \code{logical} scalar. Flag for computation of cross-validated p-values. 
+    Defaults to \code{FALSE}. Automatically reset to \code{FALSE} if cvtype="none".
   }
   \item{cvtype}{
     \code{Character} \code{vector} describing the cross-validation technique in \{"combined", "averaged", "none"\}.
