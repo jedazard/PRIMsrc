@@ -57,24 +57,26 @@ sbh <- function(dataset, discr,
   cvtype <- match.arg(arg=cvtype, choices=c("combined", "averaged", "none"), several.ok=FALSE)
   cvcriterion <- match.arg(arg=cvcriterion, choices=c("lrt", "cer", "lhr"), several.ok=FALSE)
 
-  # Checks
+  # Checking
   if (missing(dataset)) {
     stop("\nNo dataset provided !\n\n")
   } else {
     cat("\nSurvival dataset provided.\n\n")
-    if (!(is.data.frame(dataset)))
+    if (!(is.data.frame(dataset))) {
       dataset <- as.data.frame(dataset)
+    }
     x <- as.matrix(dataset[ ,-c(1,2), drop=FALSE])
     times <- dataset$stime
     status <- dataset$status
     times[times <= 0] <- 10^(-digits)
     n <- nrow(x)
     p <- ncol(x)
-    if (missing(discr))
+    if (missing(discr)) {
       discr <- logical(p)
+    }
   }
 
-  # Summary of user options
+  # Summarising user options
   if (cvtype != "none") {
     if (B > 1) {
       if (parallel) {
@@ -95,7 +97,7 @@ sbh <- function(dataset, discr,
   cat("Parallelization:", parallel, "\n")
   cat("\n")
 
-  # Variable selection
+  # Pre-selecting Variables
   if (p > n) {
     cat("Variable selection by Elasticnet Regularized Cox-Regression ... \n")
     k <- 0
@@ -113,26 +115,46 @@ sbh <- function(dataset, discr,
         k <- k + 1
         seed <- NULL
         if (k == 10) {
+          selected <- NULL
           success <- FALSE
         }
       } else {
         k <- 10
+        names(selected) <- colnames(x)[selected]
+        cv.coef <- cv.coef[selected]
+        m <- pmatch(x=1:p, table=selected, nomatch=NA, duplicates.ok=FALSE)
+        w <- which(!is.na(m))
+        sel <- m[w]
+        names(sel) <- names(selected)[sel]
         success <- TRUE
       }
     }
   } else {
-    cat("Variable selection by Cox-Regression ... \n")
-    cv.coef <- coxph(Surv(times, status) ~ x, eps=0.01, singular.ok=T, iter.max=1)$coef
+    cat("Variable selection by regular Cox-Regression ... \n")
+    fit <- coxph(Surv(times, status) ~ x, eps=0.01, singular.ok=T, iter.max=1)
+    cv.coef <- coef(fit)
     selected <- which(!(is.na(cv.coef)) & (cv.coef != 0))
-    success <- TRUE
+    if (is.empty(selected)) {
+      selected <- NULL
+      success <- FALSE
+    } else {
+      names(selected) <- colnames(x)[selected]
+      cv.coef <- cv.coef[selected]
+      m <- pmatch(x=1:p, table=selected, nomatch=NA, duplicates.ok=FALSE)
+      w <- which(!is.na(m))
+      sel <- m[w]
+      names(sel) <- names(selected)[sel]
+      success <- TRUE
+    }
   }
 
+  # Survival Bump Hunting Modeling
   if (!success) {
 
-    cat("Could not select any variable from the regularized Cox-regression model after 10 successive trials. Exiting...\n", sep="")
+    # Selected and used covariates
+    cat("Failed to pre-select any informative variable after 10 successive trials. Exiting...\n", sep="")
     bool.plot <- FALSE
     varsign <- NULL
-    selected <- NULL
     used <- NULL
     # Cross-validated minimum length from all replicates
     CV.maxsteps <- NULL
@@ -153,24 +175,29 @@ sbh <- function(dataset, discr,
 
   } else {
 
-    # Selected variables
-    names(selected) <- colnames(x)[selected]
-    cat("Selected variables:\n")
-    print(selected)
+    # Selected covariates
+    x <- x[, selected, drop=FALSE]
+    discr <- discr[selected]
+    p <- length(selected)
 
-    # Directions of directed peeling by selected variable and initial box boundaries
+    # Directions of directed peeling
     varsign <- sign(cv.coef)
-    names(varsign) <- colnames(x)
+    names(varsign) <- colnames(x)[selected]
+    
+    # Matching of the "selected" output to selected dataset
+    cat("Successfully pre-selected ", p, " covariates:\n", sep="")
+    selected <- sel
+    print(selected)
 
     # Initial box boundaries
     initcutpts <- numeric(p)
     for(j in 1:p){
-        if ((varsign[j] == 0) || (varsign[j] == 1)) {
+        if (varsign[j] == 1) {
             initcutpts[j] <- min(x[,j])
         } else if (varsign[j] == -1) {
             initcutpts[j] <- max(x[,j])
         } else {
-            stop("There is no valid direction of peeling for variable: ", j, "\n", sep="")
+            stop("The direction of peeling for variable: ", j, " is invalid!\n", sep="")
         }
     }
 
@@ -190,7 +217,7 @@ sbh <- function(dataset, discr,
                                      B=B, K=K, arg=arg,
                                      cvtype=cvtype,
                                      probval=probval, timeval=timeval,
-                                     varsign=varsign, selected=selected, initcutpts=initcutpts,
+                                     varsign=varsign, initcutpts=initcutpts,
                                      parallel=parallel, seed=seed)
     } else {
         if (conf$type == "SOCK") {
@@ -214,7 +241,7 @@ sbh <- function(dataset, discr,
                               B=a, K=K, arg=arg,
                               cvtype=cvtype,
                               probval=probval, timeval=timeval,
-                              varsign=varsign, selected=selected, initcutpts=initcutpts,
+                              varsign=varsign, initcutpts=initcutpts,
                               parallel=parallel, seed=NULL)
         stopCluster(cl)
         CV.box.rep.obj <- list("cv.maxsteps"=numeric(0),
@@ -274,8 +301,6 @@ sbh <- function(dataset, discr,
 
         cat("Failure! Could not find any bump in this dataset. Exiting... \n", sep="")
         bool.plot <- FALSE
-        varsign <- NULL
-        selected <- NULL
         used <- NULL
         # Cross-validated minimum length from all replicates
         CV.maxsteps <- NULL
@@ -363,14 +388,14 @@ sbh <- function(dataset, discr,
         # Variables used for peeling based on variable trace modal values
         used <- sort(unique(as.numeric(CV.trace$mode[-1])))
         names(used) <- colnames(x)[used]
-        cat("Variables used for peeling:\n")
+        cat("Most frequent variables used for peeling at each step:\n")
         print(used)
 
         # List of box rules for each step
         cat("Generating cross-validated box rules for each step ...\n")
         CV.boxcut.mu <- lapply.array(X=CV.boxcut, trunc=CV.nsteps, FUN=function(x){mean(x, na.rm=TRUE)}, MARGIN=1:2)
         if (any(as.logical(discr))) {
-        CV.boxcut.mu[,which(as.logical(discr))] <- myround(CV.boxcut.mu[,which(as.logical(discr)),drop=FALSE], 0)
+            CV.boxcut.mu[,which(as.logical(discr))] <- myround(CV.boxcut.mu[,which(as.logical(discr)),drop=FALSE], 0)
         }
         CV.boxcut.sd <- lapply.array(X=CV.boxcut, trunc=CV.nsteps, FUN=function(x){sd(x, na.rm=TRUE)}, MARGIN=1:2)
         rownames(CV.boxcut.mu) <- paste("step", 0:(CV.nsteps-1), sep="")
@@ -440,7 +465,7 @@ sbh <- function(dataset, discr,
             arg <- paste("beta=", beta, ",alpha=", alpha, ",minn=", minn, ",L=", CV.nsteps-1, ",peelcriterion=\"", peelcriterion, "\"", sep="")
             CV.pval <- cv.pval(x=x, times=times, status=status,
                                cvtype=cvtype,
-                               varsign=varsign, selected=selected, initcutpts=initcutpts,
+                               varsign=varsign, initcutpts=initcutpts,
                                A=A, K=K, arg=arg, obs.chisq=CV.stats$mean$cv.lrt,
                                parallel=parallel, conf=conf)
         } else {
@@ -449,7 +474,7 @@ sbh <- function(dataset, discr,
     }
   }
 
-  # Create the return object 'CV.fit'
+  # Creating the return object 'CV.fit'
   CV.fit <- list("cv.maxsteps"=CV.maxsteps,
                  "cv.nsteps"=CV.nsteps,
                  "cv.trace"=CV.trace,
@@ -459,6 +484,7 @@ sbh <- function(dataset, discr,
                  "cv.pval"=CV.pval)
   cat("Finished!\n")
 
+  # Returning the final 'PRSP' object
   return(structure(list("x"=x, "times"=times, "status"=status,
                         "B"=B, "K"=K, "A"=A, "cpv"=cpv, "arg"=arg,
                         "cvtype"=cvtype, "cvcriterion"=cvcriterion,
