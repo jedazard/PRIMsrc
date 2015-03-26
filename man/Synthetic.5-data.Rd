@@ -9,7 +9,7 @@
 \description{
   Modeling survival model #5 as described in Dazard et al. (2015) with censoring.
   Here, the regression function uses 1/10 of informative predictors in a \eqn{p > n} situation with \eqn{p = 1000} and \eqn{n = 100}. 
-  The rest represent un-informative noisy variables, which are not part of the design matrix. 
+  The rest represent un-informative noisy covariates, which are not part of the design matrix. 
   Survival time was generated from an exponential model with rate parameter \eqn{\lambda} (and mean \eqn{\frac{1}{\lambda}})
   according to a Cox-PH model with hazard exp(eta), where eta(.) is the regression function.
   Censoring indicator were generated from a uniform distribution on [0, 2].
@@ -20,8 +20,7 @@
 
 \format{
   Each dataset consists of a \code{numeric} \code{matrix} containing \eqn{n=100} observations (samples) 
-  by rows and \eqn{p=1000} variables by columns (\eqn{p > n} case), including the censoring indicator and 
-  (censored) time-to-event variables.
+  by rows and \eqn{p=1000} variables by columns, including the censoring indicator and (censored) time-to-event variables.
   It comes as a compressed Rda data file.
 }
 

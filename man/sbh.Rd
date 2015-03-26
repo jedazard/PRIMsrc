@@ -21,11 +21,12 @@
 
 \arguments{
   \item{dataset}{
-    \code{data.frame} or \code{numeric} \code{matrix} of input dataset containing the observed survival and status indicator variables in the first two columns, respectively.
+    \code{data.frame} or \code{numeric} \code{matrix} of input dataset containing the observed survival and status indicator variables 
+    in the first two columns, respectively, and all the covariates thereafter.
   }
   \item{discr}{
-    \code{Logical} \code{vector} describing what covariates are discrete.\cr
-    Defaults to \code{logical}(ncol(dataset)-2).
+    \code{Logical} \code{vector} of length the number of covariates in \code{dataset} describing which covariates are discrete.
+    Takes on values in \{0,1\}, where 1 = discrete and 0 = continuous. Defaults to \code{logical}(ncol(dataset)-2).
   }
   \item{B}{
     Positive \code{integer} scalar of the number of replications of the cross-validation procedure. Defaults to 10.
@@ -82,22 +83,25 @@
 \details{
   The function relies on an internal variable pre-selection procedure before the PRSP algorithm is run. At this point,
   this is done by regular Cox-regression (from the R package \pkg{survival}) or cross-validated Elasticnet Regularized Cox-Regression 
-  (from the R package \pkg{glmnet}), depending on whether the number of variables is less (\eqn{p \le n}) or greater (\eqn{p > n}) 
+  (from the R package \pkg{glmnet}), depending on whether the number of covariates is less (\eqn{p \le n}) or greater (\eqn{p > n}) 
   than the number of samples, respectively.
   
-  At this point, the main function \code{sbh} performs the search of the first box of the recursive coverage (outer) loop of our 
+  At this point, the main function \code{sbh} performs the search of the \emph{first} box of the recursive coverage (outer) loop of our 
   Patient Recursive Survival Peeling (PRSP) algorithm.
     
-  The \code{PRSP} object contains cross-validated estimates of all the decision-rules of covariates and other statistical quantities of interest
-  at each iteration of the peeling sequence (inner loop of the PRSP algorithm). It enables the display of results graphically of/for 
-  model tuning/selection, all peeling trajectories, variable traces, and survival distributions (see plotting functions for more details).
+  The \code{PRSP} object contains cross-validated estimates of all the decision-rules of pre-selected covariates and 
+  all other statistical quantities of interest at each iteration of the peeling sequence (inner loop of the PRSP algorithm). 
+  
+  It enables the display of results graphically of/for model tuning/selection, all peeling trajectories, variable traces 
+  and survival distributions (see plotting functions for more details).
 
   The function offers a number of options for the type of cross-validation desired: \eqn{K}-fold (replicated)-averaged or-combined,
   as well as peeling and optimization critera for model fitting, tuning and selectio and a few more parameters for the PRSP algorithm.
 
   The function takes advantage of the R package \pkg{parallel}, which allows users to create a cluster of workstations on a local
   and/or remote machine(s), enabling scaling-up with the number of CPU cores specified and efficient parallel execution.
-  Discrete (or nominal) variables should be made (or re-arranged into) ordinal variables.
+  
+  Discrete (or nominal) covariates should be made (or re-arranged into) ordinal variables.
   
   If the computation of cross-validated p-value is desired, then running with the parallelization option is generally advised as it may take a while.
   In the case of large (\eqn{p > n}) or very large (\eqn{p >> n}) datasets, it is required to use the parallelization option preferably
@@ -138,7 +142,7 @@
 \value{
   Object of \code{class} \code{PRSP} (Patient Recursive Survival Peeling)
   \code{List} containing the following 20 fields:
-    \item{x}{\code{numeric} \code{matrix} of original covariates.}
+    \item{x}{\code{numeric} \code{matrix} from original dataset with pre-selected covariates only.}
     \item{times}{\code{numeric} \code{vector} of observed failure / survival times.}
     \item{status}{\code{numeric} \code{vector} of observed event indicator in \{1,0\}.}
     \item{B}{positive \code{integer} of the number of replications used in the cross-validation procedure.}
@@ -148,9 +152,9 @@
     \item{vs}{\code{logical} scalar of returned flag of optional cross-validated variable selection procedure.}
     \item{cvtype}{\code{character} \code{vector} of the cross-validation technique used.}
     \item{cvcriterion}{\code{character} \code{vector} of cross-validation optimization criterion used.}
-    \item{varsign}{\code{numeric} \code{vector} in \{-1,+1\} of directions of peeling for all variables.} 
-    \item{selected}{\code{numeric} \code{vector} giving the selected variable by regularized (Elastic-Net) Cox-regression.}
-    \item{used}{\code{numeric} \code{vector} giving the variables used for peeling.}
+    \item{varsign}{\code{numeric} \code{vector} in \{-1,+1\} of directions of peeling for all pre-selected covariates.} 
+    \item{selected}{\code{numeric} \code{vector} giving the pre-selected covariates.}
+    \item{used}{\code{numeric} \code{vector} giving the covariates used for peeling.}
     \item{arg}{\code{character} \code{vector} of the parameters used:}
     \item{probval}{\code{Numeric} scalar of survival probability used.}
     \item{timeval}{\code{Numeric} scalar of survival time used.}
@@ -266,10 +270,10 @@ CVCOMBREP.synt1 <- sbh(dataset = Synthetic.1,
                               peelcriterion=\"lr\"",
                        parallel = FALSE, conf = NULL, seed = 123)
 
-# selected variables:
+# selected covariates:
 selected <- CVCOMBREP.synt1$selected
 selected
-# variables used for peeling:
+# covariates used for peeling:
 used <- CVCOMBREP.synt1$used
 used
 # some output results:
@@ -297,10 +301,10 @@ CVCOMBREP.synt5 <- sbh(dataset = Synthetic.5,
                               peelcriterion=\"lr\"",
                        parallel = FALSE, conf = NULL, seed = 123)
 
-# selected variables:
+# selected covariates:
 selected <- CVCOMBREP.synt5$selected
 selected
-# variables used for peeling:
+# covariates used for peeling:
 used <- CVCOMBREP.synt5$used
 used
 # some output results:
@@ -329,10 +333,10 @@ CVCOMBREP.real1 <- sbh(dataset = Real.1,
                               peelcriterion=\"lr\"",
                        parallel = FALSE, conf = NULL, seed = 123)
 
-# selected variables:
+# selected covariates:
 selected <- CVCOMBREP.real1$selected
 selected
-# variables used for peeling:
+# covariates used for peeling:
 used <- CVCOMBREP.real1$used
 used
 # some output results:
@@ -416,10 +420,10 @@ round(CVCOMBREP.real1$cvfit$cv.stats$mean,2)
                                   peelcriterion=\"lr\"",
                            parallel = TRUE, conf = conf, seed = 123)
                            
-    # selected variables:
+    # selected covariates:
     selected <- CVCOMBREP.synt1$selected
     selected
-    # variables used for peeling:
+    # covariates used for peeling:
     used <- CVCOMBREP.synt1$used
     used
     # some output results:
@@ -450,10 +454,10 @@ round(CVCOMBREP.real1$cvfit$cv.stats$mean,2)
                                   peelcriterion=\"lr\"",
                            parallel = TRUE, conf = conf, seed = 123)
 
-    # selected variables:
+    # selected covariates:
     selected <- CVCOMBREP.real2$selected
     selected
-    # variables used for peeling:
+    # covariates used for peeling:
     used <- CVCOMBREP.real2$used
     used
     # some output results:

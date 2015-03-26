@@ -20,8 +20,7 @@
 
 \format{
   Each dataset consists of a \code{numeric} \code{matrix} containing \eqn{n=250} observations (samples) 
-  by rows and \eqn{p=5} variables by columns (\eqn{p < n} case), including the censoring indicator and 
-  (censored) time-to-event variables.
+  by rows and \eqn{p=5} variables by columns, including the censoring indicator and (censored) time-to-event variables.
   It comes as a compressed Rda data file.
 }
 

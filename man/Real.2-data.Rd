@@ -12,9 +12,10 @@
   The goal of the study was to provide a more objective measure of grade with prognostic benefit for patients with 
   moderately differentiated grade II (G2) tumors. To that end, expression profiles of primary invasive breast tumors 
   were analyzed on microarrays to find a gene expression signature capable of discerning tumors of grade I (G1) and grade III (G3) histology.
-  In this dataset, only the Uppsala cohort (\eqn{n=249}) and only the gene expression data was included although other clinical covariates are available as well. 
-  It contains \eqn{p=22647} mRNA measurements from the Affymetrix Human Genome U133A Array platform on \eqn{n=249} samples. 
-  The data was left with \eqn{n=177} samples after removal of outliers and incomplete observations and \eqn{p=22577} variables after removal of Affymetrix controls.
+  In this dataset, only the Uppsala cohort (\eqn{n=249}) and only the gene expression data was included 
+  although other clinical covariates are available as well. It contains \eqn{p=22647} mRNA measurements from 
+  the Affymetrix Human Genome U133A Array platform on \eqn{n=249} samples. The data was left 
+  after removal of outliers and incomplete observations and after removal of Affymetrix controls. 
   See Ivshina et al. (2005) and Gene Expression Omnibus database repository (Accession number: #GSE4922) for more details.
 }
 
@@ -22,8 +23,7 @@
 
 \format{
   Dataset consists of a \code{numeric} \code{data.frame} containing \eqn{n=177} complete observations (samples) 
-  by rows and \eqn{p=22577} variables by columns (\eqn{p >> n} case), 
-  after including the censoring indicator and (censored) time-to-event variables. 
+  by rows and \eqn{p=22577} variables by columns, including the censoring indicator and (censored) time-to-event variables. 
   It comes as a compressed Rda data file.
 }
 
