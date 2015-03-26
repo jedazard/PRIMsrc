@@ -54,11 +54,12 @@ o RELEASE 0.5.3
 - Made all plotting functions S3-class functions and renamed them as plot.xxx(...).
 - Test build under 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2015-03-25
+Date   : 2015-03-26
 o RELEASE 0.5.5
 - Made the internal variable selection procedure conditional on whether p <= n or not.
 - Corrected treatment of missing values in case of replications for the variable traces.
 - Corrected output of variable trace modal values.
+- Corrected pre-selected variable output.
 - Several minor bugs corrected in all plotting functions.
 - Test build under 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
