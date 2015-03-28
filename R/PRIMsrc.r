@@ -10,7 +10,7 @@
 ################
 # Usage         :
 ################
-#                   sbh(dataset, discr,
+#                   sbh(dataset,
 #                       B=10, K=5, A=1000,
 #                       cpv=FALSE,
 #                       cvtype=c("combined", "averaged", "none"),
@@ -36,7 +36,7 @@
 #
 ##########################################################################################################################################
 
-sbh <- function(dataset, discr,
+sbh <- function(dataset,
                 B=10, K=5, A=1000,
                 cpv=FALSE,
                 cvtype=c("combined", "averaged", "none"),
@@ -71,9 +71,6 @@ sbh <- function(dataset, discr,
     times[times <= 0] <- 10^(-digits)
     n <- nrow(x)
     p <- ncol(x)
-    if (missing(discr)) {
-      discr <- logical(p)
-    }
   }
 
   # Summarising user options
@@ -177,7 +174,6 @@ sbh <- function(dataset, discr,
 
     # Selected covariates
     x <- x[, selected, drop=FALSE]
-    discr <- discr[selected]
     p <- length(selected)
 
     # Directions of directed peeling
@@ -388,15 +384,12 @@ sbh <- function(dataset, discr,
         # Variables used for peeling based on variable trace modal values
         used <- sort(unique(as.numeric(CV.trace$mode[-1])))
         names(used) <- colnames(x)[used]
-        cat("Most frequent variables used for peeling at each step:\n")
+        cat("Most frequently used variables for peeling:\n")
         print(used)
 
         # List of box rules for each step
         cat("Generating cross-validated box rules for each step ...\n")
         CV.boxcut.mu <- lapply.array(X=CV.boxcut, trunc=CV.nsteps, FUN=function(x){mean(x, na.rm=TRUE)}, MARGIN=1:2)
-        if (any(as.logical(discr))) {
-            CV.boxcut.mu[,which(as.logical(discr))] <- myround(CV.boxcut.mu[,which(as.logical(discr)),drop=FALSE], 0)
-        }
         CV.boxcut.sd <- lapply.array(X=CV.boxcut, trunc=CV.nsteps, FUN=function(x){sd(x, na.rm=TRUE)}, MARGIN=1:2)
         rownames(CV.boxcut.mu) <- paste("step", 0:(CV.nsteps-1), sep="")
         rownames(CV.boxcut.sd) <- paste("step", 0:(CV.nsteps-1), sep="")
