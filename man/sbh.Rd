@@ -10,7 +10,8 @@
 }
 
 \usage{
-  sbh(dataset, discr, B = 10, K = 5, A = 1000, 
+  sbh(dataset, 
+      B = 10, K = 5, A = 1000, 
       cpv = FALSE,
       cvtype=c("combined", "averaged", "none"), 
       cvcriterion=c("lrt", "cer", "lhr"),
@@ -23,10 +24,6 @@
   \item{dataset}{
     \code{data.frame} or \code{numeric} \code{matrix} of input dataset containing the observed survival and status indicator variables 
     in the first two columns, respectively, and all the covariates thereafter.
-  }
-  \item{discr}{
-    \code{Logical} \code{vector} of length the number of covariates in \code{dataset} describing which covariates are discrete.
-    Takes on values in \{0,1\}, where 1 = discrete and 0 = continuous. Defaults to \code{logical}(ncol(dataset)-2).
   }
   \item{B}{
     Positive \code{integer} scalar of the number of replications of the cross-validation procedure. Defaults to 10.
@@ -323,7 +320,6 @@ round(CVCOMBREP.synt5$cvfit$cv.stats$mean,2)
 # Without computation of cross-validated p-values
 #===================================================
 CVCOMBREP.real1 <- sbh(dataset = Real.1, 
-                       discr = c(0,1,1,0),
                        cvtype = "combined", cvcriterion = "lrt",
                        B = 5, K = 5, cpv = FALSE, probval = 0.5, 
                        arg = "beta=0.05,
@@ -444,7 +440,6 @@ round(CVCOMBREP.real1$cvfit$cv.stats$mean,2)
     #===================================================
     p <- ncol(Real.2) - 2
     CVCOMBREP.real2 <- sbh(dataset = Real.2, 
-                           discr = rep(0,p),
                            cvtype = "combined", cvcriterion = "lrt",
                            B = 5, K = 5, cpv = FALSE, probval = 0.5, 
                            arg = "beta=0.05,
