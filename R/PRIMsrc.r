@@ -179,7 +179,7 @@ sbh <- function(dataset,
     # Directions of directed peeling
     varsign <- sign(cv.coef)
     names(varsign) <- colnames(x)[selected]
-    
+
     # Matching of the "selected" output to selected dataset
     cat("Successfully pre-selected ", p, " covariates:\n", sep="")
     selected <- sel
@@ -783,7 +783,7 @@ plot.profile.PRSP <- function(x,
       }
     }
   } else {
-    cat("Either the regularized Cox regression modeling or the Survival Bump Hunting modeling failed for this dataset.\n
+    cat("Either the variable pre-selection or the Survival Bump Hunting modeling failed for this dataset.\n
         So, there is nothing to plot here.\n")
   }
   invisible()
@@ -941,7 +941,7 @@ plot.scatter.PRSP <- function(x,
         stop("Currently allowed display devices are \"PS\" (Postscript) or \"PDF\" (Portable Document Format) \n")
     }
   } else {
-    cat("Either the regularized Cox regression modeling or the Survival Bump Hunting modeling failed for this dataset.\n
+    cat("Either the variable pre-selection or the Survival Bump Hunting modeling failed for this dataset.\n
         So, there is nothing to plot here.\n")
   }
   invisible()
@@ -1172,7 +1172,7 @@ plot.boxtraj.PRSP <- function(x,
         stop("Currently allowed display devices are \"PS\" (Postscript) or \"PDF\" (Portable Document Format) \n")
     }
   } else {
-    cat("Either the regularized Cox regression modeling or the Survival Bump Hunting modeling failed for this dataset.\n
+    cat("Either the variable pre-selection or the Survival Bump Hunting modeling failed for this dataset.\n
         So, there is nothing to plot here.\n")
   }
   invisible()
@@ -1263,9 +1263,9 @@ plot.boxtrace.PRSP <- function(x,
         }
 
         if (!is.null(main)) {
-            par(mfrow=c(2, 1), oma=c(0, 0, 2, 0), mar=c(2.5, 6.0, 2.0, 0.0), mgp=c(1.5, 0.5, 0))
+            par(mfrow=c(2, 1), oma=c(0, 0, 2, 0), mar=c(2.5, 8.0, 2.0, 0.0), mgp=c(1.5, 0.5, 0))
         } else {
-            par(mfrow=c(2, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 6.0, 2.0, 0.0), mgp=c(1.5, 0.5, 0))
+            par(mfrow=c(2, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 8.0, 2.0, 0.0), mgp=c(1.5, 0.5, 0))
         }
 
         boxcut.scaled <- scale(x=object$cvfit$cv.rules$mean[,toplot], center=center, scale=scale)
@@ -1273,7 +1273,7 @@ plot.boxtrace.PRSP <- function(x,
              y=boxcut.scaled[,1], type='n',
              xlim=range(0,1),
              ylim=range(boxcut.scaled),
-             main="Variable Importance", cex.main=cex,
+             main="Variable Importance (average values)", cex.main=cex,
              xlab="",
              ylab="")
         for (j in 1:p) {
@@ -1294,7 +1294,7 @@ plot.boxtrace.PRSP <- function(x,
              type='S', yaxt="n", col=col, lty=lty, lwd=lwd,
              xlim=range(0, 1),
              ylim=range(0, p),
-             main="Variable Usage", cex.main=cex,
+             main="Variable Usage (modal values)", cex.main=cex,
              xlab="",
              ylab="")
         par(mgp=c(1.5, 0, 0))
@@ -1302,7 +1302,7 @@ plot.boxtrace.PRSP <- function(x,
         if (add.legend)
             legend("bottom", inset=0.01, legend=text.legend, cex=cex)
         mtext(text=xlab, cex=cex, side=1, line=1, outer=FALSE)
-        mtext(text="Variables Used", cex=cex, side=2, line=3, outer=FALSE)
+        mtext(text="Variables Used", cex=cex, side=2, line=7, outer=FALSE)
         mtext(text=main, cex=1, side=3, outer=TRUE)
     }
 
@@ -1349,7 +1349,7 @@ plot.boxtrace.PRSP <- function(x,
         stop("Currently allowed display devices are \"PS\" (Postscript) or \"PDF\" (Portable Document Format) \n")
     }
   } else {
-    cat("Either the regularized Cox regression modeling or the Survival Bump Hunting modeling failed for this dataset.\n
+    cat("Either the variable pre-selection or the Survival Bump Hunting modeling failed for this dataset.\n
         So, there is nothing to plot here.\n")
   }
   invisible()
@@ -1503,7 +1503,7 @@ plot.boxkm.PRSP <- function(x,
         stop("Currently allowed display devices are \"PS\" (Postscript) or \"PDF\" (Portable Document Format) \n")
     }
   } else {
-    cat("Either the regularized Cox regression modeling or the Survival Bump Hunting modeling failed for this dataset.\n
+    cat("Either the variable pre-selection or the Survival Bump Hunting modeling failed for this dataset.\n
         So, there is nothing to plot here.\n")
   }
   invisible()
