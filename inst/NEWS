@@ -54,7 +54,7 @@ o RELEASE 0.5.3
 - Made all plotting functions S3-class functions and renamed them as plot.xxx(...).
 - Test build under 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2015-03-27
+Date   : 2015-03-30
 o RELEASE 0.5.5
 - Removed argument 'discr' in the main function: there is no longer a 
   special rounding of discrete covariate decision rules.
