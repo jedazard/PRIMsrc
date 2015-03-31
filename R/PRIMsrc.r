@@ -94,9 +94,9 @@ sbh <- function(dataset,
   cat("Parallelization:", parallel, "\n")
   cat("\n")
 
-  # Pre-selecting Variables
+  # Pre-selecting covariates
   if (p > n) {
-    cat("Variable selection by Elasticnet Regularized Cox-Regression ... \n")
+    cat("Covariate selection by Elasticnet Regularized Cox-Regression ... \n")
     k <- 0
     while (k < 10) {
       if (is.null(seed)) {
@@ -127,7 +127,7 @@ sbh <- function(dataset,
       }
     }
   } else {
-    cat("Variable selection by regular Cox-Regression ... \n")
+    cat("Covariate selection by regular Cox-Regression ... \n")
     fit <- coxph(Surv(times, status) ~ x, eps=0.01, singular.ok=T, iter.max=1)
     cv.coef <- coef(fit)
     selected <- which(!(is.na(cv.coef)) & (cv.coef != 0))
@@ -149,7 +149,7 @@ sbh <- function(dataset,
   if (!success) {
 
     # Selected and used covariates
-    cat("Failed to pre-select any informative variable after 10 successive trials. Exiting...\n", sep="")
+    cat("Failed to pre-select any informative covariate after 10 successive trials. Exiting...\n", sep="")
     bool.plot <- FALSE
     varsign <- NULL
     used <- NULL
@@ -193,7 +193,7 @@ sbh <- function(dataset,
         } else if (varsign[j] == -1) {
             initcutpts[j] <- max(x[,j])
         } else {
-            stop("The direction of peeling for variable: ", j, " is invalid!\n", sep="")
+            stop("The direction of peeling for covariate: ", j, " is invalid!\n", sep="")
         }
     }
 
@@ -362,10 +362,10 @@ sbh <- function(dataset,
             stop("Invalid CV type option \n")
         }
 
-        # Variable traces for each step
+        # covariate traces for each step
         # Distribution of trace values over the replicates (by step)
         # Modal trace values over the replicates (by step)
-        cat("Generating cross-validated variable traces ...\n")
+        cat("Generating cross-validated covariate traces ...\n")
         trace.dist <- lapply.array(X=CV.trace,
                                    trunc=CV.nsteps,
                                    FUN=function(x){if (any(is.na(x)))
@@ -381,10 +381,10 @@ sbh <- function(dataset,
         names(trace.mode) <- paste("step", 0:(CV.nsteps-1), sep="")
         CV.trace <- list("dist"=trace.dist, "mode"=trace.mode)
 
-        # Variables used for peeling based on variable trace modal values
+        # covariates used for peeling based on covariate trace modal values
         used <- sort(unique(as.numeric(CV.trace$mode[-1])))
         names(used) <- colnames(x)[used]
-        cat("Most frequently used variables for peeling:\n")
+        cat("Covariates used for peeling based on covariate trace modal values:\n")
         print(used)
 
         # List of box rules for each step
@@ -783,7 +783,7 @@ plot.profile.PRSP <- function(x,
       }
     }
   } else {
-    cat("Either the variable pre-selection or the Survival Bump Hunting modeling failed for this dataset.\n
+    cat("Either the covariate pre-selection or the Survival Bump Hunting modeling failed for this dataset.\n
         So, there is nothing to plot here.\n")
   }
   invisible()
@@ -941,7 +941,7 @@ plot.scatter.PRSP <- function(x,
         stop("Currently allowed display devices are \"PS\" (Postscript) or \"PDF\" (Portable Document Format) \n")
     }
   } else {
-    cat("Either the variable pre-selection or the Survival Bump Hunting modeling failed for this dataset.\n
+    cat("Either the covariate pre-selection or the Survival Bump Hunting modeling failed for this dataset.\n
         So, there is nothing to plot here.\n")
   }
   invisible()
@@ -969,7 +969,7 @@ plot.scatter <- function(x,
 ################
 #                    plot.boxtraj (x,
 #                                  main=NULL,
-#                                  xlab="Box Mass", ylab="Variable Range",
+#                                  xlab="Box Mass", ylab="Covariate Range",
 #                                  toplot=x$used,
 #                                  col.cov, lty.cov, lwd.cov,
 #                                  col=1, lty=1, lwd=1,
@@ -997,7 +997,7 @@ plot.scatter <- function(x,
 
 plot.boxtraj.PRSP <- function(x,
                               main=NULL,
-                              xlab="Box Mass", ylab="Variable Range",
+                              xlab="Box Mass", ylab="Covariate Range",
                               toplot=x$used,
                               col.cov, lty.cov, lwd.cov,
                               col=1, lty=1, lwd=1,
@@ -1172,7 +1172,7 @@ plot.boxtraj.PRSP <- function(x,
         stop("Currently allowed display devices are \"PS\" (Postscript) or \"PDF\" (Portable Document Format) \n")
     }
   } else {
-    cat("Either the variable pre-selection or the Survival Bump Hunting modeling failed for this dataset.\n
+    cat("Either the covariate pre-selection or the Survival Bump Hunting modeling failed for this dataset.\n
         So, there is nothing to plot here.\n")
   }
   invisible()
@@ -1180,7 +1180,7 @@ plot.boxtraj.PRSP <- function(x,
 
 plot.boxtraj <- function(x,
                          main=NULL,
-                         xlab="Box Mass", ylab="Variable Range",
+                         xlab="Box Mass", ylab="Covariate Range",
                          toplot=x$used,
                          col.cov, lty.cov, lwd.cov,
                          col=1, lty=1, lwd=1,
@@ -1202,7 +1202,7 @@ plot.boxtraj <- function(x,
 ################
 #                    plot.boxtrace (x,
 #                                   main=NULL,
-#                                   xlab="Box Mass", ylab="Variable Range (centered)",
+#                                   xlab="Box Mass", ylab="Covariate Range (centered)",
 #                                   toplot=x$used,
 #                                   center=TRUE, scale=FALSE,
 #                                   col.cov, lty.cov, lwd.cov,
@@ -1214,7 +1214,7 @@ plot.boxtraj <- function(x,
 ################
 # Description   :
 ################
-#                    Plot the cross-validated modal trace curves of variable importance and variable usage
+#                    Plot the cross-validated modal trace curves of covariate importance and covariate usage
 #                    of covariates used for peeling at each iteration of the peeling sequence
 #                    (inner loop of our PRSP algorithm).
 #
@@ -1229,7 +1229,7 @@ plot.boxtraj <- function(x,
 ##########################################################################################################################################
 
 plot.boxtrace.PRSP <- function(x,
-                               main=NULL, xlab="Box Mass", ylab="Variable Range (centered)",
+                               main=NULL, xlab="Box Mass", ylab="Covariate Range (centered)",
                                toplot=x$used,
                                center=TRUE, scale=FALSE,
                                col.cov, lty.cov, lwd.cov,
@@ -1273,7 +1273,7 @@ plot.boxtrace.PRSP <- function(x,
              y=boxcut.scaled[,1], type='n',
              xlim=range(0,1),
              ylim=range(boxcut.scaled),
-             main="Variable Importance (average values)", cex.main=cex,
+             main="Covariate Importance (average values)", cex.main=cex,
              xlab="",
              ylab="")
         for (j in 1:p) {
@@ -1294,7 +1294,7 @@ plot.boxtrace.PRSP <- function(x,
              type='S', yaxt="n", col=col, lty=lty, lwd=lwd,
              xlim=range(0, 1),
              ylim=range(0, p),
-             main="Variable Usage (modal values)", cex.main=cex,
+             main="Covariate Usage (modal values)", cex.main=cex,
              xlab="",
              ylab="")
         par(mgp=c(1.5, 0, 0))
@@ -1302,7 +1302,7 @@ plot.boxtrace.PRSP <- function(x,
         if (add.legend)
             legend("bottom", inset=0.01, legend=text.legend, cex=cex)
         mtext(text=xlab, cex=cex, side=1, line=1, outer=FALSE)
-        mtext(text="Variables Used", cex=cex, side=2, line=7, outer=FALSE)
+        mtext(text="Covariates Used", cex=cex, side=2, line=7, outer=FALSE)
         mtext(text=main, cex=1, side=3, outer=TRUE)
     }
 
@@ -1349,7 +1349,7 @@ plot.boxtrace.PRSP <- function(x,
         stop("Currently allowed display devices are \"PS\" (Postscript) or \"PDF\" (Portable Document Format) \n")
     }
   } else {
-    cat("Either the variable pre-selection or the Survival Bump Hunting modeling failed for this dataset.\n
+    cat("Either the covariate pre-selection or the Survival Bump Hunting modeling failed for this dataset.\n
         So, there is nothing to plot here.\n")
   }
   invisible()
@@ -1357,7 +1357,7 @@ plot.boxtrace.PRSP <- function(x,
 
 plot.boxtrace <- function(x,
                           main=NULL,
-                          xlab="Box Mass", ylab="Variable Range (centered)",
+                          xlab="Box Mass", ylab="Covariate Range (centered)",
                           toplot=x$used,
                           center=TRUE, scale=FALSE,
                           col.cov, lty.cov, lwd.cov,
@@ -1503,7 +1503,7 @@ plot.boxkm.PRSP <- function(x,
         stop("Currently allowed display devices are \"PS\" (Postscript) or \"PDF\" (Portable Document Format) \n")
     }
   } else {
-    cat("Either the variable pre-selection or the Survival Bump Hunting modeling failed for this dataset.\n
+    cat("Either the covariate pre-selection or the Survival Bump Hunting modeling failed for this dataset.\n
         So, there is nothing to plot here.\n")
   }
   invisible()
