@@ -10,7 +10,7 @@
     Performs a unified treatment of Bump Hunting by Patient Rule Induction Method (PRIM) in Survival, Regression and Classification settings (SRC). 
     The method generates decision rules delineating a region in the predictor space, where the response is larger than its average over the entire space. 
     The region is shaped as a hyperdimensional box or hyperrectangle that is not necessarily contiguous. Assumptions are that the multivariate input 
-    covariates can be discrete or continuous and the univariate response variable can be discrete (Classification), continuous (Regression) 
+    variables can be discrete or continuous and the univariate response variable can be discrete (Classification), continuous (Regression) 
     or a time-to event, possibly censored (Survival). It is intended to handle low and high-dimensional multivariate datasets, 
     including the situation where the number of covariates exceeds or dominates that of samples (\eqn{p > n} or \eqn{p \gg n} paradigm).
 }
@@ -57,7 +57,7 @@
             of the recursive coverage (outer) loop of our Patient Recursive Survival Peeling (PRSP) algorithm.
             The \code{PRSP} object contains cross-validated estimates of all the decision-rules of pre-selected covariates 
             and all other statistical quantities of interest at each iteration of the peeling sequence (inner loop of the PRSP algorithm). 
-            It enables the display of results graphically of/for model tuning/selection, all peeling trajectories, variable traces, 
+            It enables the display of results graphically of/for model tuning/selection, all peeling trajectories, covariate traces, 
             and survival distributions (see plotting functions below for more details). The function offers a few options such as the 
             type of \eqn{K}-fold cross-validation desired ((replicated)-averaged or-combined), the peeling and optimization critera for model fitting 
             and the tuning and selection and a few more parameters for the PRSP algorithm. The function takes advantage of the R package \pkg{parallel} 
@@ -84,7 +84,7 @@
       \code{\link[PRIMsrc]{plot.boxtrace}}
       \bold{Visualization of Covariates Traces} \cr
             S3 generic function for plotting the cross-validated covariates traces of a \code{PRSP} object.
-            Plot the cross-validated modal trace curves of variable importance and variable usage of the user-specified 
+            Plot the cross-validated modal trace curves of covariate importance and covariate usage of the user-specified 
             covariates among the pre-selected ones at each iteration of the peeling sequence (inner loop of our PRSP algorithm). \cr
       \code{\link[PRIMsrc]{plot.boxkm}}
       \bold{Visualization of Survival Distributions} \cr

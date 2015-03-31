@@ -89,7 +89,7 @@
   The \code{PRSP} object contains cross-validated estimates of all the decision-rules of pre-selected covariates and 
   all other statistical quantities of interest at each iteration of the peeling sequence (inner loop of the PRSP algorithm). 
   
-  It enables the display of results graphically of/for model tuning/selection, all peeling trajectories, variable traces 
+  It enables the display of results graphically of/for model tuning/selection, all peeling trajectories, covariate traces 
   and survival distributions (see plotting functions for more details).
 
   The function offers a number of options for the type of cross-validation desired: \eqn{K}-fold (replicated)-averaged or-combined,
@@ -146,7 +146,6 @@
     \item{K}{positive \code{integer} of the number of folds used in the cross-validation procedure.}
     \item{A}{positive \code{integer} of the number of permutations used for the computation of cross-validated p-values.}
     \item{cpv}{\code{logical} scalar of returned flag of optional computation of cross-validated p-values.}
-    \item{vs}{\code{logical} scalar of returned flag of optional cross-validated variable selection procedure.}
     \item{cvtype}{\code{character} \code{vector} of the cross-validation technique used.}
     \item{cvcriterion}{\code{character} \code{vector} of cross-validation optimization criterion used.}
     \item{varsign}{\code{numeric} \code{vector} in \{-1,+1\} of directions of peeling for all pre-selected covariates.} 
@@ -159,9 +158,9 @@
         \itemize{
             \item{cv.maxsteps}: \code{numeric} scalar of maximal ceiled-mean of number of peeling steps over the replicates
             \item{cv.nsteps}: \code{numeric} scalar of optimal number of peeling steps according to the optimization criterion
-            \item{cv.trace}: \code{list} of \code{numeric} \code{matrix} and \code{numeric} \code{vector} of variable usage traces or modal trace values at each step
+            \item{cv.trace}: \code{list} of \code{numeric} \code{matrix} and \code{numeric} \code{vector} of covariate usage traces or modal trace values at each step
             \item{cv.boxind}: \code{logical} \code{matrix} in {\code{TRUE}, \code{FALSE}} of sample box membership indicator (columns) by peeling steps (rows)
-            \item{cv.rules}: \code{data.frame} of decision rules on the variable (columns) by peeling steps (rows)
+            \item{cv.rules}: \code{data.frame} of decision rules on the covariate (columns) by peeling steps (rows)
             \item{cv.stats}: \code{numeric} \code{matrix} of box quantities of interest (columns) by peeling steps (rows)
             \item{cv.pval}: \code{numeric} \code{vector} of cross-validated log-rank p-values of sepraration of survival distributions}
         }

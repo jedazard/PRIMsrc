@@ -39,7 +39,7 @@
     \item{boxind}{\code{Logical} \code{matrix} of predicted box membership indicator (columns) by peeling steps (rows).
     TRUE = in-box, FALSE = out-of-box.}
     \item{vertices}{\code{List} of size the number of chosen peeling steps where each entry is a \code{numeric} \code{matrix} of 
-    predicted box vertices: lower and upper bounds (rows) by variable (columns).}
+    predicted box vertices: lower and upper bounds (rows) by covariate (columns).}
 }
 
 \references{

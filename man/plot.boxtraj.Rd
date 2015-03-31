@@ -16,7 +16,7 @@
   \method{plot.boxtraj}{PRSP}(x,
              main = NULL, 
              xlab = "Box Mass", 
-             ylab = "Variable Range",
+             ylab = "Covariate Range",
              toplot = x$used,
              col.cov, 
              lty.cov, 
@@ -48,24 +48,24 @@
     \code{Character} \code{vector}. X axis label. Defaults to "Box Mass".
   }
   \item{ylab}{
-    \code{Character} \code{vector}. Y axis label. Defaults to "Variable Range".
+    \code{Character} \code{vector}. Y axis label. Defaults to "Covariate Range".
   }
   \item{toplot}{
     \code{Numeric} \code{vector}. Which of the pre-selected covariates to plot.
     Defaults to covariates used for peeling.
   }
   \item{col.cov}{
-    \code{Integer} \code{vector}. Line color for the variable trajectory curve of each selected covariate. 
+    \code{Integer} \code{vector}. Line color for the covariate trajectory curve of each selected covariate. 
     Defaults to vector of colors of length the number of selected covariates. 
     The vector is reused cyclically if it is shorter than the number of selected covariates.
   }
   \item{lty.cov}{
-    \code{Integer} \code{vector}. Line type for the variable trajectory curve of each selected covariate. 
+    \code{Integer} \code{vector}. Line type for the covariate trajectory curve of each selected covariate. 
     Defaults to vector of 1's of length the number of selected covariates. 
     The vector is reused cyclically if it is shorter than the number of selected covariates.
   }
   \item{lwd.cov}{
-    \code{Integer} \code{vector}. Line width for the variable trajectory curve of each selected covariate. 
+    \code{Integer} \code{vector}. Line width for the covariate trajectory curve of each selected covariate. 
     Defaults to vector of 1's of length the number of selected covariates. 
     The vector is reused cyclically if it is shorter than the number of selected covariates.
   }
@@ -186,7 +186,7 @@ library("PRIMsrc")
     #=================================================================================
     plot.boxtraj(x = CVCOMBREP.synt1,
                  main = paste("RCCV peeling trajectories for model #1", sep=""),
-                 xlab = "Box Mass", ylab = "Variable Range",
+                 xlab = "Box Mass", ylab = "Covariate Range",
                  toplot = CVCOMBREP.synt1$used,
                  device = NULL, file = "Covariate Trajectory Plots", path=getwd(),
                  horizontal = FALSE, width = 8.5, height = 8.5)

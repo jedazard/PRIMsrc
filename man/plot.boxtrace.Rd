@@ -7,7 +7,7 @@
 
 \description{
   S3 generic function for plotting the cross-validated covariates traces of a \code{PRSP} object.
-  Plot the cross-validated modal trace curves of variable importance and variable usage of the 
+  Plot the cross-validated modal trace curves of covariate importance and covariate usage of the 
   user-specified covariates among the pre-selected ones at each iteration of the peeling sequence 
   (inner loop of our PRSP algorithm). 
 }
@@ -16,7 +16,7 @@
   \method{plot.boxtrace}{PRSP}(x,
               main = NULL,
               xlab = "Box Mass", 
-              ylab = "Variable Range (centered)",
+              ylab = "Covariate Range (centered)",
               toplot = x$used,
               center = TRUE, 
               scale = FALSE, 
@@ -48,7 +48,7 @@
     \code{Character} \code{vector}. X axis label. Defaults to "Box Mass".
   }\code{NULL}
   \item{ylab}{
-    \code{Character} \code{vector}. Y axis label. Defaults to "Variable Range (centered)".
+    \code{Character} \code{vector}. Y axis label. Defaults to "Covariate Range (centered)".
   }
   \item{toplot}{
     \code{Numeric} \code{vector}. Which of the pre-selected covariates to plot.
@@ -61,30 +61,30 @@
     \code{Logical} scalar. Shall the data be scaled? Defaults to \code{FALSE}.
   }
   \item{col.cov}{
-    \code{Integer} \code{vector}. Line color for the variable importance curve of each selected covariate. 
+    \code{Integer} \code{vector}. Line color for the covariate importance curve of each selected covariate. 
     Defaults to vector of colors of length the number of selected covariates. 
     The vector is reused cyclically if it is shorter than the number of selected covariates.
   }
   \item{lty.cov}{
-    \code{Integer} \code{vector}. Line type for the variable importance curve of each selected covariate. 
+    \code{Integer} \code{vector}. Line type for the covariate importance curve of each selected covariate. 
     Defaults to vector of 1's of length the number of selected covariates. 
     The vector is reused cyclically if it is shorter than the number of selected covariates.
   }
   \item{lwd.cov}{
-    \code{Integer} \code{vector}. Line width for the variable importance curve of each selected covariate. 
+    \code{Integer} \code{vector}. Line width for the covariate importance curve of each selected covariate. 
     Defaults to vector of 1's of length the number of selected covariates. 
     The vector is reused cyclically if it is shorter than the number of selected covariates.
   }
   \item{col}{
-    \code{Integer} scalar. Line color for the variable trace curve. 
+    \code{Integer} scalar. Line color for the covariate trace curve. 
     Defaults to 1.
   }
   \item{lty}{
-    \code{Integer} scalar. Line type for the variable trace curve. 
+    \code{Integer} scalar. Line type for the covariate trace curve. 
     Defaults to 1.
   }
   \item{lwd}{
-    \code{Integer} scalar. Line width for the variable trace curve. 
+    \code{Integer} scalar. Line width for the covariate trace curve. 
     Defaults to 1.
   }
   \item{cex}{
@@ -124,11 +124,11 @@
   The trace plots limit the display of traces to those only covariates that are used for peeling. 
   If centered, an horizontal black dotted line about 0 is added to the plot.
  
-  Due to the variability induced by cross-validation and replication, it is possible that more than one variable be used for peeling at a given step.
+  Due to the variability induced by cross-validation and replication, it is possible that more than one covariate be used for peeling at a given step.
   So, for simplicity of the trace plots, only the modal or majority vote trace value (over the folds and replications of the cross-validation) is plotted. 
   
-  The top plot shows the overlay of variable importance curves for each covariate.
-  The bottom plot shows the overlay of variable usage curves for each covariate. It is a dicretized view of variable importance.
+  The top plot shows the overlay of covariate importance curves for each covariate.
+  The bottom plot shows the overlay of covariate usage curves for each covariate. It is a dicretized view of covariate importance.
   
   Both point to the magnitude and order with which covariates are used along the peeling sequence.
 }
@@ -191,7 +191,7 @@ library("PRIMsrc")
     #=================================================================================
     plot.boxtrace(x = CVCOMBREP.synt1,
                   main = paste("RCCV trace plots for model #1", sep=""),
-                  xlab = "Box Mass", ylab = "Variable Range (centered)",
+                  xlab = "Box Mass", ylab = "Covariate Range (centered)",
                   toplot = CVCOMBREP.synt1$used,
                   center = TRUE, scale = FALSE,
                   device = NULL, file = "Covariate Trace Plots", path=getwd(),
