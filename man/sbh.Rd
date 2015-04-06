@@ -23,7 +23,8 @@
 \arguments{
   \item{dataset}{
     \code{data.frame} or \code{numeric} \code{matrix} of input dataset containing the observed survival and status indicator variables 
-    in the first two columns, respectively, and all the covariates thereafter.
+    in the first two columns, respectively, and all the covariates thereafter. If a \code{data.frame} is provided, it will be coerced 
+    to a \code{numeric} \code{matrix}.
   }
   \item{B}{
     Positive \code{integer} scalar of the number of replications of the cross-validation procedure. Defaults to 10.
