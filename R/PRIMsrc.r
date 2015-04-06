@@ -66,6 +66,7 @@ sbh <- function(dataset,
       dataset <- as.data.frame(dataset)
     }
     x <- as.matrix(dataset[ ,-c(1,2), drop=FALSE])
+    class(x) <- "numeric"
     times <- dataset$stime
     status <- dataset$status
     times[times <= 0] <- 10^(-digits)
@@ -178,7 +179,7 @@ sbh <- function(dataset,
 
     # Directions of directed peeling
     varsign <- sign(cv.coef)
-    names(varsign) <- colnames(x)[selected]
+    names(varsign) <- colnames(x)
 
     # Matching of the "selected" output to selected dataset
     cat("Successfully pre-selected ", p, " covariates:\n", sep="")
