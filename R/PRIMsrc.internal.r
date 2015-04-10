@@ -40,9 +40,6 @@ cv.box.rep <- function(x, times, status,
                        parallel, seed) {
 
   CV.maxsteps <- numeric(B)
-  CV.nsteps.lhr <- numeric(B)
-  CV.nsteps.lrt <- numeric(B)
-  CV.nsteps.cer <- numeric(B)
   CV.trace <- vector(mode="list", length=B)
   CV.boxind <- vector(mode="list", length=B)
   CV.boxcut <- vector(mode="list", length=B)
@@ -86,9 +83,6 @@ cv.box.rep <- function(x, times, status,
     }
     if (!CVBOX$drop) {
       CV.maxsteps[b] <- CVBOX$cvfit$cv.maxsteps
-      CV.nsteps.lhr[b] <- CVBOX$cvfit$cv.nsteps.lhr
-      CV.nsteps.lrt[b] <- CVBOX$cvfit$cv.nsteps.lrt
-      CV.nsteps.cer[b] <- CVBOX$cvfit$cv.nsteps.cer
       CV.trace[[b]] <- CVBOX$cvfit$cv.trace
       CV.boxind[[b]] <- CVBOX$cvfit$cv.boxind
       CV.boxcut[[b]] <- CVBOX$cvfit$cv.boxcut
@@ -115,9 +109,6 @@ cv.box.rep <- function(x, times, status,
   }
 
   return(list("cv.maxsteps"=CV.maxsteps,
-              "cv.nsteps.lhr"=CV.nsteps.lhr,
-              "cv.nsteps.lrt"=CV.nsteps.lrt,
-              "cv.nsteps.cer"=CV.nsteps.cer,
               "cv.trace"=CV.trace,
               "cv.boxind"=CV.boxind,
               "cv.boxcut"=CV.boxcut,

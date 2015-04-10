@@ -66,7 +66,7 @@ sbh <- function(dataset,
       dataset <- as.data.frame(dataset)
     }
     x <- as.matrix(dataset[ ,-c(1,2), drop=FALSE])
-    class(x) <- "numeric"
+    mode(x) <- "numeric"
     times <- dataset$stime
     status <- dataset$status
     times[times <= 0] <- 10^(-digits)
@@ -74,7 +74,7 @@ sbh <- function(dataset,
     p <- ncol(x)
   }
 
-  # Summarising user options
+  # Summarizing user options
   if (cvtype != "none") {
     if (B > 1) {
       if (parallel) {
@@ -95,7 +95,7 @@ sbh <- function(dataset,
   cat("Parallelization:", parallel, "\n")
   cat("\n")
 
-  # Pre-selecting covariates
+  # Pre-selection of covariates
   if (p > n) {
     cat("Covariate selection by Elasticnet Regularized Cox-Regression ... \n")
     k <- 0
@@ -176,15 +176,13 @@ sbh <- function(dataset,
     # Selected covariates
     x <- x[, selected, drop=FALSE]
     p <- length(selected)
-
-    # Directions of directed peeling
-    varsign <- sign(cv.coef)
-    names(varsign) <- colnames(x)
-
-    # Matching of the "selected" output to selected dataset
     cat("Successfully pre-selected ", p, " covariates:\n", sep="")
     selected <- sel
     print(selected)
+    
+    # Directions of directed peeling
+    varsign <- sign(cv.coef)
+    names(varsign) <- colnames(x)
 
     # Initial box boundaries
     initcutpts <- numeric(p)
@@ -242,9 +240,6 @@ sbh <- function(dataset,
                               parallel=parallel, seed=NULL)
         stopCluster(cl)
         CV.box.rep.obj <- list("cv.maxsteps"=numeric(0),
-                               "cv.nsteps.lhr"=numeric(0),
-                               "cv.nsteps.lrt"=numeric(0),
-                               "cv.nsteps.cer"=numeric(0),
                                "cv.trace"=vector(mode="list", length=B),
                                "cv.boxind"=vector(mode="list", length=B),
                                "cv.boxcut"=vector(mode="list", length=B),
@@ -258,9 +253,6 @@ sbh <- function(dataset,
                                "cv.min.prob.bar"=vector(mode="list", length=B))
         for (b in 1:conf$cpus) {
             CV.box.rep.obj$cv.maxsteps <- c(CV.box.rep.obj$cv.maxsteps, obj.cl[[b]]$cv.maxsteps)
-            CV.box.rep.obj$cv.nsteps.lhr <- c(CV.box.rep.obj$cv.nsteps.lhr, obj.cl[[b]]$cv.nsteps.lhr)
-            CV.box.rep.obj$cv.nsteps.lrt <- c(CV.box.rep.obj$cv.nsteps.lrt, obj.cl[[b]]$cv.nsteps.lrt)
-            CV.box.rep.obj$cv.nsteps.cer <- c(CV.box.rep.obj$cv.nsteps.cer, obj.cl[[b]]$cv.nsteps.cer)
             CV.box.rep.obj$cv.trace[((b-1)*a+1):(b*a)] <- obj.cl[[b]]$cv.trace
             CV.box.rep.obj$cv.boxind[((b-1)*a+1):(b*a)] <- obj.cl[[b]]$cv.boxind
             CV.box.rep.obj$cv.boxcut[((b-1)*a+1):(b*a)] <- obj.cl[[b]]$cv.boxcut
@@ -278,9 +270,6 @@ sbh <- function(dataset,
 
     # Collect the peeling statistics for each step from all the replicates
     CV.maxsteps <- CV.box.rep.obj$cv.maxsteps
-    CV.nsteps.lhr <- CV.box.rep.obj$cv.nsteps.lhr
-    CV.nsteps.lrt <- CV.box.rep.obj$cv.nsteps.lrt
-    CV.nsteps.cer <- CV.box.rep.obj$cv.nsteps.cer
     CV.trace <- CV.box.rep.obj$cv.trace
     CV.boxind <- CV.box.rep.obj$cv.boxind
     CV.boxcut <- CV.box.rep.obj$cv.boxcut
@@ -301,6 +290,8 @@ sbh <- function(dataset,
         used <- NULL
         # Cross-validated minimum length from all replicates
         CV.maxsteps <- NULL
+        # List of CV mean profiles
+        CV.mean.profiles <- list("lhr"=NULL, "lrt"=NULL, "cer"=NULL)
         # List of CV profiles
         CV.profiles <- NULL
         # Cross-validated optimal length from all replicates
@@ -484,7 +475,9 @@ sbh <- function(dataset,
                         "cvtype"=cvtype, "cvcriterion"=cvcriterion,
                         "varsign"=varsign, "selected"=selected, "used"=used,
                         "probval"=probval, "timeval"=timeval,
-                        "cvfit"=CV.fit, "cvprofiles"=CV.profiles,
+                        "cvfit"=CV.fit, 
+                        "cvprofiles"=CV.profiles, 
+                        "cvmeanprofiles"=CV.mean.profiles,
                         "plot"=bool.plot, "seed"=seed),
                    class = "PRSP"))
 }
