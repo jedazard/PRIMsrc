@@ -54,7 +54,7 @@ o RELEASE 0.5.3
 - Made all plotting functions S3-class functions and renamed them as plot.xxx(...).
 - Test build under 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2015-04-06
+Date   : 2015-04-10
 o RELEASE 0.5.5
 - Removed argument 'discr' in the main function: no special rounding of discrete covariate 
   decision rules is done any longer.
@@ -62,6 +62,6 @@ o RELEASE 0.5.5
 - Corrected treatment of missing values in case of replications for the variable traces.
 - Corrected output of variable trace modal values.
 - Corrected pre-selected variable output.
-- Several minor bugs corrected in all plotting functions.
+- Several minor bugs corrected.
 - Test build under 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
