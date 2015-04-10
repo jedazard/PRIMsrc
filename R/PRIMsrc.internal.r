@@ -308,11 +308,11 @@ cv.ave.box <- function(x, times, status,
                           probval=probval, timeval=timeval,
                           varsign=varsign, initcutpts=initcutpts,
                           K=K, arg=arg, seed=seed)
-  trace.list <- fold.obj$trace
-  steps.list <- fold.obj$steps
-  boxcut.list <- fold.obj$boxcut
+  trace.list <- fold.obj$trace.list
+  boxstat.list <- fold.obj$boxstat.list
+  boxcut.list <- fold.obj$boxcut.list
   drop <- fold.obj$drop
-
+              
   # Cross-validated minimum length from all folds
   CV.Lm <- min(fold.obj$nsteps)
 
@@ -325,7 +325,7 @@ cv.ave.box <- function(x, times, status,
   # Truncate the cross-validated quantities from all folds to the same cross-validated length
   for (k in 1:K) {
     boxcut.list[[k]] <- boxcut.list[[k]][1:CV.Lm,]
-    steps.list[[k]] <- steps.list[[k]][1:CV.Lm]
+    boxstat.list[[k]] <- boxstat.list[[k]][1:CV.Lm]
   }
 
   # Compute the averaged box statistics for each step from all the folds
@@ -358,17 +358,17 @@ cv.ave.box <- function(x, times, status,
     sumci <- rep(NA, K)
     sumsupport <- rep(NA, K)
     for (k in 1:K) {
-      outbounds <- steps.list[[k]][[l]]
+      outbounds <- boxstat.list[[k]][[l]]
       if (!is.null(outbounds)) {
         summincut[k,] <- boxcut.list[[k]][l,]
-        sumlhr[k] <- steps.list[[k]][[l]][[1]]
-        sumlrt[k] <- steps.list[[k]][[l]][[2]]
-        sumci[k] <- steps.list[[k]][[l]][[3]]
-        sumsupport[k] <- steps.list[[k]][[l]][[4]]
-        sumtime[k] <- steps.list[[k]][[l]][[5]]
-        sumprob[k] <- steps.list[[k]][[l]][[6]]
-        summaxtime[k] <- steps.list[[k]][[l]][[7]]
-        summinprob[k] <- steps.list[[k]][[l]][[8]]
+        sumlhr[k] <- boxstat.list[[k]][[l]][[1]]
+        sumlrt[k] <- boxstat.list[[k]][[l]][[2]]
+        sumci[k] <- boxstat.list[[k]][[l]][[3]]
+        sumsupport[k] <- boxstat.list[[k]][[l]][[4]]
+        sumtime[k] <- boxstat.list[[k]][[l]][[5]]
+        sumprob[k] <- boxstat.list[[k]][[l]][[6]]
+        summaxtime[k] <- boxstat.list[[k]][[l]][[7]]
+        summinprob[k] <- boxstat.list[[k]][[l]][[8]]
       }
     }
     CV.boxcut[l, ] <- colMeans(summincut, na.rm=TRUE)
@@ -705,9 +705,10 @@ cv.ave.fold <- function(x, times, status,
 
   drop <- FALSE
   folds <- cv.folds(n=nrow(x), K=K, seed=seed)
-  steps <- vector(mode="list", length=K)
-  boxcut <- vector(mode="list", length=K)
-  trace <- vector(mode="list", length=K)
+  
+  boxstat.list <- vector(mode="list", length=K)
+  boxcut.list <- vector(mode="list", length=K)
+  trace.list <- vector(mode="list", length=K)
   nsteps <- numeric(K)
 
   for (k in 1:K) {
@@ -728,17 +729,20 @@ cv.ave.fold <- function(x, times, status,
     peelobj <- cv.ave.peel(traindata=traindata, trainstatus=trainstatus, traintime=traintime,
                            testdata=testdata, teststatus=teststatus, testtime=testtime,
                            probval=probval, timeval=timeval,
-                           varsign=varsign, initcutpts=initcutpts, K=K, arg=arg, seed=seed)
-
-    # Store the test set data/results from each fold (Note: observations of times and status from each fold are ordered in the list)
-    steps[[k]] <- peelobj$steps
-    nsteps[[k]] <- peelobj$nsteps
-    boxcut[[k]] <- peelobj$boxcut
-    trace[[k]] <- peelobj$trace
+                           varsign=varsign, initcutpts=initcutpts, arg=arg, seed=seed)
+    # Store the test set results from each fold
+    nsteps[k] <- peelobj$nsteps
+    boxstat.list[[k]] <- peelobj$boxstat
+    boxcut.list[[k]] <- peelobj$boxcut
+    trace.list[[k]] <- peelobj$vartrace
     drop <- (drop || peelobj$drop)
   }
-
-  return(list("nsteps"=nsteps, "steps"=steps, "boxcut"=boxcut, "trace"=trace, "drop"=drop))
+  
+  return(list("nsteps"=nsteps, 
+              "boxstat.list"=boxstat.list, 
+              "boxcut.list"=boxcut.list,
+              "trace.list"=trace.list, 
+              "drop"=drop))
 }
 ##########################################################################################################################################
 
@@ -793,16 +797,15 @@ cv.comb.fold <- function(x, times, status,
       testtime <- times[folds$subsets[(folds$which == k)]]
       teststatus <- status[folds$subsets[(folds$which == k)]]
     }
-    peelobj <- cv.comb.peel(traindata=traindata, trainstatus=trainstatus, traintime=traintime,
-                            testdata=testdata, teststatus=teststatus, testtime=testtime,
-                            varsign=varsign, initcutpts=initcutpts, K=K, arg=arg, seed=seed)
-
-    # Store the test set data/results from each fold
-    # Note: the order of observations of times and status from each fold is kept in the list
-    nsteps[k] <- peelobj$nsteps
+    # Store the test set data from each fold (Note: the order of observations of times and status from each fold is kept in the list)
     cvtimes[[k]] <- testtime
     cvstatus[[k]] <- teststatus
-    boxind[[k]] <- peelobj$testindmat
+    peelobj <- cv.comb.peel(traindata=traindata, trainstatus=trainstatus, traintime=traintime,
+                            testdata=testdata, teststatus=teststatus, testtime=testtime,
+                            varsign=varsign, initcutpts=initcutpts, arg=arg, seed=seed)
+    # Store the test set results from each fold
+    nsteps[k] <- peelobj$nsteps
+    boxind[[k]] <- peelobj$boxind
     boxcut[[k]] <- peelobj$boxcut
     trace[[k]] <- peelobj$trace
   }
@@ -824,7 +827,7 @@ cv.comb.fold <- function(x, times, status,
 #                                 testdata, teststatus, testtime,
 #                                 probval, timeval,
 #                                 varsign, initcutpts,
-#                                 K, arg, seed)
+#                                 arg, seed)
 #
 ################
 # Description   :
@@ -844,7 +847,7 @@ cv.ave.peel <- function(traindata, trainstatus, traintime,
                         testdata, teststatus, testtime,
                         probval, timeval,
                         varsign, initcutpts,
-                        K, arg, seed) {
+                        arg, seed) {
 
   # Training the model
   peelobj <- peel.box(traindata=traindata, traintime=traintime, trainstatus=trainstatus,
@@ -853,7 +856,7 @@ cv.ave.peel <- function(traindata, trainstatus, traintime,
   nsteps <- peelobj$nsteps
 
   # Compute the box statistics for all steps, each entry or row signifies a step
-  steps.list <- vector(mode="list", length=nsteps)
+  boxstat <- vector(mode="list", length=nsteps)
   timemat <- matrix(NA, nrow=nsteps, ncol=nrow(testdata))
   probmat <- matrix(NA, nrow=nsteps, ncol=nrow(testdata))
   ind.rem <- numeric(0)
@@ -870,8 +873,8 @@ cv.ave.peel <- function(traindata, trainstatus, traintime,
       lrt <- 0
       cer <- 1
       support <- 1
-      steps.list[[l]] <- c(lhr, lrt, cer, support)
-      names(steps.list[[l]]) <- NULL
+      boxstat[[l]] <- c(lhr, lrt, cer, support)
+      names(boxstat[[l]]) <- NULL
       surv.fit <- survfit(Surv(testtime[test.ind], teststatus[test.ind]) ~ 1)
       timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
       probmat[l, (1:length(surv.fit$surv))] <- surv.fit$surv
@@ -883,8 +886,8 @@ cv.ave.peel <- function(traindata, trainstatus, traintime,
       predobj <- predict(object=coxobj, type="lp", reference="sample")
       cer <- rcorr.cens(x=predobj, S=Surv(testtime, teststatus))['C Index']
       support <- mean(test.ind)
-      steps.list[[l]] <- c(lhr, lrt, cer, support)
-      names(steps.list[[l]]) <- NULL
+      boxstat[[l]] <- c(lhr, lrt, cer, support)
+      names(boxstat[[l]]) <- NULL
       surv.fit <- survfit(Surv(testtime[test.ind], teststatus[test.ind]) ~ 1)
       timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
       probmat[l, (1:length(surv.fit$surv))] <- surv.fit$surv
@@ -893,8 +896,8 @@ cv.ave.peel <- function(traindata, trainstatus, traintime,
       lrt <- 0
       cer <- 1
       support <- NA
-      steps.list[[l]] <- c(lhr, lrt, cer, support)
-      names(steps.list[[l]]) <- NULL
+      boxstat[[l]] <- c(lhr, lrt, cer, support)
+      names(boxstat[[l]]) <- NULL
       timemat[l, ] <- NA
       probmat[l, ] <- NA
       ind.rem <- c(ind.rem, l)
@@ -909,20 +912,20 @@ cv.ave.peel <- function(traindata, trainstatus, traintime,
     min.prob.bar <- endobj$min.prob.bar
     for (l in 1:nsteps) {
       if (!(l %in% ind.rem)) {
-        steps.list[[l]] <- c(steps.list[[l]], time.bar[l], prob.bar[l], max.time.bar[l], min.prob.bar[l])
+        boxstat[[l]] <- c(boxstat[[l]], time.bar[l], prob.bar[l], max.time.bar[l], min.prob.bar[l])
       } else {
-        steps.list[[l]] <- c(steps.list[[l]], NA, NA, NA, NA)
+        boxstat[[l]] <- c(boxstat[[l]], NA, NA, NA, NA)
       }
     }
   } else {
     cat("Dropped !\n", sep="")
     drop <- TRUE
     for (l in 1:nsteps) {
-      steps.list[[l]] <- rep(NA, 8)
+      boxstat[[l]] <- rep(NA, 8)
     }
   }
 
-  return(list("steps"=steps.list, "nsteps"=nsteps, "boxcut"=peelobj$boxcut, "trace"=peelobj$trace, "drop"=drop))
+  return(list("nsteps"=nsteps, "boxstat"=boxstat, "boxcut"=peelobj$boxcut, "trace"=peelobj$trace, "drop"=drop))
 }
 ##########################################################################################################################################
 
@@ -936,7 +939,7 @@ cv.ave.peel <- function(traindata, trainstatus, traintime,
 #                    cv.comb.peel (traindata, trainstatus, traintime,
 #                                  testdata, teststatus, testtime,
 #                                  varsign, initcutpts,
-#                                  K, arg, seed)
+#                                  arg, seed)
 #
 ################
 # Description   :
@@ -955,25 +958,25 @@ cv.ave.peel <- function(traindata, trainstatus, traintime,
 cv.comb.peel <- function(traindata, trainstatus, traintime,
                          testdata, teststatus, testtime,
                          varsign, initcutpts,
-                         K, arg, seed) {
+                         arg, seed) {
   # Training the model
   peelobj <- peel.box(traindata=traindata, traintime=traintime, trainstatus=trainstatus,
                       varsign=varsign, initcutpts=initcutpts,
                       arg=arg, seed=seed)
   nsteps <- peelobj$nsteps
 
-  # Create matrix that will represent the index of the test data that is within the box (i.e. for each step)
-  test.ind.mat <- matrix(NA, nrow=nsteps, ncol=nrow(testdata))
+  # Create the indicator matrix of the test data that is within the box for each step
+  boxind <- matrix(NA, nrow=nsteps, ncol=nrow(testdata))
   for (l in 1:nsteps) {
     # Extract the rule and sign as one vector
     boxcut <- peelobj$boxcut[l, ] * varsign
     test.cut <- t(t(testdata) * varsign)
     test.ind <- t(t(test.cut) >= boxcut)
     # Set as TRUE which observations are TRUE for all covariates
-    test.ind.mat[l, ] <- (rowMeans(test.ind) == 1)
+    boxind[l, ] <- (rowMeans(test.ind) == 1)
   }
 
-  return(list("testindmat"=test.ind.mat, "nsteps"=nsteps, "boxcut"=peelobj$boxcut, "trace"=peelobj$trace))
+  return(list("boxind"=boxind, "nsteps"=nsteps, "boxcut"=peelobj$boxcut, "trace"=peelobj$trace))
 }
 ##########################################################################################################################################
 
