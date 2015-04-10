@@ -165,8 +165,10 @@
             \item{cv.stats}: \code{numeric} \code{matrix} of box quantities of interest (columns) by peeling steps (rows)
             \item{cv.pval}: \code{numeric} \code{vector} of cross-validated log-rank p-values of sepraration of survival distributions}
         }
-    \item{cvprofiles}{\code{List} (\eqn{B}) of \code{numeric} \code{vectors}, one for each replicate, of the cross-validated statistic
-        used in the optimization criterion (set by user) as  function of the number of peeling steps.}
+    \item{cvprofiles}{\code{List} of (\eqn{B}) of \code{numeric} \code{vectors}, one for each replicate, 
+        of the cross-validated statistics used in the optimization criterion (one set by user) as a function of the number of peeling steps.}
+    \item{cvmeanprofiles}{\code{List} of \code{numeric} \code{vectors} of the cross-validated mean statistics over the replicates.
+        used in the optimization criterion (one set by user) as a function of the number of peeling steps.}
     \item{plot}{\code{logical} scalar of the returned flag for plotting results (\code{TRUE} if CV successful).}
     \item{seed}{User seed(s) used:
         \code{integer} of a single value, if parallelization is used
