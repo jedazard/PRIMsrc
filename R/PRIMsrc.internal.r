@@ -40,13 +40,13 @@ cv.box.rep <- function(x, times, status,
                        parallel, seed) {
 
   CV.maxsteps <- numeric(B)
-  CV.trace <- vector(mode="list", length=B)
   CV.boxind <- vector(mode="list", length=B)
   CV.boxcut <- vector(mode="list", length=B)
   CV.support <- vector(mode="list", length=B)
   CV.lhr <- vector(mode="list", length=B)
   CV.lrt <- vector(mode="list", length=B)
   CV.cer <- vector(mode="list", length=B)
+  CV.trace <- vector(mode="list", length=B)
   CV.time.bar <- vector(mode="list", length=B)
   CV.prob.bar <- vector(mode="list", length=B)
   CV.max.time.bar <- vector(mode="list", length=B)
@@ -141,7 +141,6 @@ cv.box.rep <- function(x, times, status,
 ################
 # Description   :
 ################
-#                   Parallel computation of the cross-validated LRT p-value at a given peeling step
 #
 ################
 # Arguments     :
@@ -212,7 +211,6 @@ cv.pval <- function(x, times, status,
 ################
 # Description   :
 ################
-#                   Internal subroutine for computation of the cross-validated LRT null distribution at a given peeling step
 #
 ################
 # Arguments     :
@@ -318,7 +316,7 @@ cv.ave.box <- function(x, times, status,
 
   # Get the variable traces
   # Variable traces are first stacked and truncated in a matrix where folds are by rows and steps by columns
-  CV.trace <- list2mat(list=trace.list, trunc=CV.Lm)
+  CV.trace <- list2mat(list=trace.list, coltrunc=CV.Lm)
   CV.trace <- t(CV.trace)
   dimnames(CV.trace) <- list(paste("step", 0:(CV.Lm-1), sep=""), 1:K)
 
@@ -355,7 +353,7 @@ cv.ave.box <- function(x, times, status,
     summinprob <- rep(NA, K)
     sumlhr <- rep(NA, K)
     sumlrt <- rep(NA, K)
-    sumci <- rep(NA, K)
+    sumcer <- rep(NA, K)
     sumsupport <- rep(NA, K)
     for (k in 1:K) {
       outbounds <- boxstat.list[[k]][[l]]
@@ -363,7 +361,7 @@ cv.ave.box <- function(x, times, status,
         summincut[k,] <- boxcut.list[[k]][l,]
         sumlhr[k] <- boxstat.list[[k]][[l]][[1]]
         sumlrt[k] <- boxstat.list[[k]][[l]][[2]]
-        sumci[k] <- boxstat.list[[k]][[l]][[3]]
+        sumcer[k] <- boxstat.list[[k]][[l]][[3]]
         sumsupport[k] <- boxstat.list[[k]][[l]][[4]]
         sumtime[k] <- boxstat.list[[k]][[l]][[5]]
         sumprob[k] <- boxstat.list[[k]][[l]][[6]]
@@ -374,7 +372,7 @@ cv.ave.box <- function(x, times, status,
     CV.boxcut[l, ] <- colMeans(summincut, na.rm=TRUE)
     CV.lhr[l] <- mean(sumlhr, na.rm=TRUE)
     CV.lrt[l] <- mean(sumlrt, na.rm=TRUE)
-    CV.cer[l] <- mean(sumci, na.rm=TRUE)
+    CV.cer[l] <- mean(sumcer, na.rm=TRUE)
     CV.support[l] <- mean(sumsupport, na.rm=TRUE)
     CV.time.bar[l] <- mean(sumtime, na.rm=TRUE)
     CV.prob.bar[l] <- mean(sumprob, na.rm=TRUE)
@@ -507,7 +505,7 @@ cv.comb.box <- function(x, times, status,
 
   # Get the variable traces
   # Variable traces are first stacked and truncated in a matrix where folds are by rows and steps by columns
-  CV.trace <- list2mat(list=trace.list, trunc=CV.Lm)
+  CV.trace <- list2mat(list=trace.list, coltrunc=CV.Lm)
   CV.trace <- t(CV.trace)
   dimnames(CV.trace) <- list(paste("step", 0:(CV.Lm-1), sep=""), 1:K)
 
@@ -521,7 +519,7 @@ cv.comb.box <- function(x, times, status,
   # Get the combined boxcut (truncated to the same cross-validated length) for each step from all the folds
   # using the circumscribing box to the conmbined test set in-box samples over all the folds
   CV.boxcut <- matrix(data=NA, nrow=CV.Lm, ncol=p, dimnames=list(paste("step", 0:(CV.Lm-1), sep=""), colnames(x)))
-  tmparray <- list2array(list=boxcut.list, trunc=CV.Lm)
+  tmparray <- list2array(list=boxcut.list, rowtrunc=CV.Lm)
   for (l in 1:CV.Lm) {
     for (j in 1:p) {
         if (varsign[j] > 0) {
@@ -995,8 +993,6 @@ cv.comb.peel <- function(traindata, trainstatus, traintime,
 ################
 # Description   :
 ################
-#                    Internal subroutine for fitting a Survival Bump Hunting (SBH) model. Search the first box of the recursive coverage 
-#                    (outer) loop of our Patient Recursive Survival Peeling (PRSP) algorithm for the case of a survival (possibly censored) response.
 #
 ################
 # Arguments     :
@@ -1149,8 +1145,6 @@ peel.box <- function(traindata, traintime, trainstatus,
 ################
 # Description   :
 ################
-#                    Split n observations into K groups to be used for K-fold cross-validation.
-#                    K should thereby be chosen such that all groups are of approximately equal size.
 #
 ################
 # Arguments     :
@@ -1204,9 +1198,6 @@ cv.folds <- function (n, K, seed=NULL) {
 ################
 # Description   :
 ################
-#                    Return the maximum time value and the corresponding minimum survival probability
-#                    for every box of the trajectory (box peeling sequence). Also return the time value
-#                    and/or the corresponding survival probability depending on what is specified by the user.
 #
 ################
 # Arguments     :
@@ -1313,16 +1304,13 @@ updatecut <- function(x, fract) {
 
 ##########################################################################################################################################
 ################
-# Usage         :   lapply.array (X, trunc=NULL, sub=NULL, fill=NA, MARGIN=1:2, FUN, ...)
+# Usage         :   lapply.array (X, rowtrunc=NULL, coltrunc=NULL, sub=NULL, fill=NA, MARGIN=1:2, FUN, ...)
 #
 ################
 #
 ################
 # Description   :
 ################
-#                   Compute FUN element-wise on entries of a list of matrices (even of different row or column numbers)
-#
-#
 #
 ################
 # Arguments     :
@@ -1334,8 +1322,8 @@ updatecut <- function(x, fract) {
 #
 ##########################################################################################################################################
 
-lapply.array <- function (X, trunc=NULL, sub=NULL, fill=NA, MARGIN=1:2, FUN, ...) {
-  x <- list2array(list=X, sub=sub, trunc=trunc, fill=fill)
+lapply.array <- function (X, rowtrunc=NULL, coltrunc=NULL, sub=NULL, fill=NA, MARGIN=1:2, FUN, ...) {
+  x <- list2array(list=X, rowtrunc=rowtrunc, coltrunc=coltrunc, sub=sub, fill=fill)
   return(apply(X=x, MARGIN=MARGIN, FUN=FUN, ...))
 }
 ##########################################################################################################################################
@@ -1345,16 +1333,13 @@ lapply.array <- function (X, trunc=NULL, sub=NULL, fill=NA, MARGIN=1:2, FUN, ...
 
 ##########################################################################################################################################
 ################
-# Usage         :   lapply.mat (X, trunc=NULL, sub=NULL, fill=NA, MARGIN=2, FUN, ...)
+# Usage         :   lapply.mat (X, coltrunc=NULL, sub=NULL, fill=NA, MARGIN=2, FUN, ...)
 #
 ################
 #
 ################
 # Description   :
 ################
-#                   Compute FUN element-wise on entries of a list of vectors (even of different lengths)
-#
-#
 #
 ################
 # Arguments     :
@@ -1366,8 +1351,8 @@ lapply.array <- function (X, trunc=NULL, sub=NULL, fill=NA, MARGIN=1:2, FUN, ...
 #
 ##########################################################################################################################################
 
-lapply.mat <- function (X, trunc=NULL, sub=NULL, fill=NA, MARGIN=2, FUN, ...) {
-  x <- list2mat(list=X, sub=sub, trunc=trunc, fill=fill)
+lapply.mat <- function (X, coltrunc=NULL, sub=NULL, fill=NA, MARGIN=2, FUN, ...) {
+  x <- list2mat(list=X, coltrunc=coltrunc, sub=sub, fill=fill)
   return(apply(X=x, MARGIN=MARGIN, FUN=FUN, ...))
 }
 ##########################################################################################################################################
@@ -1377,16 +1362,13 @@ lapply.mat <- function (X, trunc=NULL, sub=NULL, fill=NA, MARGIN=2, FUN, ...) {
 
 ##########################################################################################################################################
 ################
-# Usage         :   list2array (list, trunc=NULL, sub=NULL, fill=NA)
+# Usage         :   list2array (list, rowtrunc=NULL, coltrunc=NULL, sub=NULL, fill=NA)
 #
 ################
 #
 ################
 # Description   :
 ################
-#                   Internal function to bind a list of matrices
-#                   (even of different row or column numbers)
-#                   by third dimension of a single 3D array
 #
 ################
 # Arguments     :
@@ -1398,7 +1380,7 @@ lapply.mat <- function (X, trunc=NULL, sub=NULL, fill=NA, MARGIN=2, FUN, ...) {
 #
 ##########################################################################################################################################
 
-list2array <- function (list, trunc=NULL, sub=NULL, fill=NA) {
+list2array <- function (list, rowtrunc=NULL, coltrunc=NULL, sub=NULL, fill=NA) {
   if (!is.empty(list)) {
     if (is.null(sub)) {
       my.list <- list
@@ -1409,19 +1391,47 @@ list2array <- function (list, trunc=NULL, sub=NULL, fill=NA) {
         my.list[[i]] <- list[[i]][[sub]]
       }
     }
+    min.row <- min(sapply(my.list, nrow))
     max.row <- max(sapply(my.list, nrow))
+    min.col <- min(sapply(my.list, ncol))
     max.col <- max(sapply(my.list, ncol))
-    corrected.list <- lapply(my.list, function(x) {rbind(x, matrix(data=NA, nrow=max.row - nrow(x), ncol=ncol(x)))})
-    corrected.list <- lapply(corrected.list, function(x) {cbind(x, matrix(data=fill, nrow=nrow(x), ncol=max.col - ncol(x)))})
-    my.array <- array(data=fill, dim=c(nrow(corrected.list[[1]]), ncol(corrected.list[[1]]), length(corrected.list)))
-    for(i in 1:length(corrected.list)) {
-      my.array[,,i] <- corrected.list[[i]]
+    if (!is.null(coltrunc)) {
+      if (coltrunc == "min") {
+        adjusted.list <- lapply(my.list, function(x) {x[,1:min.col,drop=FALSE]})
+      } else if (coltrunc == "max") {
+        adjusted.list <- lapply(my.list, function(x) {cbind(x, matrix(data=fill, nrow=nrow(x), ncol=max.col - ncol(x)))})
+      } else {
+        if (coltrunc <= min.col) {
+            adjusted.list <- lapply(my.list, function(x) {x[,1:coltrunc,drop=FALSE]})
+        } else if ((coltrunc > min.col) & (coltrunc <= max.col)) {
+            adjusted.list <- lapply(my.list, function(x) {cbind(x, matrix(data=fill, nrow=nrow(x), ncol=max(0,coltrunc - ncol(x))))})
+        } else {
+            adjusted.list <- lapply(my.list, function(x) {cbind(x, matrix(data=fill, nrow=nrow(x), ncol=coltrunc - ncol(x)))})
+        }
+      } 
+    } else {
+        adjusted.list <- lapply(my.list, function(x) {cbind(x, matrix(data=fill, nrow=nrow(x), ncol=max.col - ncol(x)))})
     }
-    if (!is.null(trunc)) {
-      if (trunc == "min") {
-        trunc <- min(sapply(my.list, length))
-      }
-      my.array <- my.array[1:trunc,,,drop=FALSE]
+    if (!is.null(rowtrunc)) {
+      if (rowtrunc == "min") {
+        adjusted.list <- lapply(adjusted.list, function(x) {x[1:min.row,,drop=FALSE]})
+      } else if (rowtrunc == "max") {
+        adjusted.list <- lapply(adjusted.list, function(x) {rbind(x, matrix(data=fill, nrow=max.row - nrow(x), ncol=ncol(x)))})
+      } else {
+        if (rowtrunc <= min.row) {
+            adjusted.list <- lapply(adjusted.list, function(x) {x[1:rowtrunc,,drop=FALSE]})
+        } else if ((rowtrunc > min.row) & (rowtrunc <= max.row)) {
+            adjusted.list <- lapply(adjusted.list, function(x) {rbind(x, matrix(data=fill, nrow=max(0,rowtrunc - nrow(x)), ncol=ncol(x)))})
+        } else {
+            adjusted.list <- lapply(adjusted.list, function(x) {rbind(x, matrix(data=fill, nrow=rowtrunc - nrow(x), ncol=ncol(x)))})
+        }
+      } 
+    } else {
+        adjusted.list <- lapply(adjusted.list, function(x) {rbind(x, matrix(data=fill, nrow=max.row - nrow(x), ncol=ncol(x)))})
+    }
+    my.array <- array(data=fill, dim=c(nrow(adjusted.list[[1]]), ncol(adjusted.list[[1]]), length(adjusted.list)))
+    for(i in 1:length(adjusted.list)) {
+      my.array[,,i] <- adjusted.list[[i]]
     }
   } else {
     my.array <- array(data=fill, dim=c(0,0,0))
@@ -1435,15 +1445,13 @@ list2array <- function (list, trunc=NULL, sub=NULL, fill=NA) {
 
 ##########################################################################################################################################
 ################
-# Usage         :   list2mat (list, trunc=NULL, sub=NULL, fill=NA)
+# Usage         :   list2mat (list, coltrunc=NULL, sub=NULL, fill=NA)
 #
 ################
 #
 ################
 # Description   :
 ################
-#                   Internal function to bind a list of vectors
-#                   (even of different length) by rows into a single matrix
 #
 ################
 # Arguments     :
@@ -1455,7 +1463,7 @@ list2array <- function (list, trunc=NULL, sub=NULL, fill=NA) {
 #
 ##########################################################################################################################################
 
-list2mat <- function (list, trunc=NULL, sub=NULL, fill=NA) {
+list2mat <- function (list, coltrunc=NULL, sub=NULL, fill=NA) {
   if (!is.empty(list)) {
     if (is.null(sub)) {
       my.list <- list
@@ -1466,15 +1474,26 @@ list2mat <- function (list, trunc=NULL, sub=NULL, fill=NA) {
         my.list[[i]] <- list[[i]][[sub]]
       }
     }
-    max.len <- max(sapply(my.list, length))
-    corrected.list <- lapply(my.list, function(x) {c(x, rep(fill, max.len - length(x)))})
-    my.mat <- do.call(rbind, corrected.list)
-    if (!is.null(trunc)) {
-      if (trunc == "min") {
-        trunc <- min(sapply(my.list, length))
-      }
-      my.mat <- my.mat[, 1:trunc, drop=FALSE]
+    min.col <- min(sapply(my.list, length))
+    max.col <- max(sapply(my.list, length))
+    if (!is.null(coltrunc)) {
+      if (coltrunc == "min") {
+        adjusted.list <- lapply(my.list, function(x) {x[1:min.col]})
+      } else if (coltrunc == "max") {
+        adjusted.list <- lapply(my.list, function(x) {c(x, rep(fill, max.col - length(x)))})
+      } else {
+        if (coltrunc <= min.col) {
+            adjusted.list <- lapply(my.list, function(x) {x[1:coltrunc]})
+        } else if ((coltrunc > min.col) & (coltrunc <= max.col)) {
+            adjusted.list <- lapply(my.list, function(x) {c(x, rep(fill, max(0,coltrunc - length(x))))})
+        } else {
+            adjusted.list <- lapply(my.list, function(x) {c(x, rep(fill, coltrunc - length(x)))})
+        }
+      } 
+    } else {
+        adjusted.list <- lapply(my.list, function(x) {c(x, rep(fill, max.col - length(x)))})
     }
+    my.mat <- do.call(rbind, adjusted.list)
   } else {
     my.mat <- matrix(data=fill, nrow=0, ncol=0)
   }
@@ -1494,8 +1513,6 @@ list2mat <- function (list, trunc=NULL, sub=NULL, fill=NA) {
 ################
 # Description   :
 ################
-#                   Internal function to bind a list of matrices by columns
-#                   (even of different number of rows) into a single matrix
 #
 ################
 # Arguments     :
@@ -1540,9 +1557,6 @@ cbindlist <- function(list, trunc) {
 ################
 # Description   :
 ################
-#                   Internal function to represent the empty array, matrix, or vector of zero dimension or length.
-#                   Often returned by expressions and functions whose value is undefined.
-#                   It returns a logical: TRUE if its argument is empty and FALSE otherwise.
 #
 ################
 # Arguments     :
@@ -1580,8 +1594,6 @@ is.empty <- function(x) {
 ################
 # Description   :
 ################
-#                   Go to the nearest digit rounding
-#                   Note that for rounding off a .5, the "go to the even digit" standard is NOT used here.
 #
 ################
 # Arguments     :
@@ -1618,7 +1630,6 @@ myround <- function (x, digits = 0) {
 ################
 # Description   :
 ################
-#                   Startup initializations
 #
 ################
 # Arguments     :
