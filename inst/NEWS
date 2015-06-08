@@ -4,11 +4,11 @@ Package: PRIMsrc
 Date   : 2015-01-20
 o RELEASE 0.1.0
 - Initial release of the package to GitHub.
-- Test build under 3.0.2 
+- Test build under R 3.0.2 
 ---------------------------------------------------------------------------------
 Date   : 2015-01-22
 o RELEASE 0.2.0
-- Test build under 3.1.2 and release update to GitHub.
+- Test build under R 3.1.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
 Date   : 2015-02-01
 o RELEASE 0.3.0
@@ -32,7 +32,7 @@ o RELEASE 0.4.0
 - Corrected generation of random seed when none is provided. 
 - Minor updates, bugs and code improvements in sbh(...) and peel.box(...) functions.
 - Updated manual, version number.
-- Test build under 3.0.2 and release update to GitHub.
+- Test build under R 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
 Date   : 2015-03-04
 o RELEASE 0.5.0
@@ -45,14 +45,14 @@ o RELEASE 0.5.0
 - Corrected handling of empty PRSP object (failed peeling) in all plotting functions.
 - Implementation of plotting device now internal to all plotting functions.
 - Removed internal functions from the manual, updated manual, version number.
-- Test build under 3.0.2 and release update to GitHub.
+- Test build under R 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
 Date   : 2015-03-16
 o RELEASE 0.5.3
 - Added S3-class generic summary function.
 - Added S3-class generic predict function.
 - Made all plotting functions S3-class functions and renamed them as plot.xxx(...).
-- Test build under 3.0.2 and release update to GitHub.
+- Test build under R 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
 Date   : 2015-04-10
 o RELEASE 0.5.5
@@ -63,5 +63,11 @@ o RELEASE 0.5.5
 - Corrected output of variable trace modal values.
 - Corrected pre-selected variable output.
 - Several minor bugs corrected.
-- Test build under 3.0.2 and release update to GitHub.
+- Test build under R 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
+Date   : 2015-06-08
+o RELEASE 0.5.6
+- Minor bugs corrected.
+- Test build under R 3.0.2 and release update to GitHub.
+---------------------------------------------------------------------------------
+
