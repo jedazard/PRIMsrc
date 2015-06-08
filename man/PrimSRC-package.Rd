@@ -64,7 +64,7 @@
             for efficient parallel execution. It allows users to create a cluster of workstations on a local and/or remote machine(s), 
             enabling scaling-up to the number of specified CPU cores.\cr
 
-      \item{END-USER FUNCTIONS FOR MODEL VALIDATION AND VISUALIZATION OF RESULTS} \cr
+      \item{END-USER PLOTTING FUNCTIONS FOR MODEL VALIDATION AND VISUALIZATION OF RESULTS} \cr
       \code{\link[PRIMsrc]{plot.profile}}
       \bold{Visualization for Model Selection/Validation} \cr
             S3 generic function for plotting the cross-validated profiles of a \code{PRSP} object.
