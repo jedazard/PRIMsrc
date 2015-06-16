@@ -1307,7 +1307,7 @@ updatecut <- function(x, fract) {
 ################
 # Usage         :
 ################
-#                    lapply.array (X, rowtrunc=NULL, coltrunc=NULL, 
+#                    lapply.array (X, rowtrunc=NULL, coltrunc=NULL,
 #                                  sub=NULL, fill=NA, MARGIN=1:2, FUN, ...)
 #
 ################
@@ -1324,7 +1324,7 @@ updatecut <- function(x, fract) {
 #
 ##########################################################################################################################################
 
-lapply.array <- function (X, rowtrunc=NULL, coltrunc=NULL, 
+lapply.array <- function (X, rowtrunc=NULL, coltrunc=NULL,
                           sub=NULL, fill=NA, MARGIN=1:2, FUN, ...) {
   x <- list2array(list=X, rowtrunc=rowtrunc, coltrunc=coltrunc, sub=sub, fill=fill)
   return(apply(X=x, MARGIN=MARGIN, FUN=FUN, ...))
@@ -1338,7 +1338,7 @@ lapply.array <- function (X, rowtrunc=NULL, coltrunc=NULL,
 ################
 # Usage         :
 ################
-#                    lapply.mat (X, coltrunc=NULL, 
+#                    lapply.mat (X, coltrunc=NULL,
 #                                sub=NULL, fill=NA, MARGIN=2, FUN, ...)
 #
 ################
@@ -1355,7 +1355,7 @@ lapply.array <- function (X, rowtrunc=NULL, coltrunc=NULL,
 #
 ##########################################################################################################################################
 
-lapply.mat <- function (X, coltrunc=NULL, 
+lapply.mat <- function (X, coltrunc=NULL,
                         sub=NULL, fill=NA, MARGIN=2, FUN, ...) {
   x <- list2mat(list=X, coltrunc=coltrunc, sub=sub, fill=fill)
   return(apply(X=x, MARGIN=MARGIN, FUN=FUN, ...))
@@ -1409,7 +1409,12 @@ list2array <- function (list, rowtrunc=NULL, coltrunc=NULL, sub=NULL, fill=NA) {
         if (coltrunc <= min.col) {
             adjusted.list <- lapply(my.list, function(x) {x[,1:coltrunc,drop=FALSE]})
         } else if ((coltrunc > min.col) & (coltrunc <= max.col)) {
-            adjusted.list <- lapply(my.list, function(x) {cbind(x, matrix(data=fill, nrow=nrow(x), ncol=max(0,coltrunc - ncol(x))))})
+            adjusted.list <- lapply(my.list, function(x) {if (coltrunc > ncol(x)) {
+                                                            cbind(x, matrix(data=fill, nrow=nrow(x), ncol=coltrunc - ncol(x)))
+                                                          } else {
+                                                            x[,1:coltrunc,drop=FALSE]
+                                                          }
+                                                         })
         } else {
             adjusted.list <- lapply(my.list, function(x) {cbind(x, matrix(data=fill, nrow=nrow(x), ncol=coltrunc - ncol(x)))})
         }
@@ -1426,7 +1431,12 @@ list2array <- function (list, rowtrunc=NULL, coltrunc=NULL, sub=NULL, fill=NA) {
         if (rowtrunc <= min.row) {
             adjusted.list <- lapply(adjusted.list, function(x) {x[1:rowtrunc,,drop=FALSE]})
         } else if ((rowtrunc > min.row) & (rowtrunc <= max.row)) {
-            adjusted.list <- lapply(adjusted.list, function(x) {rbind(x, matrix(data=fill, nrow=max(0,rowtrunc - nrow(x)), ncol=ncol(x)))})
+            adjusted.list <- lapply(adjusted.list, function(x) {if (rowtrunc > nrow(x)) {
+                                                                  rbind(x, matrix(data=fill, nrow=rowtrunc - nrow(x), ncol=ncol(x)))
+                                                                } else {
+                                                                  x[1:rowtrunc,,drop=FALSE]
+                                                                }
+                                                               })
         } else {
             adjusted.list <- lapply(adjusted.list, function(x) {rbind(x, matrix(data=fill, nrow=rowtrunc - nrow(x), ncol=ncol(x)))})
         }
@@ -1490,7 +1500,12 @@ list2mat <- function (list, coltrunc=NULL, sub=NULL, fill=NA) {
         if (coltrunc <= min.col) {
             adjusted.list <- lapply(my.list, function(x) {x[1:coltrunc]})
         } else if ((coltrunc > min.col) & (coltrunc <= max.col)) {
-            adjusted.list <- lapply(my.list, function(x) {c(x, rep(fill, max(0,coltrunc - length(x))))})
+            adjusted.list <- lapply(my.list, function(x) {if (coltrunc > length(x)) {
+                                                          c(x, rep(fill, coltrunc - length(x)))
+                                                        } else {
+                                                          x[1:coltrunc]
+                                                        }
+                                                       })
         } else {
             adjusted.list <- lapply(my.list, function(x) {c(x, rep(fill, coltrunc - length(x)))})
         }

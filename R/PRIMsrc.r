@@ -197,7 +197,7 @@ sbh <- function(dataset,
     cat("Successfully pre-selected ", p, " covariates:\n", sep="")
     selected <- sel
     print(selected)
-    
+
     # Directions of directed peeling
     varsign <- sign(cv.coef)
     names(varsign) <- colnames(x)
@@ -488,8 +488,8 @@ sbh <- function(dataset,
                         "cvtype"=cvtype, "cvcriterion"=cvcriterion,
                         "varsign"=varsign, "selected"=selected, "used"=used,
                         "probval"=probval, "timeval"=timeval,
-                        "cvfit"=CV.fit, 
-                        "cvprofiles"=CV.profiles, 
+                        "cvfit"=CV.fit,
+                        "cvprofiles"=CV.profiles,
                         "cvmeanprofiles"=CV.mean.profiles,
                         "plot"=bool.plot, "seed"=seed),
                    class = "PRSP"))
