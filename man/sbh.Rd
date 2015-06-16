@@ -82,9 +82,10 @@
   The function relies on an internal variable pre-selection procedure before the PRSP algorithm is run. At this point,
   this is done by regular Cox-regression (from the R package \pkg{survival}) or cross-validated Elasticnet Regularized Cox-Regression 
   (from the R package \pkg{glmnet}), depending on whether the number of covariates is less (\eqn{p \le n}) or greater (\eqn{p > n}) 
-  than the number of samples, respectively.
+  than the number of samples, respectively. In the latter case, both Elasticnet mixing (\code{alpha}) and shrinkage (\code{lambda}) parameters 
+  are simultaneously estimated by \code{glmnet::cv.glmnet} function internal cross-validation.
   
-  At this point, the main function \code{sbh} performs the search of the \emph{first} box of the recursive coverage (outer) loop of our 
+  Also, at this point, the main function \code{sbh} performs the search of the \emph{first} box of the recursive coverage (outer) loop of our 
   Patient Recursive Survival Peeling (PRSP) algorithm.
     
   The \code{PRSP} object contains cross-validated estimates of all the decision-rules of pre-selected covariates and 
