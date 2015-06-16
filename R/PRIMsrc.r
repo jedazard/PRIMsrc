@@ -80,9 +80,9 @@ sbh <- function(dataset,
         } else {
             cat("Requested replicated ", K, "-fold cross-validation with ", B, " replications \n", sep="")
         }
-     } else {
+    } else {
         cat("Requested single ", K, "-fold cross-validation with no replications \n", sep="")
-     }
+    }
   } else {
     cvcriterion <- NULL
     cpv <- FALSE
@@ -102,26 +102,41 @@ sbh <- function(dataset,
   # Pre-selection of covariates
   if (p > n) {
     cat("Covariate selection by Elasticnet Regularized Cox-Regression ... \n")
-    k <- 0
-    while (k < 10) {
-      if (is.null(seed)) {
+    if (is.null(seed)) {
         seed <- floor(runif(n=1, min=0, max=1) * 10^(min(digits,9)))
-      } else {
+    } else {
         set.seed(seed)
-      }
-      cv.fit <- cv.glmnet(x=x, y=Surv(times, status), nfolds=max(3,K), family="cox", maxit=1e5)
-      fit <- glmnet(x=x, y=Surv(times, status), family="cox", alpha=1, maxit=1e5)
-      cv.coef <- as.numeric(coef(fit, s=cv.fit$lambda.min))
-      selected <- which(!(is.na(cv.coef)) & (cv.coef != 0))
-      if (is.empty(selected)) {
-        k <- k + 1
+    }
+    nfolds <- max(3,K)
+    folds <- cv.folds(n=n, K=nfolds, seed=seed)
+    foldid <- as.numeric(folds$which[folds$permkey])
+    enalpha <- seq(from=0, to=1, length.out=10)
+    lenalpha <- length(enalpha)
+    enlambda <- vector(mode="list", length=lenalpha)
+    cv.errmu <- vector(mode="list", length=lenalpha)
+    cv.errsd <- vector(mode="list", length=lenalpha)
+    for (i in 1:lenalpha) {
+        cv.fit <- cv.glmnet(x=x, y=Surv(times, status), alpha=enalpha[i], nfolds=nfolds, foldid=foldid, family="cox", maxit=1e5)
+        cv.errmu[[i]] <- cv.fit$cvm
+        cv.errsd[[i]] <- cv.fit$cvsd
+        enlambda[[i]] <- cv.fit$lambda
+    }
+    cv.errmu <- list2mat(list=cv.errmu, coltrunc="max", fill=NA)
+    cv.errsd <- list2mat(list=cv.errsd, coltrunc="max", fill=NA)
+    w <- as.numeric(which(x=(cv.errmu == as.numeric(cv.errmu)[which.min(cv.errmu)]), arr.ind=TRUE, useNames=FALSE))
+    ww <- as.matrix(which(x=cv.errmu[w[1],w[2]] + cv.errsd[w[1],w[2]] <= cv.errmu - cv.errsd, arr.ind=TRUE, useNames=TRUE))
+    wm <- ww - rep.mat(t(w), 2, nrow(ww))
+    wm <- w + wm[which.min(apply(abs(wm), 1, sum)),]        #Nearest neighbor to minimizer index
+    if (is.empty(wm)) {
         seed <- NULL
-        if (k == 10) {
-          selected <- NULL
-          success <- FALSE
-        }
-      } else {
-        k <- 10
+        selected <- NULL
+        success <- FALSE
+    } else {
+        enlambda.min <- enlambda[[wm[1]]][wm[2]]
+        enalpha.min <- enalpha[wm[1]]
+        fit <- glmnet(x=x, y=Surv(times, status), alpha=enalpha.min, family="cox", maxit=1e5)
+        cv.coef <- as.numeric(coef(fit, s=enlambda.min))
+        selected <- which(!(is.na(cv.coef)) & (cv.coef != 0))
         names(selected) <- colnames(x)[selected]
         cv.coef <- cv.coef[selected]
         m <- pmatch(x=1:p, table=selected, nomatch=NA, duplicates.ok=FALSE)
@@ -129,7 +144,6 @@ sbh <- function(dataset,
         sel <- m[w]
         names(sel) <- names(selected)[sel]
         success <- TRUE
-      }
     }
   } else {
     cat("Covariate selection by regular Cox-Regression ... \n")
@@ -154,7 +168,7 @@ sbh <- function(dataset,
   if (!success) {
 
     # Selected and used covariates
-    cat("Failed to pre-select any informative covariate after 10 successive trials. Exiting...\n", sep="")
+    cat("Failed to pre-select any informative covariate. Exiting...\n", sep="")
     bool.plot <- FALSE
     varsign <- NULL
     used <- NULL

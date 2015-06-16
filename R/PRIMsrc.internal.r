@@ -8,7 +8,7 @@
 ##########################################################################################################################################
 
 ##########################################################################################################################################
-#################
+################
 # Usage         :
 ################
 #                   cv.box.rep(x, times, status,
@@ -129,7 +129,7 @@ cv.box.rep <- function(x, times, status,
 
 
 ##########################################################################################################################################
-#################
+################
 # Usage         :
 ################
 #                    cv.pval (x, times, status,
@@ -200,7 +200,7 @@ cv.pval <- function(x, times, status,
 
 
 ##########################################################################################################################################
-#################
+################
 # Usage         :
 ################
 #                   cv.null (x, times, status,
@@ -272,7 +272,7 @@ cv.null <- function(x, times, status,
 
 
 ##########################################################################################################################################
-#################
+################
 # Usage         :
 ################
 #                   cv.ave.box (x, times, status,
@@ -310,7 +310,7 @@ cv.ave.box <- function(x, times, status,
   boxstat.list <- fold.obj$boxstat.list
   boxcut.list <- fold.obj$boxcut.list
   drop <- fold.obj$drop
-              
+
   # Cross-validated minimum length from all folds
   CV.Lm <- min(fold.obj$nsteps)
 
@@ -455,7 +455,7 @@ cv.ave.box <- function(x, times, status,
 
 
 ##########################################################################################################################################
-#################
+################
 # Usage         :
 ################
 #                   cv.comb.box (x, times, status,
@@ -674,7 +674,7 @@ cv.comb.box <- function(x, times, status,
 
 
 ##########################################################################################################################################
-#################
+################
 # Usage         :
 ################
 #                    cv.ave.fold (x, times, status,
@@ -703,26 +703,26 @@ cv.ave.fold <- function(x, times, status,
 
   drop <- FALSE
   folds <- cv.folds(n=nrow(x), K=K, seed=seed)
-  
+
   boxstat.list <- vector(mode="list", length=K)
   boxcut.list <- vector(mode="list", length=K)
   trace.list <- vector(mode="list", length=K)
   nsteps <- numeric(K)
 
   for (k in 1:K) {
-    cat("Overall fold : ", k, "\n", sep="")
+    cat("Fold : ", k, "\n", sep="")
     # Initialize training and test data
     if (K == 1) {
-      traindata <- testdata <- x[folds$subsets[(folds$which == k)], , drop=FALSE]
-      traintime <- testtime <- times[folds$subsets[(folds$which == k)]]
-      trainstatus <- teststatus <- status[folds$subsets[(folds$which == k)]]
+      traindata <- testdata <- x[folds$perm[(folds$which == k)], , drop=FALSE]
+      traintime <- testtime <- times[folds$perm[(folds$which == k)]]
+      trainstatus <- teststatus <- status[folds$perm[(folds$which == k)]]
     } else {
-      traindata <- x[folds$subsets[(folds$which != k)], , drop=FALSE]
-      traintime <- times[folds$subsets[(folds$which != k)]]
-      trainstatus <- status[folds$subsets[(folds$which != k)]]
-      testdata <- x[folds$subsets[(folds$which == k)], , drop=FALSE]
-      testtime <- times[folds$subsets[(folds$which == k)]]
-      teststatus <- status[folds$subsets[(folds$which == k)]]
+      traindata <- x[folds$perm[(folds$which != k)], , drop=FALSE]
+      traintime <- times[folds$perm[(folds$which != k)]]
+      trainstatus <- status[folds$perm[(folds$which != k)]]
+      testdata <- x[folds$perm[(folds$which == k)], , drop=FALSE]
+      testtime <- times[folds$perm[(folds$which == k)]]
+      teststatus <- status[folds$perm[(folds$which == k)]]
     }
     peelobj <- cv.ave.peel(traindata=traindata, trainstatus=trainstatus, traintime=traintime,
                            testdata=testdata, teststatus=teststatus, testtime=testtime,
@@ -735,11 +735,11 @@ cv.ave.fold <- function(x, times, status,
     trace.list[[k]] <- peelobj$vartrace
     drop <- (drop || peelobj$drop)
   }
-  
-  return(list("nsteps"=nsteps, 
-              "boxstat.list"=boxstat.list, 
+
+  return(list("nsteps"=nsteps,
+              "boxstat.list"=boxstat.list,
               "boxcut.list"=boxcut.list,
-              "trace.list"=trace.list, 
+              "trace.list"=trace.list,
               "drop"=drop))
 }
 ##########################################################################################################################################
@@ -748,7 +748,7 @@ cv.ave.fold <- function(x, times, status,
 
 
 ##########################################################################################################################################
-#################
+################
 # Usage         :
 ################
 #                    cv.comb.fold (x, times, status,
@@ -782,18 +782,18 @@ cv.comb.fold <- function(x, times, status,
   nsteps <- numeric(K)
 
   for (k in 1:K) {
-    cat("Overall fold : ", k, "\n", sep="")
+    cat("Fold : ", k, "\n", sep="")
     if (K == 1) {
-      traindata <- testdata <- x[folds$subsets[(folds$which == k)], , drop=FALSE]
-      traintime <- testtime <- times[folds$subsets[(folds$which == k)]]
-      trainstatus <- teststatus <- status[folds$subsets[(folds$which == k)]]
+      traindata <- testdata <- x[folds$perm[(folds$which == k)], , drop=FALSE]
+      traintime <- testtime <- times[folds$perm[(folds$which == k)]]
+      trainstatus <- teststatus <- status[folds$perm[(folds$which == k)]]
     } else {
-      traindata <- x[folds$subsets[(folds$which != k)], , drop=FALSE]
-      traintime <- times[folds$subsets[(folds$which != k)]]
-      trainstatus <- status[folds$subsets[(folds$which != k)]]
-      testdata <- x[folds$subsets[(folds$which == k)], , drop=FALSE]
-      testtime <- times[folds$subsets[(folds$which == k)]]
-      teststatus <- status[folds$subsets[(folds$which == k)]]
+      traindata <- x[folds$perm[(folds$which != k)], , drop=FALSE]
+      traintime <- times[folds$perm[(folds$which != k)]]
+      trainstatus <- status[folds$perm[(folds$which != k)]]
+      testdata <- x[folds$perm[(folds$which == k)], , drop=FALSE]
+      testtime <- times[folds$perm[(folds$which == k)]]
+      teststatus <- status[folds$perm[(folds$which == k)]]
     }
     # Store the test set data from each fold (Note: the order of observations of times and status from each fold is kept in the list)
     cvtimes[[k]] <- testtime
@@ -808,7 +808,7 @@ cv.comb.fold <- function(x, times, status,
     trace[[k]] <- peelobj$trace
   }
 
-  return(list("nsteps"=nsteps, "key"=folds$key,
+  return(list("nsteps"=nsteps, "key"=folds$foldkey,
               "cvtimes"=cvtimes, "cvstatus"=cvstatus,
               "boxind"=boxind, "boxcut"=boxcut, "trace"=trace))
 }
@@ -818,7 +818,7 @@ cv.comb.fold <- function(x, times, status,
 
 
 ##########################################################################################################################################
-#################
+################
 # Usage         :
 ################
 #                    cv.ave.peel (traindata, trainstatus, traintime,
@@ -931,7 +931,7 @@ cv.ave.peel <- function(traindata, trainstatus, traintime,
 
 
 ##########################################################################################################################################
-#################
+################
 # Usage         :
 ################
 #                    cv.comb.peel (traindata, trainstatus, traintime,
@@ -983,7 +983,7 @@ cv.comb.peel <- function(traindata, trainstatus, traintime,
 
 
 ##########################################################################################################################################
-#################
+################
 # Usage         :
 ################
 #                    peel.box (traindata, traintime, trainstatus,
@@ -1137,7 +1137,7 @@ peel.box <- function(traindata, traintime, trainstatus,
 
 
 ##########################################################################################################################################
-#################
+################
 # Usage         :
 ################
 #                    cv.folds (n, K, seed=NULL)
@@ -1168,19 +1168,20 @@ cv.folds <- function (n, K, seed=NULL) {
   if (!isTRUE((K >= 1) && K <= n))
     stop(paste("'K' outside allowable range {1,...,", n, "} \n", sep=""))
   if (K == 1) {
-    subs <- seq_len(n)
+    perm <- seq_len(n)
   } else if (K == n) {
-    subs <- seq_len(n)
+    perm <- seq_len(n)
   } else {
-    subs <- sample(n)
+    perm <- sample(n)
   }
+  permkey <- pmatch(x=1:n, table=perm)
   w <- rep(seq_len(K), length.out=n)
   ord <- numeric(0)
   for (k in 1:K) {
-    ord <- c(ord, subs[(w == k)])
+    ord <- c(ord, perm[(w == k)])
   }
-  key <- pmatch(x=1:n, table=ord)
-  folds <- list(n=n, K=K, subsets=subs, which=w, key=key, seed=seed)
+  foldkey <- pmatch(x=1:n, table=ord)
+  folds <- list(n=n, K=K, perm=perm, permkey=permkey, which=w, foldkey=foldkey, seed=seed)
 
   return(folds)
 }
@@ -1190,7 +1191,7 @@ cv.folds <- function (n, K, seed=NULL) {
 
 
 ##########################################################################################################################################
-#################
+################
 # Usage         :
 ################
 #                    endpoints (ind, timemat, probmat, timeval, probval)
@@ -1260,7 +1261,7 @@ endpoints <- function(ind, timemat, probmat, timeval, probval) {
 
 
 ##########################################################################################################################################
-#################
+################
 # Usage         :
 ################
 #                    updatecut (x, fract)
@@ -1304,9 +1305,10 @@ updatecut <- function(x, fract) {
 
 ##########################################################################################################################################
 ################
-# Usage         :   lapply.array (X, rowtrunc=NULL, coltrunc=NULL, sub=NULL, fill=NA, MARGIN=1:2, FUN, ...)
-#
+# Usage         :
 ################
+#                    lapply.array (X, rowtrunc=NULL, coltrunc=NULL, 
+#                                  sub=NULL, fill=NA, MARGIN=1:2, FUN, ...)
 #
 ################
 # Description   :
@@ -1322,7 +1324,8 @@ updatecut <- function(x, fract) {
 #
 ##########################################################################################################################################
 
-lapply.array <- function (X, rowtrunc=NULL, coltrunc=NULL, sub=NULL, fill=NA, MARGIN=1:2, FUN, ...) {
+lapply.array <- function (X, rowtrunc=NULL, coltrunc=NULL, 
+                          sub=NULL, fill=NA, MARGIN=1:2, FUN, ...) {
   x <- list2array(list=X, rowtrunc=rowtrunc, coltrunc=coltrunc, sub=sub, fill=fill)
   return(apply(X=x, MARGIN=MARGIN, FUN=FUN, ...))
 }
@@ -1333,9 +1336,10 @@ lapply.array <- function (X, rowtrunc=NULL, coltrunc=NULL, sub=NULL, fill=NA, MA
 
 ##########################################################################################################################################
 ################
-# Usage         :   lapply.mat (X, coltrunc=NULL, sub=NULL, fill=NA, MARGIN=2, FUN, ...)
-#
+# Usage         :
 ################
+#                    lapply.mat (X, coltrunc=NULL, 
+#                                sub=NULL, fill=NA, MARGIN=2, FUN, ...)
 #
 ################
 # Description   :
@@ -1351,7 +1355,8 @@ lapply.array <- function (X, rowtrunc=NULL, coltrunc=NULL, sub=NULL, fill=NA, MA
 #
 ##########################################################################################################################################
 
-lapply.mat <- function (X, coltrunc=NULL, sub=NULL, fill=NA, MARGIN=2, FUN, ...) {
+lapply.mat <- function (X, coltrunc=NULL, 
+                        sub=NULL, fill=NA, MARGIN=2, FUN, ...) {
   x <- list2mat(list=X, coltrunc=coltrunc, sub=sub, fill=fill)
   return(apply(X=x, MARGIN=MARGIN, FUN=FUN, ...))
 }
@@ -1362,9 +1367,9 @@ lapply.mat <- function (X, coltrunc=NULL, sub=NULL, fill=NA, MARGIN=2, FUN, ...)
 
 ##########################################################################################################################################
 ################
-# Usage         :   list2array (list, rowtrunc=NULL, coltrunc=NULL, sub=NULL, fill=NA)
-#
+# Usage         :
 ################
+#                    list2array (list, rowtrunc=NULL, coltrunc=NULL, sub=NULL, fill=NA)
 #
 ################
 # Description   :
@@ -1408,7 +1413,7 @@ list2array <- function (list, rowtrunc=NULL, coltrunc=NULL, sub=NULL, fill=NA) {
         } else {
             adjusted.list <- lapply(my.list, function(x) {cbind(x, matrix(data=fill, nrow=nrow(x), ncol=coltrunc - ncol(x)))})
         }
-      } 
+      }
     } else {
         adjusted.list <- lapply(my.list, function(x) {cbind(x, matrix(data=fill, nrow=nrow(x), ncol=max.col - ncol(x)))})
     }
@@ -1425,7 +1430,7 @@ list2array <- function (list, rowtrunc=NULL, coltrunc=NULL, sub=NULL, fill=NA) {
         } else {
             adjusted.list <- lapply(adjusted.list, function(x) {rbind(x, matrix(data=fill, nrow=rowtrunc - nrow(x), ncol=ncol(x)))})
         }
-      } 
+      }
     } else {
         adjusted.list <- lapply(adjusted.list, function(x) {rbind(x, matrix(data=fill, nrow=max.row - nrow(x), ncol=ncol(x)))})
     }
@@ -1445,9 +1450,9 @@ list2array <- function (list, rowtrunc=NULL, coltrunc=NULL, sub=NULL, fill=NA) {
 
 ##########################################################################################################################################
 ################
-# Usage         :   list2mat (list, coltrunc=NULL, sub=NULL, fill=NA)
-#
+# Usage         :
 ################
+#                    list2mat (list, coltrunc=NULL, sub=NULL, fill=NA)
 #
 ################
 # Description   :
@@ -1489,7 +1494,7 @@ list2mat <- function (list, coltrunc=NULL, sub=NULL, fill=NA) {
         } else {
             adjusted.list <- lapply(my.list, function(x) {c(x, rep(fill, coltrunc - length(x)))})
         }
-      } 
+      }
     } else {
         adjusted.list <- lapply(my.list, function(x) {c(x, rep(fill, max.col - length(x)))})
     }
@@ -1506,9 +1511,9 @@ list2mat <- function (list, coltrunc=NULL, sub=NULL, fill=NA) {
 
 ##########################################################################################################################################
 ################
-# Usage         :   cbindlist (list, trunc)
-#
+# Usage         :
 ################
+#                    cbindlist (list, trunc)
 #
 ################
 # Description   :
@@ -1551,8 +1556,9 @@ cbindlist <- function(list, trunc) {
 
 ##########################################################################################################################################
 ################
-# Usage         :   is.empty(x)
+# Usage         :
 ################
+#                    is.empty(x)
 #
 ################
 # Description   :
@@ -1588,8 +1594,9 @@ is.empty <- function(x) {
 
 ##########################################################################################################################################
 ################
-# Usage         :   myround (x, digits = 0)
+# Usage         :
 ################
+#                    myround (x, digits = 0)
 #
 ################
 # Description   :
@@ -1624,8 +1631,67 @@ myround <- function (x, digits = 0) {
 
 ##########################################################################################################################################
 ################
-# Usage         :   .onAttach (libname, pkgname)
+# Usage         :
 ################
+#                    rep.mat (X, margin, times)
+#
+################
+# Description   :
+################
+#
+################
+# Arguments     :
+################
+#
+################
+# Values        :
+################
+#
+##########################################################################################################################################
+
+rep.mat <- function (X, margin, times) {
+   names(X) <- NULL
+   if (missing(margin) || missing(times)) stop("missing arguments")
+   if ((class(times) == "numeric") || (class(times) == "integer")){
+       times <- as.integer(times)
+   } else {
+        stop("you must enter an integer or numeric for the repeats")
+   }
+   if (!((class(X) == "numeric") || (class(X) == "character") || (class(X) == "matrix") || (class(X) == "factor"))) {
+        stop("you must enter a matrix, a vector, a scalar, or a factor")
+   }
+   if (times > 1) {
+        if (margin == 2) {
+                mat <- X
+                for (i in 1:(times-1)) {
+                    X <- rbind(X, mat)
+                }
+                return(X)
+        } else if (margin == 1) {
+                mat <- X
+                for (i in 1:(times-1)) {
+                     X <- cbind(X, mat)
+                }
+                return(X)
+        } else {
+            stop("you must enter 1 or 2 for the respective direction \"-\" or \"|\"")
+        }
+   } else if (times == 1) {
+        return(X)
+   } else {
+        return(NULL)
+   }
+}
+###################################################################################################################################
+
+
+
+
+##########################################################################################################################################
+################
+# Usage         :
+################
+#                    .onAttach (libname, pkgname)
 #
 ################
 # Description   :
