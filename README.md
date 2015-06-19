@@ -32,7 +32,7 @@ Installation:
 =============
 PRIMsrc 0.5.6 was built under R version 3.0.2 (2013-09-25).
 Installation has been tested on Windows, Linux and Mac platforms.
-To install PRIMsrc, simply type:
+To install this most up-to-date developmental version of PRIMsrc, simply type:
 
 library(devtools)
 
