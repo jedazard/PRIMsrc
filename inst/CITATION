@@ -4,19 +4,6 @@ titl <- paste(meta$Package, ":", meta$Title, sep=" ")
 year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
 vers <- paste("R package version", meta$Version)
 
-citEntry(entry       = "Manual",
-         title       = titl,
-         author      = personList(person(family="Dazard", given="J-E."),
-                                  person(family="Choe", given="M."),
-                                  person(family="LeBlanc", given="M."),
-                                  person(family="Santana", given="A.")), 	 	
-         publisher   = "CRAN",
-         year        = year,
-         note        = vers,
-         url         = "http://cran.r-project.org/web/packages/PRIMsrc/",
-         pdf         = "http://cran.r-project.org/web/packages/PRIMsrc/PRIMsrc.pdf",
-         textVersion = paste("Dazard J-E., Choe M., LeBlanc M. and Santana A. (", year ,"). ", titl, ", ", vers, ".", sep=""))
-
 citEntry(entry       = "Article",
          title       = "Local Sparse Bump Hunting",
          author      = personList(person(family="Dazard", given="J-E."),
@@ -50,11 +37,11 @@ citEntry(entry       = "Article",
                                   person(family="Rao", given="J.S."),
                                   person(family="Dazard", given="J-E.")), 	
          journal     = "(submitted)",
-         year        = "2014",
+         year        = "2015",
          volume      = "x",
          number      = "x",
          pages       = "xxx-xxx",
-         textVersion = "Diaz-Pachon D.A., Rao J.S and Dazard J-E. (2014).
+         textVersion = "Diaz-Pachon D.A., Rao J.S and Dazard J-E. (2015).
                         On the Explanatory Power of Principal Components.
                         (submitted).")
 
@@ -64,11 +51,11 @@ citEntry(entry       = "Article",
                                   person(family="Dazard", given="J-E."),
                                   person(family="Rao", given="J.S.")), 	
          journal     = "(submitted)",
-         year        = "2014",
+         year        = "2015",
          volume      = "x",
          number      = "x",
          pages       = "xxx-xxx",
-         textVersion = "Diaz-Pachon D.A., Dazard J-E. and Rao J.S. (2014).
+         textVersion = "Diaz-Pachon D.A., Dazard J-E. and Rao J.S. (2015).
                         Unsupervised Bump Hunting Using Principal Components.
                         (submitted).")
 

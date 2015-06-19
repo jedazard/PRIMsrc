@@ -65,13 +65,14 @@ o RELEASE 0.5.5
 - Several minor bugs corrected.
 - Test build under R 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2015-06-16
+Date   : 2015-06-19
 o RELEASE 0.5.6
 - Correction/extension of internal variable selection procedure by cross-validing 
   both parameters: alpha (mixing) as well as lambda (shrinkage) in the Elasticnet-Regularized 
   Cox Regression function of the 'glmnet' package. This allows to get true lasso-ridge penalty.
 - Improved robustness in internal functions list2mat and list2array.
 - Minor improvement in internal function cv.folds.
+- Added vignette
 - Test build under R 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
 
