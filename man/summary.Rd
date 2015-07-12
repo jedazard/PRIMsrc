@@ -1,5 +1,7 @@
 \name{summary.PRSP}
 
+\alias{summary}
+
 \alias{summary.PRSP}
 
 \title{Summary Function}

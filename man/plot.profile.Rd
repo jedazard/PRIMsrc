@@ -1,6 +1,7 @@
 \name{plot.profile.PRSP}
 
 \alias{plot.profile}
+
 \alias{plot.profile.PRSP}
 
 \title{Visualization for Model Selection/Validation}

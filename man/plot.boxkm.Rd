@@ -1,6 +1,7 @@
 \name{plot.boxkm.PRSP}
 
 \alias{plot.boxkm}
+
 \alias{plot.boxkm.PRSP}
 
 \title{Visualization of Survival Distributions}

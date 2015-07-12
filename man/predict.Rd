@@ -1,5 +1,7 @@
 \name{predict.PRSP}
 
+\alias{predict}
+
 \alias{predict.PRSP}
 
 \title{Predict Function}

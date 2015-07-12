@@ -242,14 +242,11 @@ library("PRIMsrc")
     citation("PRIMsrc")
     
     #===================================================
-    # Use of two synthetic and two real datasets
+    # Demo with a synthetic dataset
     # Use help for descriptions
     #===================================================
-    data("Synthetic.1", "Synthetic.5", "Real.1", "Real.2", package="PRIMsrc")
+    data("Synthetic.1", package="PRIMsrc")
     ?Synthetic.1
-    ?Synthetic.5
-    ?Real.1
-    ?Real.2
 }
 
 #===================================================
@@ -262,7 +259,7 @@ library("PRIMsrc")
 #===================================================
 CVCOMBREP.synt1 <- sbh(dataset = Synthetic.1, 
                        cvtype = "combined", cvcriterion = "lrt",
-                       B = 5, K = 5, cpv = FALSE, probval = 0.5, 
+                       B = 3, K = 5, cpv = FALSE, probval = 0.5, 
                        arg = "beta=0.05,
                               alpha=0.1,
                               minn=10,
@@ -282,68 +279,6 @@ CVCOMBREP.synt1$cvfit$cv.nsteps
 CVCOMBREP.synt1$cvfit$cv.trace
 CVCOMBREP.synt1$cvfit$cv.rules$frame[,used]
 round(CVCOMBREP.synt1$cvfit$cv.stats$mean,2)
-
-#===================================================
-# Simulated dataset #5 (n=100, p=1000)
-# Replicated Combined Cross-Validation (RCCV)
-# Peeling criterion = LRT
-# Optimization criterion = LRT
-# Without parallelization
-# Without computation of cross-validated p-values
-#===================================================
-CVCOMBREP.synt5 <- sbh(dataset = Synthetic.5, 
-                       cvtype = "combined", cvcriterion = "lrt",
-                       B = 5, K = 5, cpv = FALSE, probval = 0.5, 
-                       arg = "beta=0.05,
-                              alpha=0.1,
-                              minn=10,
-                              L=NULL,
-                              peelcriterion=\"lr\"",
-                       parallel = FALSE, conf = NULL, seed = 123)
-
-# selected covariates:
-selected <- CVCOMBREP.synt5$selected
-selected
-# covariates used for peeling:
-used <- CVCOMBREP.synt5$used
-used
-# some output results:
-CVCOMBREP.synt5$cvfit$cv.maxsteps
-CVCOMBREP.synt5$cvfit$cv.nsteps
-CVCOMBREP.synt5$cvfit$cv.trace
-CVCOMBREP.synt5$cvfit$cv.rules$frame[,used]
-round(CVCOMBREP.synt5$cvfit$cv.stats$mean,2)
-
-#===================================================
-# Real dataset #1 (n=485, p=4)
-# Replicated Combined Cross-Validation (RCCV)
-# Peeling criterion = LRT
-# Optimization criterion = LRT
-# Without parallelization
-# Without computation of cross-validated p-values
-#===================================================
-CVCOMBREP.real1 <- sbh(dataset = Real.1, 
-                       cvtype = "combined", cvcriterion = "lrt",
-                       B = 5, K = 5, cpv = FALSE, probval = 0.5, 
-                       arg = "beta=0.05,
-                              alpha=0.1,
-                              minn=10,
-                              L=NULL,
-                              peelcriterion=\"lr\"",
-                       parallel = FALSE, conf = NULL, seed = 123)
-
-# selected covariates:
-selected <- CVCOMBREP.real1$selected
-selected
-# covariates used for peeling:
-used <- CVCOMBREP.real1$used
-used
-# some output results:
-CVCOMBREP.real1$cvfit$cv.maxsteps
-CVCOMBREP.real1$cvfit$cv.nsteps
-CVCOMBREP.real1$cvfit$cv.trace
-CVCOMBREP.real1$cvfit$cv.rules$frame[,used]
-round(CVCOMBREP.real1$cvfit$cv.stats$mean,2)
 
 \dontrun{
     #===================================================
@@ -411,7 +346,7 @@ round(CVCOMBREP.real1$cvfit$cv.stats$mean,2)
     #===================================================
     CVCOMBREP.synt1 <- sbh(dataset = Synthetic.1, 
                            cvtype = "combined", cvcriterion = "lrt",
-                           B = 5, K = 5, A = 1024, cpv = TRUE, probval = 0.5, 
+                           B = 10, K = 5, A = 1024, cpv = TRUE, probval = 0.5, 
                            arg = "beta=0.05,
                                   alpha=0.1,
                                   minn=10,
@@ -432,38 +367,7 @@ round(CVCOMBREP.real1$cvfit$cv.stats$mean,2)
     CVCOMBREP.synt1$cvfit$cv.pval
     CVCOMBREP.synt1$cvfit$cv.rules$frame[,used]
     round(CVCOMBREP.synt1$cvfit$cv.stats$mean,2)
-    
-    #===================================================
-    # Real dataset #2 (n=177, p=22577)
-    # Replicated Combined Cross-Validation (RCCV)
-    # Peeling criterion = LRT
-    # Optimization criterion = LRT
-    # With parallelization
-    # Without computation of cross-validated p-values
-    #===================================================
-    p <- ncol(Real.2) - 2
-    CVCOMBREP.real2 <- sbh(dataset = Real.2, 
-                           cvtype = "combined", cvcriterion = "lrt",
-                           B = 5, K = 5, cpv = FALSE, probval = 0.5, 
-                           arg = "beta=0.05,
-                                  alpha=0.1,
-                                  minn=10,
-                                  L=NULL,
-                                  peelcriterion=\"lr\"",
-                           parallel = TRUE, conf = conf, seed = 123)
 
-    # selected covariates:
-    selected <- CVCOMBREP.real2$selected
-    selected
-    # covariates used for peeling:
-    used <- CVCOMBREP.real2$used
-    used
-    # some output results:
-    CVCOMBREP.real2$cvfit$cv.maxsteps
-    CVCOMBREP.real2$cvfit$cv.nsteps
-    CVCOMBREP.real2$cvfit$cv.trace
-    CVCOMBREP.real2$cvfit$cv.rules$frame[,used]
-    round(CVCOMBREP.real2$cvfit$cv.stats$mean,2)
 }
 
 }
