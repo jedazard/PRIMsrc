@@ -1,8 +1,8 @@
 Package: PRIMsrc
 Type: Package
 Title: PRIM Survival Regression Classification
-Version: 0.5.6
-Date: 2015-06-19
+Version: 0.5.7
+Date: 2015-07-12
 Authors@R: c(person("Jean-Eudes", "Dazard",
                     role = c("aut", "cre"),
                     email = "jxd101@case.edu"),
@@ -20,6 +20,7 @@ Maintainer: Jean-Eudes Dazard <jxd101@case.edu>
 Description: Performs Bump Hunting by Patient Rule Induction Method
              in Survival, Regression and Classification settings.
 Depends: R (>= 3.0.2), parallel, survival, Hmisc, glmnet, MASS
+Imports: graphics, grDevices, stats
 URL: https://github.com/jedazard/PRIMsrc
 Repository: PRIMsrc, GitHub, Inc.
 License: GPL (>= 3) | file LICENSE
