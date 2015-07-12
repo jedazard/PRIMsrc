@@ -30,9 +30,15 @@ All the codes are in the R folder and a manual (PRIMsrc.pdf) details the end-use
 =============
 Installation: 
 =============
-PRIMsrc 0.5.6 was built under R version 3.0.2 (2013-09-25).
-Installation has been tested on Windows, Linux and Mac platforms.
-To install this most up-to-date developmental version of PRIMsrc, simply type:
+PRIMsrc 0.5.7 requires R-3.0.2 (2013-09-25).
+It was built under R-3.2.1 (2015-06-19) and tested under R-devel (2015-07-08 r68642).
+Installation has been tested on Windows, Linux and OSX platforms.
+
+To install PRIMsrc from CRAN, simply download and install the current version from the CRAN repository:
+
+install.packages("PRIMsrc")
+
+Alternatively, you can install the most up-to-date development version from GitHub, using devtools:
 
 library(devtools)
 
