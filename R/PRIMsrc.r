@@ -553,6 +553,10 @@ PRIMsrc.news <- function(...) {
 ##########################################################################################################################################
 
 summary.PRSP <- function(object, ...) {
+
+  if (!inherits(object, 'PRSP'))
+        stop("Primary argument much be a PRSP object")
+        
   if (object$cvtype != "none") {
     if (object$B > 1) {
       cat("PRSP object with replicated ", object$K, "-fold cross-validation with ", object$B, " replications \n", sep="")
@@ -596,6 +600,9 @@ summary.PRSP <- function(object, ...) {
 
 predict.PRSP <- function (object, newdata, steps, na.action = na.omit, ...) {
 
+  if (!inherits(object, 'PRSP'))
+        stop("Primary argument much be a PRSP object")
+        
   X <- as.matrix(newdata)
   X.names <- colnames(X)
   X.range <- apply(X=X, MARGIN=2, FUN=range)
@@ -680,6 +687,9 @@ plot.profile.PRSP <- function(x,
                               device=NULL, file="Profile Plot", path=getwd(),
                               horizontal=FALSE, width=8.5, height=5.0, ...) {
 
+  if (!inherits(x, 'PRSP'))
+        stop("Primary argument much be a PRSP object")
+        
   if (x$plot) {
     if (is.null(x$cvcriterion)) {
       cat("No CV here, so no cross-validated tuning profile to plot!\n")
@@ -835,6 +845,9 @@ plot.scatter.PRSP <- function(x,
                               device=NULL, file="Scatter Plot", path=getwd(),
                               horizontal=FALSE, width=5, height=5, ...) {
 
+  if (!inherits(x, 'PRSP'))
+        stop("Primary argument much be a PRSP object")
+        
   if (x$plot) {
 
     scatterplot <- function(object,
@@ -994,6 +1007,9 @@ plot.boxtraj.PRSP <- function(x,
                               device=NULL, file="Covariate Trajectory Plots", path=getwd(),
                               horizontal=FALSE, width=8.5, height=11.5, ...) {
 
+  if (!inherits(x, 'PRSP'))
+        stop("Primary argument much be a PRSP object")
+        
   if (x$plot) {
     boxtrajplot <- function(object,
                             main, xlab, ylab,
@@ -1223,6 +1239,9 @@ plot.boxtrace.PRSP <- function(x,
                                device=NULL, file="Covariate Trace Plots", path=getwd(),
                                horizontal=FALSE, width=8.5, height=8.5, ...) {
 
+  if (!inherits(x, 'PRSP'))
+        stop("Primary argument much be a PRSP object")
+        
   if (x$plot) {
     boxtraceplot <- function(object,
                              main, xlab, ylab,
@@ -1394,6 +1413,9 @@ plot.boxkm.PRSP <- function(x,
                             device=NULL, file="Survival Plots", path=getwd(),
                             horizontal=TRUE, width=11.5, height=8.5, ...) {
 
+  if (!inherits(x, 'PRSP'))
+        stop("Primary argument much be a PRSP object")
+        
   if (x$plot) {
 
     boxkmplot <- function(object,
