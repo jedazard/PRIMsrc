@@ -59,8 +59,9 @@
             and all other statistical quantities of interest at each iteration of the peeling sequence (inner loop of the PRSP algorithm). 
             It enables the display of results graphically of/for model tuning/selection, all peeling trajectories, covariate traces, 
             and survival distributions (see plotting functions below for more details). The function offers a few options such as the 
-            type of \eqn{K}-fold cross-validation desired ((replicated)-averaged or-combined), the peeling and optimization critera for model fitting 
-            and the tuning and selection and a few more parameters for the PRSP algorithm. The function takes advantage of the R package \pkg{parallel} 
+            type of \eqn{K}-fold cross-validation desired ((replicated)-averaged or-combined), 
+            the peeling criterion for peeling the next box, the optimization criterion for model tuning and selection 
+            and a few more parameters for the PRSP algorithm. The function takes advantage of the R package \pkg{parallel} 
             for efficient parallel execution. It allows users to create a cluster of workstations on a local and/or remote machine(s), 
             enabling scaling-up to the number of specified CPU cores.\cr
 
