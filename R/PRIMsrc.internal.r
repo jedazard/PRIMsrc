@@ -1051,6 +1051,7 @@ peel.box <- function(traindata, traintime, trainstatus,
   l <- 0
   lhrlj <- matrix(NA, ncut, p)
   lrtlj <- matrix(NA, ncut, p)
+  naslj <- matrix(NA, ncut, p)
 
   while ((boxmass >= beta) & (l*switch < L) & (continue)) {
     l <- l + 1
@@ -1069,7 +1070,7 @@ peel.box <- function(traindata, traintime, trainstatus,
       if ((sum(boxes1j) != length(boxes1j)) && (sum(boxes1j) != 0)) {
         # Rate of increase of LHR (between in and out box)
         if (peelcriterion == "hr") {
-          lhrlj[l,j] <- coxph(Surv(traintime, trainstatus) ~ 1 + boxes1j, singular.ok=TRUE, iter.max=1)$coef
+          lhrlj[l,j] <- coxph(formula=Surv(traintime, trainstatus) ~ 1 + boxes1j, singular.ok=TRUE, iter.max=1)$coef
           if (l == 1) {
             vmd[j] <- (lhrlj[l,j] - 0) / (1 - mean(boxes1j))
           } else {
@@ -1077,11 +1078,19 @@ peel.box <- function(traindata, traintime, trainstatus,
           }
         # Rate of increase of LRT (between in and out box)
         } else if (peelcriterion == "lr") {
-          lrtlj[l,j] <- survdiff(Surv(traintime, trainstatus) ~ 1 + boxes1j, rho=0)$chisq
+          lrtlj[l,j] <- survdiff(formula=Surv(traintime, trainstatus) ~ 1 + boxes1j, rho=0)$chisq
           if (l == 1) {
             vmd[j] <- (lrtlj[l,j] - 0) / (1 - mean(boxes1j))
           } else {
             vmd[j] <- (lrtlj[l,j] - lrtlj[l-1,j]) / (boxmass - mean(boxes1j))
+          }
+        } else if (peelcriterion == "na") {
+          fit <- survfit(formula=Surv(traintime, trainstatus) ~ 1, subset=(boxes1j == 1))
+          naslj[l,j] <- sum(cumsum(fit$n.event/fit$n.risk))
+          if (l == 1) {
+            vmd[j] <- (naslj[l,j] - 0) / (1 - mean(boxes1j))
+          } else {
+            vmd[j] <- (naslj[l,j] - naslj[l-1,j]) / (boxmass - mean(boxes1j))
           }
         } else {
           stop("Invalid peeling criterion \n")
