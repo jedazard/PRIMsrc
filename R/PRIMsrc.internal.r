@@ -313,7 +313,7 @@ cv.ave.box <- function(x, times, status,
 
   # Cross-validated minimum length from all folds
   CV.Lm <- min(fold.obj$nsteps)
-
+  
   # Get the variable traces
   # Variable traces are first stacked and truncated in a matrix where folds are by rows and steps by columns
   CV.trace <- list2mat(list=trace.list, coltrunc=CV.Lm)
@@ -732,7 +732,7 @@ cv.ave.fold <- function(x, times, status,
     nsteps[k] <- peelobj$nsteps
     boxstat.list[[k]] <- peelobj$boxstat
     boxcut.list[[k]] <- peelobj$boxcut
-    trace.list[[k]] <- peelobj$vartrace
+    trace.list[[k]] <- peelobj$trace
     drop <- (drop || peelobj$drop)
   }
 
@@ -1031,7 +1031,7 @@ peel.box <- function(traindata, traintime, trainstatus,
   ncut <- ceiling(log(beta) / log(1 - (1/n)))            # Maximal number of peeling steps
 
   # Initializations of variable trace and box boundaries
-  vartrace <- numeric(ncut)
+  trace <- numeric(ncut)
   boxcut <- matrix(data=NA, nrow=ncut, ncol=p)
 
   # Initializations
@@ -1113,7 +1113,7 @@ peel.box <- function(traindata, traintime, trainstatus,
       boxcutpts[varj] <- cutpts[varj]
       # Saving trained box quantities of interest for the current peeling step
       boxcut[l, ] <- boxcutpts
-      vartrace[l] <- varj
+      trace[l] <- varj
     # Else exiting the loop and decrementing the peeling step number since the last attempted failed in that case
     } else {
       continue <- FALSE
@@ -1124,21 +1124,21 @@ peel.box <- function(traindata, traintime, trainstatus,
   if (l == 0) {
     # Taking the first step box covering all the data
     boxcut <- as.matrix(initcutpts)
-    vartrace <- 0
+    trace <- 0
   } else if (l >= 1) {
     # Prepending the first step box covering all the data
     boxcut <- rbind(initcutpts, boxcut[1:l, , drop=FALSE])
-    vartrace <- c(0, vartrace[1:l])
+    trace <- c(0, trace[1:l])
   }
 
   rownames(boxcut) <- paste("step", 0:l, sep="")
   colnames(boxcut) <- colnames(traindata)
-  names(vartrace) <- paste("step", 0:l, sep="")
+  names(trace) <- paste("step", 0:l, sep="")
 
   # Returning the final results, considering the starting point as step #0
   return(list("nsteps"=l+1,
               "boxcut"=boxcut,
-              "trace"=vartrace))
+              "trace"=trace))
 }
 ##########################################################################################################################################
 

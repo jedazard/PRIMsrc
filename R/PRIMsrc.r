@@ -556,7 +556,7 @@ summary.PRSP <- function(object, ...) {
 
   if (!inherits(object, 'PRSP'))
         stop("Primary argument much be a PRSP object")
-        
+
   if (object$cvtype != "none") {
     if (object$B > 1) {
       cat("PRSP object with replicated ", object$K, "-fold cross-validation with ", object$B, " replications \n", sep="")
@@ -602,7 +602,7 @@ predict.PRSP <- function (object, newdata, steps, na.action = na.omit, ...) {
 
   if (!inherits(object, 'PRSP'))
         stop("Primary argument much be a PRSP object")
-        
+
   X <- as.matrix(newdata)
   X.names <- colnames(X)
   X.range <- apply(X=X, MARGIN=2, FUN=range)
@@ -657,7 +657,7 @@ predict.PRSP <- function (object, newdata, steps, na.action = na.omit, ...) {
 ################
 # Usage         :
 ################
-#                    plot.profile(x,
+#                    plot_profile(x,
 #                                 main=NULL,
 #                                 xlab="Peeling Steps", ylab="Mean Profiles",
 #                                 add.sd=TRUE, add.legend=TRUE, add.profiles=TRUE,
@@ -679,17 +679,17 @@ predict.PRSP <- function (object, newdata, steps, na.action = na.omit, ...) {
 #
 ##########################################################################################################################################
 
-plot.profile.PRSP <- function(x,
-                              main=NULL,
-                              xlab="Peeling Steps", ylab="Mean Profiles",
-                              add.sd=TRUE, add.legend=TRUE, add.profiles=TRUE,
-                              pch=20, col=1, lty=1, lwd=2, cex=2,
-                              device=NULL, file="Profile Plot", path=getwd(),
-                              horizontal=FALSE, width=8.5, height=5.0, ...) {
+plot_profile <- function(x,
+                         main=NULL,
+                         xlab="Peeling Steps", ylab="Mean Profiles",
+                         add.sd=TRUE, add.legend=TRUE, add.profiles=TRUE,
+                         pch=20, col=1, lty=1, lwd=2, cex=2,
+                         device=NULL, file="Profile Plot", path=getwd(),
+                         horizontal=FALSE, width=8.5, height=5.0, ...) {
 
   if (!inherits(x, 'PRSP'))
         stop("Primary argument much be a PRSP object")
-        
+
   if (x$plot) {
     if (is.null(x$cvcriterion)) {
       cat("No CV here, so no cross-validated tuning profile to plot!\n")
@@ -791,16 +791,6 @@ plot.profile.PRSP <- function(x,
   }
   invisible()
 }
-
-plot.profile <- function(x,
-                         main=NULL,
-                         xlab="Peeling Steps", ylab="Mean Profiles",
-                         add.sd=TRUE, add.legend=TRUE, add.profiles=TRUE,
-                         pch=20, col=1, lty=1, lwd=2, cex=2,
-                         device=NULL, file="Profile Plot", path=getwd(),
-                         horizontal=FALSE, width=8.5, height=5, ...) {
-    UseMethod(generic="plot.profile", object=x)
-}
 ##########################################################################################################################################
 
 
@@ -811,7 +801,7 @@ plot.profile <- function(x,
 ################
 # Usage         :
 ################
-#                    plot.scatter(x,
+#                    plot_scatter(x,
 #                                 main=NULL,
 #                                 proj=c(1,2), splom=TRUE, boxes=FALSE,
 #                                 steps=x$cvfit$cv.nsteps,
@@ -835,19 +825,19 @@ plot.profile <- function(x,
 #
 ##########################################################################################################################################
 
-plot.scatter.PRSP <- function(x,
-                              main=NULL,
-                              proj=c(1,2), splom=TRUE, boxes=FALSE,
-                              steps=x$cvfit$cv.nsteps,
-                              pch=16, cex=0.5, col=2:(length(steps)+1),
-                              col.box=2:(length(steps)+1), lty.box=rep(2,length(steps)), lwd.box=rep(1,length(steps)),
-                              add.legend=TRUE,
-                              device=NULL, file="Scatter Plot", path=getwd(),
-                              horizontal=FALSE, width=5, height=5, ...) {
+plot_scatter <- function(x,
+                         main=NULL,
+                         proj=c(1,2), splom=TRUE, boxes=FALSE,
+                         steps=x$cvfit$cv.nsteps,
+                         pch=16, cex=0.5, col=2:(length(steps)+1),
+                         col.box=2:(length(steps)+1), lty.box=rep(2,length(steps)), lwd.box=rep(1,length(steps)),
+                         add.legend=TRUE,
+                         device=NULL, file="Scatter Plot", path=getwd(),
+                         horizontal=FALSE, width=5, height=5, ...) {
 
   if (!inherits(x, 'PRSP'))
         stop("Primary argument much be a PRSP object")
-        
+
   if (x$plot) {
 
     scatterplot <- function(object,
@@ -950,18 +940,6 @@ plot.scatter.PRSP <- function(x,
   }
   invisible()
 }
-
-plot.scatter <- function(x,
-                         main=NULL,
-                         proj=c(1,2), splom=TRUE, boxes=FALSE,
-                         steps=x$cvfit$cv.nsteps,
-                         pch=16, cex=0.5, col=2:(length(steps)+1),
-                         col.box=2:(length(steps)+1), lty.box=rep(2,length(steps)), lwd.box=rep(1,length(steps)),
-                         add.legend=TRUE,
-                         device=NULL, file="Scatter Plot", path=getwd(),
-                         horizontal=FALSE, width=5, height=5, ...) {
-    UseMethod(generic="plot.scatter", object=x)
-}
 ##########################################################################################################################################
 
 
@@ -971,7 +949,7 @@ plot.scatter <- function(x,
 ################
 # Usage         :
 ################
-#                    plot.boxtraj (x,
+#                    plot_boxtraj (x,
 #                                  main=NULL,
 #                                  xlab="Box Mass", ylab="Covariate Range",
 #                                  toplot=x$used,
@@ -996,20 +974,20 @@ plot.scatter <- function(x,
 #
 ##########################################################################################################################################
 
-plot.boxtraj.PRSP <- function(x,
-                              main=NULL,
-                              xlab="Box Mass", ylab="Covariate Range",
-                              toplot=x$used,
-                              col.cov, lty.cov, lwd.cov,
-                              col=1, lty=1, lwd=1,
-                              cex=1, add.legend=FALSE, text.legend=NULL,
-                              nr=NULL, nc=NULL,
-                              device=NULL, file="Covariate Trajectory Plots", path=getwd(),
-                              horizontal=FALSE, width=8.5, height=11.5, ...) {
+plot_boxtraj <- function(x,
+                         main=NULL,
+                         xlab="Box Mass", ylab="Covariate Range",
+                         toplot=x$used,
+                         col.cov, lty.cov, lwd.cov,
+                         col=1, lty=1, lwd=1,
+                         cex=1, add.legend=FALSE, text.legend=NULL,
+                         nr=NULL, nc=NULL,
+                         device=NULL, file="Covariate Trajectory Plots", path=getwd(),
+                         horizontal=FALSE, width=8.5, height=11.5, ...) {
 
   if (!inherits(x, 'PRSP'))
         stop("Primary argument much be a PRSP object")
-        
+
   if (x$plot) {
     boxtrajplot <- function(object,
                             main, xlab, ylab,
@@ -1181,19 +1159,6 @@ plot.boxtraj.PRSP <- function(x,
   }
   invisible()
 }
-
-plot.boxtraj <- function(x,
-                         main=NULL,
-                         xlab="Box Mass", ylab="Covariate Range",
-                         toplot=x$used,
-                         col.cov, lty.cov, lwd.cov,
-                         col=1, lty=1, lwd=1,
-                         cex=1, add.legend=FALSE, text.legend=NULL,
-                         nr=NULL, nc=NULL,
-                         device=NULL, file="Covariate Trajectory Plots", path=getwd(),
-                         horizontal=FALSE, width=8.5, height=8.5, ...) {
-    UseMethod(generic="plot.boxtraj", object=x)
-}
 ##########################################################################################################################################
 
 
@@ -1204,7 +1169,7 @@ plot.boxtraj <- function(x,
 ################
 # Usage         :
 ################
-#                    plot.boxtrace (x,
+#                    plot_boxtrace (x,
 #                                   main=NULL,
 #                                   xlab="Box Mass", ylab="Covariate Range (centered)",
 #                                   toplot=x$used,
@@ -1229,19 +1194,19 @@ plot.boxtraj <- function(x,
 #
 ##########################################################################################################################################
 
-plot.boxtrace.PRSP <- function(x,
-                               main=NULL, xlab="Box Mass", ylab="Covariate Range (centered)",
-                               toplot=x$used,
-                               center=TRUE, scale=FALSE,
-                               col.cov, lty.cov, lwd.cov,
-                               col=1, lty=1, lwd=1,
-                               cex=1, add.legend=FALSE, text.legend=NULL,
-                               device=NULL, file="Covariate Trace Plots", path=getwd(),
-                               horizontal=FALSE, width=8.5, height=8.5, ...) {
+plot_boxtrace <- function(x,
+                          main=NULL, xlab="Box Mass", ylab="Covariate Range (centered)",
+                          toplot=x$used,
+                          center=TRUE, scale=FALSE,
+                          col.cov, lty.cov, lwd.cov,
+                          col=1, lty=1, lwd=1,
+                          cex=1, add.legend=FALSE, text.legend=NULL,
+                          device=NULL, file="Covariate Trace Plots", path=getwd(),
+                          horizontal=FALSE, width=8.5, height=8.5, ...) {
 
   if (!inherits(x, 'PRSP'))
         stop("Primary argument much be a PRSP object")
-        
+
   if (x$plot) {
     boxtraceplot <- function(object,
                              main, xlab, ylab,
@@ -1358,19 +1323,6 @@ plot.boxtrace.PRSP <- function(x,
   }
   invisible()
 }
-
-plot.boxtrace <- function(x,
-                          main=NULL,
-                          xlab="Box Mass", ylab="Covariate Range (centered)",
-                          toplot=x$used,
-                          center=TRUE, scale=FALSE,
-                          col.cov, lty.cov, lwd.cov,
-                          col=1, lty=1, lwd=1,
-                          cex=1, add.legend=FALSE, text.legend=NULL,
-                          device=NULL, file="Covariate Trace Plots", path=getwd(),
-                          horizontal=FALSE, width=8.5, height=8.5, ...) {
-    UseMethod(generic="plot.boxtrace", object=x)
-}
 ##########################################################################################################################################
 
 
@@ -1381,7 +1333,7 @@ plot.boxtrace <- function(x,
 ################
 # Usage         :
 ################
-#                    plot.boxkm (x,
+#                    plot_boxkm (x,
 #                                main=NULL,
 #                                xlab="Time", ylab="Probability",
 #                                precision=1e-3, mark=3, col=2, cex=1,
@@ -1404,18 +1356,18 @@ plot.boxtrace <- function(x,
 #
 ##########################################################################################################################################
 
-plot.boxkm.PRSP <- function(x,
-                            main=NULL,
-                            xlab="Time", ylab="Probability",
-                            precision=1e-3, mark=3, col=2, cex=1,
-                            steps=1:x$cvfit$cv.nsteps,
-                            nr=3, nc=4,
-                            device=NULL, file="Survival Plots", path=getwd(),
-                            horizontal=TRUE, width=11.5, height=8.5, ...) {
+plot_boxkm <- function(x,
+                       main=NULL,
+                       xlab="Time", ylab="Probability",
+                       precision=1e-3, mark=3, col=2, cex=1,
+                       steps=1:x$cvfit$cv.nsteps,
+                       nr=3, nc=4,
+                       device=NULL, file="Survival Plots", path=getwd(),
+                       horizontal=TRUE, width=11.5, height=8.5, ...) {
 
   if (!inherits(x, 'PRSP'))
         stop("Primary argument much be a PRSP object")
-        
+
   if (x$plot) {
 
     boxkmplot <- function(object,
@@ -1513,17 +1465,6 @@ plot.boxkm.PRSP <- function(x,
         So, there is nothing to plot here.\n")
   }
   invisible()
-}
-
-plot.boxkm <- function(x,
-                       main=NULL,
-                       xlab="Time", ylab="Probability",
-                       precision=1e-3, mark=3, col=2, cex=1,
-                       steps=1:x$cvfit$cv.nsteps,
-                       nr=3, nc=4,
-                       device=NULL, file="Survival Plots", path=getwd(),
-                       horizontal=TRUE, width=11.5, height=8.5, ...) {
-    UseMethod(generic="plot.boxkm", object=x)
 }
 ##########################################################################################################################################
 
