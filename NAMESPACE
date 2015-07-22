@@ -1,20 +1,13 @@
 export("PRIMsrc.news", 
-	  "sbh",
-       "summary.PRSP",
-       "predict.PRSP",
-       "plot.profile.PRSP",
-	  "plot.scatter.PRSP",
-	  "plot.boxtraj.PRSP",
-	  "plot.boxtrace.PRSP",
-	  "plot.boxkm.PRSP")
+       "sbh",
+       "plot_profile",
+       "plot_scatter",
+       "plot_boxtraj",
+       "plot_boxtrace",
+       "plot_boxkm")
 
 import("parallel", "survival", "Hmisc", "glmnet", "MASS")
 import("graphics", "grDevices", "stats")
 
 S3method("summary","PRSP")
 S3method("predict","PRSP")
-S3method("plot.profile","PRSP")
-S3method("plot.scatter","PRSP")
-S3method("plot.boxtraj","PRSP")
-S3method("plot.boxtrace","PRSP")
-S3method("plot.boxkm","PRSP")
