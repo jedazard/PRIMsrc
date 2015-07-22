@@ -75,7 +75,7 @@ o RELEASE 0.5.6
 - Added vignettes
 - Test build under R 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2015-07-21
+Date   : 2015-07-22
 o RELEASE 0.5.7
 - Compliance with new R CMD check, which now checks code usage via 'codetools'.
   Functions and packages from default packages other than base which are used in the package
@@ -83,6 +83,7 @@ o RELEASE 0.5.7
   Added new field 'Imports' in the package description file (DESCRIPTION) 
   to match the functions and packages newly imported via NAMESPACE.
 - Added Nelson-Aalen estimator as new peeling criterion option in the PRSP algorithm.
+- Removed S3-class generic method for all plot functions and renaming as plot_xxx.
 - Removed real dataset #2 for reasons of size and redundancy with real dataset #1.
 - Built and tested under R-devel (2015-07-20 r68705). 
 - Release update to GitHub.
