@@ -713,13 +713,11 @@ plot_profile <- function(x,
           ylim <- range(0, 1, profiles, na.rm=TRUE)
         } else {
           stop("Invalid CV criterion.\n")
-        }
-        if ((!is.null(main)) && (add.legend)) {
-          par(mfrow=c(1, 1), oma=c(0, 0, 4, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
-        } else if ((is.null(main)) && (!add.legend)) {
-          par(mfrow=c(1, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
+        }     
+        if (!is.null(main)) {
+            par(mfrow=c(1, 1), oma=c(0, 0, 3, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
         } else {
-          par(mfrow=c(1, 1), oma=c(0, 0, 1, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
+            par(mfrow=c(1, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
         }
         Lm <- object$cvfit$cv.maxsteps
         mean.profile <- apply(profiles, 2, mean, na.rm=TRUE)
@@ -741,16 +739,10 @@ plot_profile <- function(x,
             arrows(0:(Lm-1), mean.profile, 0:(Lm-1), mean.profile + se.profile, length=0.1, angle=90, code=2, col=col, lwd=lwd)
         }
         if (!is.null(main)) {
-          if (add.legend) {
-            title(main=main, xlab="", ylab="", line=3, outer=FALSE, xpd=TRUE)
-            legend("top", xpd=TRUE, inset=-0.1, legend=c("Sample Mean", "Std. Error"), pch=pch, col=col, lty=lty, lwd=lwd, cex=0.6, pt.cex=cex/2)
-          } else {
-            title(main=main, xlab="", ylab="", line=1, outer=FALSE, xpd=TRUE)
-          }
-        } else {
-          if (add.legend) {
+            mtext(text=main, cex=1, side=3, outer=TRUE)
+        }
+        if (add.legend) {
             legend("top", xpd=TRUE, inset=0, legend=c("Sample Mean", "Std. Error"), pch=pch, col=col, lty=lty, lwd=lwd, cex=0.6, pt.cex=cex/2)
-          }
         }
       }
 
@@ -847,12 +839,10 @@ plot_scatter <- function(x,
                             add.legend, pch, cex, col,
                             col.box, lty.box, lwd.box, ...) {
 
-        if ((!is.null(main)) && (add.legend)) {
-            par(mfrow=c(1, 1), oma=c(0, 0, 4, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
-        } else if ((is.null(main)) && (!add.legend)) {
-            par(mfrow=c(1, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
+        if (!is.null(main)) {
+            par(mfrow=c(1, 1), oma=c(0, 0, 3, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
         } else {
-            par(mfrow=c(1, 1), oma=c(0, 0, 1, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
+            par(mfrow=c(1, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
         }
 
         X <- object$x[,proj]
@@ -891,7 +881,7 @@ plot_scatter <- function(x,
             }
         }
         if (!is.null(main)) {
-            title(main=main, xlab="", ylab="", line=1, outer=FALSE, xpd=TRUE)
+            mtext(text=main, cex=1, side=3, outer=TRUE)
         }
         if (add.legend) {
             legend("topleft", xpd=TRUE, inset=0.01, legend=paste("Step: ", steps, sep=""), pch=pch, col=col, cex=cex)
@@ -1108,7 +1098,9 @@ plot_boxtraj <- function(x,
              ylab=expression(paste("1-C (", theta,")", sep="")))
         if (add.legend)
             legend("top", inset=0.01, legend=text.legend, cex=cex)
-        mtext(text=main, cex=1, side=3, outer=TRUE)
+        if (!is.null(main)) {
+            mtext(text=main, cex=1, side=3, outer=TRUE)
+        }
     }
 
     if (is.null(device)) {
@@ -1272,7 +1264,9 @@ plot_boxtrace <- function(x,
             legend("bottom", inset=0.01, legend=text.legend, cex=cex)
         mtext(text=xlab, cex=cex, side=1, line=1, outer=FALSE)
         mtext(text="Covariates Used", cex=cex, side=2, line=7, outer=FALSE)
-        mtext(text=main, cex=1, side=3, outer=TRUE)
+        if (!is.null(main)) {
+            mtext(text=main, cex=1, side=3, outer=TRUE)
+        }
     }
 
     if (is.null(device)) {
@@ -1420,7 +1414,7 @@ plot_boxkm <- function(x,
         }
 
         if (!is.null(main)) {
-            mtext(text=main, cex=cex, side=3, outer=TRUE)
+            mtext(text=main, cex=1, side=3, outer=TRUE)
         }
     }
 
