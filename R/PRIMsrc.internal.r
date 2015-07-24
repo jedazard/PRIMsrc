@@ -1051,7 +1051,7 @@ peel.box <- function(traindata, traintime, trainstatus,
   l <- 0
   lhrlj <- matrix(NA, ncut, p)
   lrtlj <- matrix(NA, ncut, p)
-  naslj <- matrix(NA, ncut, p)
+  chslj <- matrix(NA, ncut, p)
 
   while ((boxmass >= beta) & (l*switch < L) & (continue)) {
     l <- l + 1
@@ -1084,13 +1084,13 @@ peel.box <- function(traindata, traintime, trainstatus,
           } else {
             vmd[j] <- (lrtlj[l,j] - lrtlj[l-1,j]) / (boxmass - mean(boxes1j))
           }
-        } else if (peelcriterion == "na") {
+        } else if (peelcriterion == "ch") {
           fit <- survfit(formula=Surv(traintime, trainstatus) ~ 1, subset=(boxes1j == 1))
-          naslj[l,j] <- sum(cumsum(fit$n.event/fit$n.risk))
+          chslj[l,j] <- sum(cumsum(fit$n.event/fit$n.risk))
           if (l == 1) {
-            vmd[j] <- (naslj[l,j] - 0) / (1 - mean(boxes1j))
+            vmd[j] <- (chslj[l,j] - 0) / (1 - mean(boxes1j))
           } else {
-            vmd[j] <- (naslj[l,j] - naslj[l-1,j]) / (boxmass - mean(boxes1j))
+            vmd[j] <- (chslj[l,j] - chslj[l-1,j]) / (boxmass - mean(boxes1j))
           }
         } else {
           stop("Invalid peeling criterion \n")
