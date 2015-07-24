@@ -54,7 +54,9 @@
         \item{\code{beta}} = minimum support size resulting from the peeling sequence. Defaults to 0.05.
         \item{\code{minn}} = minimum number of observation in a box. Defaults to 10.
         \item{\code{L}} = fixed peeling length. Defaults to \code{NULL}.
-        \item{\code{peelcriterion}} in \{"hr" for Log-Hazard Ratio (LHR), "lr" for Log-Rank Test (LRT), "na" for Nelson-Aalen Summary(NAS)\}. 
+        \item{\code{peelcriterion}} in \{"hr" for Log-Hazard Ratio (LHR), 
+                                         "lr" for Log-Rank Test (LRT), 
+                                         "ch" for Cumulative Hazard Summary (CHS)\}. 
                     Defaults to "lr".
     }
     Note that the parameters in \code{arg} come as a string of charaters between double quotes, 

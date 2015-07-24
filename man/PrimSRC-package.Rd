@@ -66,30 +66,30 @@
             enabling scaling-up to the number of specified CPU cores.\cr
 
       \item{END-USER PLOTTING FUNCTIONS FOR MODEL VALIDATION AND VISUALIZATION OF RESULTS} \cr
-      \code{\link[PRIMsrc]{plot.profile}}
+      \code{\link[PRIMsrc]{plot_profile}}
       \bold{Visualization for Model Selection/Validation} \cr
-            S3 generic function for plotting the cross-validated profiles of a \code{PRSP} object.
+            Function for plotting the cross-validated profiles of a \code{PRSP} object.
             It uses the user's choice of statistics among the Log Hazard Ratio (LHR), Log-Rank Test (LRT) or Concordance Error Rate (CER) 
             as a function of the model tuning parameter, that is, the optimal number of peeling steps of the peeling sequence 
             (inner loop of our PRSP algorithm).\cr
-      \code{\link[PRIMsrc]{plot.scatter}}
+      \code{\link[PRIMsrc]{plot_scatter}}
       \bold{2D Visualization of Data Scatter and Box Vertices} \cr
-            S3 generic function for plotting the cross-validated box vertices of a \code{PRSP} object.
+            Function for plotting the cross-validated box vertices of a \code{PRSP} object.
             Plot the data scatter and cross-validated box vertices in a plane at a given peeling step of the peeling sequence 
             (inner loop of our PRSP algorithm).\cr
-      \code{\link[PRIMsrc]{plot.boxtraj}}
+      \code{\link[PRIMsrc]{plot_boxtraj}}
       \bold{Visualization of Peeling Trajectories/Profiles} \cr
-            S3 generic function for plotting the cross-validated peeling trajectories/profiles of a \code{PRSP} object.
+            Function for plotting the cross-validated peeling trajectories/profiles of a \code{PRSP} object.
             Applies to the user-specified covariates among the pre-selected ones and all other statistical quantities of interest
             at each iteration of the peeling sequence (inner loop of our PRSP algorithm). \cr
-      \code{\link[PRIMsrc]{plot.boxtrace}}
+      \code{\link[PRIMsrc]{plot_boxtrace}}
       \bold{Visualization of Covariates Traces} \cr
-            S3 generic function for plotting the cross-validated covariates traces of a \code{PRSP} object.
+            Function for plotting the cross-validated covariates traces of a \code{PRSP} object.
             Plot the cross-validated modal trace curves of covariate importance and covariate usage of the user-specified 
             covariates among the pre-selected ones at each iteration of the peeling sequence (inner loop of our PRSP algorithm). \cr
-      \code{\link[PRIMsrc]{plot.boxkm}}
+      \code{\link[PRIMsrc]{plot_boxkm}}
       \bold{Visualization of Survival Distributions} \cr
-            S3 generic function for plotting the cross-validated survival distributions of a \code{PRSP} object. 
+            Function for plotting the cross-validated survival distributions of a \code{PRSP} object. 
             Plot the cross-validated Kaplan-Meir estimates of survival distributions for the highest risk (inbox) versus
             lower-risk (outbox) groups of samples at each iteration of the peeling sequence (inner loop of our PRSP algorithm). \cr
 
