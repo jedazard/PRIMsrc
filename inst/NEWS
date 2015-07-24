@@ -75,7 +75,7 @@ o RELEASE 0.5.6
 - Added vignettes
 - Test build under R 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2015-07-23
+Date   : 2015-07-24
 o RELEASE 0.5.7
 - Compliance with new R CMD check, which now checks code usage via 'codetools'.
   Functions and packages from default packages other than base which are used in the package
