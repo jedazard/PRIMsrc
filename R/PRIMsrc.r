@@ -85,7 +85,6 @@ sbh <- function(dataset,
     }
   } else {
     cvcriterion <- NULL
-    cpv <- FALSE
     B <- 1
     K <- 1
     parallel <- FALSE
@@ -94,7 +93,7 @@ sbh <- function(dataset,
   }
   cat("Cross-validation technique: ", cvtype, "\n")
   cat("Cross-validation criterion: ", cvcriterion, "\n")
-  cat("Cross-validated p-values:", cpv, "\n")
+  cat("Computation of permutation p-values:", cpv, "\n")
   cat("Peeling criterion: ", peelcriterion, "\n")
   cat("Parallelization:", parallel, "\n")
   cat("\n")
