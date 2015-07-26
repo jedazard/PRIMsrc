@@ -36,8 +36,8 @@
     Positive \code{integer} scalar of the number of permutations for the computation of cross-validated p-values. Defaults to 1000.
   }
   \item{cpv}{
-    \code{logical} scalar. Flag for computation of cross-validated p-values. 
-    Defaults to \code{FALSE}. Automatically reset to \code{FALSE} if cvtype="none".
+    \code{logical} scalar. Flag for computation of permutation p-values. 
+    Defaults to \code{FALSE}.
   }
   \item{cvtype}{
     \code{Character} \code{vector} describing the cross-validation technique in \{"combined", "averaged", "none"\}.
@@ -149,8 +149,8 @@
     \item{status}{\code{numeric} \code{vector} of observed event indicator in \{1,0\}.}
     \item{B}{positive \code{integer} of the number of replications used in the cross-validation procedure.}
     \item{K}{positive \code{integer} of the number of folds used in the cross-validation procedure.}
-    \item{A}{positive \code{integer} of the number of permutations used for the computation of cross-validated p-values.}
-    \item{cpv}{\code{logical} scalar of returned flag of optional computation of cross-validated p-values.}
+    \item{A}{positive \code{integer} of the number of permutations used for the computation of permutation p-values.}
+    \item{cpv}{\code{logical} scalar of returned flag of optional computation of permutation p-values.}
     \item{cvtype}{\code{character} \code{vector} of the cross-validation technique used.}
     \item{cvcriterion}{\code{character} \code{vector} of cross-validation optimization criterion used.}
     \item{varsign}{\code{numeric} \code{vector} in \{-1,+1\} of directions of peeling for all pre-selected covariates.} 
@@ -167,7 +167,7 @@
             \item{cv.boxind}: \code{logical} \code{matrix} in {\code{TRUE}, \code{FALSE}} of sample box membership indicator (columns) by peeling steps (rows)
             \item{cv.rules}: \code{data.frame} of decision rules on the covariate (columns) by peeling steps (rows)
             \item{cv.stats}: \code{numeric} \code{matrix} of box quantities of interest (columns) by peeling steps (rows)
-            \item{cv.pval}: \code{numeric} \code{vector} of cross-validated log-rank p-values of sepraration of survival distributions}
+            \item{cv.pval}: \code{numeric} \code{vector} of log-rank permutation p-values of sepraration of survival distributions}
         }
     \item{cvprofiles}{\code{List} of (\eqn{B}) of \code{numeric} \code{vectors}, one for each replicate, 
         of the cross-validated statistics used in the optimization criterion (one set by user) as a function of the number of peeling steps.}
@@ -258,7 +258,7 @@ library("PRIMsrc")
 # Peeling criterion = LRT
 # Optimization criterion = LRT
 # Without parallelization
-# Without computation of cross-validated p-values
+# Without computation of permutation p-values
 #===================================================
 CVCOMBREP.synt1 <- sbh(dataset = Synthetic.1, 
                        cvtype = "combined", cvcriterion = "lrt",
@@ -345,7 +345,7 @@ round(CVCOMBREP.synt1$cvfit$cv.stats$mean,2)
     # Peeling criterion = LRT
     # Optimization criterion = LRT
     # With parallelization
-    # With computation of cross-validated p-values
+    # With computation of permutation p-values
     #===================================================
     CVCOMBREP.synt1 <- sbh(dataset = Synthetic.1, 
                            cvtype = "combined", cvcriterion = "lrt",
