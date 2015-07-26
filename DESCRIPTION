@@ -17,8 +17,7 @@ Authors@R: c(person("Jean-Eudes", "Dazard",
 	               email = "ahs4@case.edu"))
 Author: Jean-Eudes Dazard [aut, cre], Michael Choe [ctb], Michael LeBlanc [ctb], Alberto Santana [ctb]
 Maintainer: Jean-Eudes Dazard <jxd101@case.edu>
-Description: Performs Bump Hunting by Patient Rule Induction Method
-             in Survival, Regression and Classification settings.
+Description: Performs a unified treatment of Bump Hunting by Patient Rule Induction Method (PRIM) in Survival, Regression and Classification settings (SRC). The current version is a development release that only implements the case of a survival response. New features will be added soon as they are available.
 Depends: R (>= 3.0.2), parallel, survival, Hmisc, glmnet, MASS
 Imports: graphics, grDevices, stats
 URL: https://github.com/jedazard/PRIMsrc
