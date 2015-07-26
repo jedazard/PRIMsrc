@@ -16,8 +16,8 @@
 }
 
 \details{
-    The current version is a developmental release that only implements the case of a survival response.
-    At this point, it is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our 
+    The current version is a development release that only implements the case of a survival response.
+    At this point, survival bump hunting is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our 
     Patient Recursive Survival Peeling (PRSP) algorithm. New features will be added soon as they are available. 
     The main function relies on an internal variable pre-selection procedure before the PRSP algorithm is run. 
     At this point, this is done either by regular Cox-regression or cross-validated regularized Cox-regression.

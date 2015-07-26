@@ -45,7 +45,7 @@
   }
   \item{cvcriterion}{
     \code{character} \code{vector} describing the cross-validation optimization criterion in \{"lrt", "cer", "lhr"\}.
-    If \code{NULL}, defaults to "lrt". Automatically reset to \code{NULL} if cvtype="none".
+    If \code{NULL}, defaults to "lrt". Automatically reset to "none" if \code{cvtype} is set to "none".
   }
   \item{arg}{
     \code{Character} \code{vector} describing the PRSP parameters:
