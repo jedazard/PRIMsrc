@@ -84,7 +84,7 @@ sbh <- function(dataset,
         cat("Requested single ", K, "-fold cross-validation with no replications \n", sep="")
     }
   } else {
-    cvcriterion <- NULL
+    cvcriterion <- "none"
     B <- 1
     K <- 1
     parallel <- FALSE
