@@ -158,18 +158,25 @@
 #===================================================
 library("PRIMsrc")
 
-\dontrun{
-    #=================================================================================
-    # Simulated dataset #1 (n=250, p=3)
-    # Replicated Combined Cross-Validation (RCCV)
-    # Peeling criterion = LRT
-    # Optimization criterion = LRT
-    #=================================================================================
-    plot_boxkm(x = CVCOMBREP.synt1,
+#=================================================================================
+# Simulated dataset #1 (n=250, p=3)
+# Replicated Combined Cross-Validation (RCCV)
+# Peeling criterion = LRT
+# Optimization criterion = LRT
+#=================================================================================
+CVCOMBREP.synt1 <- sbh(dataset = Synthetic.1, 
+                       cvtype = "combined", cvcriterion = "lrt",
+                       B = 1, K = 5, cpv = FALSE, probval = 0.5, 
+                       arg = "beta=0.05,
+                              alpha=0.1,
+                              minn=10,
+                              L=NULL,
+                              peelcriterion=\"lr\"",
+                       parallel = FALSE, conf = NULL, seed = 123)
+
+plot_boxkm(x = CVCOMBREP.synt1,
                main = paste("RCCV probability curves for model #1", sep=""),
                xlab = "Time", ylab = "Probability",
                device = NULL, file = "Survival Plots", path=getwd(),
                horizontal = TRUE, width = 11.5, height = 8.5)
-}
-
 }

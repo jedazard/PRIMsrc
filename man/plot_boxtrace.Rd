@@ -181,21 +181,28 @@
 #===================================================
 library("PRIMsrc")
 
-\dontrun{
-    #=================================================================================
-    # Simulated dataset #1 (n=250, p=3)
-    # Replicated Combined Cross-Validation (RCCV)
-    # Peeling criterion = LRT
-    # Optimization criterion = LRT
-    #=================================================================================
-    plot_boxtrace(x = CVCOMBREP.synt1,
-                  main = paste("RCCV trace plots for model #1", sep=""),
-                  xlab = "Box Mass", ylab = "Covariate Range (centered)",
-                  toplot = CVCOMBREP.synt1$used,
-                  center = TRUE, scale = FALSE,
-                  device = NULL, file = "Covariate Trace Plots", path=getwd(),
-                  horizontal = FALSE, width = 8.5, height = 8.5)
-}
+#=================================================================================
+# Simulated dataset #1 (n=250, p=3)
+# Replicated Combined Cross-Validation (RCCV)
+# Peeling criterion = LRT
+# Optimization criterion = LRT
+#=================================================================================
+CVCOMBREP.synt1 <- sbh(dataset = Synthetic.1, 
+                       cvtype = "combined", cvcriterion = "lrt",
+                       B = 1, K = 5, cpv = FALSE, probval = 0.5, 
+                       arg = "beta=0.05,
+                              alpha=0.1,
+                              minn=10,
+                              L=NULL,
+                              peelcriterion=\"lr\"",
+                       parallel = FALSE, conf = NULL, seed = 123)
 
+plot_boxtrace(x = CVCOMBREP.synt1,
+              main = paste("RCCV trace plots for model #1", sep=""),
+              xlab = "Box Mass", ylab = "Covariate Range (centered)",
+              toplot = CVCOMBREP.synt1$used,
+              center = TRUE, scale = FALSE,
+              device = NULL, file = "Covariate Trace Plots", path=getwd(),
+              horizontal = FALSE, width = 8.5, height = 8.5)
 }
 

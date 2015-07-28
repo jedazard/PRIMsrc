@@ -151,20 +151,27 @@
 #===================================================
 library("PRIMsrc")
 
-\dontrun{
-    #=================================================================================
-    # Simulated dataset #1 (n=250, p=3)
-    # Replicated Combined Cross-Validation (RCCV)
-    # Peeling criterion = LRT
-    # Optimization criterion = LRT
-    #=================================================================================
-    plot_profile(x = CVCOMBREP.synt1, 
-                 main = "RCCV tuning profiles for model #1",
-                 xlab = "Peeling Steps", ylab = "Mean Profiles",
-                 pch=20, col="black", lty=1, lwd=2, cex=2,
-                 add.sd = TRUE, add.legend = TRUE, add.profiles = TRUE,
-                 device = NULL, file = "Profile Plot", path=getwd(),
-                 horizontal = FALSE, width = 8.5, height = 5)
-}
+#=================================================================================
+# Simulated dataset #1 (n=250, p=3)
+# Replicated Combined Cross-Validation (RCCV)
+# Peeling criterion = LRT
+# Optimization criterion = LRT
+#=================================================================================
+CVCOMBREP.synt1 <- sbh(dataset = Synthetic.1, 
+                       cvtype = "combined", cvcriterion = "lrt",
+                       B = 1, K = 5, cpv = FALSE, probval = 0.5, 
+                       arg = "beta=0.05,
+                              alpha=0.1,
+                              minn=10,
+                              L=NULL,
+                              peelcriterion=\"lr\"",
+                       parallel = FALSE, conf = NULL, seed = 123)
 
+plot_profile(x = CVCOMBREP.synt1, 
+             main = "RCCV tuning profiles for model #1",
+             xlab = "Peeling Steps", ylab = "Mean Profiles",
+             pch=20, col="black", lty=1, lwd=2, cex=2,
+             add.sd = TRUE, add.legend = TRUE, add.profiles = TRUE,
+             device = NULL, file = "Profile Plot", path=getwd(),
+             horizontal = FALSE, width = 8.5, height = 5)
 }
