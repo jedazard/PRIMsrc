@@ -1,26 +1,57 @@
-=======
-PRIMsrc
-=======
+============
+Description:
+============
 Performs a unified treatment of Bump Hunting by Patient Rule Induction Method (PRIM) in Survival, Regression and Classification settings (SRC). The method generates decision rules delineating a region in the predictor space, where the response is larger than its average over the entire space. The region is shaped as a hyperdimensional box or hyperrectangle that is not necessarily contiguous. Assumptions are that the multivariate input covariates can be discrete or continuous and the univariate response variable can be discrete (Classification), continuous (Regression) or a time-to event, possibly censored (Survival). It is intended to handle low and high-dimensional multivariate datasets, including the situation where the number of covariates exceeds or dominates that of samples (p > n or p >> n paradigm).
 
-The current version is a development release that only implements the case of a survival response. At this point, the survival bump hunting procedure is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our Patient Recursive Survival Peeling (PRSP) algorithm. New features will be added soon as they are available. The main function relies on an internal variable pre-selection procedure before the PRSP algorithm is run. At this point, this is done either by regular Cox-regression (from the R package 'survival') or cross-validated Elasticnet Regularized Cox-Regression (from the R package 'glmnet'), depending on whether the number of covariates is less (p <= n) or greater (p > n) than the number of samples, respectively.
+=========
+Branches:
+=========
+The master branch hosts the current development release of the survival bump hunting procedure that implements the case of a survival response. At this point, this version is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our Patient Recursive Survival Peeling (PRSP) algorithm. New features will be added soon as they are available.
 
-See also below the package news with the R command: PRIMsrc.news().
+	The main function relies on an internal variable pre-selection procedure before the PRSP algorithm is run. At this point, this is done either by regular Cox-regression (from the R package 'survival') or cross-validated Elasticnet Regularized Cox-Regression (from the R package 'glmnet'), depending on whether the number of covariates is less (p <= n) or greater (p > n) than the number of samples, respectively.
+	
+	In this version, the bump hunting procedure and the cross-validation procedure that control the model size and model peeling length are carried out by a single main function 'sbh()' that generates an S3-class object 'PRSP'.  
 
+
+The first branch hosts an alternative development version that, on top of the above master branch, offers an additional internal variable pre-selection procedure before the PRSP algorithm is run. Specifically, it includes a univariate bump hunting variable selection procedure, where model size and model peeling length are simultaneously optimized by cross-validation to minimize the cross-validation criterion of choice: CER, LRT, or LHR (see companion paper below for details). 
+
+	In addition, this version of the code is more modular. Here, the cross-validation procedure is carried out separately of the main function 'sbh()' in an independent function called 'cv.sbh()'. This allows a better control on the user-end and improved maintenance on the back-end. In the process, two S3-class objects are created instead of one: an additional S3-class object 'CV' is output by the cross-validation function cv.sbh() and used as input in the main function 'sbh()'. 
+
+
+The second branch will host the undirected peeling search version by Patient Rule Induction Method (PRIM) that will allow the unified treatment of bump hunting for every type of common response: Survival, Regression and Classification (SRC).
+
+========
+License:
+========
 PRIMsrc is Open Source / Free Software, and is freely available under the GNU General Public License, version 3.
 
-==========
-References
-==========
+===========
+References:
+===========
+CRAN release:
+https://cran.r-project.org/web/packages/PRIMsrc/index.html
+
 The companion papers (accepted and submitted for publication) can be accessed here:
 
-ASA-IMS JSM Proceedings (2014): 
+- ASA-IMS JSM Proceedings (2014): 
+
 https://www.amstat.org/membersonly/proceedings/2014/data/assets/pdf/312982_90342.pdf
 
-Archives arXiv:
+- Archives arXiv:
+
 http://arxiv.org/abs/1501.03856.
 
-See also below on how to cite the package with the R command: citation("PRIMsrc").
+- Statistical Analysis and Data Mining. The ASA Data Science Journal (to appear):
+
+http://onlinelibrary.wiley.com/journal/10.1002/(ISSN)1932-1872
+
+=============
+Requirements:
+=============
+PRIMsrc 0.5.7 requires R-3.0.2 (2013-09-25).
+
+It was built and tested under R-devel (2015-07-20 r68705). Installation has been tested on Windows, Linux and OSX platforms. See for isntance the 'CRAN Package Check Results' here:
+https://cran.r-project.org/web/checks/check_results_PRIMsrc.html
 
 =========================
 Documentation and Manual: 
@@ -30,10 +61,6 @@ All the codes are in the R folder and a manual (PRIMsrc.pdf) details the end-use
 =============
 Installation: 
 =============
-PRIMsrc 0.5.7 requires R-3.0.2 (2013-09-25).
-It was built and tested under R-devel (2015-07-20 r68705).
-Installation has been tested on Windows, Linux and OSX platforms.
-
 To install PRIMsrc from CRAN, simply download and install the current version (0.5.7) from the CRAN repository:
 
 install.packages("PRIMsrc")
@@ -44,14 +71,18 @@ library(devtools)
 
 devtools::install_github("jedazard/PRIMsrc")
 
-=============
+======
 Usage: 
-=============
+======
 To load the PRIMsrc library in an R session and start using it:
 
 library("PRIMsrc")
 
+Check the package news with the R command:
+
 PRIMsrc.news()
+
+Check on how to cite the package with the R command:
 
 citation("PRIMsrc")
 
