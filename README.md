@@ -25,6 +25,11 @@ License:
 ========
 PRIMsrc is Open Source / Free Software, and is freely available under the GNU General Public License, version 3.
 
+=========================
+Documentation and Manual: 
+=========================
+All the codes are in the R folder and a manual (PRIMsrc.pdf) details the end-user functions. At this stage and for simplicity, there is a unique end-user main function for fitting a cross-validated Survival Bump Hunting model (sbh(...)). There are 5 end-user plotting functions (plot_****(...)) along with two S3 generic functions: summary(...) and predict(...). Available are also 5 synthetic datasets and 1 real dataset including altogether low and high-dimensional situations (for p < n, p > n and p >> n cases). See the "PRIMsrc-package" introduction section of the manual for more details and examples.
+
 ===========
 References:
 ===========
@@ -54,11 +59,6 @@ PRIMsrc 0.5.7 requires R-3.0.2 (2013-09-25). It was built and tested under R-dev
 Installation has been tested on Windows, Linux and OSX platforms. See for instance the 'CRAN Package Check Results' here:
 
 https://cran.r-project.org/web/checks/check_results_PRIMsrc.html
-
-=========================
-Documentation and Manual: 
-=========================
-All the codes are in the R folder and a manual (PRIMsrc.pdf) details the end-user functions. At this stage and for simplicity, there is a unique end-user main function for fitting a cross-validated Survival Bump Hunting model (sbh(...)). There are 5 end-user plotting functions (plot_****(...)) along with two S3 generic functions: summary(...) and predict(...). Available are also 5 synthetic datasets and 1 real dataset including altogether low and high-dimensional situations (for p < n, p > n and p >> n cases). See the "PRIMsrc-package" introduction section of the manual for more details and examples.
 
 =============
 Installation: 
