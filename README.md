@@ -54,7 +54,7 @@ http://onlinelibrary.wiley.com/journal/10.1002/(ISSN)1932-1872
 =============
 Requirements:
 =============
-PRIMsrc 0.5.7 requires R-3.0.2 (2013-09-25). It was built and tested under R-devel (2015-07-20 r68705). 
+PRIMsrc 0.5.7 requires R-3.0.2 (2013-09-25). It was built and tested under R-devel (2015-07-20 r68705) and Travis CI. 
 
 Installation has been tested on Windows, Linux and OSX platforms. See for instance the 'CRAN Package Check Results' here:
 
