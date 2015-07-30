@@ -10,12 +10,12 @@ Branches:
 
 	The main function relies on an internal variable pre-selection procedure before the PRSP algorithm is run. At this point, this is done either by regular Cox-regression (from the R package 'survival') or cross-validated Elasticnet Regularized Cox-Regression (from the R package 'glmnet'), depending on whether the number of covariates is less (p <= n) or greater (p > n) than the number of samples, respectively.
 	
-	In this version, the bump hunting procedure and the cross-validation procedure that control the model size and model peeling length are carried out by a single main function 'sbh()' that generates an S3-class object 'PRSP'.  
+	In this version, the bump hunting procedure and the cross-validation procedures that control the model size and model peeling length are carried out by two separate procedures within a single main function 'sbh()' that generates an S3-class object 'PRSP'.  
 
 
 - The first branch (devel) hosts an alternative development version that, on top of the above master branch, offers an additional internal variable pre-selection procedure before the PRSP algorithm is run. Specifically, it includes a univariate bump hunting variable selection procedure, where model size and model peeling length are simultaneously optimized by cross-validation to minimize the cross-validation criterion of choice: CER, LRT, or LHR (see companion paper below for details). 
 
-	In addition, this version of the code is more modular. Here, the cross-validation procedure is carried out separately of the main function 'sbh()' in an independent function called 'cv.sbh()'. This allows a better control on the user-end and improved maintenance on the back-end. In the process, two S3-class objects are created instead of one: an additional S3-class object 'CV' is output by the cross-validation function cv.sbh() and used as input in the main function 'sbh()'. 
+	This version of the code is also more modular. Here, the cross-validation procedures that control the model size and model peeling length are carried out simultaneously in a single cross-validation function called 'cv.sbh()'. In addition, this cross-validation procedure is carried out separately of the main function 'sbh()'. Altogether, this allows a more rigorous treatment of model validation, a better control on the user-end and an improvement of the maintenance on the back-end. In the process, two S3-class objects are created instead of one: an additional S3-class object 'CV' is output by the cross-validation function cv.sbh() and used as input in the main function 'sbh()'. 
 
 
 - The second branch (unified) will host the undirected peeling search version by Patient Rule Induction Method (PRIM) that will allow the unified treatment of bump hunting for every type of common response: Survival, Regression and Classification (SRC).
