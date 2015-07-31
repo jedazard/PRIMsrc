@@ -6,19 +6,19 @@ Performs a unified treatment of Bump Hunting by Patient Rule Induction Method (P
 =========
 Branches:
 =========
-- The default branch (master) hosts the current development release of the survival bump hunting procedure that implements the case of a survival response. At this point, this version is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our Patient Recursive Survival Peeling (PRSP) algorithm. New features will be added soon as they are available.
+- The default branch (master) hosts the current development release (version 0.5.7) of the survival bump hunting procedure that implements the case of a survival response. At this point, this version is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our Patient Recursive Survival Peeling (PRSP) algorithm. New features will be added soon as they are available.
 
 	The main function relies on an internal variable pre-selection procedure before the PRSP algorithm is run. At this point, this is done either by regular Cox-regression (from the R package 'survival') or cross-validated Elasticnet Regularized Cox-Regression (from the R package 'glmnet'), depending on whether the number of covariates is less (p <= n) or greater (p > n) than the number of samples, respectively.
 	
 	In this version, the bump hunting procedure and the cross-validation procedures that control the model size and model peeling length are carried out by two separate procedures within a single main function 'sbh()' that generates an S3-class object 'PRSP'.  
 
 
-- The first branch (devel) hosts a development version of the code that is more rigorous and modular. Here, an alternative single internal cross-validation procedure is carried out in a single cross-validation function called 'cv.sbh()' to simultaneously control the model size and model peeling length before the PRSP algorithm is run. Specifically, it includes a univariate bump hunting variable selection procedure, where model size and model peeling length are simultaneously optimized by cross-validation with respect to the cross-validation criterion of choice: CER, LRT, or LHR (see companion paper below for details).
+- The first branch (devel) hosts a development version of the code (version 0.6.0) that is more rigorous and modular. Here, an alternative single internal cross-validation procedure is carried out in a single cross-validation function called 'cv.sbh()' to simultaneously control the model size and model peeling length before the PRSP algorithm is run. Specifically, it includes a univariate bump hunting variable selection procedure, where model size and model peeling length are simultaneously optimized by cross-validation with respect to the cross-validation criterion of choice: CER, LRT, or LHR (see companion paper below for details).
 
 	In addition, this cross-validation procedure is carried out separately of the main function 'sbh()'. Altogether, this allows a more rigorous treatment of model validation, a better control on the user-end and an improvement of the maintenance on the back-end. In the process, two S3-class objects are created instead of one: an additional S3-class object 'CV' is output by the cross-validation function cv.sbh() and used as input in the main function 'sbh()'. 
 
 
-- The second branch (unified) will host the undirected peeling search version by Patient Rule Induction Method (PRIM) that will allow the unified treatment of bump hunting for every type of common response: Survival, Regression and Classification (SRC).
+- The second branch (unified) will host the future complete version of the code (version 1.0.0), including undirected peeling search by Patient Rule Induction Method (PRIM) that will allow the unified treatment of bump hunting for every type of common response: Survival, Regression and Classification (SRC).
 
 ========
 License:
