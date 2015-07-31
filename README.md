@@ -56,7 +56,7 @@ Requirements:
 =============
 PRIMsrc 0.5.7 requires R-3.0.2 (2013-09-25). It was built and tested under R-devel (2015-07-20 r68705) and Travis CI. 
 
-Installation has been tested on Windows, Linux and OSX platforms. See for instance the 'CRAN Package Check Results' here:
+Installation has been tested on Windows, Linux, OSX and Solaris platforms. See for instance the 'CRAN Package Check Results' here:
 
 https://cran.r-project.org/web/checks/check_results_PRIMsrc.html
 
