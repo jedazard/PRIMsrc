@@ -83,10 +83,9 @@
 
 \details{
   The function relies on an internal variable pre-selection procedure before the PRSP algorithm is run. At this point,
-  this is done by regular Cox-regression (from the R package \pkg{survival}) or cross-validated Elasticnet Regularized Cox-Regression 
-  (from the R package \pkg{glmnet}), depending on whether the number of covariates is less (\eqn{p \le n}) or greater (\eqn{p > n}) 
-  than the number of samples, respectively. In the latter case, both Elasticnet mixing (\code{alpha}) and shrinkage (\code{lambda}) parameters 
-  are simultaneously estimated by \code{glmnet::cv.glmnet} function internal cross-validation.
+  this is done by cross-validated Elasticnet Regularized Cox-Regression (from the R package \pkg{glmnet}). 
+  Both Elasticnet mixing (\code{alpha}) and shrinkage (\code{lambda}) parameters are simultaneously estimated 
+  by \code{glmnet::cv.glmnet} function internal cross-validation.
   
   Also, at this point, the main function \code{sbh} performs the search of the \emph{first} box of the recursive coverage (outer) loop of our 
   Patient Recursive Survival Peeling (PRSP) algorithm.
@@ -248,8 +247,11 @@ library("PRIMsrc")
     # Demo with a synthetic dataset
     # Use help for descriptions
     #===================================================
-    data("Synthetic.1", package="PRIMsrc")
+    data("Synthetic.1", "Synthetic.5", "Real.1", "Real.2", package="PRIMsrc")
     ?Synthetic.1
+    ?Synthetic.5
+    ?Real.1
+    ?Real.2
 }
 
 #===================================================
@@ -285,11 +287,11 @@ round(CVCOMBREP.synt1$cvfit$cv.stats$mean,2)
 
 \dontrun{
     #===================================================
-    # Examples of parallelization below with 
-    # a SOCKET or MPI cluster configuration
+    # Examples of parallel backend parametrization 
     #===================================================
-    # 1- WINDOWS multicores PC with SOCKET communication
-    #    With a 2-Quad (8-CPUs) PC
+    # Example #1 - 1-Quad (4-core double threaded) PC 
+    # Running WINDOWS
+    # With SOCKET communication
     #===================================================
     if (.Platform$OS.type == "windows") {
         cpus <- detectCores()
@@ -301,11 +303,10 @@ round(CVCOMBREP.synt1$cvfit$cv.stats$mean,2)
                      "outfile" = "")
     }
     #===================================================
-    # 2- LINUX multinodes cluster with SOCKET communication
-    #    with 4-nodes (32-CPUs) cluster
-    #    with 1 masternode and 3 workernodes
-    #    All hosts run identical setups
-    #    Same number of core CPUs (8) per node
+    # Example #2 - 1 master node + 3 worker nodes cluster
+    # All nodes equipped with identical setups and multicores
+    # Running LINUX
+    # With SOCKET communication
     #===================================================
     if (.Platform$OS.type == "unix") {
         masterhost <- Sys.getenv("HOSTNAME")
@@ -321,9 +322,11 @@ round(CVCOMBREP.synt1$cvfit$cv.stats$mean,2)
                      "outfile" = "")
     }
     #===================================================
-    # 3- LINUX multinodes cluster with MPI communication
-    #    Here, a file named ".nodes" (e.g. in the home directory)
-    #    must contain the list of nodes of the cluster
+    # Example #3 - Multinode multicore per node cluster
+    # Running LINUX 
+    # with MPI communication
+    # Here, a file named ".nodes" (e.g. in the home directory)
+    # contains the list of nodes of the cluster
     #===================================================
     if (.Platform$OS.type == "unix") {
         hosts <- scan(file=paste(Sys.getenv("HOME"), "/.nodes", sep=""), 

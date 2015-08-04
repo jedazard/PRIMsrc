@@ -20,7 +20,7 @@
     At this point, survival bump hunting is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our 
     Patient Recursive Survival Peeling (PRSP) algorithm. New features will be added soon as they are available. 
     The main function relies on an internal variable pre-selection procedure before the PRSP algorithm is run. 
-    At this point, this is done either by regular Cox-regression or cross-validated regularized Cox-regression.
+    At this point, this is done by cross-validated Elastic-Net regularized Cox-regression.
     
     The following describes only the end-user functions that are needed to run a complete procedure.
     The other internal subroutines are briefly documented in the manual, but are not to be called by the end-user at any time. 
@@ -122,6 +122,16 @@
             in this dataset example for simplification. Variables included history of Injection Drug Use ("IDU") at enrollment,
             African American ethnicity ("Race"), age ("Age"), and baseline CD4 count ("CD4"). The question in this dataset example 
             was whether it is possible to achieve a prognostication of patients for AIDS and HAART.\cr
+
+      \code{\link[PRIMsrc]{Real.2}}
+      \bold{Large Gene Expression Dataset} \cr
+            Publicly available breast cancer gene expression profiling dataset from the Uppsala cohort study that enrolled 249 women.
+            It is entitled: "Genetic Reclassification of Histologic Grade Delineates New Clinical Subtypes of Breast Cancer".   
+            The goal of the study was to provide a more objective measure of grade with prognostic benefit for patients with 
+            moderately differentiated grade II (G2) tumors. To that end, expression profiles of primary invasive breast tumors 
+            were analyzed on microarrays to find a gene expression signature capable of discerning tumors of grade I (G1) and grade III (G3) histology.
+            In this dataset, only the Uppsala cohort and only the gene expression data was included although other clinical covariates are available as well.
+            It represents a situation where the number of covariates dominates the number of complete observations, or \eqn{p >> n} case. \cr
     }
     Known Bugs/Problems : None at this time.
 }
