@@ -8,7 +8,7 @@ Branches:
 =========
 - The default branch (master) hosts the current development release (version 0.5.8) of the survival bump hunting procedure that implements the case of a survival response. At this point, this version is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our Patient Recursive Survival Peeling (PRSP) algorithm. New features will be added soon as they are available.
 
-	The main function relies on an internal variable pre-selection procedure before the PRSP algorithm is run. At this point, this is done by an optioal cross-validated Elasticnet Regularized Cox-Regression (from the R package 'glmnet').
+	The main function relies on an internal variable pre-selection procedure before the PRSP algorithm is run. At this point, this is done by an optional cross-validated Elasticnet Regularized Cox-Regression (from the R package 'glmnet').
 	
 	In this version, the bump hunting procedure and the cross-validation procedures that control the model size and model peeling length are carried out by two separate procedures within a single main function 'sbh()' that generates an S3-class object 'PRSP'.  
 
