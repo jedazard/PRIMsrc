@@ -12,7 +12,7 @@
 ################
 #                   sbh(dataset,
 #                       B=10, K=5, A=1000,
-#                       cpv=FALSE,
+#                       vs=TRUE, cpv=FALSE,
 #                       cvtype=c("combined", "averaged", "none"),
 #                       cvcriterion=c("lrt", "cer", "lhr"),
 #                       arg="beta=0.05,alpha=0.1,minn=10,L=NULL,peelcriterion=\"lr\"",
@@ -35,7 +35,7 @@
 
 sbh <- function(dataset,
                 B=10, K=5, A=1000,
-                cpv=FALSE,
+                vs=TRUE, cpv=FALSE,
                 cvtype=c("combined", "averaged", "none"),
                 cvcriterion=c("lrt", "cer", "lhr"),
                 arg="beta=0.05,alpha=0.1,minn=10,L=NULL,peelcriterion=\"lr\"",
@@ -93,64 +93,29 @@ sbh <- function(dataset,
   }
   cat("Cross-validation technique: ", cvtype, "\n")
   cat("Cross-validation criterion: ", cvcriterion, "\n")
+  cat("Variable pre-selection:", vs, "\n")
   cat("Computation of permutation p-values:", cpv, "\n")
-  cat("Peeling criterion: ", peelcriterion, "\n")
+  cat("Peeling criterion: ", disp(peelcriterion), "\n")
   cat("Parallelization:", parallel, "\n")
   cat("\n")
 
-  # Pre-selection of covariates by Elasticnet Regularized Cox-Regression
-  cat("Covariate pre-selection by Elasticnet Regularized Cox-Regression ... \n")
-  if (is.null(seed)) {
-        seed <- floor(runif(n=1, min=0, max=1) * 10^(min(digits,9)))
+  # Optional pre-selection of covariates
+  if (vs) {
+    cat("Pre-selection of covariates and determination of directions of peeling... \n")
   } else {
-        set.seed(seed)
+    cat("Determination of directions of peeling... \n")
   }
-  nfolds <- max(3,K)
-  folds <- cv.folds(n=n, K=nfolds, seed=seed)
-  foldid <- as.numeric(folds$which[folds$permkey])
-  enalpha <- seq(from=0, to=1, length.out=10)
-  lenalpha <- length(enalpha)
-  enlambda <- vector(mode="list", length=lenalpha)
-  cv.errmu <- vector(mode="list", length=lenalpha)
-  cv.errsd <- vector(mode="list", length=lenalpha)
-  for (i in 1:lenalpha) {
-        cv.fit <- cv.glmnet(x=x, y=Surv(times, status), alpha=enalpha[i], nfolds=nfolds, foldid=foldid, family="cox", maxit=1e5)
-        cv.errmu[[i]] <- cv.fit$cvm
-        cv.errsd[[i]] <- cv.fit$cvsd
-        enlambda[[i]] <- cv.fit$lambda
-  }
-  cv.errmu <- list2mat(list=cv.errmu, coltrunc="max", fill=NA)
-  cv.errsd <- list2mat(list=cv.errsd, coltrunc="max", fill=NA)
-  w <- as.numeric(which(x=(cv.errmu == as.numeric(cv.errmu)[which.min(cv.errmu)]), arr.ind=TRUE, useNames=FALSE))
-  ww <- as.matrix(which(x=cv.errmu[w[1],w[2]] + cv.errsd[w[1],w[2]] <= cv.errmu - cv.errsd, arr.ind=TRUE, useNames=TRUE))
-  wm <- ww - rep.mat(t(w), 2, nrow(ww))
-  wm <- w + wm[which.min(apply(abs(wm), 1, sum)),]        #Nearest neighbor to minimizer index
-  if (is.empty(wm)) {
-        seed <- NULL
-        selected <- NULL
-        success <- FALSE
-  } else {
-        enlambda.min <- enlambda[[wm[1]]][wm[2]]
-        enalpha.min <- enalpha[wm[1]]
-        fit <- glmnet(x=x, y=Surv(times, status), alpha=enalpha.min, family="cox", maxit=1e5)
-        cv.coef <- as.numeric(coef(fit, s=enlambda.min))
-        selected <- which(!(is.na(cv.coef)) & (cv.coef != 0))
-        names(selected) <- colnames(x)[selected]
-        cv.coef <- cv.coef[selected]
-        m <- pmatch(x=1:p, table=selected, nomatch=NA, duplicates.ok=FALSE)
-        w <- which(!is.na(m))
-        sel <- m[w]
-        names(sel) <- names(selected)[sel]
-        success <- TRUE
-  }
+  cv.presel.obj <- cv.presel(x=x, times=times, status=status, vs=vs, n=n, p=p, K=K, seed=seed)
+  success <- cv.presel.obj$success
 
   # Survival Bump Hunting Modeling
   if (!success) {
 
-    # Selected and used covariates
+    # Pre-selected covariates
     cat("Failed to pre-select any informative covariate. Exiting...\n", sep="")
     bool.plot <- FALSE
     varsign <- NULL
+    selected <- NULL
     used <- NULL
     # Cross-validated minimum length from all replicates
     CV.maxsteps <- NULL
@@ -171,17 +136,27 @@ sbh <- function(dataset,
 
   } else {
 
-    # Selected covariates
-    x <- x[, selected, drop=FALSE]
-    p <- length(selected)
-    cat("Successfully pre-selected ", p, " covariates:\n", sep="")
-    selected <- sel
+    # Pre-selected covariates
+    indsel <- cv.presel.obj$indsel
+    selected <- cv.presel.obj$selected
+    x <- x[, indsel, drop=FALSE]
+    p <- length(indsel)
+    if (vs) {
+        cat("Successfully pre-selected ", p, " covariates:\n", sep="")
+    } else {
+        cat("All ", p, " covariates were selected:\n", sep="")
+    }
     print(selected)
 
-    # Directions of directed peeling
-    varsign <- sign(cv.coef)
-    names(varsign) <- colnames(x)
-
+    # Directions of directed peeling of pre-selected covariates
+    varsign <- cv.presel.obj$varsign
+    if (vs) {
+        cat("Directions of peeling of pre-selected covariates:\n", sep="")
+    } else {
+        cat("Directions of peeling of all covariates:\n", sep="")
+    }
+    print(varsign)
+    
     # Initial box boundaries
     initcutpts <- numeric(p)
     for(j in 1:p){
@@ -464,7 +439,7 @@ sbh <- function(dataset,
 
   # Returning the final 'PRSP' object
   return(structure(list("x"=x, "times"=times, "status"=status,
-                        "B"=B, "K"=K, "A"=A, "cpv"=cpv, "arg"=arg,
+                        "B"=B, "K"=K, "A"=A, "vs"=vs, "cpv"=cpv, "arg"=arg,
                         "cvtype"=cvtype, "cvcriterion"=cvcriterion,
                         "varsign"=varsign, "selected"=selected, "used"=used,
                         "probval"=probval, "timeval"=timeval,

@@ -11,6 +11,116 @@
 ################
 # Usage         :
 ################
+#                   cv.presel(x, times, status,
+#                             vs, n, p, K, seed)
+#
+################
+# Description   :
+################
+#
+################
+# Arguments     :
+################
+#
+################
+# Values        :
+################
+#
+##########################################################################################################################################
+
+cv.presel <- function(x, times, status,
+                      vs, n, p, K, seed) {
+
+  if (vs) {
+    digits <- getOption("digits")
+    if (is.null(seed)) {
+        seed <- floor(runif(n=1, min=0, max=1) * 10^(min(digits,9)))
+    } else {
+        set.seed(seed)
+    }
+    nfolds <- max(3,K)
+    folds <- cv.folds(n=n, K=nfolds, seed=seed)
+    foldid <- as.numeric(folds$which[folds$permkey])
+    enalpha <- seq(from=0, to=1, length.out=10)
+    lenalpha <- length(enalpha)
+    enlambda <- vector(mode="list", length=lenalpha)
+    cv.errmu <- vector(mode="list", length=lenalpha)
+    cv.errsd <- vector(mode="list", length=lenalpha)
+    for (i in 1:lenalpha) {
+        cv.fit <- cv.glmnet(x=x, y=Surv(times, status), alpha=enalpha[i], nfolds=nfolds, foldid=foldid, family="cox", maxit=1e5)
+        cv.errmu[[i]] <- cv.fit$cvm
+        cv.errsd[[i]] <- cv.fit$cvsd
+        enlambda[[i]] <- cv.fit$lambda
+    }
+    cv.errmu <- list2mat(list=cv.errmu, coltrunc="max", fill=NA)
+    cv.errsd <- list2mat(list=cv.errsd, coltrunc="max", fill=NA)
+    w <- as.numeric(which(x=(cv.errmu == as.numeric(cv.errmu)[which.min(cv.errmu)]), arr.ind=TRUE, useNames=FALSE))
+    ww <- as.matrix(which(x=cv.errmu[w[1],w[2]] + cv.errsd[w[1],w[2]] <= cv.errmu - cv.errsd, arr.ind=TRUE, useNames=TRUE))
+    wm <- ww - rep.mat(t(w), 2, nrow(ww))
+    wm <- w + wm[which.min(apply(abs(wm), 1, sum)),]        # Nearest neighbor to index minimizer 
+    if (is.empty(wm)) {
+        indsel <- NULL
+        selected <- NULL
+        varsign <- NULL
+        success <- FALSE
+    } else {
+        enlambda.min <- enlambda[[wm[1]]][wm[2]]
+        enalpha.min <- enalpha[wm[1]]
+        fit <- glmnet(x=x, y=Surv(times, status), alpha=enalpha.min, family="cox", maxit=1e5)
+        cv.coef <- as.numeric(coef(fit, s=enlambda.min))
+        indsel <- which(!(is.na(cv.coef)) & (cv.coef != 0))
+        if (is.empty(indsel)) {
+            indsel <- NULL
+            selected <- NULL
+            varsign <- NULL
+            success <- FALSE
+        } else {
+            names(indsel) <- colnames(x)[indsel]
+            cv.coef <- cv.coef[indsel]
+            varsign <- sign(cv.coef)
+            names(varsign) <- colnames(x)[indsel]
+            m <- pmatch(x=1:p, table=indsel, nomatch=NA, duplicates.ok=FALSE)
+            selected <- m[!is.na(m)]
+            names(selected) <- names(indsel)[selected]
+            success <- TRUE
+        }
+    }
+  } else {
+    fit <- glmnet(x=x, y=Surv(times, status), alpha=0, family="cox", maxit=1e5)
+    cv.coef <- as.numeric(coef(fit, s=0))
+    indsel <- which(!(is.na(cv.coef)) & (cv.coef != 0))
+    if (is.empty(indsel)) {
+      indsel <- NULL
+      selected <- NULL
+      varsign <- NULL
+      success <- FALSE
+    } else {
+      names(indsel) <- colnames(x)[indsel]
+      cv.coef <- cv.coef[indsel]
+      varsign <- sign(cv.coef)
+      names(varsign) <- colnames(x)[indsel]
+      m <- pmatch(x=1:p, table=indsel, nomatch=NA, duplicates.ok=FALSE)
+      selected <- m[!is.na(m)]
+      names(selected) <- names(indsel)[selected]
+      success <- TRUE
+    }
+  }
+
+  return(list("indsel"=indsel,
+              "selected"=selected,
+              "varsign"=varsign,
+              "success"=success))
+}
+##########################################################################################################################################
+
+
+
+
+
+##########################################################################################################################################
+################
+# Usage         :
+################
 #                   cv.box.rep(x, times, status,
 #                              B, K, arg,
 #                              cvtype,
@@ -1707,6 +1817,39 @@ rep.mat <- function (X, margin, times) {
    }
 }
 ###################################################################################################################################
+
+
+
+
+##########################################################################################################################################
+################
+# Usage         :
+################
+#                    disp (peelcriterion)
+#
+################
+# Description   :
+################
+#
+################
+# Arguments     :
+################
+#
+################
+# Values        :
+################
+#
+##########################################################################################################################################
+disp <- function(peelcriterion) {
+    if (peelcriterion == "lh") {
+        return("LHR")
+    } else if (peelcriterion == "lr") { 
+        return("LRT")
+    } else if (peelcriterion == "ch") {
+        return("CHS")
+    }
+}
+##########################################################################################################################################
 
 
 
