@@ -85,10 +85,12 @@ o RELEASE 0.5.7
 - Added Cumulative Hazard Summary statistic (derived from the Nelson-Aalen estimator) 
   as new peeling criterion option in the PRSP algorithm.
 - Removed S3-class generic method for all plot functions and renaming as plot_xxx.
-- Removed real dataset #2 for reasons of size and redundancy with real dataset #1.
 - Built and tested under R-devel (2015-07-20 r68705). 
 - Initial release to CRAN and update to GitHub.
 ---------------------------------------------------------------------------------
-
-
-
+Date   : 2015-08-03
+o RELEASE 0.5.8
+- Removed option for pre-selection of variables (covariates) by regular Cox-regression.
+- Minor typos corrected in the manual.
+- Built and tested under R-devel (2015-08-02 r68804). 
+---------------------------------------------------------------------------------
