@@ -8,7 +8,7 @@ Branches:
 =========
 - The default branch (master) hosts the current development release (version 0.5.7) of the survival bump hunting procedure that implements the case of a survival response. At this point, this version is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our Patient Recursive Survival Peeling (PRSP) algorithm. New features will be added soon as they are available.
 
-	The main function relies on an internal variable pre-selection procedure before the PRSP algorithm is run. At this point, this is done either by regular Cox-regression (from the R package 'survival') or cross-validated Elasticnet Regularized Cox-Regression (from the R package 'glmnet'), depending on whether the number of covariates is less (p <= n) or greater (p > n) than the number of samples, respectively.
+	The main function relies on an internal variable pre-selection procedure before the PRSP algorithm is run. At this point, this is done by cross-validated Elasticnet Regularized Cox-Regression (from the R package 'glmnet').
 	
 	In this version, the bump hunting procedure and the cross-validation procedures that control the model size and model peeling length are carried out by two separate procedures within a single main function 'sbh()' that generates an S3-class object 'PRSP'.  
 
@@ -54,7 +54,7 @@ http://onlinelibrary.wiley.com/journal/10.1002/(ISSN)1932-1872
 =============
 Requirements:
 =============
-PRIMsrc 0.5.7 requires R-3.0.2 (2013-09-25). It was built and tested under R-devel (2015-07-20 r68705) and Travis CI. 
+PRIMsrc 0.5.8 requires R-3.0.2 (2013-09-25). It was built and tested under R-devel (2015-08-02 r68804) and Travis CI. 
 
 Installation has been tested on Windows, Linux, OSX and Solaris platforms. See for instance the 'CRAN Package Check Results' here:
 
@@ -67,7 +67,7 @@ Installation:
 
 install.packages("PRIMsrc")
 
-- Alternatively, you can install the most up-to-date development version (0.5.7) from GitHub, using devtools:
+- Alternatively, you can install the most up-to-date development version (0.5.8) from GitHub, using devtools:
 
 library(devtools)
 devtools::install_github("jedazard/PRIMsrc")
