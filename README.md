@@ -6,7 +6,7 @@ Performs a unified treatment of Bump Hunting by Patient Rule Induction Method (P
 =========
 Branches:
 =========
-- The default branch (master) hosts the current development release (version 0.5.7) of the survival bump hunting procedure that implements the case of a survival response. At this point, this version is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our Patient Recursive Survival Peeling (PRSP) algorithm. New features will be added soon as they are available.
+- The default branch (master) hosts the current development release (version 0.5.8) of the survival bump hunting procedure that implements the case of a survival response. At this point, this version is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our Patient Recursive Survival Peeling (PRSP) algorithm. New features will be added soon as they are available.
 
 	The main function relies on an internal variable pre-selection procedure before the PRSP algorithm is run. At this point, this is done by cross-validated Elasticnet Regularized Cox-Regression (from the R package 'glmnet').
 	
