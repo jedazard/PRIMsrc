@@ -98,39 +98,38 @@ sbh <- function(dataset,
   cat("Parallelization:", parallel, "\n")
   cat("\n")
 
-  # Pre-selection of covariates
-  if (p > n) {
-    cat("Covariate selection by Elasticnet Regularized Cox-Regression ... \n")
-    if (is.null(seed)) {
+  # Pre-selection of covariates by Elasticnet Regularized Cox-Regression
+  cat("Covariate pre-selection by Elasticnet Regularized Cox-Regression ... \n")
+  if (is.null(seed)) {
         seed <- floor(runif(n=1, min=0, max=1) * 10^(min(digits,9)))
-    } else {
+  } else {
         set.seed(seed)
-    }
-    nfolds <- max(3,K)
-    folds <- cv.folds(n=n, K=nfolds, seed=seed)
-    foldid <- as.numeric(folds$which[folds$permkey])
-    enalpha <- seq(from=0, to=1, length.out=10)
-    lenalpha <- length(enalpha)
-    enlambda <- vector(mode="list", length=lenalpha)
-    cv.errmu <- vector(mode="list", length=lenalpha)
-    cv.errsd <- vector(mode="list", length=lenalpha)
-    for (i in 1:lenalpha) {
+  }
+  nfolds <- max(3,K)
+  folds <- cv.folds(n=n, K=nfolds, seed=seed)
+  foldid <- as.numeric(folds$which[folds$permkey])
+  enalpha <- seq(from=0, to=1, length.out=10)
+  lenalpha <- length(enalpha)
+  enlambda <- vector(mode="list", length=lenalpha)
+  cv.errmu <- vector(mode="list", length=lenalpha)
+  cv.errsd <- vector(mode="list", length=lenalpha)
+  for (i in 1:lenalpha) {
         cv.fit <- cv.glmnet(x=x, y=Surv(times, status), alpha=enalpha[i], nfolds=nfolds, foldid=foldid, family="cox", maxit=1e5)
         cv.errmu[[i]] <- cv.fit$cvm
         cv.errsd[[i]] <- cv.fit$cvsd
         enlambda[[i]] <- cv.fit$lambda
-    }
-    cv.errmu <- list2mat(list=cv.errmu, coltrunc="max", fill=NA)
-    cv.errsd <- list2mat(list=cv.errsd, coltrunc="max", fill=NA)
-    w <- as.numeric(which(x=(cv.errmu == as.numeric(cv.errmu)[which.min(cv.errmu)]), arr.ind=TRUE, useNames=FALSE))
-    ww <- as.matrix(which(x=cv.errmu[w[1],w[2]] + cv.errsd[w[1],w[2]] <= cv.errmu - cv.errsd, arr.ind=TRUE, useNames=TRUE))
-    wm <- ww - rep.mat(t(w), 2, nrow(ww))
-    wm <- w + wm[which.min(apply(abs(wm), 1, sum)),]        #Nearest neighbor to minimizer index
-    if (is.empty(wm)) {
+  }
+  cv.errmu <- list2mat(list=cv.errmu, coltrunc="max", fill=NA)
+  cv.errsd <- list2mat(list=cv.errsd, coltrunc="max", fill=NA)
+  w <- as.numeric(which(x=(cv.errmu == as.numeric(cv.errmu)[which.min(cv.errmu)]), arr.ind=TRUE, useNames=FALSE))
+  ww <- as.matrix(which(x=cv.errmu[w[1],w[2]] + cv.errsd[w[1],w[2]] <= cv.errmu - cv.errsd, arr.ind=TRUE, useNames=TRUE))
+  wm <- ww - rep.mat(t(w), 2, nrow(ww))
+  wm <- w + wm[which.min(apply(abs(wm), 1, sum)),]        #Nearest neighbor to minimizer index
+  if (is.empty(wm)) {
         seed <- NULL
         selected <- NULL
         success <- FALSE
-    } else {
+  } else {
         enlambda.min <- enlambda[[wm[1]]][wm[2]]
         enalpha.min <- enalpha[wm[1]]
         fit <- glmnet(x=x, y=Surv(times, status), alpha=enalpha.min, family="cox", maxit=1e5)
@@ -143,24 +142,6 @@ sbh <- function(dataset,
         sel <- m[w]
         names(sel) <- names(selected)[sel]
         success <- TRUE
-    }
-  } else {
-    cat("Covariate selection by regular Cox-Regression ... \n")
-    fit <- coxph(Surv(times, status) ~ x, eps=0.01, singular.ok=T, iter.max=1)
-    cv.coef <- coef(fit)
-    selected <- which(!(is.na(cv.coef)) & (cv.coef != 0))
-    if (is.empty(selected)) {
-      selected <- NULL
-      success <- FALSE
-    } else {
-      names(selected) <- colnames(x)[selected]
-      cv.coef <- cv.coef[selected]
-      m <- pmatch(x=1:p, table=selected, nomatch=NA, duplicates.ok=FALSE)
-      w <- which(!is.na(m))
-      sel <- m[w]
-      names(sel) <- names(selected)[sel]
-      success <- TRUE
-    }
   }
 
   # Survival Bump Hunting Modeling
