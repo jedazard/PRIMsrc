@@ -25,7 +25,7 @@
                lwd.box = rep(1,length(steps)),
                add.legend = TRUE, 
                device = NULL, 
-              file = "Scatter Plot", 
+               file = "Scatter Plot", 
                path=getwd(), 
                horizontal = FALSE, 
                width = 5, 
@@ -166,7 +166,8 @@ library("PRIMsrc")
 #=================================================================================
 CVCOMBREP.synt1 <- sbh(dataset = Synthetic.1, 
                        cvtype = "combined", cvcriterion = "lrt",
-                       B = 1, K = 5, cpv = FALSE, probval = 0.5, 
+                       B = 1, K = 5, 
+                       vs = TRUE, cpv = FALSE, probval = 0.5, 
                        arg = "beta=0.05,
                               alpha=0.1,
                               minn=10,

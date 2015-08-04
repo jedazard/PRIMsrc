@@ -12,7 +12,7 @@
 \usage{
   sbh(dataset, 
       B = 10, K = 5, A = 1000, 
-      cpv = FALSE,
+      vs = TRUE, cpv = FALSE,
       cvtype=c("combined", "averaged", "none"), 
       cvcriterion=c("lrt", "cer", "lhr"),
       arg = "beta=0.05,alpha=0.1,minn=10,L=NULL,peelcriterion=\"lr\"",
@@ -34,6 +34,10 @@
   }
   \item{A}{
     Positive \code{integer} scalar of the number of permutations for the computation of cross-validated p-values. Defaults to 1000.
+  }
+  \item{vs}{
+    \code{logical} scalar. Flag for optional variable (covariate) pre-selection. 
+    Defaults to \code{TRUE}.
   }
   \item{cpv}{
     \code{logical} scalar. Flag for computation of permutation p-values. 
@@ -149,6 +153,7 @@
     \item{B}{positive \code{integer} of the number of replications used in the cross-validation procedure.}
     \item{K}{positive \code{integer} of the number of folds used in the cross-validation procedure.}
     \item{A}{positive \code{integer} of the number of permutations used for the computation of permutation p-values.}
+    \item{vs}{\code{logical} scalar of returned flag of optional variable pre-selection.}
     \item{cpv}{\code{logical} scalar of returned flag of optional computation of permutation p-values.}
     \item{cvtype}{\code{character} \code{vector} of the cross-validation technique used.}
     \item{cvcriterion}{\code{character} \code{vector} of cross-validation optimization criterion used.}
@@ -264,7 +269,8 @@ library("PRIMsrc")
 #===================================================
 CVCOMBREP.synt1 <- sbh(dataset = Synthetic.1, 
                        cvtype = "combined", cvcriterion = "lrt",
-                       B = 1, K = 5, cpv = FALSE, probval = 0.5, 
+                       B = 1, K = 5, 
+                       vs = TRUE, cpv = FALSE, probval = 0.5, 
                        arg = "beta=0.05,
                               alpha=0.1,
                               minn=10,
@@ -352,7 +358,8 @@ round(CVCOMBREP.synt1$cvfit$cv.stats$mean,2)
     #===================================================
     CVCOMBREP.synt1 <- sbh(dataset = Synthetic.1, 
                            cvtype = "combined", cvcriterion = "lrt",
-                           B = 10, K = 5, A = 1024, cpv = TRUE, probval = 0.5, 
+                           B = 10, K = 5, A = 1024, 
+                           vs = TRUE, cpv = TRUE, probval = 0.5, 
                            arg = "beta=0.05,
                                   alpha=0.1,
                                   minn=10,
