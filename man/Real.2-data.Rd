@@ -23,7 +23,7 @@
 
 \format{
   Dataset consists of a \code{numeric} \code{data.frame} containing \eqn{n=177} complete observations (samples) 
-  by rows and \eqn{p=22577} variables by columns, including the censoring indicator and (censored) time-to-event variables. 
+  by rows and \eqn{p=22577} variables by columns, not including the censoring indicator and (censored) time-to-event variables. 
   It comes as a compressed Rda data file.
 }
 

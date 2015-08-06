@@ -25,7 +25,7 @@
 
 \format{
   Dataset consists of a \code{numeric} \code{data.frame} containing \eqn{n=485} complete observations (samples) 
-  by rows and \eqn{p=6} clinical variables by columns, including the censoring indicator and (censored) time-to-event variables.
+  by rows and \eqn{p=4} clinical variables by columns, not including the censoring indicator and (censored) time-to-event variables.
   It comes as a compressed Rda data file.
 }
 
