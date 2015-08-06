@@ -92,10 +92,10 @@ sbh <- function(dataset,
     cat("No cross-validation requested. No replication will be performed. No need of parallelization. \n")
   }
   cat("Cross-validation technique: ", cvtype, "\n")
-  cat("Cross-validation criterion: ", cvcriterion, "\n")
+  cat("Cross-validation criterion: ", disp(criterion=cvcriterion), "\n")
   cat("Variable pre-selection:", vs, "\n")
   cat("Computation of permutation p-values:", cpv, "\n")
-  cat("Peeling criterion: ", disp(peelcriterion), "\n")
+  cat("Peeling criterion: ", disp(criterion=peelcriterion), "\n")
   cat("Parallelization:", parallel, "\n")
   cat("\n")
 

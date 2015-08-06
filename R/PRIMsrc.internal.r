@@ -1825,7 +1825,7 @@ rep.mat <- function (X, margin, times) {
 ################
 # Usage         :
 ################
-#                    disp (peelcriterion)
+#                    disp (criterion)
 #
 ################
 # Description   :
@@ -1840,13 +1840,19 @@ rep.mat <- function (X, margin, times) {
 ################
 #
 ##########################################################################################################################################
-disp <- function(peelcriterion) {
-    if (peelcriterion == "lh") {
+disp <- function(criterion) {
+    if (criterion == "lh") {
         return("LHR")
-    } else if (peelcriterion == "lr") { 
+    } else if (criterion == "lr") { 
         return("LRT")
-    } else if (peelcriterion == "ch") {
+    } else if (criterion == "ch") {
         return("CHS")
+    } else if (criterion == "lhr") {
+        return("LHR") 
+    } else if (criterion == "lrt") {
+        return("LRT") 
+    } else if (criterion == "cer") {
+        return("CER") 
     }
 }
 ##########################################################################################################################################
