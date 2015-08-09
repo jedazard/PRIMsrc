@@ -16,14 +16,15 @@
 }
 
 \details{
-    The current version is a development release that only implements the case of a survival response.
-    At this point, survival bump hunting is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our 
-    Patient Recursive Survival Peeling (PRSP) algorithm. New features will be added soon as they are available. 
-    The main function relies on an internal variable pre-selection procedure before the PRSP algorithm is run. 
-    At this point, this is done by cross-validated Elastic-Net regularized Cox-regression.
+    The current version is a development release that only implements the case of a survival response. At this point, 
+    survival bump hunting is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our 
+    Patient Recursive Survival Peeling (PRSP) algorithm. New features will be added soon.
     
-    The following describes only the end-user functions that are needed to run a complete procedure.
-    The other internal subroutines are briefly documented in the manual, but are not to be called by the end-user at any time. 
+    The main function relies on an optional variable pre-selection procedure that is run before the PRSP algorithm. 
+    At this point, this is done by a cross-validated penalization of the partial likelihood using the R package \pkg{glmnet}. 
+    
+    The following describes the end-user functions that are needed to run a complete procedure.
+    The other internal subroutines are not documented in the manual and are not to be called by the end-user at any time. 
     For computational efficiency, some end-user functions offer a parallelization option that is done by passing a few parameters 
     needed to configure a cluster. This is indicated by an asterisk (* = optionally involving cluster usage). 
     The R functions are categorized as follows:
