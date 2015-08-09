@@ -67,9 +67,9 @@ o RELEASE 0.5.5
 ---------------------------------------------------------------------------------
 Date   : 2015-06-19
 o RELEASE 0.5.6
-- Correction/extension of internal variable selection procedure by cross-validing 
-  both parameters: alpha (mixing) as well as lambda (shrinkage) in the Elasticnet-Regularized 
-  Cox Regression function of the 'glmnet' package. This allows to get true lasso-ridge penalty.
+- Correction/extension of internal variable pre-selection procedure by cross-validing 
+  both parameters alpha (mixing) and lambda (shrinkage) of the 'glmnet' package. 
+  This allows to get true lasso-ridge shrinkage estimates.
 - Improved robustness in internal functions list2mat and list2array.
 - Minor improvement in internal function cv.folds.
 - Added vignettes
@@ -88,13 +88,13 @@ o RELEASE 0.5.7
 - Built and tested under R-devel (2015-07-20 r68705). 
 - Initial release to CRAN and update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2015-08-06
+Date   : 2015-08-08
 o RELEASE 0.5.8
 - Removed pre-selection of variables (covariates) by regular Cox-regression
   and made the remaining Elastic-Net pre-selection of variables optional by
   passing an additional argument in the main function sbh().
 - Created a new internal subroutine cv.presel() for (optional) variable pre-selection.
-- Minor typos corrected in the manual.
+- Minor corrections in the manual.
 - Built and tested under R-devel (2015-08-02 r68804).
-- Release to GitHub.
+- Release update to GitHub.
 ---------------------------------------------------------------------------------
