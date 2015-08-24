@@ -69,7 +69,10 @@ install.packages("PRIMsrc")
 
 - Alternatively, you can install the most up-to-date development version (0.5.8) from GitHub, using devtools:
 
+install.packages(devtools)
+
 library(devtools)
+
 devtools::install_github("jedazard/PRIMsrc")
 
 ======
