@@ -612,7 +612,7 @@ predict.PRSP <- function (object, newdata, steps, na.action = na.omit, ...) {
 ################
 # Usage         :
 ################
-#                    plot_profile(x,
+#                    plot_profile(object,
 #                                 main=NULL,
 #                                 xlab="Peeling Steps", ylab="Mean Profiles",
 #                                 add.sd=TRUE, add.legend=TRUE, add.profiles=TRUE,
@@ -634,7 +634,7 @@ predict.PRSP <- function (object, newdata, steps, na.action = na.omit, ...) {
 #
 ##########################################################################################################################################
 
-plot_profile <- function(x,
+plot_profile <- function(object,
                          main=NULL,
                          xlab="Peeling Steps", ylab="Mean Profiles",
                          add.sd=TRUE, add.legend=TRUE, add.profiles=TRUE,
@@ -642,11 +642,11 @@ plot_profile <- function(x,
                          device=NULL, file="Profile Plot", path=getwd(),
                          horizontal=FALSE, width=8.5, height=5.0, ...) {
 
-  if (!inherits(x, 'PRSP'))
+  if (!inherits(object, 'PRSP'))
         stop("Primary argument much be a PRSP object")
 
-  if (x$plot) {
-    if (is.null(x$cvcriterion)) {
+  if (object$plot) {
+    if (is.null(object$cvcriterion)) {
       cat("No CV here, so no cross-validated tuning profile to plot!\n")
     } else {
 
@@ -703,7 +703,7 @@ plot_profile <- function(x,
 
       if (is.null(device)) {
         dev.new(width=width, height=height, title="Profile Plot", noRStudioGD = TRUE)
-        profileplot(object=x, main=main, xlab=xlab, ylab=ylab,
+        profileplot(object=object, main=main, xlab=xlab, ylab=ylab,
                     add.sd=add.sd, add.legend=add.legend, add.profiles=add.profiles,
                     pch=pch, col=col, lty=lty, lwd=lwd, cex=cex)
       } else if (device == "PS") {
@@ -713,7 +713,7 @@ plot_profile <- function(x,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
-        profileplot(object=x, main=main, xlab=xlab, ylab=ylab,
+        profileplot(object=object, main=main, xlab=xlab, ylab=ylab,
                     add.sd=add.sd, add.legend=add.legend, add.profiles=add.profiles,
                     pch=pch, col=col, lty=lty, lwd=lwd, cex=cex)
         dev.off()
@@ -724,7 +724,7 @@ plot_profile <- function(x,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
-        profileplot(object=x, main=main, xlab=xlab, ylab=ylab,
+        profileplot(object=object, main=main, xlab=xlab, ylab=ylab,
                     add.sd=add.sd, add.legend=add.legend, add.profiles=add.profiles,
                     pch=pch, col=col, lty=lty, lwd=lwd, cex=cex)
         dev.off()
@@ -748,10 +748,10 @@ plot_profile <- function(x,
 ################
 # Usage         :
 ################
-#                    plot_scatter(x,
+#                    plot_scatter(object,
 #                                 main=NULL,
 #                                 proj=c(1,2), splom=TRUE, boxes=FALSE,
-#                                 steps=x$cvfit$cv.nsteps,
+#                                 steps=object$cvfit$cv.nsteps,
 #                                 pch=16, cex=0.5, col=, col=2:(length(steps)+1),
 #                                 col.box=2:(length(steps)+1), lty.box=rep(2,length(steps)), lwd.box=rep(1,length(steps)),
 #                                 add.legend=TRUE,
@@ -772,20 +772,20 @@ plot_profile <- function(x,
 #
 ##########################################################################################################################################
 
-plot_scatter <- function(x,
+plot_scatter <- function(object,
                          main=NULL,
                          proj=c(1,2), splom=TRUE, boxes=FALSE,
-                         steps=x$cvfit$cv.nsteps,
+                         steps=object$cvfit$cv.nsteps,
                          pch=16, cex=0.5, col=2:(length(steps)+1),
                          col.box=2:(length(steps)+1), lty.box=rep(2,length(steps)), lwd.box=rep(1,length(steps)),
                          add.legend=TRUE,
                          device=NULL, file="Scatter Plot", path=getwd(),
                          horizontal=FALSE, width=5, height=5, ...) {
 
-  if (!inherits(x, 'PRSP'))
+  if (!inherits(object, 'PRSP'))
         stop("Primary argument much be a PRSP object")
 
-  if (x$plot) {
+  if (object$plot) {
 
     scatterplot <- function(object,
                             main,
@@ -845,7 +845,7 @@ plot_scatter <- function(x,
 
     if (is.null(device)) {
         dev.new(width=width, height=height, title="Scatter Plot", noRStudioGD = TRUE)
-        scatterplot(object=x,
+        scatterplot(object=object,
                     main=main,
                     proj=proj, splom=splom, boxes=boxes, steps=steps,
                     add.legend=add.legend, pch=pch, cex=cex, col=col,
@@ -857,7 +857,7 @@ plot_scatter <- function(x,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
-        scatterplot(object=x,
+        scatterplot(object=object,
                     main=main,
                     proj=proj, splom=splom, boxes=boxes, steps=steps,
                     add.legend=add.legend, pch=pch, cex=cex, col=col,
@@ -870,7 +870,7 @@ plot_scatter <- function(x,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
-        scatterplot(object=x,
+        scatterplot(object=object,
                     main=main,
                     proj=proj, splom=splom, boxes=boxes, steps=steps,
                     add.legend=add.legend, pch=pch, cex=cex, col=col,
@@ -894,10 +894,10 @@ plot_scatter <- function(x,
 ################
 # Usage         :
 ################
-#                    plot_boxtraj (x,
+#                    plot_boxtraj (object,
 #                                  main=NULL,
 #                                  xlab="Box Mass", ylab="Covariate Range",
-#                                  toplot=x$used,
+#                                  toplot=object$used,
 #                                  col.cov, lty.cov, lwd.cov,
 #                                  col=1, lty=1, lwd=1,
 #                                  cex=1, add.legend=FALSE, text.legend=NULL,
@@ -919,10 +919,10 @@ plot_scatter <- function(x,
 #
 ##########################################################################################################################################
 
-plot_boxtraj <- function(x,
+plot_boxtraj <- function(object,
                          main=NULL,
                          xlab="Box Mass", ylab="Covariate Range",
-                         toplot=x$used,
+                         toplot=object$used,
                          col.cov, lty.cov, lwd.cov,
                          col=1, lty=1, lwd=1,
                          cex=1, add.legend=FALSE, text.legend=NULL,
@@ -930,10 +930,10 @@ plot_boxtraj <- function(x,
                          device=NULL, file="Covariate Trajectory Plots", path=getwd(),
                          horizontal=FALSE, width=8.5, height=11.5, ...) {
 
-  if (!inherits(x, 'PRSP'))
+  if (!inherits(object, 'PRSP'))
         stop("Primary argument much be a PRSP object")
 
-  if (x$plot) {
+  if (object$plot) {
     boxtrajplot <- function(object,
                             main, xlab, ylab,
                             toplot,
@@ -1060,7 +1060,7 @@ plot_boxtraj <- function(x,
 
     if (is.null(device)) {
         dev.new(width=width, height=height, title="Covariate Trajectory Plots", noRStudioGD = TRUE)
-        boxtrajplot(object=x,
+        boxtrajplot(object=object,
                     main=main, xlab=xlab, ylab=ylab,
                     toplot=toplot,
                     col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
@@ -1074,7 +1074,7 @@ plot_boxtraj <- function(x,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
-        boxtrajplot(object=x,
+        boxtrajplot(object=object,
                     main=main, xlab=xlab, ylab=ylab,
                     toplot=toplot,
                     col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
@@ -1089,7 +1089,7 @@ plot_boxtraj <- function(x,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
-        boxtrajplot(object=x,
+        boxtrajplot(object=object,
                     main=main, xlab=xlab, ylab=ylab,
                     toplot=toplot,
                     col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
@@ -1116,10 +1116,10 @@ plot_boxtraj <- function(x,
 ################
 # Usage         :
 ################
-#                    plot_boxtrace (x,
+#                    plot_boxtrace (object,
 #                                   main=NULL,
 #                                   xlab="Box Mass", ylab="Covariate Range (centered)",
-#                                   toplot=x$used,
+#                                   toplot=object$used,
 #                                   center=TRUE, scale=FALSE,
 #                                   col.cov, lty.cov, lwd.cov,
 #                                   col=1, lty=1, lwd=1,
@@ -1141,9 +1141,9 @@ plot_boxtraj <- function(x,
 #
 ##########################################################################################################################################
 
-plot_boxtrace <- function(x,
+plot_boxtrace <- function(object,
                           main=NULL, xlab="Box Mass", ylab="Covariate Range (centered)",
-                          toplot=x$used,
+                          toplot=object$used,
                           center=TRUE, scale=FALSE,
                           col.cov, lty.cov, lwd.cov,
                           col=1, lty=1, lwd=1,
@@ -1151,10 +1151,10 @@ plot_boxtrace <- function(x,
                           device=NULL, file="Covariate Trace Plots", path=getwd(),
                           horizontal=FALSE, width=8.5, height=8.5, ...) {
 
-  if (!inherits(x, 'PRSP'))
+  if (!inherits(object, 'PRSP'))
         stop("Primary argument much be a PRSP object")
 
-  if (x$plot) {
+  if (object$plot) {
     boxtraceplot <- function(object,
                              main, xlab, ylab,
                              toplot,
@@ -1226,7 +1226,7 @@ plot_boxtrace <- function(x,
 
     if (is.null(device)) {
         dev.new(width=width, height=height, title="Covariate Trace Plots", noRStudioGD = TRUE)
-        boxtraceplot(object=x,
+        boxtraceplot(object=object,
                      main=main, xlab=xlab, ylab=ylab,
                      toplot=toplot,
                      center=center, scale=scale,
@@ -1240,7 +1240,7 @@ plot_boxtrace <- function(x,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
-        boxtraceplot(object=x,
+        boxtraceplot(object=object,
                      main=main, xlab=xlab, ylab=ylab,
                      toplot=toplot,
                      center=center, scale=scale,
@@ -1255,7 +1255,7 @@ plot_boxtrace <- function(x,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
-        boxtraceplot(object=x,
+        boxtraceplot(object=object,
                      main=main, xlab=xlab, ylab=ylab,
                      toplot=toplot,
                      center=center, scale=scale,
@@ -1282,11 +1282,11 @@ plot_boxtrace <- function(x,
 ################
 # Usage         :
 ################
-#                    plot_boxkm (x,
+#                    plot_boxkm (object,
 #                                main=NULL,
 #                                xlab="Time", ylab="Probability",
 #                                precision=1e-3, mark=3, col=2, cex=1,
-#                                steps=1:x$cvfit$cv.nsteps,
+#                                steps=1:object$cvfit$cv.nsteps,
 #                                nr=3, nc=4,
 #                                device=NULL, file="Survival Plots", path=getwd(),
 #                                horizontal=TRUE, width=11.5, height=8.5, ...)
@@ -1305,19 +1305,19 @@ plot_boxtrace <- function(x,
 #
 ##########################################################################################################################################
 
-plot_boxkm <- function(x,
+plot_boxkm <- function(object,
                        main=NULL,
                        xlab="Time", ylab="Probability",
                        precision=1e-3, mark=3, col=2, cex=1,
-                       steps=1:x$cvfit$cv.nsteps,
+                       steps=1:object$cvfit$cv.nsteps,
                        nr=3, nc=4,
                        device=NULL, file="Survival Plots", path=getwd(),
                        horizontal=TRUE, width=11.5, height=8.5, ...) {
 
-  if (!inherits(x, 'PRSP'))
+  if (!inherits(object, 'PRSP'))
         stop("Primary argument much be a PRSP object")
 
-  if (x$plot) {
+  if (object$plot) {
 
     boxkmplot <- function(object,
                           main, xlab, ylab,
@@ -1375,7 +1375,7 @@ plot_boxkm <- function(x,
 
     if (is.null(device)) {
         dev.new(width=width, height=height, title="Survival Plots", noRStudioGD = TRUE)
-        boxkmplot(object=x,
+        boxkmplot(object=object,
                   main=main, xlab=xlab, ylab=ylab,
                   precision=precision, mark=mark, col=col, cex=cex,
                   steps=steps,
@@ -1387,7 +1387,7 @@ plot_boxkm <- function(x,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
-        boxkmplot(object=x,
+        boxkmplot(object=object,
                   main=main, xlab=xlab, ylab=ylab,
                   precision=precision, mark=mark, col=col, cex=cex,
                   steps=steps,
@@ -1400,7 +1400,7 @@ plot_boxkm <- function(x,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
-        boxkmplot(object=x,
+        boxkmplot(object=object,
                   main=main, xlab=xlab, ylab=ylab,
                   precision=precision, mark=mark, col=col, cex=cex,
                   steps=steps,
