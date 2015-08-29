@@ -11,3 +11,4 @@ import("graphics", "grDevices", "stats")
 
 S3method("summary","PRSP")
 S3method("predict","PRSP")
+S3method("print","PRSP")
