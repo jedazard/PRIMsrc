@@ -81,7 +81,7 @@ sbh <- function(dataset,
             cat("Requested replicated ", K, "-fold cross-validation with ", B, " replications \n", sep="")
         }
     } else {
-        cat("Requested single ", K, "-fold cross-validation with no replications \n", sep="")
+        cat("Requested single ", K, "-fold cross-validation without replications \n", sep="")
     }
   } else {
     cvcriterion <- "none"
@@ -414,7 +414,7 @@ sbh <- function(dataset,
 
         # Vector of p-values for each step
         if (cpv) {
-            cat("Computation of cross-validated LRT p-values at all steps ... \n")
+            cat("Computation of cross-validated permutation p-values for each step ... \n")
             arg <- paste("beta=", beta, ",alpha=", alpha, ",minn=", minn, ",L=", CV.nsteps-1, ",peelcriterion=\"", peelcriterion, "\"", sep="")
             CV.pval <- cv.pval(x=x, times=times, status=status,
                                cvtype=cvtype,
@@ -446,7 +446,15 @@ sbh <- function(dataset,
                         "cvfit"=CV.fit,
                         "cvprofiles"=CV.profiles,
                         "cvmeanprofiles"=CV.mean.profiles,
-                        "plot"=bool.plot, "seed"=seed),
+                        "plot"=bool.plot, 
+                        "config"=list("parallel"=parallel, 
+                                      "names"=conf$names, 
+                                      "cpus"=conf$cpus,
+                                      "type"=conf$type,
+                                      "homo"=conf$homo,
+                                      "verbose"=conf$verbose,
+                                      "outfile"=conf$outfile),
+                        "seed"=seed),
                    class = "PRSP"))
 }
 ##########################################################################################################################################
@@ -510,23 +518,127 @@ PRIMsrc.news <- function(...) {
 summary.PRSP <- function(object, ...) {
 
   if (!inherits(object, 'PRSP'))
-        stop("Primary argument much be a PRSP object")
+        stop("Primary argument much be an object of class 'PRSP' \n")
+
+  alpha <- NULL
+  beta <- NULL
+  minn <- NULL
+  L <- NULL
+  peelcriterion <- NULL
+  eval(parse( text=unlist(strsplit(x=object$arg, split=",")) ))
+
+  cat("S3-class object: `", attr(x=object, "class"), "` \n\n")
 
   if (object$cvtype != "none") {
     if (object$B > 1) {
-      cat("PRSP object with replicated ", object$K, "-fold cross-validation with ", object$B, " replications \n", sep="")
+        if (object$config$parallel) {
+            cat("Replicated ", object$K, "-fold cross-validation with ", object$config$cpus*ceiling(object$B/object$config$cpus), " replications \n\n", sep="")
+        } else {
+            cat("Replicated ", object$K, "-fold cross-validation with ", object$B, " replications \n\n", sep="")
+        }
     } else {
-      cat("PRSP object with replicated ", object$K, "-fold cross-validation without replications \n", sep="")
+        cat("Single ", object$K, "-fold cross-validation without replications \n\n", sep="")
     }
-    cat("Cross-validation technique: ", object$cvtype, "\n")
-    cat("Cross-validation criterion: ", object$cvcriterion, "\n")
-    cat("Cross-validated p-values:", object$cpv, "\n")
   } else {
-    cat("PRSP object without cross-validation \n", sep="")
-    cat("Cross-validation technique: ", object$cvtype, "\n")
-    cat("Cross-validation criterion: ", object$cvcriterion, "\n")
-    cat("Cross-validated p-values:", object$cpv, "\n")
+    cat("'PRSP' object without cross-validation and replications\n\n", sep="")
   }
+  cat("Variable pre-selection:", object$vs, "\n")
+  cat("PRSP parameters:\n")
+  cat("\t Peeling criterion: ", disp(criterion=peelcriterion), "\n")
+  cat("\t Peeling percentile: ", alpha*100, "%\n")
+  cat("\t Minimal box support: ", beta*100, "%\n")
+  cat("\t Minimal box sample size: ", minn, "\n")
+  cat("\t Peeling steps: ", L, "\n")
+  cat("Cross-validation technique: ", object$cvtype, "\n")
+  cat("Cross-validation criterion: ", disp(criterion=object$cvcriterion), "\n")
+  cat("Computation of permutation p-values:", object$cpv, "\n")
+  cat("Configuration of parallelization : \n")
+  print(object$config)
+  cat("\n")
+  
+  invisible()
+}
+##########################################################################################################################################
+
+
+
+
+##########################################################################################################################################
+################
+#Usage         :
+################
+#                   print(x, digits=3, ...)
+#
+################
+# Description   :
+################
+#
+################
+# Arguments     :
+################
+#
+################
+# Values        :
+################
+#
+##########################################################################################################################################
+
+print.PRSP <- function(x, digits=3, ...) {
+
+  if (!inherits(x, 'PRSP'))
+        stop("Primary argument much be an object of class 'PRSP' \n")
+
+  obj <- x
+  cat("Selected covariates:\n")
+  print(obj$selected)
+  cat("\n")
+  
+  cat("Used covariates:\n")
+  print(obj$used)
+  cat("\n")
+
+  cat("Maximum number of peeling steps:\n")
+  print(obj$cvfit$cv.maxsteps)
+  cat("\n")
+  
+  out <- obj$cvfit$cv.nsteps-1
+  names(out) <- NULL
+  cat("Optimum number of peeling steps (not counting step #0):\n")
+  print(out)
+  cat("\n")
+  
+  cat("Traces of covariate usage for all replications (columns) for all steps (rows):\n")
+  print(obj$cvfit$cv.trace$dist)
+  cat("\n")
+  
+  cat("Modal trace values of covariate usage at each peeling step:\n")
+  print(obj$cvfit$cv.trace$mode)
+  cat("\n")
+  
+  cat("Cross-validated permutation p-values at each peeling step:\n")
+  print(format(obj$cvfit$cv.pval, digits=digits), quote = FALSE)
+  cat("\n")
+
+  used <- obj$used
+  cat("Decision rules on the covariates (columns) for all peeling steps (rows):\n")
+  print(obj$cvfit$cv.rules$frame[,used,drop=FALSE], quote = FALSE)
+  cat("\n")
+  
+  out <- format(obj$cvfit$cv.stats$mean, digits=digits)
+  colnames(out) <- c("Support", "LHR", "LRT", "CER", "EFT", "EFP", "MEFT", "MEFP")
+  cat("Box endpoint quantities of interest (columns) for all peeling steps (rows):\n")
+  print(out)
+  cat("\n")
+  
+  cat("Box support (sample) size at each peeling step:\n")
+  print(round(nrow(obj$x)*obj$cvfit$cv.stats$mean$cv.support,0))
+  cat("\n")
+  
+  cat("Individual observation box membership indicator (columns) for all peeling steps (rows):\n")
+  print(obj$cvfit$cv.boxind)
+  cat("\n")
+  
+  invisible()
 }
 ##########################################################################################################################################
 
@@ -556,7 +668,7 @@ summary.PRSP <- function(object, ...) {
 predict.PRSP <- function (object, newdata, steps, na.action = na.omit, ...) {
 
   if (!inherits(object, 'PRSP'))
-        stop("Primary argument much be a PRSP object")
+        stop("Primary argument much be an object of class 'PRSP' \n")
 
   X <- as.matrix(newdata)
   X.names <- colnames(X)
@@ -643,7 +755,7 @@ plot_profile <- function(object,
                          horizontal=FALSE, width=8.5, height=5.0, ...) {
 
   if (!inherits(object, 'PRSP'))
-        stop("Primary argument much be a PRSP object")
+        stop("Primary argument much be an object of class 'PRSP' \n")
 
   if (object$plot) {
     if (is.null(object$cvcriterion)) {
@@ -783,7 +895,7 @@ plot_scatter <- function(object,
                          horizontal=FALSE, width=5, height=5, ...) {
 
   if (!inherits(object, 'PRSP'))
-        stop("Primary argument much be a PRSP object")
+        stop("Primary argument much be an object of class 'PRSP' \n")
 
   if (object$plot) {
 
@@ -931,7 +1043,7 @@ plot_boxtraj <- function(object,
                          horizontal=FALSE, width=8.5, height=11.5, ...) {
 
   if (!inherits(object, 'PRSP'))
-        stop("Primary argument much be a PRSP object")
+        stop("Primary argument much be an object of class 'PRSP' \n")
 
   if (object$plot) {
     boxtrajplot <- function(object,
@@ -1152,7 +1264,7 @@ plot_boxtrace <- function(object,
                           horizontal=FALSE, width=8.5, height=8.5, ...) {
 
   if (!inherits(object, 'PRSP'))
-        stop("Primary argument much be a PRSP object")
+        stop("Primary argument much be an object of class 'PRSP' \n")
 
   if (object$plot) {
     boxtraceplot <- function(object,
@@ -1315,7 +1427,7 @@ plot_boxkm <- function(object,
                        horizontal=TRUE, width=11.5, height=8.5, ...) {
 
   if (!inherits(object, 'PRSP'))
-        stop("Primary argument much be a PRSP object")
+        stop("Primary argument much be an object of class 'PRSP' \n")
 
   if (object$plot) {
 

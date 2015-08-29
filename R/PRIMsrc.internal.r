@@ -837,7 +837,7 @@ cv.ave.fold <- function(x, times, status,
     peelobj <- cv.ave.peel(traindata=traindata, trainstatus=trainstatus, traintime=traintime,
                            testdata=testdata, teststatus=teststatus, testtime=testtime,
                            probval=probval, timeval=timeval,
-                           varsign=varsign, initcutpts=initcutpts, arg=arg, seed=seed)
+                           varsign=varsign, initcutpts=initcutpts, arg=arg)
     # Store the test set results from each fold
     nsteps[k] <- peelobj$nsteps
     boxstat.list[[k]] <- peelobj$boxstat
@@ -910,7 +910,7 @@ cv.comb.fold <- function(x, times, status,
     cvstatus[[k]] <- teststatus
     peelobj <- cv.comb.peel(traindata=traindata, trainstatus=trainstatus, traintime=traintime,
                             testdata=testdata, teststatus=teststatus, testtime=testtime,
-                            varsign=varsign, initcutpts=initcutpts, arg=arg, seed=seed)
+                            varsign=varsign, initcutpts=initcutpts, arg=arg)
     # Store the test set results from each fold
     nsteps[k] <- peelobj$nsteps
     boxind[[k]] <- peelobj$boxind
@@ -934,8 +934,7 @@ cv.comb.fold <- function(x, times, status,
 #                    cv.ave.peel (traindata, trainstatus, traintime,
 #                                 testdata, teststatus, testtime,
 #                                 probval, timeval,
-#                                 varsign, initcutpts,
-#                                 arg, seed)
+#                                 varsign, initcutpts, arg)
 #
 ################
 # Description   :
@@ -954,13 +953,11 @@ cv.comb.fold <- function(x, times, status,
 cv.ave.peel <- function(traindata, trainstatus, traintime,
                         testdata, teststatus, testtime,
                         probval, timeval,
-                        varsign, initcutpts,
-                        arg, seed) {
+                        varsign, initcutpts, arg) {
 
   # Training the model
   peelobj <- peel.box(traindata=traindata, traintime=traintime, trainstatus=trainstatus,
-                      varsign=varsign, initcutpts=initcutpts,
-                      arg=arg, seed=seed)
+                      varsign=varsign, initcutpts=initcutpts, arg=arg)
   nsteps <- peelobj$nsteps
 
   # Compute the box statistics for all steps, each entry or row signifies a step
@@ -1046,8 +1043,7 @@ cv.ave.peel <- function(traindata, trainstatus, traintime,
 ################
 #                    cv.comb.peel (traindata, trainstatus, traintime,
 #                                  testdata, teststatus, testtime,
-#                                  varsign, initcutpts,
-#                                  arg, seed)
+#                                  varsign, initcutpts, arg)
 #
 ################
 # Description   :
@@ -1065,12 +1061,10 @@ cv.ave.peel <- function(traindata, trainstatus, traintime,
 
 cv.comb.peel <- function(traindata, trainstatus, traintime,
                          testdata, teststatus, testtime,
-                         varsign, initcutpts,
-                         arg, seed) {
+                         varsign, initcutpts, arg) {
   # Training the model
   peelobj <- peel.box(traindata=traindata, traintime=traintime, trainstatus=trainstatus,
-                      varsign=varsign, initcutpts=initcutpts,
-                      arg=arg, seed=seed)
+                      varsign=varsign, initcutpts=initcutpts, arg=arg)
   nsteps <- peelobj$nsteps
 
   # Create the indicator matrix of the test data that is within the box for each step
@@ -1097,8 +1091,7 @@ cv.comb.peel <- function(traindata, trainstatus, traintime,
 # Usage         :
 ################
 #                    peel.box (traindata, traintime, trainstatus,
-#                              varsign, initcutpts,
-#                              arg, seed)
+#                              varsign, initcutpts, arg)
 #
 ################
 # Description   :
@@ -1115,11 +1108,7 @@ cv.comb.peel <- function(traindata, trainstatus, traintime,
 ##########################################################################################################################################
 
 peel.box <- function(traindata, traintime, trainstatus,
-                     varsign, initcutpts,
-                     arg, seed) {
-
-  if (!is.null(seed))
-    set.seed(seed)
+                     varsign, initcutpts, arg) {
 
   alpha <- NULL
   beta <- NULL
@@ -1194,6 +1183,7 @@ peel.box <- function(traindata, traintime, trainstatus,
           } else {
             vmd[j] <- (lrtlj[l,j] - lrtlj[l-1,j]) / (boxmass - mean(boxes1j))
           }
+        # Rate of increase of CHS (between in and out box)
         } else if (peelcriterion == "ch") {
           fit <- survfit(formula=Surv(traintime, trainstatus) ~ 1, subset=(boxes1j == 1))
           chslj[l,j] <- sum(cumsum(fit$n.event/fit$n.risk))
@@ -1720,43 +1710,6 @@ is.empty <- function(x) {
   } else {
     return( ((length(x) == 0) || (x == "")) )
   }
-}
-##########################################################################################################################################
-
-
-
-
-##########################################################################################################################################
-################
-# Usage         :
-################
-#                    myround (x, digits = 0)
-#
-################
-# Description   :
-################
-#
-################
-# Arguments     :
-################
-#
-################
-# Values        :
-################
-#
-##########################################################################################################################################
-
-myround <- function (x, digits = 0) {
-    upround <- function (x, digits = 0) {
-        return(ceiling(x*10^(digits))/10^digits)
-    }
-    dnround <- function (x, digits = 0) {
-        return(floor(x*10^digits)/10^digits)
-    }
-    i <- (x - trunc(x) >= 0.5)
-    x[i] <- upround(x[i], digits=digits)
-    x[!i] <- dnround(x[!i], digits=digits)
-    return(x)
 }
 ##########################################################################################################################################
 
