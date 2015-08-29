@@ -9,13 +9,13 @@ Branches:
 - The default branch (master) hosts the current development release (version 0.5.8) of the survival bump hunting procedure that implements the case of a survival response. At this point, this version is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our Patient Recursive Survival Peeling (PRSP) algorithm. New features will be added soon as they are available.
 
 	The main function relies on an optional variable pre-selection procedure that is run before the PRSP algorithm. At this point, this is done by a cross-validated penalization of the partial likelihood using the R package 'glmnet'.
-	
-	In this version, the bump hunting procedure and the cross-validation procedures that control the model size and model peeling length are carried out by two separate procedures within a single main function 'sbh()' that generates an S3-class object 'PRSP'.  
+
+	In this version, the bump hunting procedure and the cross-validation procedures that control the model size and model peeling length are carried out by two separate procedures within a single main function 'sbh()' that generates a unique S3-class object 'PRSP'.  
 
 
-- The first branch (devel) hosts a development version of the code (version 0.6.0) that is more rigorous and modular. Here, an alternative single internal cross-validation procedure is carried out in a single cross-validation function called 'cv.sbh()' to simultaneously control the model size and model peeling length before the PRSP algorithm is run. Specifically, it includes a univariate bump hunting variable selection procedure, where model size and model peeling length are simultaneously optimized by cross-validation with respect to the cross-validation criterion of choice: CER, LRT, or LHR (see companion paper below for details).
+- The first branch (devel) hosts a development version of the code (version 0.6.0) that is more rigorous and modular. Here, a single internal cross-validation procedure is carried out to simultaneously control the model size and model peeling length before the model is fit. Specifically, it includes a univariate bump hunting variable selection procedure, where model size and model peeling length are simultaneously optimized by cross-validation of the cross-validation criterion of choice: CER, LRT, or LHR (see companion paper below for details).
 
-	In addition, this cross-validation procedure is carried out separately of the main function 'sbh()'. Altogether, this allows a more rigorous treatment of model validation, a better control on the user-end and an improvement of the maintenance on the back-end. In the process, two S3-class objects are created instead of one: an additional S3-class object 'CV' is output by the cross-validation function cv.sbh() and used as input in the main function 'sbh()'. 
+	In addition, this cross-validation procedure is carried out separately of the main function 'sbh()' in a cross-validation function called 'cv.sbh()'. Altogether, this allows a more rigorous treatment of model validation, a better control on the user-end and an improvement of the maintenance on the back-end. In the process, two S3-class objects are created instead of one: an additional S3-class object 'CV' is output by the cross-validation function cv.sbh() and used as input in the main function 'sbh()'. 
 
 
 - The second branch (unified) will host the future complete version of the code (version 1.0.0), including undirected peeling search by Patient Rule Induction Method (PRIM) that will allow the unified treatment of bump hunting for every type of common response: Survival, Regression and Classification (SRC).
@@ -28,7 +28,7 @@ PRIMsrc is Open Source / Free Software, and is freely available under the GNU Ge
 =========================
 Documentation and Manual: 
 =========================
-All the codes are in the R folder and a manual (PRIMsrc.pdf) details the end-user functions. At this stage and for simplicity, there is a unique end-user main function for fitting a cross-validated Survival Bump Hunting model (sbh(...)). There are 5 end-user plotting functions (plot_****(...)) along with two S3 generic functions: summary(...) and predict(...). Available are also 5 synthetic datasets and 2 real datasets including altogether low and high-dimensional situations (for p < n, p > n and p >> n cases). See the "PRIMsrc-package" introduction section of the manual for more details and examples.
+All the codes are in the R folder and a manual (PRIMsrc.pdf) details the end-user functions. At this stage and for simplicity, there is a unique end-user main function for fitting a cross-validated Survival Bump Hunting model (sbh(...)). There are 5 end-user plotting functions (plot_****(...)) along with three S3 generic functions: summary(...), predict(...) and print(...). Available are also 5 synthetic datasets and 2 real datasets including altogether low and high-dimensional situations (for p < n, p > n and p >> n cases). See the "PRIMsrc-package" introduction section of the manual for more details and examples.
 
 ===========
 References:
@@ -63,7 +63,7 @@ https://cran.r-project.org/web/checks/check_results_PRIMsrc.html
 =============
 Installation: 
 =============
-- To install PRIMsrc from CRAN, simply download and install the current version (0.5.7) from the CRAN repository:
+- To install PRIMsrc from CRAN, simply download and install the current version (0.5.8) from the CRAN repository:
 
 install.packages("PRIMsrc")
 
