@@ -4,30 +4,29 @@
 
 \alias{Real.2}
 
-\title{Real Dataset #2: Large Gene Expression Dataset (\eqn{p >> n} case)}
+\title{Real Dataset #2: Genomic Dataset (\eqn{p >> n} case)}
 
 \description{
-  Publicly available breast cancer gene expression profiling dataset from the Uppsala cohort study.
-  It is entitled: "Genetic Reclassification of Histologic Grade Delineates New Clinical Subtypes of Breast Cancer".   
-  The goal of the study was to provide a more objective measure of grade with prognostic benefit for patients with 
-  moderately differentiated grade II (G2) tumors. To that end, expression profiles of primary invasive breast tumors 
-  were analyzed on microarrays to find a gene expression signature capable of discerning tumors of grade I (G1) and grade III (G3) histology.
-  In this dataset, only the Uppsala cohort (\eqn{n=249}) and only the gene expression data was included 
-  although other clinical covariates are available as well. It contains \eqn{p=22647} mRNA measurements from 
-  the Affymetrix Human Genome U133A Array platform on \eqn{n=249} samples. The data was left 
-  after removal of outliers and incomplete observations and after removal of Affymetrix controls. 
-  See Ivshina et al. (2005) and Gene Expression Omnibus database repository (Accession number: #GSE4922) for more details.
+  Publicly available lung cancer data from the Chemores Cohort Study. This was an integrated study of mRNA, miRNA 
+  and clinical variables to characterize the molecular distinctions between squamous cell carcinoma (SCC) and adenocarcinoma (AC)
+  in Non Small Cell Lung Cancer (NSCLC). Tissue samples were analysed from a cohort of 123 patients who underwent complete 
+  surgical resection at the Institut Mutualiste Montsouris (Paris, France) between 30 January 2002 and 26 June 2006. 
+  In this genomic dataset, only the expression levels of Agilent miRNA probes (\eqn{p=939}) were included from the \eqn{n=123} 
+  samples of the Chemores cohort. The data contains normalized expression levels. See below the paper by Lazar et al. (2013) 
+  and Array Express data repository for complete description of the samples, tissue preparation, 
+  Agilent array technology, data normalization, etc. This dataset represents a situation where the number of covariates dominates 
+  the number of complete observations, or \eqn{p >> n} case. 
 }
 
 \usage{Real.2}
 
 \format{
-  Dataset consists of a \code{numeric} \code{data.frame} containing \eqn{n=177} complete observations (samples) 
-  by rows and \eqn{p=22577} variables by columns, not including the censoring indicator and (censored) time-to-event variables. 
+  Dataset consists of a \code{numeric} \code{data.frame} containing \eqn{n=123} complete observations (samples) 
+  by rows and \eqn{p=939} genomic covariates by columns, not including the censoring indicator and (censored) time-to-event variables. 
   It comes as a compressed Rda data file.
 }
 
-\source{See real clinical data application in Dazard et al., 2015.}
+\source{See real data application in Dazard et al., 2015.}
 
 \references{
     \itemize{
@@ -41,9 +40,9 @@
         \item Dazard J-E. and J. S. Rao (2010).
               "\emph{Local Sparse Bump Hunting.}"
               J. Comp Graph. Statistics, 19(4):900-92.
-        \item  Ivshina AV, George J, Senko O, Mow B et al. (2006).
-              "\emph{Genetic reclassification of histologic grade delineates new clinical subtypes of breast cancer.}
-              Cancer Res 66(21):10292-301. PMID: 17079448
+        \item  Lazar V. et al. (2013).
+              "\emph{Integrated molecular portrait of non-small cell lung cancers.}
+              BMC Medical Genomics 6:53-65. PMID: 24299561 
     }
 }
 
@@ -65,7 +64,12 @@
 
 \seealso{
     \itemize{
-       Gene Expression Omnibus (GEO) database. Accession number: #GSE4922
-       \url{http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE4922}
+       Array Express data repository at the European Bioinformatics Institute.
+       Accession number: #E-MTAB-1134 (MIR).
+       \url{www.ebi.ac.uk/arrayexpress/}
+    }
+    \itemize{
+       CHEMORES Consortium and website.
+       \url{http://www.chemores.ki.se/index.html}
     }
 }

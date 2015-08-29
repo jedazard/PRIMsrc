@@ -31,15 +31,20 @@
 
     \enumerate{
 
-      \item{END-USER FUNCTIONS FOR NEWS, SUMMARY AND PREDICTION} \cr
+      \item{END-USER FUNCTION FOR PACKAGE NEWS} \cr
       \code{\link[PRIMsrc]{PRIMsrc.news}}
       \bold{Display the \pkg{PRIMsrc} Package News}\cr
             Function to display the log file \code{NEWS} of updates of the \pkg{PRIMsrc} package.\cr
             
+      \item{END-USER S3 GENERIC FUNCTIONS FOR SUMMARY, DISPLAY AND PREDICTION} \cr
       \code{\link[PRIMsrc]{summary}}
       \bold{Summary Function}\cr
-            S3 generic summary function to display the main parameters of a \code{PRSP} object.\cr
+            S3 generic summary function to summerize the main parameters used to generate the \code{PRSP} object.\cr
             
+      \code{\link[PRIMsrc]{print}}
+      \bold{Print Function}\cr
+            S3 generic print function to display the cross-validated fitted values of the \code{PRSP} object.\cr
+
       \code{\link[PRIMsrc]{predict}}
       \bold{Predict Function}\cr
             S3 generic predict function to predict the box membership and box vertices 
@@ -125,13 +130,12 @@
             was whether it is possible to achieve a prognostication of patients for AIDS and HAART.\cr
 
       \code{\link[PRIMsrc]{Real.2}}
-      \bold{Large Gene Expression Dataset} \cr
-            Publicly available breast cancer gene expression profiling dataset from the Uppsala cohort study that enrolled 249 women.
-            It is entitled: "Genetic Reclassification of Histologic Grade Delineates New Clinical Subtypes of Breast Cancer".   
-            The goal of the study was to provide a more objective measure of grade with prognostic benefit for patients with 
-            moderately differentiated grade II (G2) tumors. To that end, expression profiles of primary invasive breast tumors 
-            were analyzed on microarrays to find a gene expression signature capable of discerning tumors of grade I (G1) and grade III (G3) histology.
-            In this dataset, only the Uppsala cohort and only the gene expression data was included although other clinical covariates are available as well.
+      \bold{Genomic Dataset} \cr
+            Publicly available lung cancer data from the Chemores Cohort Study. This was an integrated study of mRNA, miRNA 
+            and clinical variables to characterize the molecular distinctions between squamous cell carcinoma (SCC) 
+            and adenocarcinoma (AC) in Non Small Cell Lung Cancer (NSCLC). Tissue samples were analysed from a cohort of 123 patients 
+            who underwent complete surgical resection at the Institut Mutualiste Montsouris (Paris, France) between 30 January 2002 and 26 June 2006.
+            In this genomic dataset, only the expression levels of Agilent miRNA probes (\eqn{p=939}) were included from the \eqn{n=123} samples of the Chemores cohort. 
             It represents a situation where the number of covariates dominates the number of complete observations, or \eqn{p >> n} case. \cr
     }
     Known Bugs/Problems : None at this time.

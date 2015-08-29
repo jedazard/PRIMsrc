@@ -15,21 +15,21 @@
   The studied outcomes were the competing risks "AIDS/Death (before HAART)" and "Treatment Initiation (HAART)".
   However, here, for simplification purposes, only the first of the two competing events (i.e. the time to AIDS/Death), 
   was used in this dataset example. Likewise, the entire study enrolled 1164 women, but only the complete cases were used 
-  in this dataset example for simplification. Variables included history of Injection Drug Use ("IDU") at enrollment,
+  in this clinical dataset example for simplification. Variables included history of Injection Drug Use ("IDU") at enrollment,
   African American ethnicity ("Race"), age ("Age"), and baseline CD4 count ("CD4"). The question in this dataset example 
   was whether it is possible to achieve a prognostication of patients for AIDS and HAART. 
-  See Bacon et al. (2005) and the WIHS website for more details.
+  See below Bacon et al. (2005) and the WIHS website for more details.
 }
 
 \usage{Real.1}
 
 \format{
   Dataset consists of a \code{numeric} \code{data.frame} containing \eqn{n=485} complete observations (samples) 
-  by rows and \eqn{p=4} clinical variables by columns, not including the censoring indicator and (censored) time-to-event variables.
+  by rows and \eqn{p=4} clinical covariates by columns, not including the censoring indicator and (censored) time-to-event variables.
   It comes as a compressed Rda data file.
 }
 
-\source{See real clinical data application in Dazard et al., 2015.}
+\source{See real data application in Dazard et al., 2015.}
 
 \references{
     \itemize{
