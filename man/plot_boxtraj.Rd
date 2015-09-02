@@ -5,7 +5,7 @@
 \title{Visualization of Peeling Trajectories/Profiles}
 
 \description{
-  S3 generic function for plotting the cross-validated peeling trajectories/profiles of a \code{PRSP} object.
+  Function for plotting the cross-validated peeling trajectories/profiles of a \code{PRSP} object.
   Applies to the user-specified covariates among the pre-selected ones and 
   all other statistical quantities of interest at each iteration of the peeling sequence 
   (inner loop of our PRSP algorithm). 

@@ -7,7 +7,7 @@
 \title{Predict Function}
 
 \description{
-  S3 generic predict function to predict the box membership and box vertices 
+  S3-generic predict function to predict the box membership and box vertices 
   on an independent set from a \code{PRSP} object trained by a SBH model.
 }
 

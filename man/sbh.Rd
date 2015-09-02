@@ -48,7 +48,7 @@
     If \code{NULL}, defaults to "combined".
   }
   \item{cvcriterion}{
-    \code{character} \code{vector} describing the cross-validation optimization criterion in \{"lrt", "cer", "lhr"\}.
+    \code{character} \code{vector} describing the optimization criterion in \{"lrt", "cer", "lhr"\}.
     If \code{NULL}, defaults to "lrt". Automatically reset to "none" if \code{cvtype} is set to "none".
   }
   \item{arg}{
@@ -157,7 +157,7 @@
     \item{vs}{\code{logical} scalar of returned flag of optional variable pre-selection.}
     \item{cpv}{\code{logical} scalar of returned flag of optional computation of permutation p-values.}
     \item{cvtype}{\code{character} \code{vector} of the cross-validation technique used.}
-    \item{cvcriterion}{\code{character} \code{vector} of cross-validation optimization criterion used.}
+    \item{cvcriterion}{\code{character} \code{vector} of optimization criterion used.}
     \item{varsign}{\code{numeric} \code{vector} in \{-1,+1\} of directions of peeling for all pre-selected covariates.} 
     \item{selected}{\code{numeric} \code{vector} giving the pre-selected covariates.}
     \item{used}{\code{numeric} \code{vector} giving the covariates used for peeling.}

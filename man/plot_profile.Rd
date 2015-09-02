@@ -5,7 +5,7 @@
 \title{Visualization for Model Selection/Validation}
 
 \description{
-  S3 generic function for plotting the cross-validated profiles of a \code{PRSP} object. 
+  Function for plotting the cross-validated profiles of a \code{PRSP} object. 
   It uses the user's choice of statistics among the Log Hazard Ratio (LHR), 
   Log-Rank Test (LRT) or Concordance Error Rate (CER) as a function of the model tuning parameter, 
   that is, the optimal number of peeling steps of the peeling sequence (inner loop of our PRSP algorithm).

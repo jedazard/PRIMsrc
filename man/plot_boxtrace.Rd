@@ -5,7 +5,7 @@
 \title{Visualization of Covariates Traces}
 
 \description{
-  S3 generic function for plotting the cross-validated covariates traces of a \code{PRSP} object.
+  Function for plotting the cross-validated covariates traces of a \code{PRSP} object.
   Plot the cross-validated modal trace curves of covariate importance and covariate usage of the 
   user-specified covariates among the pre-selected ones at each iteration of the peeling sequence 
   (inner loop of our PRSP algorithm). 

@@ -36,18 +36,24 @@
       \bold{Display the \pkg{PRIMsrc} Package News}\cr
             Function to display the log file \code{NEWS} of updates of the \pkg{PRIMsrc} package.\cr
             
-      \item{END-USER S3 GENERIC FUNCTIONS FOR SUMMARY, DISPLAY AND PREDICTION} \cr
+      \item{END-USER S3-GENERIC FUNCTIONS FOR SUMMARY, DISPLAY, PLOT AND PREDICTION} \cr
       \code{\link[PRIMsrc]{summary}}
       \bold{Summary Function}\cr
-            S3 generic summary function to summerize the main parameters used to generate the \code{PRSP} object.\cr
+            S3-generic summary function to summerize the main parameters used to generate the \code{PRSP} object.\cr
             
       \code{\link[PRIMsrc]{print}}
       \bold{Print Function}\cr
-            S3 generic print function to display the cross-validated fitted values of the \code{PRSP} object.\cr
+            S3-generic print function to display the cross-validated fitted values of the \code{PRSP} object.\cr
+
+      \code{\link[PRIMsrc]{plot}}
+      \bold{2D Visualization of Data Scatter and Box Vertices} \cr
+            S3-generic function to plot a scatterplot of the data and the cross-validated box vertices 
+            of a \code{PRSP} object in a plane defined by the user. The plot is for a given peeling step 
+            of the peeling sequence (inner loop of our PRSP algorithm) defined by the user.\cr
 
       \code{\link[PRIMsrc]{predict}}
       \bold{Predict Function}\cr
-            S3 generic predict function to predict the box membership and box vertices 
+            S3-generic predict function to predict the box membership and box vertices 
             on an independent set from a \code{PRSP} object trained by a SBH model.\cr
   
       \item{END-USER SURVIVAL BUMP HUNTING FUNCTION} \cr
@@ -77,11 +83,6 @@
             Function for plotting the cross-validated profiles of a \code{PRSP} object.
             It uses the user's choice of statistics among the Log Hazard Ratio (LHR), Log-Rank Test (LRT) or Concordance Error Rate (CER) 
             as a function of the model tuning parameter, that is, the optimal number of peeling steps of the peeling sequence 
-            (inner loop of our PRSP algorithm).\cr
-      \code{\link[PRIMsrc]{plot_scatter}}
-      \bold{2D Visualization of Data Scatter and Box Vertices} \cr
-            Function for plotting the cross-validated box vertices of a \code{PRSP} object.
-            Plot the data scatter and cross-validated box vertices in a plane at a given peeling step of the peeling sequence 
             (inner loop of our PRSP algorithm).\cr
       \code{\link[PRIMsrc]{plot_boxtraj}}
       \bold{Visualization of Peeling Trajectories/Profiles} \cr

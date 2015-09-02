@@ -7,7 +7,7 @@
 \title{Print Function}
 
 \description{
-  S3 generic print function to display the cross-validated fitted values of the \code{PRSP} object.
+  S3-generic print function to display the cross-validated fitted values of the \code{PRSP} object.
 }
 
 \usage{
