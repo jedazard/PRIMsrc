@@ -28,7 +28,7 @@ PRIMsrc is Open Source / Free Software, and is freely available under the GNU Ge
 =========================
 Documentation and Manual: 
 =========================
-All the codes are in the R folder and a manual (PRIMsrc.pdf) details the end-user functions. At this stage and for simplicity, there is a unique end-user main function for fitting a cross-validated Survival Bump Hunting model (sbh(...)). There are 5 end-user plotting functions (plot_****(...)) along with three S3 generic functions: summary(...), predict(...) and print(...). Available are also 5 synthetic datasets and 2 real datasets including altogether low and high-dimensional situations (for p < n, p > n and p >> n cases). See the "PRIMsrc-package" introduction section of the manual for more details and examples.
+All the codes are in the R folder and a manual (PRIMsrc.pdf) details the end-user functions. At this stage and for simplicity, there is a unique end-user main function for fitting a cross-validated Survival Bump Hunting model (sbh(...)). There are 4 end-user specific plotting functions (plot_****(...)) along with four S3-generic functions: summary(...), predict(...), plot(...) and print(...). Available are also 5 synthetic datasets and 2 real datasets including altogether low and high-dimensional situations (for p < n, p > n and p >> n cases). See the "PRIMsrc-package" introduction section of the manual for more details and examples.
 
 ===========
 References:
@@ -54,7 +54,7 @@ http://onlinelibrary.wiley.com/journal/10.1002/(ISSN)1932-1872
 =============
 Requirements:
 =============
-PRIMsrc 0.5.8 requires R-3.0.2 (2013-09-25). It was built and tested under R-devel (2015-08-02 r68804) and Travis CI. 
+PRIMsrc 0.5.9 requires R-3.0.2 (2013-09-25). It was built and tested under R-devel (2015-08-02 r68804) and Travis CI. 
 
 Installation has been tested on Windows, Linux, OSX and Solaris platforms. See for instance the 'CRAN Package Check Results' here:
 
@@ -63,11 +63,11 @@ https://cran.r-project.org/web/checks/check_results_PRIMsrc.html
 =============
 Installation: 
 =============
-- To install PRIMsrc from CRAN, simply download and install the current version (0.5.8) from the CRAN repository:
+- To install PRIMsrc from CRAN, simply download and install the current version (0.5.9) from the CRAN repository:
 
 install.packages("PRIMsrc")
 
-- Alternatively, you can install the most up-to-date development version (0.5.8) from GitHub, using devtools:
+- Alternatively, you can install the most up-to-date development version (0.5.9) from GitHub, using devtools:
 
 install.packages(devtools)
 
