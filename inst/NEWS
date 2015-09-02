@@ -30,7 +30,7 @@ o RELEASE 0.4.0
 - Corrected stepwise variable selection procedure in peel.box() to account for missing values.
 - Corrected definition of the cross-validated box vertices (definition) in the case of "combined CV" technique.
 - Corrected generation of random seed when none is provided. 
-- Minor updates, bugs and code improvements in sbh(...) and peel.box(...) functions.
+- Minor updates, bugs and code improvements in sbh(...) and internal peel.box(...) functions.
 - Updated manual, version number.
 - Test build under R 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
@@ -38,10 +38,8 @@ Date   : 2015-03-04
 o RELEASE 0.5.0
 - Change of package name and GitHub repository name from PrimSRC to PRIMsrc.
 - Added CRAN/GitHub subfolder doc for PDF documentation files (including manual and applied study abstract).
-- Removed option for overlaying plots of multiple PRSP objects 
-  in plot.boxtrace(...) and plot.boxtraj(...).
-- Added argument "toplot" to choose which covariates should be plotted
-  in plot.boxtrace(...) and plot.boxtraj(...).
+- Removed option for overlaying plots of multiple PRSP objects in plot_boxtrace(...) and plot_boxtraj(...).
+- Added argument "toplot" to choose which covariates should be plotted in plot_boxtrace(...) and plot_boxtraj(...).
 - Corrected handling of empty PRSP object (failed peeling) in all plotting functions.
 - Implementation of plotting device now internal to all plotting functions.
 - Removed internal functions from the manual, updated manual, version number.
@@ -49,9 +47,8 @@ o RELEASE 0.5.0
 ---------------------------------------------------------------------------------
 Date   : 2015-03-16
 o RELEASE 0.5.3
-- Added S3-class generic 'summary' function.
-- Added S3-class generic 'predict' function.
-- Made all plotting functions S3-class functions and renamed them as plot.xxx(...).
+- Added S3-generic 'summary' function.
+- Added S3-generic 'predict' function.
 - Test build under R 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
 Date   : 2015-04-10
@@ -84,7 +81,6 @@ o RELEASE 0.5.7
   to match the functions and packages newly imported via NAMESPACE.
 - Added Cumulative Hazard Summary statistic (derived from the Nelson-Aalen estimator) 
   as new peeling criterion option in the PRSP algorithm.
-- Removed S3-class generic method for all plot functions and renaming as plot_xxx.
 - Built and tested under R-devel (2015-07-20 r68705). 
 - Initial release to CRAN and update to GitHub.
 ---------------------------------------------------------------------------------
@@ -95,10 +91,17 @@ o RELEASE 0.5.8
   passing an additional argument in the main function sbh().
 - Main function sbh() now returns the parameters used for configuring the parallelization.
 - Replaced real dataset #2 of breast cancer data with lung cancer data for reason of size.
-- Added S3-class generic 'print' function and updated S3-class generic 'summary' function.
+- Added S3-generic 'print' function and updated S3-generic 'summary' function.
 - Created a new internal subroutine cv.presel() for (optional) variable pre-selection.
 - Changed main argument of plot functions from 'x' to 'object'.
 - Minor corrections in the manual.
+- Built and tested under R-devel (2015-08-02 r68804).
+- Release update to GitHub.
+---------------------------------------------------------------------------------
+Date   : 2015-09-02
+o RELEASE 0.5.9
+- Added S3-generic 'plot' function.
+- Updated documentation file and manual.
 - Built and tested under R-devel (2015-08-02 r68804).
 - Release update to GitHub.
 ---------------------------------------------------------------------------------
