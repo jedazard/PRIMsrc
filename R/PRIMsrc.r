@@ -750,7 +750,7 @@ plot.PRSP <- function(x,
     }
 
     if (is.null(device)) {
-        dev.new(width=width, height=height, title="Scatter Plot", noRStudioGD = TRUE)
+        cat("Device: ",  dev.cur(), "\n")
         scatterplot(obj=obj,
                     main=main,
                     proj=proj, splom=splom, boxes=boxes, steps=steps,
@@ -763,6 +763,7 @@ plot.PRSP <- function(x,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
+        cat("Device: ",  dev.cur(), "\n")
         scatterplot(obj=obj,
                     main=main,
                     proj=proj, splom=splom, boxes=boxes, steps=steps,
@@ -776,6 +777,7 @@ plot.PRSP <- function(x,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
+        cat("Device: ",  dev.cur(), "\n")
         scatterplot(obj=obj,
                     main=main,
                     proj=proj, splom=splom, boxes=boxes, steps=steps,
@@ -965,7 +967,7 @@ plot_profile <- function(object,
       }
 
       if (is.null(device)) {
-        dev.new(width=width, height=height, title="Profile Plot", noRStudioGD = TRUE)
+        cat("Device: ",  dev.cur(), "\n")
         profileplot(object=object, main=main, xlab=xlab, ylab=ylab,
                     add.sd=add.sd, add.legend=add.legend, add.profiles=add.profiles,
                     pch=pch, col=col, lty=lty, lwd=lwd, cex=cex)
@@ -976,6 +978,7 @@ plot_profile <- function(object,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
+        cat("Device: ",  dev.cur(), "\n")
         profileplot(object=object, main=main, xlab=xlab, ylab=ylab,
                     add.sd=add.sd, add.legend=add.legend, add.profiles=add.profiles,
                     pch=pch, col=col, lty=lty, lwd=lwd, cex=cex)
@@ -987,6 +990,7 @@ plot_profile <- function(object,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
+        cat("Device: ",  dev.cur(), "\n")
         profileplot(object=object, main=main, xlab=xlab, ylab=ylab,
                     add.sd=add.sd, add.legend=add.legend, add.profiles=add.profiles,
                     pch=pch, col=col, lty=lty, lwd=lwd, cex=cex)
@@ -1175,7 +1179,7 @@ plot_boxtraj <- function(object,
     }
 
     if (is.null(device)) {
-        dev.new(width=width, height=height, title="Covariate Trajectory Plots", noRStudioGD = TRUE)
+        cat("Device: ",  dev.cur(), "\n")
         boxtrajplot(object=object,
                     main=main, xlab=xlab, ylab=ylab,
                     toplot=toplot,
@@ -1190,6 +1194,7 @@ plot_boxtraj <- function(object,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
+        cat("Device: ",  dev.cur(), "\n")
         boxtrajplot(object=object,
                     main=main, xlab=xlab, ylab=ylab,
                     toplot=toplot,
@@ -1205,6 +1210,7 @@ plot_boxtraj <- function(object,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
+        cat("Device: ",  dev.cur(), "\n")
         boxtrajplot(object=object,
                     main=main, xlab=xlab, ylab=ylab,
                     toplot=toplot,
@@ -1340,7 +1346,7 @@ plot_boxtrace <- function(object,
     }
 
     if (is.null(device)) {
-        dev.new(width=width, height=height, title="Covariate Trace Plots", noRStudioGD = TRUE)
+        cat("Device: ",  dev.cur(), "\n")
         boxtraceplot(object=object,
                      main=main, xlab=xlab, ylab=ylab,
                      toplot=toplot,
@@ -1355,6 +1361,7 @@ plot_boxtrace <- function(object,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
+        cat("Device: ",  dev.cur(), "\n")
         boxtraceplot(object=object,
                      main=main, xlab=xlab, ylab=ylab,
                      toplot=toplot,
@@ -1370,6 +1377,7 @@ plot_boxtrace <- function(object,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
+        cat("Device: ",  dev.cur(), "\n")
         boxtraceplot(object=object,
                      main=main, xlab=xlab, ylab=ylab,
                      toplot=toplot,
@@ -1488,7 +1496,7 @@ plot_boxkm <- function(object,
     }
 
     if (is.null(device)) {
-        dev.new(width=width, height=height, title="Survival Plots", noRStudioGD = TRUE)
+        cat("Device: ",  dev.cur(), "\n")
         boxkmplot(object=object,
                   main=main, xlab=xlab, ylab=ylab,
                   precision=precision, mark=mark, col=col, cex=cex,
@@ -1501,6 +1509,7 @@ plot_boxkm <- function(object,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
+        cat("Device: ",  dev.cur(), "\n")
         boxkmplot(object=object,
                   main=main, xlab=xlab, ylab=ylab,
                   precision=precision, mark=mark, col=col, cex=cex,
@@ -1514,6 +1523,7 @@ plot_boxkm <- function(object,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
+        cat("Device: ",  dev.cur(), "\n")
         boxkmplot(object=object,
                   main=main, xlab=xlab, ylab=ylab,
                   precision=precision, mark=mark, col=col, cex=cex,
