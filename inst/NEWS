@@ -100,8 +100,8 @@ o RELEASE 0.5.8
 ---------------------------------------------------------------------------------
 Date   : 2015-09-02
 o RELEASE 0.5.9
-- Added S3-generic 'plot' function.
-- Corrected all plotting functions for the case of NULL graphical device.
+- Replaced plotting function plot_scatter(...) by S3-generic 'plot' function.
+- Corrected all plotting functions for the case of a NULL graphical device.
 - Updated documentation file and manual.
 - Built and tested under R-devel (2015-08-02 r68804).
 - Release update to GitHub.
