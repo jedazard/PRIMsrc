@@ -98,10 +98,12 @@ o RELEASE 0.5.8
 - Built and tested under R-devel (2015-08-02 r68804).
 - Release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2015-09-02
+Date   : 2015-09-07
 o RELEASE 0.5.9
 - Replaced plotting function plot_scatter(...) by S3-generic 'plot' function.
 - Corrected all plotting functions for the case of a NULL graphical device.
+- Cross-validated estimates of box endpoint quantities of interest now contains sample size for all peeling steps.
+- Minor updates and corrections in the outputs of S3-generic functions.
 - Updated documentation file and manual.
 - Built and tested under R-devel (2015-08-02 r68804).
 - Release update to GitHub.
