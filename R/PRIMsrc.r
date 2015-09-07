@@ -69,7 +69,7 @@ sbh <- function(dataset,
     times[times <= 0] <- 10^(-digits)
     n <- nrow(x)
     p <- ncol(x)
-    if (is.null(colnames(x))) colnames(x) <- paste("X", 1:ncol(x), sep="")
+    if (is.null(colnames(x))) colnames(x) <- paste("X", 1:p, sep="")
   }
 
   # Summarizing user choices
@@ -378,6 +378,8 @@ sbh <- function(dataset,
         cat("Generating cross-validated box statistics for each step ...\n")
         CV.support.mu <- lapply.mat(X=CV.support, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps)
         CV.support.sd <- lapply.mat(X=CV.support, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps)
+        CV.size.mu <- round(n*CV.support.mu,0)
+        CV.size.sd <- n*CV.support.sd
         CV.lhr.mu <- lapply.mat(X=CV.lhr, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps)
         CV.lhr.sd <- lapply.mat(X=CV.lhr, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps)
         CV.lrt.mu <- lapply.mat(X=CV.lrt, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps)
@@ -393,6 +395,7 @@ sbh <- function(dataset,
         CV.min.prob.bar.mu <- lapply.mat(X=CV.min.prob.bar, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps)
         CV.min.prob.bar.sd <- lapply.mat(X=CV.min.prob.bar, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps)
         CV.stats.mu <- data.frame("cv.support"=CV.support.mu,
+                                  "cv.size"=CV.size.mu,
                                   "cv.lhr"=CV.lhr.mu,
                                   "cv.lrt"=CV.lrt.mu,
                                   "cv.cer"=CV.cer.mu,
@@ -402,6 +405,7 @@ sbh <- function(dataset,
                                   "cv.min.prob.bar"=CV.min.prob.bar.mu)
         rownames(CV.stats.mu) <- paste("step", 0:(CV.nsteps-1), sep="")
         CV.stats.sd <- data.frame("cv.support"=CV.support.sd,
+                                  "cv.size"=CV.size.sd,
                                   "cv.lhr"=CV.lhr.sd,
                                   "cv.lrt"=CV.lrt.sd,
                                   "cv.cer"=CV.cer.sd,
@@ -552,7 +556,6 @@ summary.PRSP <- function(object, ...) {
   cat("\t Peeling percentile: ", alpha*100, "%\n")
   cat("\t Minimal box support: ", beta*100, "%\n")
   cat("\t Minimal box sample size: ", minn, "\n")
-  cat("\t Peeling steps: ", L, "\n")
   cat("Cross-validation technique: ", object$cvtype, "\n")
   cat("Cross-validation criterion: ", disp(criterion=object$cvcriterion), "\n")
   cat("Computation of permutation p-values:", object$cpv, "\n")
@@ -605,9 +608,9 @@ print.PRSP <- function(x, digits=3, ...) {
   print(obj$cvfit$cv.maxsteps)
   cat("\n")
   
-  out <- obj$cvfit$cv.nsteps-1
+  out <- obj$cvfit$cv.nsteps
   names(out) <- NULL
-  cat("Optimum number of peeling steps (not counting step #0):\n")
+  cat("Optimal number of peeling steps (counting step #0):\n")
   print(out)
   cat("\n")
   
@@ -629,13 +632,9 @@ print.PRSP <- function(x, digits=3, ...) {
   cat("\n")
   
   out <- format(obj$cvfit$cv.stats$mean, digits=digits)
-  colnames(out) <- c("Support", "LHR", "LRT", "CER", "EFT", "EFP", "MEFT", "MEFP")
+  colnames(out) <- c("Support", "Size", "LHR", "LRT", "CER", "EFT", "EFP", "MEFT", "MEFP")
   cat("Box endpoint quantities of interest (columns) for all peeling steps (rows):\n")
   print(out)
-  cat("\n")
-  
-  cat("Box support (sample) size at each peeling step:\n")
-  print(round(nrow(obj$x)*obj$cvfit$cv.stats$mean$cv.support,0))
   cat("\n")
   
   cat("Individual observation box membership indicator (columns) for all peeling steps (rows):\n")

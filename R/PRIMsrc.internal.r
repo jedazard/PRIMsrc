@@ -301,6 +301,7 @@ cv.pval <- function(x, times, status,
   for (l in 1:cvl) {
     pval[l] <- mean((null.chisq[l,] >= obs.chisq[l]), na.rm=TRUE)
   }
+  names(pval) <- paste("step", 0:(cvl-1), sep="")
 
   return(pval)
 }
