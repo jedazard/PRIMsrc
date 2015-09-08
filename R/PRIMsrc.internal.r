@@ -1807,6 +1807,10 @@ disp <- function(x) {
         return("LRT") 
     } else if (x == "cer") {
         return("CER") 
+    } else if (x == "combined") {
+        return("COMBINED") 
+    } else if (x == "averaged") {
+        return("AVERAGED") 
     } else if (x == "none") {
         return("NONE") 
     }
