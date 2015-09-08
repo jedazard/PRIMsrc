@@ -13,8 +13,8 @@
   sbh(dataset, 
       B = 10, K = 5, A = 1000, 
       vs = TRUE, cpv = FALSE,
-      cvtype=c("combined", "averaged", "none"), 
-      cvcriterion=c("lrt", "cer", "lhr"),
+      cvtype=c("combined", "averaged", "none", NULL), 
+      cvcriterion=c("lrt", "cer", "lhr", NULL),
       arg = "beta=0.05,alpha=0.1,minn=10,L=NULL,peelcriterion=\"lr\"",
       probval = NULL, timeval = NULL, 
       parallel = FALSE, conf = NULL, seed = NULL)
@@ -44,12 +44,12 @@
     Defaults to \code{FALSE}.
   }
   \item{cvtype}{
-    \code{Character} \code{vector} describing the cross-validation technique in \{"combined", "averaged", "none"\}.
-    If \code{NULL}, defaults to "combined".
+    \code{Character} \code{vector} describing the cross-validation technique in \{"combined", "averaged", "none", NULL\}.
+    If \code{NULL}, automatically reset to "none".
   }
   \item{cvcriterion}{
-    \code{character} \code{vector} describing the optimization criterion in \{"lrt", "cer", "lhr"\}.
-    If \code{NULL}, defaults to "lrt". Automatically reset to "none" if \code{cvtype} is set to "none".
+    \code{character} \code{vector} describing the optimization criterion in \{"lrt", "cer", "lhr", NULL\}.
+    If \code{NULL}, automatically reset to "none".
   }
   \item{arg}{
     \code{Character} \code{vector} describing the PRSP parameters:
