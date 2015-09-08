@@ -1779,7 +1779,7 @@ rep.mat <- function (X, margin, times) {
 ################
 # Usage         :
 ################
-#                    disp (criterion)
+#                    disp (x)
 #
 ################
 # Description   :
@@ -1794,19 +1794,21 @@ rep.mat <- function (X, margin, times) {
 ################
 #
 ##########################################################################################################################################
-disp <- function(criterion) {
-    if (criterion == "lh") {
+disp <- function(x) {
+    if (x == "lh") {
         return("LHR")
-    } else if (criterion == "lr") { 
+    } else if (x == "lr") { 
         return("LRT")
-    } else if (criterion == "ch") {
+    } else if (x == "ch") {
         return("CHS")
-    } else if (criterion == "lhr") {
+    } else if (x == "lhr") {
         return("LHR") 
-    } else if (criterion == "lrt") {
+    } else if (x == "lrt") {
         return("LRT") 
-    } else if (criterion == "cer") {
+    } else if (x == "cer") {
         return("CER") 
+    } else if (x == "none") {
+        return("NONE") 
     }
 }
 ##########################################################################################################################################
