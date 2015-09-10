@@ -7,7 +7,7 @@
 \description{
   Function for plotting the cross-validated covariates traces of a \code{PRSP} object.
   Plot the cross-validated modal trace curves of covariate importance and covariate usage of the 
-  user-specified covariates among the pre-selected ones at each iteration of the peeling sequence 
+  pre-selected covariates specified by user at each iteration of the peeling sequence 
   (inner loop of our PRSP algorithm). 
 }
 
