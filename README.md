@@ -6,14 +6,14 @@ Performs a unified treatment of Bump Hunting by Patient Rule Induction Method (P
 =========
 Branches:
 =========
-- The default branch (master) hosts the current development release (version 0.5.8) of the survival bump hunting procedure that implements the case of a survival response. At this point, this version is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our Patient Recursive Survival Peeling (PRSP) algorithm. New features will be added soon as they are available.
+- The default branch (master) hosts the current development release (version 0.6.0) of the survival bump hunting procedure that implements the case of a survival response. At this point, this version is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our Patient Recursive Survival Peeling (PRSP) algorithm. New features will be added soon as they are available.
 
 	The main function relies on an optional variable pre-selection procedure that is run before the PRSP algorithm. At this point, this is done by a cross-validated penalization of the partial likelihood using the R package 'glmnet'.
 
 	In this version, the bump hunting procedure and the cross-validation procedures that control the model size and model peeling length are carried out by two separate procedures within a single main function 'sbh()' that generates a unique S3-class object 'PRSP'.  
 
 
-- The first branch (devel) hosts a development version of the code (version 0.6.0) that is more rigorous and modular. Here, a single internal cross-validation procedure is carried out to simultaneously control the model size and model peeling length before the model is fit. Specifically, it includes a univariate bump hunting variable selection procedure, where model size and model peeling length are simultaneously optimized by cross-validation of the cross-validation criterion of choice: CER, LRT, or LHR (see companion paper below for details).
+- The first branch (devel) hosts a development version of the code (version 0.7.0) that is more rigorous and modular. Here, a single internal cross-validation procedure is carried out to simultaneously control the model size and model peeling length before the model is fit. Specifically, it includes a univariate bump hunting variable selection procedure, where model size and model peeling length are simultaneously optimized by cross-validation of the cross-validation criterion of choice: CER, LRT, or LHR (see companion paper below for details).
 
 	In addition, this cross-validation procedure is carried out separately of the main function 'sbh()' in a cross-validation function called 'cv.sbh()'. Altogether, this allows a more rigorous treatment of model validation, a better control on the user-end and an improvement of the maintenance on the back-end. In the process, two S3-class objects are created instead of one: an additional S3-class object 'CV' is output by the cross-validation function cv.sbh() and used as input in the main function 'sbh()'. 
 
@@ -54,7 +54,7 @@ http://onlinelibrary.wiley.com/journal/10.1002/(ISSN)1932-1872
 =============
 Requirements:
 =============
-PRIMsrc 0.5.9 requires R-3.0.2 (2013-09-25). It was built and tested under R-devel (2015-08-02 r68804) and Travis CI. 
+PRIMsrc 0.6.0 requires R-3.0.2 (2013-09-25). It was built and tested under R-devel (2015-08-02 r68804) and Travis CI. 
 
 Installation has been tested on Windows, Linux, OSX and Solaris platforms. See for instance the 'CRAN Package Check Results' here:
 
@@ -67,7 +67,7 @@ Installation:
 
 install.packages("PRIMsrc")
 
-- Alternatively, you can install the most up-to-date development version (0.5.9) from GitHub, using devtools:
+- Alternatively, you can install the most up-to-date version (0.6.0) from GitHub, using devtools:
 
 install.packages(devtools)
 
