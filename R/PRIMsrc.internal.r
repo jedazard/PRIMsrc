@@ -59,7 +59,6 @@ cv.presel <- function(x, times, status,
     wm <- ww - rep.mat(t(w), 2, nrow(ww))
     wm <- w + wm[which.min(apply(abs(wm), 1, sum)),]        # Nearest neighbor to index minimizer 
     if (is.empty(wm)) {
-        indsel <- NULL
         selected <- NULL
         varsign <- NULL
         success <- FALSE
@@ -68,46 +67,37 @@ cv.presel <- function(x, times, status,
         enalpha.min <- enalpha[wm[1]]
         fit <- glmnet(x=x, y=Surv(times, status), alpha=enalpha.min, family="cox", maxit=1e5)
         cv.coef <- as.numeric(coef(fit, s=enlambda.min))
-        indsel <- which(!(is.na(cv.coef)) & (cv.coef != 0))
-        if (is.empty(indsel)) {
-            indsel <- NULL
+        selected <- which(!(is.na(cv.coef)) & (cv.coef != 0))
+        if (is.empty(selected)) {
             selected <- NULL
             varsign <- NULL
             success <- FALSE
         } else {
-            names(indsel) <- colnames(x)[indsel]
-            cv.coef <- cv.coef[indsel]
+            names(selected) <- colnames(x)[selected]
+            cv.coef <- cv.coef[selected]
             varsign <- sign(cv.coef)
-            names(varsign) <- colnames(x)[indsel]
-            m <- pmatch(x=1:p, table=indsel, nomatch=NA, duplicates.ok=FALSE)
-            selected <- m[!is.na(m)]
-            names(selected) <- names(indsel)[selected]
+            names(varsign) <- colnames(x)[selected]
             success <- TRUE
         }
     }
   } else {
     fit <- glmnet(x=x, y=Surv(times, status), alpha=0, family="cox", maxit=1e5)
     cv.coef <- as.numeric(coef(fit, s=0))
-    indsel <- which(!(is.na(cv.coef)) & (cv.coef != 0))
-    if (is.empty(indsel)) {
-      indsel <- NULL
+    selected <- which(!(is.na(cv.coef)) & (cv.coef != 0))
+    if (is.empty(selected)) {
       selected <- NULL
       varsign <- NULL
       success <- FALSE
     } else {
-      names(indsel) <- colnames(x)[indsel]
-      cv.coef <- cv.coef[indsel]
+      names(selected) <- colnames(x)[selected]
+      cv.coef <- cv.coef[selected]
       varsign <- sign(cv.coef)
-      names(varsign) <- colnames(x)[indsel]
-      m <- pmatch(x=1:p, table=indsel, nomatch=NA, duplicates.ok=FALSE)
-      selected <- m[!is.na(m)]
-      names(selected) <- names(indsel)[selected]
+      names(varsign) <- colnames(x)[selected]
       success <- TRUE
     }
   }
 
-  return(list("indsel"=indsel,
-              "selected"=selected,
+  return(list("selected"=selected,
               "varsign"=varsign,
               "success"=success))
 }
