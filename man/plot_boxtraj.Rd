@@ -50,7 +50,7 @@
     \code{Character} \code{vector}. Y axis label. Defaults to "Covariate Range".
   }
   \item{toplot}{
-    \code{Numeric} \code{vector}. Which of the pre-selected covariates to plot.
+    \code{Numeric} \code{vector}. Which of the pre-selected covariates to plot (in reference to the original index of covariates).
     Defaults to covariates used for peeling.
   }
   \item{col.cov}{
