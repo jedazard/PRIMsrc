@@ -121,6 +121,8 @@ sbh <- function(dataset,
     used <- NULL
     # Cross-validated minimum length from all replicates
     CV.maxsteps <- NULL
+    # List of CV mean profiles
+    CV.mean.profiles <- list("lhr"=NULL, "lrt"=NULL, "cer"=NULL)
     # List of CV profiles
     CV.profiles <- NULL
     # Cross-validated optimal length from all replicates
@@ -542,18 +544,16 @@ summary.PRSP <- function(object, ...) {
   } else {
     cat("'PRSP' object without cross-validation and replications\n\n", sep="")
   }
-  cat("Variable pre-selection:", object$vs, "\n")
+  cat("Variable pre-selection:", object$vs, "\n\n")
   cat("PRSP parameters:\n")
   cat("\t Peeling criterion: ", disp(x=peelcriterion), "\n")
   cat("\t Peeling percentile: ", alpha*100, "%\n")
   cat("\t Minimal box support: ", beta*100, "%\n")
-  cat("\t Minimal box sample size: ", minn, "\n")
-  cat("Cross-validation technique: ", disp(x=object$cvtype), "\n")
-  cat("Cross-validation criterion: ", disp(x=object$cvcriterion), "\n")
-  cat("Computation of permutation p-values:", object$cpv, "\n")
-  cat("Configuration of parallelization : \n")
-  print(object$config)
-  cat("\n")
+  cat("\t Minimal box sample size: ", minn, "\n\n")
+  cat("Cross-validation technique: ", disp(x=object$cvtype), "\n\n")
+  cat("Cross-validation criterion: ", disp(x=object$cvcriterion), "\n\n")
+  cat("Computation of permutation p-values: ", object$cpv, "\n\n")
+  cat("Parallelization: ", object$config$parallel, "\n\n")
   
   invisible()
 }
@@ -1074,7 +1074,7 @@ plot_boxtraj <- function(object,
         }
         for (j in 1:p) {
             plot(x=object$cvfit$cv.stats$mean$cv.support,
-                 y=object$cvfit$cv.rules$mean[,toplot[j]],
+                 y=object$cvfit$cv.rules$mean[,varnames[toplot[j]]],
                  type='s', col=col.cov[j], lty=lty.cov[j], lwd=lwd.cov[j],
                  main=paste(varnames[toplot[j]], " covariate trajectory", sep=""), cex.main=cex,
                  xlim=range(0,1),
@@ -1262,9 +1262,6 @@ plot_boxtrace <- function(object,
                              cex, add.legend, text.legend, ...) {
         p <- length(toplot)
         varnames <- colnames(object$x)
-        ticknames <- paste(varnames[toplot], " -", sep="")
-        pointtrace <- c(object$cvfit$cv.trace[2], object$cvfit$cv.trace[-1])
-        matchtrace <- pmatch(x=pointtrace, table=toplot, duplicates.ok = TRUE)
         if (missing(col.cov)) {
             col.cov <- 2:(p+1)
         }
@@ -1279,7 +1276,8 @@ plot_boxtrace <- function(object,
         } else {
             par(mfrow=c(2, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 8.0, 2.0, 0.0), mgp=c(1.5, 0.5, 0))
         }
-        boxcut.scaled <- scale(x=object$cvfit$cv.rules$mean[,toplot], center=center, scale=scale)
+        
+        boxcut.scaled <- scale(x=object$cvfit$cv.rules$mean[,varnames[toplot]], center=center, scale=scale)
         plot(x=object$cvfit$cv.stats$mean$cv.support,
              y=boxcut.scaled[,1], type='n',
              xlim=range(0,1),
@@ -1299,6 +1297,10 @@ plot_boxtrace <- function(object,
             legend("bottom", inset=0.01, legend=text.legend, cex=cex)
         mtext(text=xlab, cex=cex, side=1, line=1, outer=FALSE)
         mtext(text=ylab, cex=cex, side=2, line=2, outer=FALSE)
+
+        ticknames <- paste(varnames[toplot], " -", sep="")
+        pointtrace <- c(object$cvfit$cv.trace[2], object$cvfit$cv.trace[-1])
+        matchtrace <- pmatch(x=pointtrace, table=toplot, duplicates.ok = TRUE)
         plot(x=object$cvfit$cv.stats$mean$cv.support,
              y=matchtrace,
              type='S', yaxt="n", col=col, lty=lty, lwd=lwd,
