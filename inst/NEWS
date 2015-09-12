@@ -108,14 +108,17 @@ o RELEASE 0.5.9
 - Built and tested under R-devel (2015-08-02 r68804).
 - Release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2015-09-10
+Date   : 2015-09-15
 o RELEASE 0.6.0
-- Corrected bug in the output of sbh(): the returned vectors of pre-selected and used covariates
-  are now in reference to the original index.
-- Main function sbh() now returns the matrix of original dataset and not the submatrix of pre-selected covariates only.
+- The matrix of original dataset is now returned by the main function sbh() 
+  and not the submatrix of pre-selected covariates only.
+- Corrected bugs in the output of main function sbh(): 
+  . the returned vectors of pre-selected and used covariates are now in reference to the original index.
+  . the value of traces and rules are now matched accordingly.
+  . plot_boxtraj() and plot_boxtrace() are now corrected accordingly.  
 - The value of `object$cvfit$cv.trace` of the `PRSP` `object` that is returned by the main function sbh() 
-  now only returns the vector of the modal trace values of covariate usage at each step.
-- Updated plot_boxtrace() and S3-generic 'print' functions.
+  now only contains the vector of the modal trace values of covariate usage at each step.
+- Updated S3-generic 'summary' and 'print' functions.
 - Minor updates and corrections in the documentation file and manual.
 - Built and tested under R-devel (2015-08-02 r68804).
 - Release update to GitHub.
