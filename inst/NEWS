@@ -119,5 +119,5 @@ o RELEASE 0.6.0
   now only contains the vector of the modal trace values of covariate usage at each step.
 - Updated S3-generic 'summary' and 'print' functions.
 - Minor updates and corrections in the documentation file and manual.
-- Built and tested under R-devel (2015-08-02 r68804) and release update to GitHub.
+- Built and tested under R-devel (2015-09-14 r69384) and release update to GitHub.
 ---------------------------------------------------------------------------------
