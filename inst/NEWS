@@ -3,16 +3,17 @@ Package: PRIMsrc
 ---------------------------------------------------------------------------------
 Date   : 2015-01-20
 o RELEASE 0.1.0
-- Initial release of the package to GitHub.
-- Test build under R 3.0.2 
+- Initial release to GitHub.
+- Built and tested under R 3.1.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
 Date   : 2015-01-22
 o RELEASE 0.2.0
-- Test build under R 3.1.2 and release update to GitHub.
+- Built and tested under R 3.1.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
 Date   : 2015-02-01
 o RELEASE 0.3.0
 - Minor updates in the manual, email and version number.
+- Built and tested under R 3.1.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
 Date   : 2015-02-27
 o RELEASE 0.4.0
@@ -32,7 +33,7 @@ o RELEASE 0.4.0
 - Corrected generation of random seed when none is provided. 
 - Minor updates, bugs and code improvements in sbh(...) and internal peel.box(...) functions.
 - Updated manual, version number.
-- Test build under R 3.0.2 and release update to GitHub.
+- Built and tested under R 3.1.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
 Date   : 2015-03-04
 o RELEASE 0.5.0
@@ -43,13 +44,13 @@ o RELEASE 0.5.0
 - Corrected handling of empty PRSP object (failed peeling) in all plotting functions.
 - Implementation of plotting device now internal to all plotting functions.
 - Removed internal functions from the manual, updated manual, version number.
-- Test build under R 3.0.2 and release update to GitHub.
+- Built and tested under R 3.1.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
 Date   : 2015-03-16
 o RELEASE 0.5.3
 - Added S3-generic 'summary' function.
 - Added S3-generic 'predict' function.
-- Test build under R 3.0.2 and release update to GitHub.
+- Built and tested under R 3.1.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
 Date   : 2015-04-10
 o RELEASE 0.5.5
@@ -60,7 +61,7 @@ o RELEASE 0.5.5
 - Corrected output of variable trace modal values.
 - Corrected pre-selected variable output.
 - Several minor bugs corrected.
-- Test build under R 3.0.2 and release update to GitHub.
+- Built and tested under R 3.1.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
 Date   : 2015-06-19
 o RELEASE 0.5.6
@@ -70,7 +71,7 @@ o RELEASE 0.5.6
 - Improved robustness in internal functions list2mat and list2array.
 - Minor improvement in internal function cv.folds.
 - Added vignettes
-- Test build under R 3.0.2 and release update to GitHub.
+- Built and tested under R 3.0.2 and release update to GitHub.
 ---------------------------------------------------------------------------------
 Date   : 2015-07-28
 o RELEASE 0.5.7
@@ -95,8 +96,7 @@ o RELEASE 0.5.8
 - Created a new internal subroutine cv.presel() for (optional) variable pre-selection.
 - Changed main argument of plot functions from 'x' to 'object'.
 - Minor corrections in the manual.
-- Built and tested under R-devel (2015-08-02 r68804).
-- Release update to GitHub.
+- Built and tested under R-devel (2015-08-02 r68804) and release update to GitHub.
 ---------------------------------------------------------------------------------
 Date   : 2015-09-07
 o RELEASE 0.5.9
@@ -105,21 +105,19 @@ o RELEASE 0.5.9
 - Cross-validated estimates of box endpoint quantities of interest now contains sample size for all peeling steps.
 - Minor updates and corrections in the outputs of S3-generic functions.
 - Minor updates and corrections in the documentation file and manual.
-- Built and tested under R-devel (2015-08-02 r68804).
-- Release update to GitHub.
+- Built and tested under R-devel (2015-08-02 r68804) and release update to GitHub.
 ---------------------------------------------------------------------------------
 Date   : 2015-09-15
 o RELEASE 0.6.0
 - The matrix of original dataset is now returned by the main function sbh() 
   and not the submatrix of pre-selected covariates only.
 - Corrected bugs in the output of main function sbh(): 
-  . the returned vectors of pre-selected and used covariates are now in reference to the original index.
+  . the returned vectors of `pre-selected` and `used` covariates are now in reference to the original index of variables.
   . the value of traces and rules are now matched accordingly.
   . plot_boxtraj() and plot_boxtrace() are now corrected accordingly.  
 - The value of `object$cvfit$cv.trace` of the `PRSP` `object` that is returned by the main function sbh() 
   now only contains the vector of the modal trace values of covariate usage at each step.
 - Updated S3-generic 'summary' and 'print' functions.
 - Minor updates and corrections in the documentation file and manual.
-- Built and tested under R-devel (2015-08-02 r68804).
-- Release update to GitHub.
+- Built and tested under R-devel (2015-08-02 r68804) and release update to GitHub.
 ---------------------------------------------------------------------------------
