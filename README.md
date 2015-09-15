@@ -63,7 +63,7 @@ https://cran.r-project.org/web/checks/check_results_PRIMsrc.html
 =============
 Installation: 
 =============
-- To install PRIMsrc from CRAN, simply download and install the current version (0.5.9) from the CRAN repository:
+- To install PRIMsrc from CRAN, simply download and install the current version (0.6.0) from the CRAN repository:
 
 install.packages("PRIMsrc")
 
