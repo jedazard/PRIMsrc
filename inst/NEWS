@@ -123,6 +123,8 @@ o RELEASE 0.6.0
 ---------------------------------------------------------------------------------
 Date   : 2015-09-25
 o RELEASE 0.6.1
+- Rename example datasets #4 and #5 into #1b and #4, respectively, for consistency with companion article. 
 - Minor correction in plot_boxtrace() axes names output.  
+- Minor corrections in the documentation file and manual.
 - Built and tested under R-devel (2015-09-14 r69384) and release update to GitHub.
 ---------------------------------------------------------------------------------
