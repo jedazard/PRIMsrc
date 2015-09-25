@@ -151,7 +151,7 @@ sbh <- function(dataset,
     varsign <- cv.presel.obj$varsign
     cat("Directions of peeling of pre-selected ", p.sel, " covariates:\n", sep="")
     print(varsign)
-    
+
     # Initial box boundaries
     initcutpts <- numeric(p.sel)
     for(j in 1:p.sel){
@@ -331,7 +331,7 @@ sbh <- function(dataset,
         CV.trace <- apply(X=trace.dist,
                           FUN=function(x){as.numeric(names(which.max(table(x, useNA="no"))))},
                           MARGIN=1)
-        m <- pmatch(x=names(selected)[CV.trace], table=colnames(x), nomatch=NA, duplicates.ok=TRUE) 
+        m <- pmatch(x=names(selected)[CV.trace], table=colnames(x), nomatch=NA, duplicates.ok=TRUE)
         CV.trace <- c(0, m[!is.na(m)])
         names(CV.trace) <- paste("step", 0:(CV.nsteps-1), sep="")
 
@@ -444,9 +444,9 @@ sbh <- function(dataset,
                         "cvfit"=CV.fit,
                         "cvprofiles"=CV.profiles,
                         "cvmeanprofiles"=CV.mean.profiles,
-                        "plot"=bool.plot, 
-                        "config"=list("parallel"=parallel, 
-                                      "names"=conf$names, 
+                        "plot"=bool.plot,
+                        "config"=list("parallel"=parallel,
+                                      "names"=conf$names,
                                       "cpus"=conf$cpus,
                                       "type"=conf$type,
                                       "homo"=conf$homo,
@@ -554,7 +554,7 @@ summary.PRSP <- function(object, ...) {
   cat("Cross-validation criterion: ", disp(x=object$cvcriterion), "\n\n")
   cat("Computation of permutation p-values: ", object$cpv, "\n\n")
   cat("Parallelization: ", object$config$parallel, "\n\n")
-  
+
   invisible()
 }
 ##########################################################################################################################################
@@ -591,7 +591,7 @@ print.PRSP <- function(x, digits=3, ...) {
   cat("Selected covariates:\n")
   print(obj$selected)
   cat("\n")
-  
+
   cat("Used covariates:\n")
   print(obj$used)
   cat("\n")
@@ -599,17 +599,17 @@ print.PRSP <- function(x, digits=3, ...) {
   cat("Maximum number of peeling steps:\n")
   print(obj$cvfit$cv.maxsteps)
   cat("\n")
-  
+
   out <- obj$cvfit$cv.nsteps
   names(out) <- NULL
   cat("Optimal number of peeling steps (counting step #0):\n")
   print(out)
   cat("\n")
-  
+
   cat("Modal trace values of covariate usage at each peeling step:\n")
   print(obj$cvfit$cv.trace)
   cat("\n")
-  
+
   cat("Cross-validated permutation p-values at each peeling step:\n")
   print(format(obj$cvfit$cv.pval, digits=digits), quote = FALSE)
   cat("\n")
@@ -618,17 +618,17 @@ print.PRSP <- function(x, digits=3, ...) {
   cat("Decision rules on the covariates (columns) for all peeling steps (rows):\n")
   print(obj$cvfit$cv.rules$frame[,used,drop=FALSE], quote = FALSE)
   cat("\n")
-  
+
   out <- format(obj$cvfit$cv.stats$mean, digits=digits)
   colnames(out) <- c("Support", "Size", "LHR", "LRT", "CER", "EFT", "EFP", "MEFT", "MEFP")
   cat("Box endpoint quantities of interest (columns) for all peeling steps (rows):\n")
   print(out)
   cat("\n")
-  
+
   cat("Individual observation box membership indicator (columns) for all peeling steps (rows):\n")
   print(obj$cvfit$cv.boxind)
   cat("\n")
-  
+
   invisible()
 }
 ##########################################################################################################################################
@@ -919,7 +919,7 @@ plot_profile <- function(object,
           ylim <- range(0, 1, profiles, na.rm=TRUE)
         } else {
           stop("Invalid CV criterion.\n")
-        }     
+        }
         if (!is.null(main)) {
             par(mfrow=c(1, 1), oma=c(0, 0, 3, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
         } else {
@@ -1262,6 +1262,8 @@ plot_boxtrace <- function(object,
                              cex, add.legend, text.legend, ...) {
         p <- length(toplot)
         varnames <- colnames(object$x)
+        maxlength <- max(sapply(X=varnames, FUN=function(x){nchar(x, type="chars", allowNA=TRUE)}))
+
         if (missing(col.cov)) {
             col.cov <- 2:(p+1)
         }
@@ -1272,11 +1274,11 @@ plot_boxtrace <- function(object,
             lwd.cov <- rep(1,p)
         }
         if (!is.null(main)) {
-            par(mfrow=c(2, 1), oma=c(0, 0, 2, 0), mar=c(2.5, 8.0, 2.0, 0.0), mgp=c(1.5, 0.5, 0))
+            par(mfrow=c(2, 1), oma=c(0, 0, 2, 0), mar=c(2.5, 2+maxlength/2, 2.0, 0.0), mgp=c(1.5, 0.5, 0))
         } else {
-            par(mfrow=c(2, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 8.0, 2.0, 0.0), mgp=c(1.5, 0.5, 0))
+            par(mfrow=c(2, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 2+maxlength/2, 2.0, 0.0), mgp=c(1.5, 0.5, 0))
         }
-        
+
         boxcut.scaled <- scale(x=object$cvfit$cv.rules$mean[,varnames[toplot]], center=center, scale=scale)
         plot(x=object$cvfit$cv.stats$mean$cv.support,
              y=boxcut.scaled[,1], type='n',
@@ -1314,7 +1316,7 @@ plot_boxtrace <- function(object,
         if (add.legend)
             legend("bottom", inset=0.01, legend=text.legend, cex=cex)
         mtext(text=xlab, cex=cex, side=1, line=1, outer=FALSE)
-        mtext(text="Covariates Used", cex=cex, side=2, line=7, outer=FALSE)
+        mtext(text="Covariates Used", cex=cex, side=2, line=1+maxlength/2, outer=FALSE)
         if (!is.null(main)) {
             mtext(text=main, cex=1, side=3, outer=TRUE)
         }
