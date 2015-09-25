@@ -121,3 +121,8 @@ o RELEASE 0.6.0
 - Minor updates and corrections in the documentation file and manual.
 - Built and tested under R-devel (2015-09-14 r69384) and release update to GitHub.
 ---------------------------------------------------------------------------------
+Date   : 2015-09-25
+o RELEASE 0.6.1
+- Minor correction in plot_boxtrace() axes names output.  
+- Built and tested under R-devel (2015-09-14 r69384) and release update to GitHub.
+---------------------------------------------------------------------------------
