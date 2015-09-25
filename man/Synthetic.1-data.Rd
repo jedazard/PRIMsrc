@@ -7,7 +7,7 @@
 \title{Synthetic Dataset #1: \eqn{p < n} case}
 
 \description{
-  Modeling survival model #1 as described in Dazard et al. (2015) with censoring.
+  Dataset from simulated regression survival model #1 as described in Dazard et al. (2015).
   Here, the regression function uses all of the predictors, which are also part of the design matrix. 
   Survival time was generated from an exponential model with rate parameter \eqn{\lambda} (and mean \eqn{\frac{1}{\lambda}})
   according to a Cox-PH model with hazard exp(eta), where eta(.) is the regression function.

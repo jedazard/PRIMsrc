@@ -7,7 +7,7 @@
 \title{Synthetic Dataset #2: \eqn{p < n} case}
 
 \description{
-  Modeling survival model #2 as described in Dazard et al. (2015) with censoring.
+  Dataset from simulated regression survival model #2 as described in Dazard et al. (2015).
   Here, the regression function uses some informative predictors. 
   The rest represent un-informative noisy covariates, which are not part of the design matrix. 
   Survival time was generated from an exponential model with rate parameter \eqn{\lambda} (and mean \eqn{\frac{1}{\lambda}})

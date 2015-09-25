@@ -7,7 +7,7 @@
 \title{Summary Function}
 
 \description{
-  S3-generic summary function to summerize the main parameters used to generate the \code{PRSP} object.
+  S3-generic summary function to summarize the main parameters used to generate the \code{PRSP} object.
 }
 
 \usage{
@@ -24,7 +24,7 @@
 }
 
 \value{
-  Summerizes the main parameters used to generate its argument.
+  Summarizes the main parameters used to generate its argument.
 }
 
 \references{

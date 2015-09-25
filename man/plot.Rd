@@ -7,9 +7,9 @@
 \title{2D Visualization of Data Scatter and Box Vertices}
 
 \description{
-  S3-generic function to plot a scatterplot of the data and the cross-validated box vertices 
-  of a \code{PRSP} object in a plane defined by the user. The plot is for a given peeling step 
-  of the peeling sequence (inner loop of our PRSP algorithm) defined by the user.
+  S3-generic plotting function for two-dimensional visualization of original or predicted data scatter 
+  as well as cross-validated box vertices of a \code{PRSP} object. The scatter plot is for a given 
+  peeling step of the peeling sequence and a given plane, both specified by the user.
 }
 
 \usage{

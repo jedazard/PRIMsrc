@@ -4,23 +4,23 @@
 
 \alias{Synthetic.4}
 
-\title{Synthetic Dataset #4: \eqn{p < n} case}
+\title{Synthetic Dataset #4: \eqn{p > n} case}
 
 \description{
-  Modeling survival model #4 as described in Dazard et al. (2015) with censoring.
-  Here, the regression function uses all of the predictors, which are also part of the design matrix. 
-  In this example, the signal is limited to a box-shaped region R of the predictor space. 
+  Dataset from simulated regression survival model #4 as described in Dazard et al. (2015).
+  Here, the regression function uses 1/10 of informative predictors in a \eqn{p > n} situation with \eqn{p = 1000} and \eqn{n = 100}. 
+  The rest represents non-informative noisy covariates, which are not part of the design matrix. 
   Survival time was generated from an exponential model with rate parameter \eqn{\lambda} (and mean \eqn{\frac{1}{\lambda}})
   according to a Cox-PH model with hazard exp(eta), where eta(.) is the regression function.
-  Censoring indicator were generated from a uniform distribution on [0, 3].
-  In this synthetic example, all covariates are continuous, i.i.d. from a multivariate uniform distribution on [0, 1].
+  Censoring indicator were generated from a uniform distribution on [0, 2].
+  In this synthetic example, all covariates are continuous, i.i.d. from a multivariate standard normal distribution.
 }
 
 \usage{Synthetic.4}
 
 \format{
-  Each dataset consists of a \code{numeric} \code{matrix} containing \eqn{n=250} observations (samples) 
-  by rows and \eqn{p=3} variables by columns, not including the censoring indicator and (censored) time-to-event variables.
+  Each dataset consists of a \code{numeric} \code{matrix} containing \eqn{n=100} observations (samples) 
+  by rows and \eqn{p=1000} variables by columns, not including the censoring indicator and (censored) time-to-event variables.
   It comes as a compressed Rda data file.
 }
 

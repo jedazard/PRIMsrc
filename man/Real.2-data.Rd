@@ -7,7 +7,7 @@
 \title{Real Dataset #2: Genomic Dataset (\eqn{p >> n} case)}
 
 \description{
-  Publicly available lung cancer data from the Chemores Cohort Study. This was an integrated study of mRNA, miRNA 
+  Publicly available lung cancer genomic data from the Chemores Cohort Study. This was an integrated study of mRNA, miRNA 
   and clinical variables to characterize the molecular distinctions between squamous cell carcinoma (SCC) and adenocarcinoma (AC)
   in Non Small Cell Lung Cancer (NSCLC). Tissue samples were analysed from a cohort of 123 patients who underwent complete 
   surgical resection at the Institut Mutualiste Montsouris (Paris, France) between 30 January 2002 and 26 June 2006. 

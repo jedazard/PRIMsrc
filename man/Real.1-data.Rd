@@ -7,7 +7,7 @@
 \title{Real Dataset #1: Clinical Dataset (\eqn{p < n} case)}
 
 \description{
-  Publicly available dataset from the Women's Interagency HIV cohort Study (WIHS). 
+  Publicly available HIV clinical data from the Women's Interagency HIV cohort Study (WIHS). 
   Inclusion criteria of the study were that women at enrolment were 
   (i) alive, (ii) HIV-1 infected, and (iii) free of clinical AIDS symptoms. 
   Women were followed until the first of the following occurred: 

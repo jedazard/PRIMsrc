@@ -8,7 +8,7 @@
 
 \description{
   S3-generic predict function to predict the box membership and box vertices 
-  on an independent set from a \code{PRSP} object trained by a SBH model.
+  on an independent set.
 }
 
 \usage{
