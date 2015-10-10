@@ -94,13 +94,13 @@ o RELEASE 0.5.8
 - Replaced real dataset #2 of breast cancer data with lung cancer data for reason of size.
 - Added S3-generic 'print' function and updated S3-generic 'summary' function.
 - Created a new internal subroutine cv.presel() for (optional) variable pre-selection.
-- Changed main argument of plot functions from 'x' to 'object'.
+- Changed main argument of plot functions from `x` to `object`.
 - Minor corrections in the manual.
 - Built and tested under R-devel (2015-08-02 r68804) and release update to GitHub.
 ---------------------------------------------------------------------------------
 Date   : 2015-09-07
 o RELEASE 0.5.9
-- Replaced plotting function plot_scatter(...) by S3-generic 'plot' function.
+- Replaced plotting function plot_scatter(...) by S3-generic `plot` function.
 - Corrected all plotting functions for the case of a NULL graphical device.
 - Cross-validated estimates of box endpoint quantities of interest now contains sample size for all peeling steps.
 - Minor updates and corrections in the outputs of S3-generic functions.
@@ -115,16 +115,21 @@ o RELEASE 0.6.0
   . the returned vectors of `pre-selected` and `used` covariates are now in reference to the original index of variables.
   . the value of traces and rules are now matched accordingly.
   . plot_boxtraj() and plot_boxtrace() are now corrected accordingly.  
-- The value of `object$cvfit$cv.trace` of the `PRSP` `object` that is returned by the main function sbh() 
+- The value of `object$cvfit$cv.trace` of the `PRSP` object that is returned by the main function sbh() 
   now only contains the vector of the modal trace values of covariate usage at each step.
 - Updated S3-generic 'summary' and 'print' functions.
 - Minor updates and corrections in the documentation file and manual.
 - Built and tested under R-devel (2015-09-14 r69384) and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2015-09-25
+Date   : 2015-10-09
 o RELEASE 0.6.1
-- Rename example datasets #4 and #5 into #1b and #4, respectively, for consistency with companion article. 
-- Minor correction in plot_boxtrace() axes names output.  
-- Minor corrections in the documentation file and manual.
+- Rename example datasets #4 and #5 into #1b and #4, respectively, for consistency with companion article.
+- Added argument `decimals` to main function sbh() to output results in user-specified significant decimals.
+- Added examples for all S3-generic functions.
+- Corrected output of decision rules in S3-generic `print` function in case `vs=TRUE`. 
+- Renamed results 'varsign`, `selected` and `used` to 'CV.sign`, `CV.selected` and `CV.used` and
+  moved them to `cvfit` field of return `PRSP` object.
+- Minor improvement in output plot axes names of plot_boxtrace() function.  
+- Updates of corresponding modifications in the documentation file and manual.
 - Built and tested under R-devel (2015-09-14 r69384) and release update to GitHub.
 ---------------------------------------------------------------------------------
