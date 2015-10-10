@@ -45,7 +45,7 @@
     Defaults to \code{FALSE}.
   }
   \item{decimals}{
-    \code{integer} scalar. of the number of user-specified significant decimals to output results.
+    \code{integer} scalar. Number of user-specified significant decimals to output results.
     Defaults to 2.
   }
   \item{cvtype}{
@@ -152,7 +152,7 @@
 
 \value{
   Object of \code{class} \code{PRSP} (Patient Recursive Survival Peeling)
-  \code{List} containing the following 22 fields:
+  \code{List} containing the following 19 fields:
     \item{x}{\code{numeric} \code{matrix} of original dataset.}
     \item{times}{\code{numeric} \code{vector} of observed failure / survival times.}
     \item{status}{\code{numeric} \code{vector} of observed event indicator in \{1,0\}.}
@@ -164,19 +164,19 @@
     \item{decimals}{\code{integer} of the number of user-specified significant decimals.}
     \item{cvtype}{\code{character} \code{vector} of the cross-validation technique used.}
     \item{cvcriterion}{\code{character} \code{vector} of optimization criterion used.}
-    \item{varsign}{\code{numeric} \code{vector} in \{-1,+1\} of directions of peeling for all pre-selected covariates.} 
-    \item{selected}{\code{numeric} \code{vector} of pre-selected covariates in reference to original index.}
-    \item{used}{\code{numeric} \code{vector} of covariates used for peeling in reference to original index.}
     \item{arg}{\code{character} \code{vector} of the parameters used:}
     \item{probval}{\code{Numeric} scalar of survival probability used.}
     \item{timeval}{\code{Numeric} scalar of survival time used.}
-    \item{cvfit}{\code{List} with 7 fields of cross-validated estimates:
+    \item{cvfit}{\code{List} with 10 fields of cross-validated estimates:
         \itemize{
             \item{cv.maxsteps}: \code{numeric} scalar of maximal ceiled-mean of number of peeling steps over the replicates.
             \item{cv.nsteps}: \code{numeric} scalar of optimal number of peeling steps according to the optimization criterion.
             \item{cv.trace}: \code{numeric} \code{vector} of the modal trace values of covariate usage for all peeling steps.
             \item{cv.boxind}: \code{logical} \code{matrix} in {\code{TRUE}, \code{FALSE}} of individual observation box membership indicator (columns) for all peeling steps (rows).
             \item{cv.rules}: \code{data.frame} of decision rules on the covariates (columns) for all peeling steps (rows).
+            \item{cv.sign}{\code{numeric} \code{vector} in \{-1,+1\} of directions of peeling for all pre-selected covariates.} 
+            \item{cv.selected}{\code{numeric} \code{vector} of pre-selected covariates in reference to original index.}
+            \item{cv.used}{\code{numeric} \code{vector} of covariates used for peeling in reference to original index.}
             \item{cv.stats}: \code{numeric} \code{matrix} of box endpoint quantities of interest (columns) for all peeling steps (rows).
             \item{cv.pval}: \code{numeric} \code{vector} of log-rank permutation p-values of sepraration of survival distributions.}
         }
