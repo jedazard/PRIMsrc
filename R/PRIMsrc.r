@@ -343,22 +343,23 @@ sbh <- function(dataset,
 
         # Box rules for the pre-selected covariates at each step
         cat("Generating cross-validated box rules for the pre-selected covariates at each step ...\n")
-        CV.boxcut.mu <- round(lapply.array(X=CV.boxcut, rowtrunc=CV.nsteps, FUN=function(x){mean(x, na.rm=TRUE)}, MARGIN=1:2), digits=decimals)
-        CV.boxcut.sd <- round(lapply.array(X=CV.boxcut, rowtrunc=CV.nsteps, FUN=function(x){sd(x, na.rm=TRUE)}, MARGIN=1:2), digits=decimals)
+        CV.boxcut.mu <- lapply.array(X=CV.boxcut, rowtrunc=CV.nsteps, FUN=function(x){mean(x, na.rm=TRUE)}, MARGIN=1:2)
+        CV.boxcut.sd <- lapply.array(X=CV.boxcut, rowtrunc=CV.nsteps, FUN=function(x){sd(x, na.rm=TRUE)}, MARGIN=1:2)
         rownames(CV.boxcut.mu) <- paste("step", 0:(CV.nsteps-1), sep="")
         rownames(CV.boxcut.sd) <- paste("step", 0:(CV.nsteps-1), sep="")
         colnames(CV.boxcut.mu) <- colnames(x.sel)
         colnames(CV.boxcut.sd) <- colnames(x.sel)
-        CV.tmp <- as.data.frame(matrix(data=NA, nrow=CV.nsteps, ncol=p.sel, dimnames=list(paste("step", 0:(CV.nsteps-1), sep=""), colnames(x.sel))))
+        CV.frame <- as.data.frame(matrix(data=NA, nrow=CV.nsteps, ncol=p.sel, dimnames=list(paste("step", 0:(CV.nsteps-1), sep=""), colnames(x.sel))))
         for (j in 1:p.sel) {
-        if (CV.varsign[j] > 0) {
-            ss <- ">="
-        } else {
-            ss <- "<="
+            if (CV.varsign[j] > 0) {
+                ss <- ">="
+            } else {
+                ss <- "<="
+            }
+            CV.frame[, j] <- paste(paste(colnames(x)[j], ss, format(x=CV.boxcut.mu[, j], digits=decimals, nsmall=decimals), sep=""),
+                                   format(x=CV.boxcut.sd[, j], digits=decimals, nsmall=decimals), sep=" +/- ")
         }
-        CV.tmp[, j] <- paste(paste(colnames(x.sel)[j], ss, CV.boxcut.mu[, j], sep=""), CV.boxcut.sd[, j], sep=" +/- ")
-        }
-        CV.rules <- list("mean"=CV.boxcut.mu, "sd"=CV.boxcut.sd, "frame"=CV.tmp)
+        CV.rules <- list("mean"=CV.boxcut.mu, "sd"=CV.boxcut.sd, "frame"=CV.frame)
 
         # Box membership indicator vector of all observations at each step
         # using the modal or majority vote value over the replicates
@@ -554,6 +555,7 @@ summary.PRSP <- function(object, ...) {
   cat("\t Minimal box sample size: ", minn, "\n\n")
   cat("Cross-validation technique: ", disp(x=object$cvtype), "\n\n")
   cat("Cross-validation criterion: ", disp(x=object$cvcriterion), "\n\n")
+  cat("Number of decimals: ", object$decimals, "\n\n")
   cat("Computation of permutation p-values: ", object$cpv, "\n\n")
   cat("Parallelization: ", object$config$parallel, "\n\n")
 
