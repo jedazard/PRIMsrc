@@ -622,7 +622,7 @@ print.PRSP <- function(x, ...) {
 
   colnames(obj$cvfit$cv.stats$mean) <- c("Support", "Size", "LHR", "LRT", "CER", "EFT", "EFP", "MEFT", "MEFP")
   cat("Box endpoint quantities of interest (columns) at each peeling step (rows):\n")
-  print(out)
+  print(obj$cvfit$cv.stats$mean)
   cat("\n")
 
   cat("Individual observation box membership indicator (columns) at each peeling step (rows):\n")
