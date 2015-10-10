@@ -13,7 +13,7 @@
 \usage{
   sbh(dataset, 
       B = 10, K = 5, A = 1000, 
-      vs = TRUE, cpv = FALSE,
+      vs = TRUE, cpv = FALSE, decimals = 2,
       cvtype=c("combined", "averaged", "none", NULL), 
       cvcriterion=c("lrt", "cer", "lhr", NULL),
       arg = "beta=0.05,alpha=0.1,minn=10,L=NULL,peelcriterion=\"lr\"",
@@ -43,6 +43,10 @@
   \item{cpv}{
     \code{logical} scalar. Flag for computation of permutation p-values. 
     Defaults to \code{FALSE}.
+  }
+  \item{decimals}{
+    \code{integer} scalar. of the number of user-specified significant decimals to output results.
+    Defaults to 2.
   }
   \item{cvtype}{
     \code{Character} \code{vector} describing the cross-validation technique in \{"combined", "averaged", "none", NULL\}.
@@ -148,7 +152,7 @@
 
 \value{
   Object of \code{class} \code{PRSP} (Patient Recursive Survival Peeling)
-  \code{List} containing the following 21 fields:
+  \code{List} containing the following 22 fields:
     \item{x}{\code{numeric} \code{matrix} of original dataset.}
     \item{times}{\code{numeric} \code{vector} of observed failure / survival times.}
     \item{status}{\code{numeric} \code{vector} of observed event indicator in \{1,0\}.}
@@ -157,6 +161,7 @@
     \item{A}{positive \code{integer} of the number of permutations used for the computation of permutation p-values.}
     \item{vs}{\code{logical} scalar of returned flag of optional variable pre-selection.}
     \item{cpv}{\code{logical} scalar of returned flag of optional computation of permutation p-values.}
+    \item{decimals}{\code{integer} of the number of user-specified significant decimals.}
     \item{cvtype}{\code{character} \code{vector} of the cross-validation technique used.}
     \item{cvcriterion}{\code{character} \code{vector} of optimization criterion used.}
     \item{varsign}{\code{numeric} \code{vector} in \{-1,+1\} of directions of peeling for all pre-selected covariates.} 
@@ -270,7 +275,8 @@ library("PRIMsrc")
 CVCOMBREP.synt1 <- sbh(dataset = Synthetic.1, 
                        cvtype = "combined", cvcriterion = "lrt",
                        B = 1, K = 5, 
-                       vs = TRUE, cpv = FALSE, probval = 0.5, 
+                       vs = TRUE, cpv = FALSE, 
+                       decimals = 2, probval = 0.5, 
                        arg = "beta=0.05,
                               alpha=0.1,
                               minn=10,
@@ -279,10 +285,10 @@ CVCOMBREP.synt1 <- sbh(dataset = Synthetic.1,
                        parallel = FALSE, conf = NULL, seed = 123)
 
 # selected covariates:
-selected <- CVCOMBREP.synt1$selected
+selected <- CVCOMBREP.synt1$cvfit$cv.selected
 selected
 # covariates used for peeling:
-used <- CVCOMBREP.synt1$used
+used <- CVCOMBREP.synt1$cvfit$cv.used
 used
 # some output results:
 CVCOMBREP.synt1$cvfit$cv.maxsteps
@@ -359,7 +365,8 @@ round(CVCOMBREP.synt1$cvfit$cv.stats$mean,2)
     CVCOMBREP.synt1 <- sbh(dataset = Synthetic.1, 
                            cvtype = "combined", cvcriterion = "lrt",
                            B = 10, K = 5, A = 1024, 
-                           vs = TRUE, cpv = TRUE, probval = 0.5, 
+                           vs = TRUE, cpv = TRUE, 
+                           decimals = 2, probval = 0.5, 
                            arg = "beta=0.05,
                                   alpha=0.1,
                                   minn=10,
@@ -368,10 +375,10 @@ round(CVCOMBREP.synt1$cvfit$cv.stats$mean,2)
                            parallel = TRUE, conf = conf, seed = 123)
                            
     # selected covariates:
-    selected <- CVCOMBREP.synt1$selected
+    selected <- CVCOMBREP.synt1$cvfit$cv.selected
     selected
     # covariates used for peeling:
-    used <- CVCOMBREP.synt1$used
+    used <- CVCOMBREP.synt1$cvfit$cv.used
     used
     # some output results:
     CVCOMBREP.synt1$cvfit$cv.maxsteps

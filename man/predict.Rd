@@ -82,3 +82,36 @@
 \keyword{Cross-Validation}
 \keyword{Bump Hunting}
 \keyword{Rule-Induction Method}
+
+\examples{
+    #===================================================
+    # Loading the library and its dependencies
+    #===================================================
+    library("PRIMsrc")
+
+    #=================================================================================
+    # Simulated dataset #1 (n=250, p=3)
+    # Replicated Combined Cross-Validation (RCCV)
+    # Peeling criterion = LRT
+    # Optimization criterion = LRT
+    #=================================================================================
+    CVCOMBREP.synt1 <- sbh(dataset = Synthetic.1, 
+                           cvtype = "combined", cvcriterion = "lrt",
+                           B = 1, K = 5, 
+                           vs = TRUE, cpv = FALSE, 
+                           decimals = 2, probval = 0.5, 
+                           arg = "beta=0.05,
+                                  alpha=0.1,
+                                  minn=10,
+                                  L=NULL,
+                                  peelcriterion=\"lr\"",
+                           parallel = FALSE, conf = NULL, seed = 123)
+
+    n <- 100
+    p <- 3
+    x <- matrix(data=runif(n=n*p, min=0, max=1),
+                nrow=n, ncol=p, byrow=FALSE,
+                dimnames=list(1:n, paste("X", 1:p, sep="")))
+    pred <- predict(object=CVCOMBREP.synt1, newdata=x, steps=CVCOMBREP.synt1$cvfit$cv.nsteps)
+    pred
+}
