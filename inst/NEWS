@@ -121,7 +121,7 @@ o RELEASE 0.6.0
 - Minor updates and corrections in the documentation file and manual.
 - Built and tested under R-devel (2015-09-14 r69384) and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2015-10-09
+Date   : 2015-10-10
 o RELEASE 0.6.1
 - Rename example datasets #4 and #5 into #1b and #4, respectively, for consistency with companion article.
 - Added argument `decimals` to main function sbh() to output results in user-specified significant decimals.
