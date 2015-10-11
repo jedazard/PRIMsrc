@@ -356,7 +356,7 @@ sbh <- function(dataset,
             } else {
                 ss <- "<="
             }
-            CV.frame[, j] <- paste(paste(colnames(x)[j], ss, format(x=CV.boxcut.mu[, j], digits=decimals, nsmall=decimals), sep=""),
+            CV.frame[, j] <- paste(paste(colnames(x.sel)[j], ss, format(x=CV.boxcut.mu[, j], digits=decimals, nsmall=decimals), sep=""),
                                    format(x=CV.boxcut.sd[, j], digits=decimals, nsmall=decimals), sep=" +/- ")
         }
         CV.rules <- list("mean"=CV.boxcut.mu, "sd"=CV.boxcut.sd, "frame"=CV.frame)
