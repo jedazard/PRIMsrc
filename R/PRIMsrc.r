@@ -116,7 +116,7 @@ sbh <- function(dataset,
     # Pre-selected covariates
     cat("Failed to pre-select any informative covariate. Exiting...\n", sep="")
     bool.plot <- FALSE
-    CV.varsign <- NULL
+    CV.sign <- NULL
     CV.selected <- NULL
     CV.used <- NULL
     # Cross-validated minimum length from all replicates
@@ -148,16 +148,16 @@ sbh <- function(dataset,
     print(CV.selected)
 
     # Directions of directed peeling at each step of pre-selected covariates
-    CV.varsign <- cv.presel.obj$varsign
+    CV.sign <- cv.presel.obj$varsign
     cat("Directions of peeling at each step of pre-selected ", p.sel, " covariates:\n", sep="")
-    print(CV.varsign)
+    print(CV.sign)
 
     # Initial box boundaries
     initcutpts <- numeric(p.sel)
     for(j in 1:p.sel){
-        if (CV.varsign[j] == 1) {
+        if (CV.sign[j] == 1) {
             initcutpts[j] <- min(x.sel[,j])
-        } else if (CV.varsign[j] == -1) {
+        } else if (CV.sign[j] == -1) {
             initcutpts[j] <- max(x.sel[,j])
         } else {
             stop("The direction of peeling for covariate: ", j, " is invalid!\n", sep="")
@@ -175,7 +175,7 @@ sbh <- function(dataset,
                                      B=B, K=K, arg=arg,
                                      cvtype=cvtype,
                                      probval=probval, timeval=timeval,
-                                     varsign=CV.varsign, initcutpts=initcutpts,
+                                     varsign=CV.sign, initcutpts=initcutpts,
                                      parallel=parallel, seed=seed)
     } else {
         if (conf$type == "SOCK") {
@@ -199,7 +199,7 @@ sbh <- function(dataset,
                               B=a, K=K, arg=arg,
                               cvtype=cvtype,
                               probval=probval, timeval=timeval,
-                              varsign=CV.varsign, initcutpts=initcutpts,
+                              varsign=CV.sign, initcutpts=initcutpts,
                               parallel=parallel, seed=NULL)
         stopCluster(cl)
         CV.box.rep.obj <- list("cv.maxsteps"=numeric(0),
@@ -351,7 +351,7 @@ sbh <- function(dataset,
         colnames(CV.boxcut.sd) <- colnames(x.sel)
         CV.frame <- as.data.frame(matrix(data=NA, nrow=CV.nsteps, ncol=p.sel, dimnames=list(paste("step", 0:(CV.nsteps-1), sep=""), colnames(x.sel))))
         for (j in 1:p.sel) {
-            if (CV.varsign[j] > 0) {
+            if (CV.sign[j] > 0) {
                 ss <- ">="
             } else {
                 ss <- "<="
@@ -416,7 +416,7 @@ sbh <- function(dataset,
             arg <- paste("beta=", beta, ",alpha=", alpha, ",minn=", minn, ",L=", CV.nsteps-1, ",peelcriterion=\"", peelcriterion, "\"", sep="")
             CV.pval <- cv.pval(x=x.sel, times=times, status=status,
                                cvtype=cvtype,
-                               varsign=CV.varsign, initcutpts=initcutpts,
+                               varsign=CV.sign, initcutpts=initcutpts,
                                A=A, K=K, arg=arg, obs.chisq=CV.stats$mean$cv.lrt,
                                parallel=parallel, conf=conf)
         } else {
@@ -431,7 +431,7 @@ sbh <- function(dataset,
                  "cv.trace"=CV.trace,
                  "cv.boxind"=CV.boxind,
                  "cv.rules"=CV.rules,
-                 "cv.sign"=CV.varsign,
+                 "cv.sign"=CV.sign,
                  "cv.selected"=CV.selected,
                  "cv.used"=CV.used,
                  "cv.stats"=CV.stats,
