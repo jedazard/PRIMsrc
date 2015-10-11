@@ -6,7 +6,7 @@ Performs a unified treatment of Bump Hunting by Patient Rule Induction Method (P
 =========
 Branches:
 =========
-- The default branch (master) hosts the current development release (version 0.6.0) of the survival bump hunting procedure that implements the case of a survival response. At this point, this version is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our Patient Recursive Survival Peeling (PRSP) algorithm. New features will be added soon as they are available.
+- The default branch (master) hosts the current development release (version 0.6.2) of the survival bump hunting procedure that implements the case of a survival response. At this point, this version is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our Patient Recursive Survival Peeling (PRSP) algorithm. New features will be added soon as they are available.
 
 	The main function relies on an optional variable pre-selection procedure that is run before the PRSP algorithm. At this point, this is done by a cross-validated penalization of the partial likelihood using the R package 'glmnet'.
 
@@ -54,7 +54,7 @@ http://onlinelibrary.wiley.com/journal/10.1002/(ISSN)1932-1872
 =============
 Requirements:
 =============
-PRIMsrc 0.6.0 requires R-3.0.2 (2013-09-25). It was built and tested under R-devel (2015-09-14 r69384) and Travis CI. 
+PRIMsrc 0.6.2 requires R-3.0.2 (2013-09-25). It was built and tested under R-devel (2015-09-14 r69384) and Travis CI. 
 
 Installation has been tested on Windows, Linux, OSX and Solaris platforms. See for instance the 'CRAN Package Check Results' here:
 
@@ -63,11 +63,11 @@ https://cran.r-project.org/web/checks/check_results_PRIMsrc.html
 =============
 Installation: 
 =============
-- To install PRIMsrc from CRAN, simply download and install the current version (0.6.0) from the CRAN repository:
+- To install PRIMsrc from CRAN, simply download and install the current version (0.6.2) from the CRAN repository:
 
 install.packages("PRIMsrc")
 
-- Alternatively, you can install the most up-to-date version (0.6.0) from GitHub, using devtools:
+- Alternatively, you can install the most up-to-date version (0.6.2) from GitHub, using devtools:
 
 install.packages("devtools")
 
