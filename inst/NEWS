@@ -133,3 +133,14 @@ o RELEASE 0.6.2
 - Updates of corresponding modifications in the documentation file and manual.
 - Built and tested under R-devel (2015-09-14 r69384) and release update to GitHub.
 ---------------------------------------------------------------------------------
+Date   : 2015-11-06
+o RELEASE 0.6.3
+- Changed random splitting in the cross-validation step to random stratified splitting by conservation of events.
+- Changed default values of metaparameters `alpha` to 0.05 (instead of 0.10) and `minn` to 5 (instead of 10).
+- Modified "Replicated Combined CV" maximal peeling length in order to avoid getting below the minimal box support threshold 
+ (i.e. the greater of `beta*n` or `minn`) that could occur when averaging results over the cross-validation replicates.
+- Corrected behaviors in case `n` is less than `minn` and `n` is equal to `minn`.
+- Updates in the manual file, including added explanation about the outputs of box membership indicator and box decision rules.  
+- Updates in the CITATION file.  
+- Built and tested under R-devel (2015-11-04 r69597) and release update to GitHub.
+---------------------------------------------------------------------------------

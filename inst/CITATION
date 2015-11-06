@@ -82,26 +82,44 @@ citEntry(entry       = "Article",
                                   person(family="Choe", given="M."),
                                   person(family="LeBlanc", given="M."),
                                   person(family="Rao", given="J.S.")), 	
-         journal     = "(submitted)",
+         journal     = "Statistical Analysis and Data Mining",
          year        = "2015",
          volume      = "x",
          number      = "x",
          pages       = "xxx-xxx",
          textVersion = "Dazard J-E., Choe M., LeBlanc M. and Rao J.S. (2015).
                         Cross-validation and Peeling Strategies for Survival Bump Hunting using Recursive Peeling Methods.
-                        (submitted)")
+                        Statistical Analysis and Data Mining, x(x):xxx-xxx.")
+
+citEntry(entry       = "Proceedings",
+         title       = "R package PRIMsrc: Bump Hunting by Patient Rule Induction Method for Survival, Regression and Classification",
+         author      = personList(person(family="Dazard", given="J-E."),
+                                  person(family="Choe", given="M."),
+                                  person(family="LeBlanc", given="M."),
+                                  person(family="Rao", given="J.S.")), 	
+         journal     = "JSM Proceedings.
+                        Section for Statistical Programmers and Analysts.
+                        American Statistical Association-IMS.
+                        Seattle, WA, USA.",
+         year        = "2015",
+         pages       = "xxxx-xxxx",
+         textVersion = "Dazard J-E., Choe M., LeBlanc M. and Rao J.S. (2015).
+                        R package PRIMsrc: Bump Hunting by Patient Rule Induction Method for Survival, Regression and Classification.
+                        In JSM Proceedings, Section for Statistical Programmers and Analysts Section. Seattle, WA, USA.
+                        American Statistical Association-IMS, p. xxxx-xxxx.")
 
 citEntry(entry       = "Article",
-         title       = "Survival Bump Hunting for Identification and Characterization of Informative Prognostic Subgroups",
-         author      = personList(person(family="Choe", given="M."),
-                                  person(family="Dazard", given="J-E."),
+         title       = "PRIMsrc for Identification and Characterization of Informative Prognostic Subgroups by Survival Bump Hunting",
+         author      = personList(person(family="Dazard", given="J-E."),
+                                  person(family="Choe", given="M."),
+						  person(family="LeBlanc", given="M."),
                                   person(family="Rao", given="J.S.")), 	
          journal     = "(submitted)",
          year        = "2015",
          volume      = "x",
          number      = "x",
          pages       = "xxx-xxx",
-         textVersion = "Choe M., Dazard J-E. and Rao J.S. (2015).
-                        Survival Bump Hunting for Identification and Characterization of Informative Prognostic Subgroups.
+         textVersion = "Dazard J-E., Choe M., LeBlanc M. and Rao J.S. (2015).
+                        PRIMsrc for Identification and Characterization of Informative Prognostic Subgroups by Survival Bump Hunting.
                         (submitted)")
 
