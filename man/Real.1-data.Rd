@@ -67,6 +67,6 @@
 
 \seealso{
     \itemize{
-        \url{http://statepiaps.jhsph.edu/wihs/}
+        \url{statepiaps.jhsph.edu/wihs/}
     }
 }

@@ -7,13 +7,13 @@
 \title{Real Dataset #2: Genomic Dataset (\eqn{p >> n} case)}
 
 \description{
-  Publicly available lung cancer genomic data from the Chemores Cohort Study. This was an integrated study of mRNA, miRNA 
+  Publicly available lung cancer genomic data from the Chemores Cohort Study. This data is part of an integrated study of mRNA, miRNA 
   and clinical variables to characterize the molecular distinctions between squamous cell carcinoma (SCC) and adenocarcinoma (AC)
-  in Non Small Cell Lung Cancer (NSCLC). Tissue samples were analysed from a cohort of 123 patients who underwent complete 
-  surgical resection at the Institut Mutualiste Montsouris (Paris, France) between 30 January 2002 and 26 June 2006. 
-  In this genomic dataset, only the expression levels of Agilent miRNA probes (\eqn{p=939}) were included from the \eqn{n=123} 
-  samples of the Chemores cohort. The data contains normalized expression levels. See below the paper by Lazar et al. (2013) 
-  and Array Express data repository for complete description of the samples, tissue preparation, 
+  in Non Small Cell Lung Cancer (NSCLC) aside large cell lung carcinoma (LCC). Tissue samples were analysed from a cohort of 
+  123 patients who underwent complete surgical resection at the Institut Mutualiste Montsouris (Paris, France) between 
+  30 January 2002 and 26 June 2006. In this genomic dataset, the expression levels of Agilent miRNA probes (\eqn{p=939}) 
+  were included from the \eqn{n=123} samples of the Chemores cohort. The data contains normalized expression levels. 
+  See below the paper by Lazar et al. (2013) and Array Express data repository for complete description of the samples, tissue preparation, 
   Agilent array technology, data normalization, etc. This dataset represents a situation where the number of covariates dominates 
   the number of complete observations, or \eqn{p >> n} case. 
 }
@@ -70,6 +70,6 @@
     }
     \itemize{
        CHEMORES Consortium and website.
-       \url{http://www.chemores.ki.se/index.html}
+       \url{www.chemores.ki.se/index.html}
     }
 }

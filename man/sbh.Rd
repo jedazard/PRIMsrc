@@ -16,7 +16,7 @@
       vs = TRUE, cpv = FALSE, decimals = 2,
       cvtype=c("combined", "averaged", "none", NULL), 
       cvcriterion=c("lrt", "cer", "lhr", NULL),
-      arg = "beta=0.05,alpha=0.1,minn=10,L=NULL,peelcriterion=\"lr\"",
+      arg = "beta=0.05,alpha=0.05,minn=5,L=NULL,peelcriterion=\"lr\"",
       probval = NULL, timeval = NULL, 
       parallel = FALSE, conf = NULL, seed = NULL)
 }
@@ -31,8 +31,14 @@
     Positive \code{integer} scalar of the number of replications of the cross-validation procedure. Defaults to 10.
   }
   \item{K}{
-    Positive \code{integer} scalar of the number of folds for the cross-validation procedure. Defaults to 5.
-  }
+    \code{Integer} giving the number of folds (partitions) into which the observations should be randomly split 
+    for the cross-validation procedure. Setting K also specifies the type of cross-validation to be done:
+    \itemize{
+        \item{\code{K}} = 1 carries no cross-validation out.
+        \item{\code{K}} in \{2,...,\eqn{n-1}\} carries out eqn{K}-fold cross-validation.
+        \item{\code{K}} = \eqn{n} carries out leave-one-out cross-validation.
+    }
+  } 
   \item{A}{
     Positive \code{integer} scalar of the number of permutations for the computation of cross-validated p-values. Defaults to 1000.
   }
@@ -53,15 +59,15 @@
     If \code{NULL}, automatically reset to "none".
   }
   \item{cvcriterion}{
-    \code{character} \code{vector} describing the optimization criterion in \{"lrt", "cer", "lhr", NULL\}.
+    \code{character} \code{vector} describing the optimization criterion in \{"lrt", "lhr", "cer", NULL\}.
     If \code{NULL}, automatically reset to "none".
   }
   \item{arg}{
     \code{Character} \code{vector} describing the PRSP parameters:
     \itemize{
-        \item{\code{alpha}} = fraction to peel off at each step. Defaults to 0.1.
+        \item{\code{alpha}} = fraction to peel off at each step. Defaults to 0.05.
         \item{\code{beta}} = minimum support size resulting from the peeling sequence. Defaults to 0.05.
-        \item{\code{minn}} = minimum number of observation in a box. Defaults to 10.
+        \item{\code{minn}} = minimum number of observation that we want to be able to detect in a box. Defaults to 5.
         \item{\code{L}} = fixed peeling length. Defaults to \code{NULL}.
         \item{\code{peelcriterion}} in \{"hr" for Log-Hazard Ratio (LHR), 
                                          "lr" for Log-Rank Test (LRT), 
@@ -109,6 +115,16 @@
   The function offers a number of options for the type of cross-validation desired: \eqn{K}-fold (replicated)-averaged or-combined,
   as well as peeling and optimization critera for model fitting, tuning and selectio and a few more parameters for the PRSP algorithm.
 
+  Because of the summarization that has to be done over the \eqn{B} replications, the reported output of "Replicated Combined CV" box decision 
+  rules matrix does not necessarily match exactly the reported vector of modal trace values of covariate usage for all peeling steps (see values below). 
+  Even thought the PRSP algorithm uses only one covariate at a time at each peeling step as reported in the vector of modal trace values, 
+  the reported "Replicated Combined CV" box decision rules matrix may show several covariates being used in a given step, simply because these 
+  decision rules are averaged over the \eqn{B} replicates (see equation \#20 in Dazard et al. 2015). Likewise, the reported output of 
+  "Replicated Combined CV" box membership indicator matrix does not necessarily match exactly the reported vector of box support 
+  (and corresponding box sample size) for all peeling steps. The reason is that the reported "Replicated Combined CV" box membership 
+  indicators are computed as the point-wise majority vote over the \eqn{B} replicates (see equation \#21 in Dazard et al. 2015), 
+  whereas the "Replicated Combined CV" box support vector (and corresponding box sample size) is averaged over the \eqn{B} replicates.
+  
   The function takes advantage of the R package \pkg{parallel}, which allows users to create a cluster of workstations on a local
   and/or remote machine(s), enabling scaling-up with the number of CPU cores specified and efficient parallel execution.
   
