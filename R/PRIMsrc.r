@@ -281,12 +281,12 @@ sbh <- function(dataset,
         cat("Success! ", B, " (replicated) cross-validation(s) has(ve) completed \n", sep="")
         bool.plot <- TRUE
 
-        # Cross-validated maximum peeling length, thresholded by minimal box support, from all replicates
-        CV.thrsteps <- sapply(CV.support, function(x) {max(which(x >= max(minn/n, beta)))})
-        CV.maxsteps <- ceiling(mean(CV.thrsteps))
+        # Cross-validated maximum peeling length from all replicates
+        CV.maxsteps <- ceiling(mean(CV.maxsteps))
 
+        # Adjusted cross-validated optimal peeling lengths from all replicates
+        cat("Generating cross-validated optimal peeling lengths from all replicates ...\n")
         # List of CV profiles
-        cat("Generating cross-validated profiles and optimal peeling length ...\n")
         if ((cvtype == "averaged") || (cvtype == "combined")) {
             CV.lhr.mat <- list2mat(list=CV.lhr, fill=0, coltrunc=CV.maxsteps)
             CV.lrt.mat <- list2mat(list=CV.lrt, fill=0, coltrunc=CV.maxsteps)
@@ -308,7 +308,7 @@ sbh <- function(dataset,
         CV.mean.lrt <- apply(CV.profiles$lrt, 2, mean)
         CV.mean.cer <- apply(CV.profiles$cer, 2, mean)
         CV.mean.profiles <- list("lhr"=CV.mean.lhr, "lrt"=CV.mean.lrt, "cer"=CV.mean.cer)
-
+        
         # Cross-validated optimal peeling length from all replicates
         if (cvtype == "none") {
             CV.nsteps <- CV.maxsteps
@@ -323,13 +323,77 @@ sbh <- function(dataset,
         } else {
             stop("Invalid CV type option \n")
         }
-
+            
         # Box membership indicator vector of all observations at each step using the modal or majority vote value over the replicates
-        cat("Generating cross-validated box memberships at each step ...\n")
-        CV.boxind <- lapply.array(X=CV.boxind, rowtrunc=CV.nsteps, FUN=function(x){mean(x, na.rm=TRUE) >= 0.5}, MARGIN=1:2)
-        rownames(CV.boxind) <- paste("step", 0:(CV.nsteps-1), sep="")
+        CV.boxind <- lapply.array(X=CV.boxind, rowtrunc=CV.maxsteps, FUN=function(x){mean(x, na.rm=TRUE) >= 0.5}, MARGIN=1:2)
+        rownames(CV.boxind) <- paste("step", 0:(CV.maxsteps-1), sep="")
         colnames(CV.boxind) <- rownames(x.sel)
-                
+        
+        # Adjusted cross-validated maximum peeling length, thresholded by minimal box support, from all replicates
+        CV.maxsteps <- max(which(apply(CV.boxind, 1, function(x) {length(which(x))/n >= max(minn/n, beta)})))
+        
+        # Adjusted list of CV profiles
+        if ((cvtype == "averaged") || (cvtype == "combined")) {
+            CV.lhr.mat <- list2mat(list=CV.lhr, fill=0, coltrunc=CV.maxsteps)
+            CV.lrt.mat <- list2mat(list=CV.lrt, fill=0, coltrunc=CV.maxsteps)
+            CV.cer.mat <- list2mat(list=CV.cer, fill=1, coltrunc=CV.maxsteps)
+        } else if (cvtype == "none") {
+            CV.lhr.mat <- matrix(data=NA, nrow=B, ncol=CV.maxsteps)
+            CV.lrt.mat <- matrix(data=NA, nrow=B, ncol=CV.maxsteps)
+            CV.cer.mat <- matrix(data=NA, nrow=B, ncol=CV.maxsteps)
+        } else {
+            stop("Invalid CV type option \n")
+        }
+        CV.profiles <- list("lhr"=CV.lhr.mat, "lrt"=CV.lrt.mat, "cer"=CV.cer.mat)
+        colnames(CV.profiles$lhr) <- paste("step", 0:(CV.maxsteps-1), sep="")
+        colnames(CV.profiles$lrt) <- paste("step", 0:(CV.maxsteps-1), sep="")
+        colnames(CV.profiles$cer) <- paste("step", 0:(CV.maxsteps-1), sep="")
+
+        # Adjusted list of CV mean profiles
+        CV.mean.lhr <- apply(CV.profiles$lhr, 2, mean)
+        CV.mean.lrt <- apply(CV.profiles$lrt, 2, mean)
+        CV.mean.cer <- apply(CV.profiles$cer, 2, mean)
+        CV.mean.profiles <- list("lhr"=CV.mean.lhr, "lrt"=CV.mean.lrt, "cer"=CV.mean.cer)
+
+        # Adjusted cross-validated optimal peeling length from all replicates
+        if (cvtype == "none") {
+            CV.nsteps <- CV.maxsteps
+        } else if ((cvtype == "averaged") || (cvtype == "combined")) {
+            if (cvcriterion=="lhr") {
+                CV.nsteps <- which.max(CV.mean.profiles$lhr)
+            } else if (cvcriterion=="lrt") {
+                CV.nsteps <- which.max(CV.mean.profiles$lrt)
+            } else if (cvcriterion=="cer") {
+                CV.nsteps <- which.min(CV.mean.profiles$cer)
+            }
+        } else {
+            stop("Invalid CV type option \n")
+        }
+
+        # Adjusted box membership indicator vector of all observations at each step using the modal or majority vote value over the replicates
+        cat("Generating cross-validated box memberships at each step ...\n")
+        CV.boxind <- CV.boxind[1:CV.nsteps,,drop=FALSE]
+        
+        # Box rules for the pre-selected covariates at each step
+        cat("Generating cross-validated box rules for the pre-selected covariates at each step ...\n")
+        CV.boxcut.mu <- round(lapply.array(X=CV.boxcut, rowtrunc=CV.nsteps, FUN=function(x){mean(x, na.rm=TRUE)}, MARGIN=1:2), digits=decimals)
+        CV.boxcut.sd <- round(lapply.array(X=CV.boxcut, rowtrunc=CV.nsteps, FUN=function(x){sd(x, na.rm=TRUE)}, MARGIN=1:2), digits=decimals)
+        rownames(CV.boxcut.mu) <- paste("step", 0:(CV.nsteps-1), sep="")
+        rownames(CV.boxcut.sd) <- paste("step", 0:(CV.nsteps-1), sep="")
+        colnames(CV.boxcut.mu) <- colnames(x.sel)
+        colnames(CV.boxcut.sd) <- colnames(x.sel)
+        CV.frame <- as.data.frame(matrix(data=NA, nrow=CV.nsteps, ncol=p.sel, dimnames=list(paste("step", 0:(CV.nsteps-1), sep=""), colnames(x.sel))))
+        for (j in 1:p.sel) {
+          if (CV.sign[j] > 0) {
+            ss <- ">="
+          } else {
+            ss <- "<="
+          }
+          CV.frame[, j] <- paste(paste(colnames(x.sel)[j], ss, format(x=CV.boxcut.mu[, j], digits=decimals, nsmall=decimals), sep=""),
+                                 format(x=CV.boxcut.sd[, j], digits=decimals, nsmall=decimals), sep=" +/- ")
+        }
+        CV.rules <- list("mean"=CV.boxcut.mu, "sd"=CV.boxcut.sd, "frame"=CV.frame)
+
         # Modal trace values (over the replicates) of covariate usage at each step
         cat("Generating cross-validated modal trace values of covariate usage at each step ...\n")
         trace.dist <- lapply.array(X=CV.trace,
@@ -353,26 +417,6 @@ sbh <- function(dataset,
         names(CV.used) <- colnames(x)[CV.used]
         cat("Covariates used for peeling at each step, based on covariate trace modal values:\n")
         print(CV.used)
-
-        # Box rules for the pre-selected covariates at each step
-        cat("Generating cross-validated box rules for the pre-selected covariates at each step ...\n")
-        CV.boxcut.mu <- round(lapply.array(X=CV.boxcut, rowtrunc=CV.nsteps, FUN=function(x){mean(x, na.rm=TRUE)}, MARGIN=1:2), digits=decimals)
-        CV.boxcut.sd <- round(lapply.array(X=CV.boxcut, rowtrunc=CV.nsteps, FUN=function(x){sd(x, na.rm=TRUE)}, MARGIN=1:2), digits=decimals)
-        rownames(CV.boxcut.mu) <- paste("step", 0:(CV.nsteps-1), sep="")
-        rownames(CV.boxcut.sd) <- paste("step", 0:(CV.nsteps-1), sep="")
-        colnames(CV.boxcut.mu) <- colnames(x.sel)
-        colnames(CV.boxcut.sd) <- colnames(x.sel)
-        CV.frame <- as.data.frame(matrix(data=NA, nrow=CV.nsteps, ncol=p.sel, dimnames=list(paste("step", 0:(CV.nsteps-1), sep=""), colnames(x.sel))))
-        for (j in 1:p.sel) {
-            if (CV.sign[j] > 0) {
-                ss <- ">="
-            } else {
-                ss <- "<="
-            }
-            CV.frame[, j] <- paste(paste(colnames(x.sel)[j], ss, format(x=CV.boxcut.mu[, j], digits=decimals, nsmall=decimals), sep=""),
-                                   format(x=CV.boxcut.sd[, j], digits=decimals, nsmall=decimals), sep=" +/- ")
-        }
-        CV.rules <- list("mean"=CV.boxcut.mu, "sd"=CV.boxcut.sd, "frame"=CV.frame)
 
         # Box statistics at each step
         cat("Generating cross-validated box statistics at each step ...\n")
@@ -606,7 +650,7 @@ print.PRSP <- function(x, ...) {
   print(obj$cvfit$cv.used)
   cat("\n")
 
-  cat("Maximum number of peeling steps:\n")
+  cat("Maximum number of peeling steps (counting step #0):\n")
   print(obj$cvfit$cv.maxsteps)
   cat("\n")
 

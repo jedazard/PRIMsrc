@@ -413,6 +413,13 @@ cv.ave.box <- function(x, times, status,
   n <- nrow(x)
   p <- ncol(x)
 
+  alpha <- NULL
+  beta <- NULL
+  minn <- NULL
+  L <- NULL
+  peelcriterion <- NULL
+  eval(parse( text=unlist(strsplit(x=arg, split=",")) ))
+
   fold.obj <- cv.ave.fold(x=x, times=times, status=status,
                           probval=probval, timeval=timeval,
                           varsign=varsign, initcutpts=initcutpts,
@@ -425,7 +432,44 @@ cv.ave.box <- function(x, times, status,
   # Cross-validated maximum peeling length from all folds
   CV.Lm <- min(fold.obj$nsteps)
 
-  # Get the variable traces
+  # Truncate the cross-validated quantities from all folds to the same cross-validated length
+  for (k in 1:K) {
+    boxcut.list[[k]] <- boxcut.list[[k]][1:CV.Lm,,drop=FALSE]
+  }
+
+  # Compute the averaged box statistics for each step from all the folds
+  # Each entry or row signifies a step
+  CV.boxcut <- matrix(data=NA, nrow=CV.Lm, ncol=p, dimnames=list(paste("step", 0:(CV.Lm-1), sep=""), colnames(x)))
+  for (l in 1:CV.Lm) {
+    summincut <- matrix(NA, K, p)
+    for (k in 1:K) {
+        summincut[k,] <- boxcut.list[[k]][l,]
+    }
+    CV.boxcut[l, ] <- colMeans(summincut, na.rm=TRUE)
+  }
+  rownames(CV.boxcut) <- paste("step", 0:(CV.Lm-1), sep="")
+  colnames(CV.boxcut) <- colnames(x)
+  
+  # Get the box membership indicator vector of all observations for each step from all the folds
+  # Based on the corresponding averaged box over the folds
+  CV.boxind <- matrix(NA, nrow=CV.Lm, ncol=n)
+  for (l in 1:CV.Lm) {
+    boxcut <- CV.boxcut[l, ] * varsign
+    x.cut <- t(t(x) * varsign)
+    x.ind <- t(t(x.cut) >= boxcut)
+    CV.boxind[l,] <- (rowMeans(x.ind) == 1)  # Set as TRUE which observations are inside the box boudaries for all axes directions
+  }
+  rownames(CV.boxind) <- paste("step", 0:(CV.Lm-1), sep="")
+  colnames(CV.boxind) <- rownames(x)
+
+  # Get the adjusted cross-validated maximum peeling length, thresholded by minimal box support
+  CV.Lm <- max(which(apply(CV.boxind, 1, function(x) {length(which(x))/n >= max(minn/n, beta)})))
+        
+  # Get the adjusted test box defnition and membership indicator vector of all observations for each step from all the folds
+  CV.boxind <- CV.boxind[1:CV.Lm,,drop=FALSE]
+  CV.boxcut <- CV.boxcut[1:CV.Lm,,drop=FALSE]
+
+  # Get the covariates traces from all folds
   # Variable traces are first stacked and truncated in a matrix where folds are by rows and steps by columns
   CV.trace <- list2mat(list=trace.list, coltrunc=CV.Lm)
   CV.trace <- t(CV.trace)
@@ -433,13 +477,11 @@ cv.ave.box <- function(x, times, status,
 
   # Truncate the cross-validated quantities from all folds to the same cross-validated length
   for (k in 1:K) {
-    boxcut.list[[k]] <- boxcut.list[[k]][1:CV.Lm,,drop=FALSE]
     boxstat.list[[k]] <- boxstat.list[[k]][1:CV.Lm]
   }
-
+  
   # Compute the averaged box statistics for each step from all the folds
   # Each entry or row signifies a step
-  CV.boxcut <- matrix(data=NA, nrow=CV.Lm, ncol=p, dimnames=list(paste("step", 0:(CV.Lm-1), sep=""), colnames(x)))
   CV.support <- rep(NA, CV.Lm)
   names(CV.support) <- paste("step", 0:(CV.Lm-1), sep="")
   CV.lhr <- rep(NA, CV.Lm)
@@ -457,7 +499,6 @@ cv.ave.box <- function(x, times, status,
   CV.min.prob.bar <- rep(NA, CV.Lm)
   names(CV.min.prob.bar) <- paste("step", 0:(CV.Lm-1), sep="")
   for (l in 1:CV.Lm) {
-    summincut <- matrix(NA, K, p)
     sumtime <- rep(NA, K)
     sumprob <- rep(NA, K)
     summaxtime <- rep(NA, K)
@@ -469,7 +510,6 @@ cv.ave.box <- function(x, times, status,
     for (k in 1:K) {
       outbounds <- boxstat.list[[k]][[l]]
       if (!is.null(outbounds)) {
-        summincut[k,] <- boxcut.list[[k]][l,]
         sumlhr[k] <- boxstat.list[[k]][[l]][[1]]
         sumlrt[k] <- boxstat.list[[k]][[l]][[2]]
         sumcer[k] <- boxstat.list[[k]][[l]][[3]]
@@ -480,7 +520,6 @@ cv.ave.box <- function(x, times, status,
         summinprob[k] <- boxstat.list[[k]][[l]][[8]]
       }
     }
-    CV.boxcut[l, ] <- colMeans(summincut, na.rm=TRUE)
     CV.lhr[l] <- mean(sumlhr, na.rm=TRUE)
     CV.lrt[l] <- mean(sumlrt, na.rm=TRUE)
     CV.cer[l] <- mean(sumcer, na.rm=TRUE)
@@ -501,18 +540,6 @@ cv.ave.box <- function(x, times, status,
     }
     CV.rules[, j] <- paste(colnames(x)[j], ss, format(x=CV.boxcut[, j], digits=decimals, nsmall=decimals), sep="")
   }
-
-  # Get the box membership indicator vector of all observations for each step from all the folds
-  # Based on the corresponding averaged box over the folds
-  CV.boxind <- matrix(NA, nrow=CV.Lm, ncol=n)
-  for (l in 1:CV.Lm) {
-    boxcut <- CV.boxcut[l, ] * varsign
-    x.cut <- t(t(x) * varsign)
-    x.ind <- t(t(x.cut) >= boxcut)
-    CV.boxind[l,] <- (rowMeans(x.ind) == 1)  # Set as TRUE which observations are inside the box boudaries for all axes directions
-  }
-  rownames(CV.boxind) <- paste("step", 0:(CV.Lm-1), sep="")
-  colnames(CV.boxind) <- rownames(x)
 
   # Applying the cross-validation criterion to the profiles
   # Cross-validated optimal length from all folds
@@ -596,9 +623,17 @@ cv.comb.box <- function(x, times, status,
   n <- nrow(x)
   p <- ncol(x)
 
+  alpha <- NULL
+  beta <- NULL
+  minn <- NULL
+  L <- NULL
+  peelcriterion <- NULL
+  eval(parse( text=unlist(strsplit(x=arg, split=",")) ))
+
   fold.obj <- cv.comb.fold(x=x, times=times, status=status,
                            varsign=varsign, initcutpts=initcutpts,
                            K=K, arg=arg, seed=seed)
+  
   ord <- fold.obj$key
   times.list <- fold.obj$cvtimes
   status.list <- fold.obj$cvstatus
@@ -608,6 +643,19 @@ cv.comb.box <- function(x, times, status,
 
   # Cross-validated maximum peeling length from all folds
   CV.Lm <- min(fold.obj$nsteps)
+
+  # Get the test box membership indicator vector of all observations for each step from all the folds
+  # Based on the combined membership indicator vectors over the folds
+  # Re-ordered by initial order of observations
+  CV.boxind <- cbindlist(boxind.list, trunc=CV.Lm)[,ord,drop=FALSE]
+  rownames(CV.boxind) <- paste("step", 0:(CV.Lm-1), sep="")
+  colnames(CV.boxind) <- rownames(x)
+
+  # Get the adjusted cross-validated maximum peeling length, thresholded by minimal box support
+  CV.Lm <- max(which(apply(CV.boxind, 1, function(x) {length(which(x))/n >= max(minn/n, beta)})))
+        
+  # Get the adjusted test box membership indicator vector of all observations for each step from all the folds
+  CV.boxind <- CV.boxind[1:CV.Lm,,drop=FALSE]
 
   # Concatenates the observations of test times and status from all folds
   # Re-ordered by initial order of observations
@@ -619,13 +667,6 @@ cv.comb.box <- function(x, times, status,
   CV.trace <- list2mat(list=trace.list, coltrunc=CV.Lm)
   CV.trace <- t(CV.trace)
   dimnames(CV.trace) <- list(paste("step", 0:(CV.Lm-1), sep=""), 1:K)
-
-  # Get the test box membership indicator vector of all observations for each step from all the folds
-  # Based on the combined membership indicator vectors over the folds
-  # Re-ordered by initial order of observations
-  CV.boxind <- cbindlist(boxind.list, trunc=CV.Lm)[,ord,drop=FALSE]
-  rownames(CV.boxind) <- paste("step", 0:(CV.Lm-1), sep="")
-  colnames(CV.boxind) <- rownames(x)
 
   # Get the combined boxcut (truncated to the same cross-validated length) for each step from all the folds
   # using the circumscribing box to the conmbined test set in-box samples over all the folds
