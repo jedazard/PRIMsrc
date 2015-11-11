@@ -90,5 +90,5 @@
                                   peelcriterion=\"lr\"",
                            parallel = FALSE, conf = NULL, seed = 123)
 
-    summary(object=CVCOMBREP.synt1)
+    summary(CVCOMBREP.synt1)
 }

@@ -115,16 +115,21 @@
   The function offers a number of options for the type of cross-validation desired: \eqn{K}-fold (replicated)-averaged or-combined,
   as well as peeling and optimization critera for model fitting, tuning and selectio and a few more parameters for the PRSP algorithm.
 
-  Because of the summarization that has to be done over the \eqn{B} replications, the reported output of "Replicated Combined CV" box decision 
-  rules matrix does not necessarily match exactly the reported vector of modal trace values of covariate usage for all peeling steps (see values below). 
-  Even thought the PRSP algorithm uses only one covariate at a time at each peeling step as reported in the vector of modal trace values, 
-  the reported "Replicated Combined CV" box decision rules matrix may show several covariates being used in a given step, simply because these 
-  decision rules are averaged over the \eqn{B} replicates (see equation \#20 in Dazard et al. 2015). Likewise, the reported output of 
-  "Replicated Combined CV" box membership indicator matrix does not necessarily match exactly the reported vector of box support 
-  (and corresponding box sample size) for all peeling steps. The reason is that the reported "Replicated Combined CV" box membership 
-  indicators are computed as the point-wise majority vote over the \eqn{B} replicates (see equation \#21 in Dazard et al. 2015), 
-  whereas the "Replicated Combined CV" box support vector (and corresponding box sample size) is averaged over the \eqn{B} replicates.
+  In case a replicated cross-validation is performed, a "summary" of the outputs is done over the \eqn{B} replicates, 
+  which requires some explanation:
+  \itemize{
+    \item Even thought the PRSP algorithm uses only one covariate at a time at each peeling step, the reported matrix of 
+    "Replicated CV" box decision rules may show several covariates being used in a given step, simply because these decision rules 
+    are averaged over the \eqn{B} replicates (see equation #21 in Dazard et al. 2015). This is also reflected in the reported 
+    "Replicated CV" importance and usage plots of covariate traces.
   
+    \item Likewise, the output matrix of "Replicated CV" box membership indicator does not necessarily match exactly the output vector 
+    of "Replicated CV" box support (and corresponding box sample size) for all peeling steps. The reason is that the reported 
+    "Replicated CV" box membership indicators are computed (at each peeling step) as the point-wise majority vote over the \eqn{B} 
+    replicates (see equation #22 in Dazard et al. 2015), whereas the "Replicated CV" box support vector (and corresponding box sample size) 
+    is averaged (at each peeling step) over the \eqn{B} replicates.
+  }
+    
   The function takes advantage of the R package \pkg{parallel}, which allows users to create a cluster of workstations on a local
   and/or remote machine(s), enabling scaling-up with the number of CPU cores specified and efficient parallel execution.
   
@@ -261,24 +266,19 @@
 #===================================================
 library("PRIMsrc")
 
-\dontrun{
-    #===================================================
-    # PRIMsrc package news
-    #===================================================
-    PRIMsrc.news()
+#===================================================
+# Package news
+# Package citation
+#===================================================
+PRIMsrc.news()
+citation("PRIMsrc")
     
-    #===================================================
-    # PRIMsrc package citation
-    #===================================================
-    citation("PRIMsrc")
-    
-    #===================================================
-    # Demo with a synthetic dataset
-    # Use help for descriptions
-    #===================================================
-    data("Synthetic.1", package="PRIMsrc")
-    ?Synthetic.1
-}
+#===================================================
+# Demo with a synthetic dataset
+# Use help for descriptions
+#===================================================
+data("Synthetic.1", package="PRIMsrc")
+?Synthetic.1
 
 #===================================================
 # Simulated dataset #1 (n=250, p=3)
@@ -300,18 +300,8 @@ CVCOMBREP.synt1 <- sbh(dataset = Synthetic.1,
                               peelcriterion=\"lr\"",
                        parallel = FALSE, conf = NULL, seed = 123)
 
-# selected covariates:
-selected <- CVCOMBREP.synt1$cvfit$cv.selected
-selected
-# covariates used for peeling:
-used <- CVCOMBREP.synt1$cvfit$cv.used
-used
-# some output results:
-CVCOMBREP.synt1$cvfit$cv.maxsteps
-CVCOMBREP.synt1$cvfit$cv.nsteps
-CVCOMBREP.synt1$cvfit$cv.trace
-CVCOMBREP.synt1$cvfit$cv.rules$frame[,used]
-round(CVCOMBREP.synt1$cvfit$cv.stats$mean,2)
+summary(CVCOMBREP.synt1)
+print(CVCOMBREP.synt1)
 
 \dontrun{
     #===================================================
@@ -390,19 +380,8 @@ round(CVCOMBREP.synt1$cvfit$cv.stats$mean,2)
                                   peelcriterion=\"lr\"",
                            parallel = TRUE, conf = conf, seed = 123)
                            
-    # selected covariates:
-    selected <- CVCOMBREP.synt1$cvfit$cv.selected
-    selected
-    # covariates used for peeling:
-    used <- CVCOMBREP.synt1$cvfit$cv.used
-    used
-    # some output results:
-    CVCOMBREP.synt1$cvfit$cv.maxsteps
-    CVCOMBREP.synt1$cvfit$cv.nsteps
-    CVCOMBREP.synt1$cvfit$cv.trace
-    CVCOMBREP.synt1$cvfit$cv.pval
-    CVCOMBREP.synt1$cvfit$cv.rules$frame[,used]
-    round(CVCOMBREP.synt1$cvfit$cv.stats$mean,2)
+    summary(CVCOMBREP.synt1)
+    print(CVCOMBREP.synt1)
 
 }
 

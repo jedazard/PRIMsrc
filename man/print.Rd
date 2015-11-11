@@ -90,5 +90,5 @@
                                   peelcriterion=\"lr\"",
                            parallel = FALSE, conf = NULL, seed = 123)
 
-    print(x=CVCOMBREP.synt1)
+    print(CVCOMBREP.synt1)
 }
