@@ -17,19 +17,22 @@ o RELEASE 0.3.0
 ---------------------------------------------------------------------------------
 Date   : 2015-02-27
 o RELEASE 0.4.0
-- Extension to high-dimensional p > n and p >> n cases by adding an internal variable selection procedure 
-  using the Elasticnet-Regularized Cox Regression function of the 'glmnet' package.
+- Extension to high-dimensional p > n and p >> n cases by adding an 
+  internal variable selection procedure using the Elasticnet-Regularized Cox Regression 
+  function of the 'glmnet' package.
 - Removed (temporarily) interactive option in sbh() in case no variables are selected by glmnet(...).
 - Added dependency to glmnet package for initial variable selection.
 - Added synthetic dataset #5 and example with p > n.
 - Added real dataset #2 and example with p >> n.
-- Added new ouputs 'selected' and 'used' in main function sbh(...) for variables effectively selected and used for peeling. 
+- Added new ouputs 'selected' and 'used' in main function sbh(...) for variables effectively 
+  selected and used for peeling. 
 - Removed returned values of box vertices that were redudant with the returned rules.
 - Changed return value of variable traces: now also returns the matrix of traces by replication.
 - Corrected superfluous codes in the parallelization section, before clusterCall(...) in sbh(...).
 - Corrected number of replications in sbh(...) in case of parallelization. 
 - Corrected stepwise variable selection procedure in peel.box() to account for missing values.
-- Corrected definition of the cross-validated box vertices (definition) in the case of "combined CV" technique.
+- Corrected definition of the cross-validated box vertices (definition) 
+  in the case of "combined CV" technique.
 - Corrected generation of random seed when none is provided. 
 - Minor updates, bugs and code improvements in sbh(...) and internal peel.box(...) functions.
 - Updated manual, version number.
@@ -38,9 +41,12 @@ o RELEASE 0.4.0
 Date   : 2015-03-04
 o RELEASE 0.5.0
 - Change of package name and GitHub repository name from PrimSRC to PRIMsrc.
-- Added CRAN/GitHub subfolder doc for PDF documentation files (including manual and applied study abstract).
-- Removed option for overlaying plots of multiple PRSP objects in plot_boxtrace(...) and plot_boxtraj(...).
-- Added argument "toplot" to choose which covariates should be plotted in plot_boxtrace(...) and plot_boxtraj(...).
+- Added CRAN/GitHub subfolder doc for PDF documentation files 
+  (including manual and applied study abstract).
+- Removed option for overlaying plots of multiple PRSP objects 
+  in plot_boxtrace(...) and plot_boxtraj(...).
+- Added argument "toplot" to choose which covariates should be plotted in 
+  plot_boxtrace(...) and plot_boxtraj(...).
 - Corrected handling of empty PRSP object (failed peeling) in all plotting functions.
 - Implementation of plotting device now internal to all plotting functions.
 - Removed internal functions from the manual, updated manual, version number.
@@ -102,7 +108,8 @@ Date   : 2015-09-07
 o RELEASE 0.5.9
 - Replaced plotting function plot_scatter(...) by S3-generic `plot` function.
 - Corrected all plotting functions for the case of a NULL graphical device.
-- Cross-validated estimates of box endpoint quantities of interest now contains sample size for all peeling steps.
+- Cross-validated estimates of box endpoint quantities of interest now contains 
+  sample size for all peeling steps.
 - Minor updates and corrections in the outputs of S3-generic functions.
 - Minor updates and corrections in the documentation file and manual.
 - Built and tested under R-devel (2015-08-02 r68804) and release update to GitHub.
@@ -112,19 +119,23 @@ o RELEASE 0.6.0
 - The matrix of original dataset is now returned by the main function sbh() 
   and not the submatrix of pre-selected covariates only.
 - Corrected bugs in the output of main function sbh(): 
-  . the returned vectors of `pre-selected` and `used` covariates are now in reference to the original index of variables.
+  . the returned vectors of `pre-selected` and `used` covariates are now in reference 
+    to the original index of variables.
   . the value of traces and rules are now matched accordingly.
   . plot_boxtraj() and plot_boxtrace() are now corrected accordingly.  
-- The value of `object$cvfit$cv.trace` of the `PRSP` object that is returned by the main function sbh() 
-  now only contains the vector of the modal trace values of covariate usage at each step.
+- The value of `object$cvfit$cv.trace` of the `PRSP` object that is returned 
+  by the main function sbh() now only contains the vector of the modal trace values 
+  of covariate usage at each step.
 - Updated S3-generic 'summary' and 'print' functions.
 - Minor updates and corrections in the documentation file and manual.
 - Built and tested under R-devel (2015-09-14 r69384) and release update to GitHub.
 ---------------------------------------------------------------------------------
 Date   : 2015-10-11
 o RELEASE 0.6.2
-- Rename example datasets #4 and #5 into #1b and #4, respectively, for consistency with companion article.
-- Added argument `decimals` to main function sbh() to output results in user-specified significant decimals.
+- Rename example datasets #4 and #5 into #1b and #4, respectively, 
+  for consistency with companion article.
+- Added argument `decimals` to main function sbh() to output results in
+  user-specified significant decimals.
 - Added examples for all S3-generic functions.
 - Corrected output of decision rules in S3-generic `print` function in case `vs=TRUE`. 
 - Renamed results 'varsign`, `selected` and `used` to 'CV.sign`, `CV.selected` and `CV.used` and
@@ -133,14 +144,18 @@ o RELEASE 0.6.2
 - Updates of corresponding modifications in the documentation file and manual.
 - Built and tested under R-devel (2015-09-14 r69384) and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2015-11-06
+Date   : 2015-11-10
 o RELEASE 0.6.3
-- Changed random splitting in the cross-validation step to random stratified splitting by conservation of events.
-- Changed default values of metaparameters `alpha` to 0.05 (instead of 0.10) and `minn` to 5 (instead of 10).
-- Modified "Replicated Combined CV" maximal peeling length in order to avoid getting below the minimal box support threshold 
- (i.e. the greater of `beta*n` or `minn`) that could occur when averaging results over the cross-validation replicates.
+- Changed random splitting in the cross-validation step to random stratified splitting 
+  with/by conservation of events.
+- Changed default values of metaparameters `alpha` to 0.05 (instead of 0.10) 
+                                            `minn` to 5    (instead of 10).
+- Modified computation of replicated cross-validated maximal peeling length in order to avoid 
+  getting below the minimal box support threshold (i.e. the greater of `beta*n` or `minn`) 
+  that could occur when combining results from the cross-validation loops and replicates. 
 - Corrected behaviors in case `n` is less than `minn` and `n` is equal to `minn`.
-- Updates in the manual file, including added explanation about the outputs of box membership indicator and box decision rules.  
+- Updates in the manual file, including added explanation about the outputs of 
+  averaged covariate traces, box membership indicators and box decision rules.  
 - Updates in the CITATION file.  
 - Built and tested under R-devel (2015-11-04 r69597) and release update to GitHub.
 ---------------------------------------------------------------------------------
