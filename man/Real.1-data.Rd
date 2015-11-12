@@ -35,17 +35,18 @@
     \itemize{
         \item Dazard J-E., Choe M., LeBlanc M. and Rao J.S. (2015).
               "\emph{Cross-validation and Peeling Strategies for Survival Bump Hunting using Recursive Peeling Methods.}"
-              (Submitted).
+              Statistical Analysis and Data Mining (in press).
         \item Dazard J-E., Choe M., LeBlanc M. and Rao J.S. (2014).
               "\emph{Cross-Validation of Survival Bump Hunting by Recursive Peeling Methods.}"
               In JSM Proceedings, Survival Methods for Risk Estimation/Prediction Section. Boston, MA, USA.
               American Statistical Association IMS - JSM, p. 3366-3380.
-        \item Dazard J-E. and J. S. Rao (2010).
+        \item Dazard J-E., Choe M., LeBlanc M. and Rao J.S. (2015).
+              "\emph{R package PRIMsrc: Bump Hunting by Patient Rule Induction Method for Survival, Regression and Classification.}"
+              In JSM Proceedings, Statistical Programmers and Analysts Section. Seattle, WA, USA.
+              American Statistical Association IMS - JSM, (in press).
+        \item Dazard J-E. and J.S. Rao (2010).
               "\emph{Local Sparse Bump Hunting.}"
               J. Comp Graph. Statistics, 19(4):900-92.
-        \item  Bacon M.C, von Wyl V., Alden C. et al. {2005}.
-              "\emph{Semi-Supervised Methods to Predict Patient Survival from Gene Expression Data.}"
-              Clin Diagn Lab Immunol 12(9): 1013-1019.
     }
 }
 

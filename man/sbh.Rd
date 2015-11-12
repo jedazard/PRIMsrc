@@ -14,8 +14,8 @@
   sbh(dataset, 
       B = 10, K = 5, A = 1000, 
       vs = TRUE, cpv = FALSE, decimals = 2,
-      cvtype=c("combined", "averaged", "none", NULL), 
-      cvcriterion=c("lrt", "cer", "lhr", NULL),
+      cvtype = c("combined", "averaged", "none", NULL), 
+      cvcriterion = c("lrt", "cer", "lhr", NULL),
       arg = "beta=0.05,alpha=0.05,minn=5,L=NULL,peelcriterion=\"lr\"",
       probval = NULL, timeval = NULL, 
       parallel = FALSE, conf = NULL, seed = NULL)
@@ -25,7 +25,7 @@
   \item{dataset}{
     \code{data.frame} or \code{numeric} \code{matrix} of input dataset containing the observed survival and status indicator variables 
     in the first two columns, respectively, and all the covariates thereafter. If a \code{data.frame} is provided, it will be coerced 
-    to a \code{numeric} \code{matrix}.
+    to a \code{numeric} \code{matrix}. Discrete (or nominal) covariates should be made (or re-arranged into) ordinal variables.
   }
   \item{B}{
     Positive \code{integer} scalar of the number of replications of the cross-validation procedure. Defaults to 10.
@@ -99,23 +99,21 @@
 \details{
     
   At this point, the main function \code{sbh} performs the search of the \emph{first} box of the recursive coverage (outer) loop of our 
-  Patient Recursive Survival Peeling (PRSP) algorithm.
-    
-  Also, the main function relies on an optional variable pre-selection procedure that is run before the PRSP algorithm. 
-  At this point, this is done by Elastic-Net (EN) penalization of the partial likelihood, where both mixing (\code{alpha}) 
+  Patient Recursive Survival Peeling (PRSP) algorithm. It relies on an optional variable pre-selection procedure that is run before 
+  the PRSP algorithm. At this point, this is done by Elastic-Net (EN) penalization of the partial likelihood, where both mixing (\code{alpha}) 
   and overal shrinkage (\code{lambda}) parameters are simultaneously estimated by cross-validation using 
   the \code{glmnet::cv.glmnet} function of the R package \pkg{glmnet}. 
     
-  The \code{PRSP} object contains cross-validated estimates of all the decision-rules of pre-selected covariates and 
-  all other statistical quantities of interest at each iteration of the peeling sequence (inner loop of the PRSP algorithm). 
-  
-  It enables the display of results graphically of/for model tuning/selection, all peeling trajectories, covariate traces 
-  and survival distributions (see plotting functions for more details).
+  The returned S3-class \code{PRSP} object contains cross-validated estimates of all the decision-rules of pre-selected covariates and 
+  all other statistical quantities of interest at each iteration of the peeling sequence (inner loop of the PRSP algorithm).
+  This enables the graphical display of results of profiling curves for model tuning, peeling trajectories, covariate traces and 
+  survival distributions (see plotting functions for more details).
 
-  The function offers a number of options for the type of cross-validation desired: \eqn{K}-fold (replicated)-averaged or-combined,
-  as well as peeling and optimization critera for model fitting, tuning and selectio and a few more parameters for the PRSP algorithm.
+  The function offers a number of options for the number of cross-validation replicates to be perfomed: \eqn{B}; the type of 
+  cross-validation desired: \eqn{K}-fold (replicated)-averaged or-combined, as well as the peeling and optimization critera chosen 
+  for model tuning and a few more parameters for the PRSP algorithm.
 
-  In case a replicated cross-validation is performed, a "summary" of the outputs is done over the \eqn{B} replicates, 
+  In case replicated cross-validations are performed, a "summary" of the outputs is done over the \eqn{B} replicates, 
   which requires some explanation:
   \itemize{
     \item Even thought the PRSP algorithm uses only one covariate at a time at each peeling step, the reported matrix of 
@@ -132,12 +130,10 @@
     
   The function takes advantage of the R package \pkg{parallel}, which allows users to create a cluster of workstations on a local
   and/or remote machine(s), enabling scaling-up with the number of CPU cores specified and efficient parallel execution.
-  
-  Discrete (or nominal) covariates should be made (or re-arranged into) ordinal variables.
-  
-  If the computation of cross-validated p-value is desired, then running with the parallelization option is generally advised as it may take a while.
-  In the case of large (\eqn{p > n}) or very large (\eqn{p >> n}) datasets, it is required to use the parallelization option preferably
-  on a hyperperformance cluster of workstations. 
+    
+  If the computation of permutation \emph{p}-values is desired, then running with the parallelization option is strongly advised 
+  as it may take a while. In the case of large (\eqn{p > n}) or very large (\eqn{p >> n}) datasets, it is also required to use the 
+  parallelization option. 
   
   To run a parallel session (and parallel RNG) of the PRIMsrc procedures (\code{parallel}=\code{TRUE}), argument \code{conf}
   is to be specified (i.e. non \code{NULL}). It must list the specifications of the folowing parameters for cluster configuration:
@@ -157,8 +153,9 @@
         \item "outfile": \code{outfile} : \code{character} \code{vector} of the output log file name for the workernodes.
   }
 
-  Note that argument \code{B} is internally reset to \code{conf$cpus}*\code{ceiling}(\code{B}/\code{conf$cpus}) in case the parallelization
-  is used (i.e. \code{conf} is non \code{NULL}), where \code{conf$cpus} denotes the total number of CPUs to be used (see above).
+  Note that argument \code{B} is internally reset to \code{conf$cpus}*\code{ceiling}(\code{B}/\code{conf$cpus}) in case the 
+  parallelization is used (i.e. \code{conf} is non \code{NULL}), where \code{conf$cpus} denotes the total number of CPUs to be 
+  used (see above). The argument \code{A} is similarly reset. 
   
   The actual creation of the cluster, its initialization, and closing are all done internally.
   In addition, when random number generation is needed, the creation of separate streams of parallel RNG per node
@@ -185,12 +182,12 @@
     \item{decimals}{\code{integer} of the number of user-specified significant decimals.}
     \item{cvtype}{\code{character} \code{vector} of the cross-validation technique used.}
     \item{cvcriterion}{\code{character} \code{vector} of optimization criterion used.}
-    \item{arg}{\code{character} \code{vector} of the parameters used:}
+    \item{arg}{\code{character} \code{vector} of the parameters used.}
     \item{probval}{\code{Numeric} scalar of survival probability used.}
     \item{timeval}{\code{Numeric} scalar of survival time used.}
     \item{cvfit}{\code{List} with 10 fields of cross-validated estimates:
         \itemize{
-            \item{cv.maxsteps}: \code{numeric} scalar of maximal ceiled-mean of number of peeling steps over the replicates.
+            \item{cv.maxsteps}: \code{numeric} scalar of maximal number of peeling steps over the replicates.
             \item{cv.nsteps}: \code{numeric} scalar of optimal number of peeling steps according to the optimization criterion.
             \item{cv.trace}: \code{numeric} \code{vector} of the modal trace values of covariate usage for all peeling steps.
             \item{cv.boxind}: \code{logical} \code{matrix} in {\code{TRUE}, \code{FALSE}} of individual observation box membership indicator (columns) for all peeling steps (rows).
@@ -202,10 +199,10 @@
             \item{cv.pval}: \code{numeric} \code{vector} of log-rank permutation p-values of sepraration of survival distributions.}
         }
     \item{cvprofiles}{\code{List} of (\eqn{B}) of \code{numeric} \code{vectors}, one for each replicate, 
-        of the cross-validated statistics used in the optimization criterion (one set by user) as a function of the number of peeling steps.}
+        of the cross-validated statistics used in the optimization criterion (set by user) as a function of the number of peeling steps.}
     \item{cvmeanprofiles}{\code{List} of \code{numeric} \code{vectors} of the cross-validated mean statistics over the replicates.
         used in the optimization criterion (one set by user) as a function of the number of peeling steps.}
-    \item{plot}{\code{logical} scalar of the returned flag for plotting results (\code{TRUE} if CV successful).}
+    \item{plot}{\code{logical} scalar of the returned flag for plotting or not the results of the fitted SBH model.}
     \item{config}{\code{List} with 7 fields of parameters used for configuring the parallelization including \code{parallel} and \code{conf}.}
     \item{seed}{User seed(s) used:
         \code{integer} of a single value, if parallelization is used
@@ -216,12 +213,16 @@
     \itemize{
         \item Dazard J-E., Choe M., LeBlanc M. and Rao J.S. (2015).
               "\emph{Cross-validation and Peeling Strategies for Survival Bump Hunting using Recursive Peeling Methods.}"
-              (Submitted).
+              Statistical Analysis and Data Mining (in press).
         \item Dazard J-E., Choe M., LeBlanc M. and Rao J.S. (2014).
               "\emph{Cross-Validation of Survival Bump Hunting by Recursive Peeling Methods.}"
               In JSM Proceedings, Survival Methods for Risk Estimation/Prediction Section. Boston, MA, USA.
               American Statistical Association IMS - JSM, p. 3366-3380.
-        \item Dazard J-E. and J. S. Rao (2010).
+        \item Dazard J-E., Choe M., LeBlanc M. and Rao J.S. (2015).
+              "\emph{R package PRIMsrc: Bump Hunting by Patient Rule Induction Method for Survival, Regression and Classification.}"
+              In JSM Proceedings, Statistical Programmers and Analysts Section. Seattle, WA, USA.
+              American Statistical Association IMS - JSM, (in press).
+        \item Dazard J-E. and J.S. Rao (2010).
               "\emph{Local Sparse Bump Hunting.}"
               J. Comp Graph. Statistics, 19(4):900-92.
     }
@@ -294,8 +295,8 @@ CVCOMBREP.synt1 <- sbh(dataset = Synthetic.1,
                        vs = TRUE, cpv = FALSE, 
                        decimals = 2, probval = 0.5, 
                        arg = "beta=0.05,
-                              alpha=0.1,
-                              minn=10,
+                              alpha=0.05,
+                              minn=5,
                               L=NULL,
                               peelcriterion=\"lr\"",
                        parallel = FALSE, conf = NULL, seed = 123)
@@ -374,15 +375,13 @@ print(CVCOMBREP.synt1)
                            vs = TRUE, cpv = TRUE, 
                            decimals = 2, probval = 0.5, 
                            arg = "beta=0.05,
-                                  alpha=0.1,
-                                  minn=10,
+                                  alpha=0.05,
+                                  minn=5,
                                   L=NULL,
                                   peelcriterion=\"lr\"",
                            parallel = TRUE, conf = conf, seed = 123)
                            
     summary(CVCOMBREP.synt1)
     print(CVCOMBREP.synt1)
-
 }
-
 }
