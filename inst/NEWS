@@ -144,7 +144,7 @@ o RELEASE 0.6.2
 - Updates of corresponding modifications in the documentation file and manual.
 - Built and tested under R-devel (2015-09-14 r69384) and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2015-11-10
+Date   : 2015-11-12
 o RELEASE 0.6.3
 - Changed random splitting in the cross-validation step to random stratified splitting 
   with/by conservation of events.
