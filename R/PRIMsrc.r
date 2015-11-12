@@ -288,9 +288,9 @@ sbh <- function(dataset,
         cat("Generating cross-validated optimal peeling lengths from all replicates ...\n")
         # List of CV profiles
         if ((cvtype == "averaged") || (cvtype == "combined")) {
-            CV.lhr.mat <- list2mat(list=CV.lhr, fill=0, coltrunc=CV.maxsteps)
-            CV.lrt.mat <- list2mat(list=CV.lrt, fill=0, coltrunc=CV.maxsteps)
-            CV.cer.mat <- list2mat(list=CV.cer, fill=1, coltrunc=CV.maxsteps)
+            CV.lhr.mat <- list2mat(list=CV.lhr, fill=NA, coltrunc=CV.maxsteps)
+            CV.lrt.mat <- list2mat(list=CV.lrt, fill=NA, coltrunc=CV.maxsteps)
+            CV.cer.mat <- list2mat(list=CV.cer, fill=NA, coltrunc=CV.maxsteps)
         } else if (cvtype == "none") {
             CV.lhr.mat <- matrix(data=NA, nrow=B, ncol=CV.maxsteps)
             CV.lrt.mat <- matrix(data=NA, nrow=B, ncol=CV.maxsteps)
@@ -304,9 +304,9 @@ sbh <- function(dataset,
         colnames(CV.profiles$cer) <- paste("step", 0:(CV.maxsteps-1), sep="")
 
         # List of CV mean profiles
-        CV.mean.lhr <- apply(CV.profiles$lhr, 2, mean)
-        CV.mean.lrt <- apply(CV.profiles$lrt, 2, mean)
-        CV.mean.cer <- apply(CV.profiles$cer, 2, mean)
+        CV.mean.lhr <- apply(CV.profiles$lhr, 2, mean, na.rm=TRUE)
+        CV.mean.lrt <- apply(CV.profiles$lrt, 2, mean, na.rm=TRUE)
+        CV.mean.cer <- apply(CV.profiles$cer, 2, mean, na.rm=TRUE)
         CV.mean.profiles <- list("lhr"=CV.mean.lhr, "lrt"=CV.mean.lrt, "cer"=CV.mean.cer)
         
         # Cross-validated optimal peeling length from all replicates
@@ -334,9 +334,9 @@ sbh <- function(dataset,
         
         # Adjusted list of CV profiles
         if ((cvtype == "averaged") || (cvtype == "combined")) {
-            CV.lhr.mat <- list2mat(list=CV.lhr, fill=0, coltrunc=CV.maxsteps)
-            CV.lrt.mat <- list2mat(list=CV.lrt, fill=0, coltrunc=CV.maxsteps)
-            CV.cer.mat <- list2mat(list=CV.cer, fill=1, coltrunc=CV.maxsteps)
+            CV.lhr.mat <- list2mat(list=CV.lhr, fill=NA, coltrunc=CV.maxsteps)
+            CV.lrt.mat <- list2mat(list=CV.lrt, fill=NA, coltrunc=CV.maxsteps)
+            CV.cer.mat <- list2mat(list=CV.cer, fill=NA, coltrunc=CV.maxsteps)
         } else if (cvtype == "none") {
             CV.lhr.mat <- matrix(data=NA, nrow=B, ncol=CV.maxsteps)
             CV.lrt.mat <- matrix(data=NA, nrow=B, ncol=CV.maxsteps)
@@ -350,9 +350,9 @@ sbh <- function(dataset,
         colnames(CV.profiles$cer) <- paste("step", 0:(CV.maxsteps-1), sep="")
 
         # Adjusted list of CV mean profiles
-        CV.mean.lhr <- apply(CV.profiles$lhr, 2, mean)
-        CV.mean.lrt <- apply(CV.profiles$lrt, 2, mean)
-        CV.mean.cer <- apply(CV.profiles$cer, 2, mean)
+        CV.mean.lhr <- apply(CV.profiles$lhr, 2, mean, na.rm=TRUE)
+        CV.mean.lrt <- apply(CV.profiles$lrt, 2, mean, na.rm=TRUE)
+        CV.mean.cer <- apply(CV.profiles$cer, 2, mean, na.rm=TRUE)
         CV.mean.profiles <- list("lhr"=CV.mean.lhr, "lrt"=CV.mean.lrt, "cer"=CV.mean.cer)
 
         # Adjusted cross-validated optimal peeling length from all replicates
