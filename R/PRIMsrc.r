@@ -732,12 +732,12 @@ plot.PRSP <- function(x,
     obj <- x
     if (obj$plot) {
 
-    scatterplot <- function(obj,
-                            main,
-                            proj, splom, boxes,
-                            steps,
-                            add.legend, pch, cex, col,
-                            col.box, lty.box, lwd.box, ...) {
+        scatterplot <- function(obj,
+                                main,
+                                proj, splom, boxes,
+                                steps,
+                                add.legend, pch, cex, col,
+                                col.box, lty.box, lwd.box, ...) {
 
         if (!is.null(main)) {
             par(mfrow=c(1, 1), oma=c(0, 0, 3, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
@@ -745,7 +745,9 @@ plot.PRSP <- function(x,
             par(mfrow=c(1, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
         }
 
-        X <- obj$x[,proj]
+        toplot <- obj$cvfit$cv.used[proj]
+        varnames <- colnames(obj$x)
+        X <- obj$x[,varnames[toplot],drop=FALSE]
         X.names <- colnames(X)
 
         if (is.null(steps))
@@ -756,13 +758,13 @@ plot.PRSP <- function(x,
         if (splom) {
             for (i in 1:L) {
                 w <- obj$cvfit$cv.boxind[steps[i],]
-                points(x=obj$x[w,proj], type="p", pch=pch, cex=cex, col=col[i], ...)
+                points(x=obj$x[w,varnames[toplot],drop=FALSE], type="p", pch=pch, cex=cex, col=col[i], ...)
             }
         }
         if (boxes) {
             X.range <- apply(X=X, MARGIN=2, FUN=range)
-            boxcut <- obj$cvfit$cv.rules$mean[steps,proj,drop=FALSE]
-            varsign <- obj$cvfit$cv.sign[proj]
+            boxcut <- obj$cvfit$cv.rules$mean[steps,varnames[toplot],drop=FALSE]
+            varsign <- obj$cvfit$cv.sign[varnames[toplot]]
             vertices <- vector(mode="list", length=L)
             for (i in 1:L) {
                 vertices[[i]] <- matrix(data=NA, nrow=2, ncol=2, dimnames=list(c("LB","UB"), X.names))
@@ -789,7 +791,6 @@ plot.PRSP <- function(x,
     }
 
     if (is.null(device)) {
-        cat("Device: ",  dev.cur(), "\n")
         scatterplot(obj=obj,
                     main=main,
                     proj=proj, splom=splom, boxes=boxes, steps=steps,
@@ -802,7 +803,6 @@ plot.PRSP <- function(x,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
-        cat("Device: ",  dev.cur(), "\n")
         scatterplot(obj=obj,
                     main=main,
                     proj=proj, splom=splom, boxes=boxes, steps=steps,
@@ -816,7 +816,6 @@ plot.PRSP <- function(x,
         cat("Filename : ", file, "\n")
         cat("Directory: ", path, "\n")
         pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
-        cat("Device: ",  dev.cur(), "\n")
         scatterplot(obj=obj,
                     main=main,
                     proj=proj, splom=splom, boxes=boxes, steps=steps,
@@ -868,16 +867,19 @@ predict.PRSP <- function (object, newdata, steps, na.action = na.omit, ...) {
   n <- nrow(X)
   p <- ncol(X)
 
-  if (ncol(object$x) != p) {
-    stop("Non-matching dimensions of newdata to PRSP object \n")
+  toplot <- object$cvfit$cv.used
+  varnames <- colnames(object$x)
+
+  if (length(toplot) != p) {
+    stop("Non-matching dimensionality of newdata to PRSP object of used covariates.\n")
   }
 
   if (missing(steps) || is.null(steps))
     steps <- object$cvfit$cv.nsteps
 
   L <- length(steps)
-  boxcut <- object$cvfit$cv.rules$mean[steps,,drop=FALSE]
-  varsign <- object$cvfit$cv.sign
+  boxcut <- object$cvfit$cv.rules$mean[steps,varnames[toplot],drop=FALSE]
+  varsign <- object$cvfit$cv.sign[varnames[toplot]]
 
   pred.boxind <- matrix(NA, nrow=L, ncol=n, dimnames=list(paste("step ", steps, sep=""), rownames(X)))
   for (l in 1:L) {
@@ -1331,7 +1333,7 @@ plot_boxtrace <- function(object,
             par(mfrow=c(2, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 2+maxlength/2, 2.0, 0.0), mgp=c(1.5, 0.5, 0))
         }
 
-        boxcut.scaled <- scale(x=object$cvfit$cv.rules$mean[,varnames[toplot]], center=center, scale=scale)
+        boxcut.scaled <- scale(x=object$cvfit$cv.rules$mean[,varnames[toplot],drop=FALSE], center=center, scale=scale)
         plot(x=object$cvfit$cv.stats$mean$cv.support,
              y=boxcut.scaled[,1], type='n',
              xlim=range(0,1),
