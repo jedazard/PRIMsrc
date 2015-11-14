@@ -7,9 +7,10 @@
 \title{2D Visualization of Data Scatter and Box Vertices}
 
 \description{
-  S3-generic plotting function for two-dimensional visualization of original or predicted data scatter 
-  as well as cross-validated box vertices of a \code{PRSP} object. The scatter plot is for a given 
-  peeling step of the peeling sequence and a given plane, both specified by the user.
+  S3-generic plotting function for two-dimensional visualization of original data as well as 
+  predicted data scatter with cross-validated box vertices of a \code{PRSP} object. 
+  The scatter plot is for a given peeling step of the peeling sequence and in a given plane of
+  the used covariates of the \code{PRSP} object, both specified by the user.
 }
 
 \usage{
@@ -42,7 +43,8 @@
     \code{Character} \code{vector}. Main Title. Defaults to \code{NULL}.
   }
   \item{proj}{
-    \code{Integer} \code{vector} of length two, specifying the two dimensions of the projection plane. Defaults to c(1,2).
+    \code{Integer} \code{vector} of length two, specifying the two dimensions of the projection plane of
+    of the used covariates of the \code{PRSP} object. Defaults to first two dimensions: \{1,2\}.
   }
   \item{splom}{
     \code{Logical} scalar. Shall the scatter plot of points inside the box(es) be plotted? Default to \code{TRUE}.
