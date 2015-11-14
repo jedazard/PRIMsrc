@@ -154,7 +154,8 @@ o RELEASE 0.6.3
   getting below the minimal box support threshold (i.e. the greater of `beta*n` or `minn`) 
   that could occur when combining results from the cross-validation loops and replicates. 
 - Corrected behaviors in case `n` is less than `minn` and `n` is equal to `minn`.
-- Corrected behavior in internal functions list2array() and list2mat().
+- Corrected minor error in internal functions list2array() and list2mat().
+- Corrected minor error in `plot` and `predict` S3-generic functions.
 - Updates in the manual file, including added explanation about the outputs of 
   averaged covariate traces, box membership indicators and box decision rules.  
 - Updates in the CITATION file.  
