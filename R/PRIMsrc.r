@@ -840,7 +840,10 @@ plot.PRSP <- function(x,
 ################
 #Usage         :
 ################
-#                   predict(object, newdata, steps, na.action = na.omit, ...)
+#                   predict(object, 
+#                           newdata, 
+#                           steps, 
+#                           na.action = na.omit, ...)
 #
 ################
 # Description   :
@@ -856,7 +859,10 @@ plot.PRSP <- function(x,
 #
 ##########################################################################################################################################
 
-predict.PRSP <- function (object, newdata, steps, na.action = na.omit, ...) {
+predict.PRSP <- function (object, 
+                          newdata, 
+                          steps, 
+                          na.action = na.omit, ...) {
 
   if (!inherits(object, 'PRSP'))
         stop("Primary argument much be an object of class 'PRSP' \n")
@@ -962,15 +968,12 @@ plot_profile <- function(object,
         if (object$cvcriterion == "lhr") {
           txt <- "LHR"
           profiles <- object$cvprofiles$lhr
-          ylim <- range(0, profiles, na.rm=TRUE)
         } else if (object$cvcriterion == "lrt") {
           txt <- "LRT"
           profiles <- object$cvprofiles$lrt
-          ylim <- range(0, profiles, na.rm=TRUE)
         } else if (object$cvcriterion == "cer") {
           txt <- "CER"
           profiles <- object$cvprofiles$cer
-          ylim <- range(0, 1, profiles, na.rm=TRUE)
         } else {
           stop("Invalid CV criterion.\n")
         }
@@ -982,6 +985,7 @@ plot_profile <- function(object,
         Lm <- object$cvfit$cv.maxsteps
         mean.profile <- apply(profiles, 2, mean, na.rm=TRUE)
         se.profile <- apply(profiles, 2, sd, na.rm=TRUE)
+        ylim <- range(0, 1, profiles, na.rm=TRUE)
         if (add.profiles) {
           matplot(t(profiles), axes=FALSE, type="b",
                   xlab="", ylab="", main="", ylim=ylim,
@@ -1056,13 +1060,12 @@ plot_profile <- function(object,
 ################
 #                    plot_boxtraj (object,
 #                                  main=NULL,
-#                                  xlab="Box Mass", ylab="Covariate Range",
 #                                  toplot=object$cvfit$cv.used,
 #                                  col.cov, lty.cov, lwd.cov,
 #                                  col=1, lty=1, lwd=1,
 #                                  cex=1, add.legend=FALSE, text.legend=NULL,
 #                                  nr=NULL, nc=NULL,
-#                                  device=NULL, file="Covariate Trajectory Plots", path=getwd())
+#                                  device=NULL, file="Trajectory Plots", path=getwd())
 #                                  horizontal=FALSE, width=8.5, height=8.5, ...)
 #
 ################
@@ -1081,13 +1084,12 @@ plot_profile <- function(object,
 
 plot_boxtraj <- function(object,
                          main=NULL,
-                         xlab="Box Mass", ylab="Covariate Range",
                          toplot=object$cvfit$cv.used,
                          col.cov, lty.cov, lwd.cov,
                          col=1, lty=1, lwd=1,
                          cex=1, add.legend=FALSE, text.legend=NULL,
                          nr=NULL, nc=NULL,
-                         device=NULL, file="Covariate Trajectory Plots", path=getwd(),
+                         device=NULL, file="Trajectory Plots", path=getwd(),
                          horizontal=FALSE, width=8.5, height=11.5, ...) {
 
   if (!inherits(object, 'PRSP'))
@@ -1095,7 +1097,7 @@ plot_boxtraj <- function(object,
 
   if (object$plot) {
     boxtrajplot <- function(object,
-                            main, xlab, ylab,
+                            main,
                             toplot,
                             col.cov, lty.cov, lwd.cov,
                             col, lty, lwd,
@@ -1133,8 +1135,8 @@ plot_boxtraj <- function(object,
                  main=paste(varnames[toplot[j]], " covariate trajectory", sep=""), cex.main=cex,
                  xlim=range(0,1),
                  ylim=range(object$x[,toplot[j]], na.rm=TRUE),
-                 xlab=xlab,
-                 ylab=ylab, ...)
+                 xlab="Box Mass",
+                 ylab="Covariate Range", ...)
         }
         if (add.legend)
           legend("bottomleft", inset=0.01, legend=text.legend, cex=cex)
@@ -1145,7 +1147,7 @@ plot_boxtraj <- function(object,
              main="Box support trajectory", cex.main=cex,
              xlim=range(0,1),
              ylim=range(0,1),
-             xlab=xlab,
+             xlab="Box Mass",
              ylab=expression(paste("Support (", beta, ")", sep="")), ...)
         if (add.legend)
             legend("bottomright", inset=0.01, legend=text.legend, cex=cex)
@@ -1156,7 +1158,7 @@ plot_boxtraj <- function(object,
              main="MEFT trajectory", cex.main=cex,
              xlim=range(0,1),
              ylim=range(0, object$cvfit$cv.stats$mean$cv.max.time.bar, na.rm=TRUE),
-             xlab=xlab,
+             xlab="Box Mass",
              ylab="Time", ...)
         if (add.legend)
             legend("bottomright", inset=0.01, legend=text.legend, cex=cex)
@@ -1167,7 +1169,7 @@ plot_boxtraj <- function(object,
              main="MEFP trajectory", cex.main=cex,
              xlim=range(0,1),
              ylim=range(0,1),
-             xlab=xlab,
+             xlab="Box Mass",
              ylab="Probability", ...)
         if (add.legend)
             legend("bottomright", inset=0.01, legend=text.legend, cex=cex)
@@ -1178,7 +1180,7 @@ plot_boxtraj <- function(object,
              main="LHR trajectory", cex.main=cex,
              xlim=range(0,1),
              ylim=range(0, object$cvfit$cv.stats$mean$cv.lhr, na.rm=TRUE),
-             xlab=xlab,
+             xlab="Box Mass",
              ylab=expression(paste("Log-Hazard Ratio (", lambda,")", sep="")), ...)
         if (add.legend)
             legend("top", inset=0.01, legend=text.legend, cex=cex)
@@ -1189,7 +1191,7 @@ plot_boxtraj <- function(object,
              main="LRT trajectory", cex.main=cex,
              xlim=range(0,1),
              ylim=range(0, object$cvfit$cv.stats$mean$cv.lrt, na.rm=TRUE),
-             xlab=xlab,
+             xlab="Box Mass",
              ylab=expression(paste("Log-rank test (", chi^2 ,")", sep="")), ...)
         if (add.legend)
             legend("top", inset=0.01, legend=text.legend, cex=cex)
@@ -1200,7 +1202,7 @@ plot_boxtraj <- function(object,
              main="CER trajectory", cex.main=cex,
              xlim=range(0,1),
              ylim=range(0,1),
-             xlab=xlab,
+             xlab="Box Mass",
              ylab=expression(paste("1-C (", theta,")", sep="")), ...)
         if (add.legend)
             legend("top", inset=0.01, legend=text.legend, cex=cex)
@@ -1212,7 +1214,7 @@ plot_boxtraj <- function(object,
     if (is.null(device)) {
         cat("Device: ",  dev.cur(), "\n")
         boxtrajplot(object=object,
-                    main=main, xlab=xlab, ylab=ylab,
+                    main=main,
                     toplot=toplot,
                     col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
                     col=col, lty=lty, lwd=lwd,
@@ -1227,7 +1229,7 @@ plot_boxtraj <- function(object,
         postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
         cat("Device: ",  dev.cur(), "\n")
         boxtrajplot(object=object,
-                    main=main, xlab=xlab, ylab=ylab,
+                    main=main,
                     toplot=toplot,
                     col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
                     col=col, lty=lty, lwd=lwd,
@@ -1243,7 +1245,7 @@ plot_boxtraj <- function(object,
         pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
         cat("Device: ",  dev.cur(), "\n")
         boxtrajplot(object=object,
-                    main=main, xlab=xlab, ylab=ylab,
+                    main=main,
                     toplot=toplot,
                     col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
                     col=col, lty=lty, lwd=lwd,
