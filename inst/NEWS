@@ -144,7 +144,7 @@ o RELEASE 0.6.2
 - Updates of corresponding modifications in the documentation file and manual.
 - Built and tested under R-devel (2015-09-14 r69384) and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2015-11-13
+Date   : 2015-11-15
 o RELEASE 0.6.3
 - Changed random splitting in the cross-validation step to random stratified splitting 
   with/by conservation of events.
@@ -154,8 +154,8 @@ o RELEASE 0.6.3
   getting below the minimal box support threshold (i.e. the greater of `beta*n` or `minn`) 
   that could occur when combining results from the cross-validation loops and replicates. 
 - Corrected behaviors in case `n` is less than `minn` and `n` is equal to `minn`.
-- Corrected minor error in internal functions list2array() and list2mat().
-- Corrected minor error in `plot` and `predict` S3-generic functions.
+- Corrected minor errors in list2array() and list2mat() internal functions.
+- Corrected minor errors in plot() and predict() S3-generic functions.
 - Updates in the manual file, including added explanation about the outputs of 
   averaged covariate traces, box membership indicators and box decision rules.  
 - Updates in the CITATION file.  
