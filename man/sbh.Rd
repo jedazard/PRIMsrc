@@ -196,8 +196,9 @@
             \item{cv.selected}{\code{numeric} \code{vector} of pre-selected covariates in reference to original index.}
             \item{cv.used}{\code{numeric} \code{vector} of covariates used for peeling in reference to original index.}
             \item{cv.stats}: \code{numeric} \code{matrix} of box endpoint quantities of interest (columns) for all peeling steps (rows).
-            \item{cv.pval}: \code{numeric} \code{vector} of log-rank permutation p-values of sepraration of survival distributions.}
-        }
+            \item{cv.pval}: \code{numeric} \code{vector} of log-rank permutation p-values of sepraration of survival distributions.
+            }
+    }
     \item{cvprofiles}{\code{List} of (\eqn{B}) of \code{numeric} \code{vectors}, one for each replicate, 
         of the cross-validated statistics used in the optimization criterion (set by user) as a function of the number of peeling steps.}
     \item{cvmeanprofiles}{\code{List} of \code{numeric} \code{vectors} of the cross-validated mean statistics over the replicates.
@@ -283,26 +284,23 @@ data("Synthetic.1", package="PRIMsrc")
 
 #===================================================
 # Simulated dataset #1 (n=250, p=3)
-# Replicated Combined Cross-Validation (RCCV)
+# Non Replicated Combined Cross-Validation (RCCV)
 # Peeling criterion = LRT
 # Optimization criterion = LRT
 # Without parallelization
 # Without computation of permutation p-values
 #===================================================
-CVCOMBREP.synt1 <- sbh(dataset = Synthetic.1, 
-                       cvtype = "combined", cvcriterion = "lrt",
-                       B = 1, K = 5, 
-                       vs = TRUE, cpv = FALSE, 
-                       decimals = 2, probval = 0.5, 
-                       arg = "beta=0.05,
-                              alpha=0.05,
-                              minn=5,
-                              L=NULL,
-                              peelcriterion=\"lr\"",
-                       parallel = FALSE, conf = NULL, seed = 123)
-
-summary(CVCOMBREP.synt1)
-print(CVCOMBREP.synt1)
+CVCOMB.synt1 <- sbh(dataset = Synthetic.1, 
+                    cvtype = "combined", cvcriterion = "lrt",
+                    B = 1, K = 5, 
+                    vs = TRUE, cpv = FALSE, 
+                    decimals = 2, probval = 0.5, 
+                    arg = "beta=0.05,
+                           alpha=0.05,
+                           minn=5,
+                           L=NULL,
+                           peelcriterion=\"lr\"",
+                    parallel = FALSE, conf = NULL, seed = 123)
 
 \dontrun{
     #===================================================
@@ -360,7 +358,6 @@ print(CVCOMBREP.synt1)
                      "verbose" = TRUE,
                      "outfile" = "")
     }
-    
     #===================================================
     # Simulated dataset #1 (n=250, p=3)
     # Replicated Combined Cross-Validation (RCCV)
@@ -380,8 +377,5 @@ print(CVCOMBREP.synt1)
                                   L=NULL,
                                   peelcriterion=\"lr\"",
                            parallel = TRUE, conf = conf, seed = 123)
-                           
-    summary(CVCOMBREP.synt1)
-    print(CVCOMBREP.synt1)
 }
 }

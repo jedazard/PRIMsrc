@@ -14,8 +14,6 @@
 \usage{
   plot_boxtraj(object,
                main = NULL, 
-               xlab = "Box Mass", 
-               ylab = "Covariate Range",
                toplot = object$cvfit$cv.used,
                col.cov, 
                lty.cov, 
@@ -29,7 +27,7 @@
                nr = NULL, 
                nc = NULL,
                device = NULL, 
-               file = "Covariate Trajectory Plots", 
+               file = "Trajectory Plots", 
                path=getwd(), 
                horizontal = FALSE, 
                width = 8.5, 
@@ -42,12 +40,6 @@
   }
   \item{main}{
     \code{Character} \code{vector}. Main Title. Defaults to \code{NULL}.
-  }
-  \item{xlab}{
-    \code{Character} \code{vector}. X axis label. Defaults to "Box Mass".
-  }
-  \item{ylab}{
-    \code{Character} \code{vector}. Y axis label. Defaults to "Covariate Range".
   }
   \item{toplot}{
     \code{Numeric} \code{vector}. Which of the pre-selected covariates to plot (in reference to the original index of covariates).
@@ -100,7 +92,7 @@
     Currently implemented graphic display devices are "PS" (Postscript) or "PDF" (Portable Document Format).
   }
   \item{file}{
-    File name for output graphic. Defaults to "Covariate Trajectory Plots".
+    File name for output graphic. Defaults to "Trajectory Plots".
   }
   \item{path}{
     Absolute path (without final (back)slash separator). Defaults to working directory path.
@@ -182,27 +174,25 @@ library("PRIMsrc")
 
 #=================================================================================
 # Simulated dataset #1 (n=250, p=3)
-# Replicated Combined Cross-Validation (RCCV)
+# Non Replicated Combined Cross-Validation (RCCV)
 # Peeling criterion = LRT
 # Optimization criterion = LRT
 #=================================================================================
-CVCOMBREP.synt1 <- sbh(dataset = Synthetic.1, 
-                       cvtype = "combined", cvcriterion = "lrt",
-                       B = 1, K = 5, 
-                       vs = TRUE, cpv = FALSE, 
-                       decimals = 2, probval = 0.5, 
-                       arg = "beta=0.05,
-                              alpha=0.1,
-                              minn=10,
-                              L=NULL,
-                              peelcriterion=\"lr\"",
-                       parallel = FALSE, conf = NULL, seed = 123)
+CVCOMB.synt1 <- sbh(dataset = Synthetic.1, 
+                    cvtype = "combined", cvcriterion = "lrt",
+                    B = 1, K = 5, 
+                    vs = TRUE, cpv = FALSE, 
+                    decimals = 2, probval = 0.5, 
+                    arg = "beta=0.05,
+                           alpha=0.1,
+                           minn=10,
+                           L=NULL,
+                           peelcriterion=\"lr\"",
+                    parallel = FALSE, conf = NULL, seed = 123)
 
-plot_boxtraj(object = CVCOMBREP.synt1,
-             main = paste("RCCV peeling trajectories for model #1", sep=""),
-             xlab = "Box Mass", ylab = "Covariate Range",
-             toplot = CVCOMBREP.synt1$cvfit$cv.used,
-             device = NULL, file = "Covariate Trajectory Plots", path=getwd(),
+plot_boxtraj(object = CVCOMB.synt1,
+             main = paste("Cross-validated peeling trajectories for model #1", sep=""),
+             toplot = CVCOMB.synt1$cvfit$cv.used,
+             device = NULL, file = "Trajectory Plots", path=getwd(),
              horizontal = FALSE, width = 8.5, height = 8.5)
-
 }
