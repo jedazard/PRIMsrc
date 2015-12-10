@@ -1,4 +1,3 @@
-https://travis-ci.org/jedazard/PRIMsrc.svg?branch=master
 ============
 Description:
 ============
