@@ -3,8 +3,8 @@
 Total grand-total number of downloads since October of 2012, the month the
 [RStudio CRAN mirror](http://cran-logs.rstudio.com/) started publishing logs, with `grand-total`:
 
-#> `http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc`
-#> ![](http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc) 
+%> `http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc`
+%> ![](http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc) 
 ![](http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc) 
  
 Monthly number of downloads since the begining of the month:
@@ -13,8 +13,8 @@ Monthly number of downloads since the begining of the month:
 
 Travis CI build result:
 
-# https://img.shields.io/travis/USER/REPO.svg
-https://travis-ci.org/jedazard/PRIMsrc.svg
+% https://img.shields.io/travis/USER/REPO.svg
+![](https://travis-ci.org/jedazard/PRIMsrc.svg)
 
 ============
 Description:
