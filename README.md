@@ -1,6 +1,6 @@
 #### General Remarks
 
-Grand-total number of downloads since initial release to CRAN (2015-07-28), as logged by [RStudio CRAN mirror](http://cran-logs.rstudio.com/) since October 1, 2012, the month it started publishing logs:
+Grand-total number of downloads since initial release to CRAN (2015-07-28), as logged by [RStudio CRAN mirror](http://cran-logs.rstudio.com/):
 
 ![](http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc) 
 
