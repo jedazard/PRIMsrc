@@ -1,10 +1,16 @@
 #### General Remarks
 
-Grand-total number of downloads since initial release, as logged by [RStudio CRAN mirror](http://cran-logs.rstudio.com/): ![](http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc) 
+Grand-total number of downloads since initial release to CRAN (2015-07-28), as logged by [RStudio CRAN mirror](http://cran-logs.rstudio.com/):
 
-Monthly number of downloads since the begining of the month: ![](http://cranlogs.r-pkg.org/badges/PRIMsrc)
+![](http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc) 
 
-Travis CI build result: ![](https://travis-ci.org/jedazard/PRIMsrc.svg)
+Number of downloads last month:
+
+![](http://cranlogs.r-pkg.org/badges/PRIMsrc)
+
+Travis CI build result: 
+
+![](https://travis-ci.org/jedazard/PRIMsrc.svg)
 
 ============
 Description:
@@ -36,7 +42,7 @@ PRIMsrc is Open Source / Free Software, and is freely available under the GNU Ge
 =========================
 Documentation and Manual: 
 =========================
-All the codes are in the R folder and a manual (PRIMsrc.pdf) details the end-user functions. At this stage and for simplicity, there is a unique end-user main function for fitting a cross-validated Survival Bump Hunting model (sbh(...)). There are 4 end-user specific plotting functions (plot_****(...)) along with 4 S3-generic functions: summary(...), predict(...), plot(...) and print(...). Available are also 5 synthetic datasets and 2 real datasets including altogether low and high-dimensional situations (for p < n, p > n and p >> n cases). See the "PRIMsrc-package" introduction section of the manual for more details and examples.
+All the codes are in the R folder and a manual (PRIMsrc.pdf) details the end-user functions. At this stage and for simplicity, there is a unique end-user main function for fitting a cross-validated Survival Bump Hunting model (sbh(...)). There are 4 end-user specific plotting functions (`plot_****(...)`) along with 4 S3-generic functions: `summary(...)`, `predict(...)`, `plot(...)` and `print(...)`. Available are also 5 synthetic datasets and 2 real datasets including altogether low and high-dimensional situations (for p < n, p > n and p >> n cases). See the "PRIMsrc-package" introduction section of the manual for more details and examples.
 
 ===========
 References:
