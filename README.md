@@ -47,30 +47,24 @@ All the codes are in the R folder and a manual (PRIMsrc.pdf) details the end-use
 ===========
 References:
 ===========
-CRAN release:
-https://cran.r-project.org/web/packages/PRIMsrc/index.html
+[CRAN release](https://cran.r-project.org/web/packages/PRIMsrc/index.html).
 
+Open access to companion papers (accepted for publication):
 
-The companion papers (accepted and submitted for publication) can be accessed here:
+- [ASA-IMS JSM Proceedings (2014)](https://www.amstat.org/membersonly/proceedings/2014/data/assets/pdf/312982_90342.pdf).
 
-- ASA-IMS JSM Proceedings (2014): 
+- [ASA-IMS JSM Proceedings (2015)](https://www.amstat.org/membersonly/proceedings/2015/data/assets/pdf/233927.pdf).
 
-https://www.amstat.org/membersonly/proceedings/2014/data/assets/pdf/312982_90342.pdf
+- [Archives arXiv](http://arxiv.org/abs/1501.03856).
 
-- Archives arXiv:
-
-http://arxiv.org/abs/1501.03856.
-
-- Statistical Analysis and Data Mining. The ASA Data Science Journal (to appear):
-
-http://onlinelibrary.wiley.com/journal/10.1002/(ISSN)1932-1872
+- Statistical Analysis and Data Mining. The ASA Data Science Journal: [(to appear)](http://onlinelibrary.wiley.com/journal/10.1002/(ISSN)1932-1872).
 
 =============
 Requirements:
 =============
 PRIMsrc 0.6.3 requires R-3.0.2 (2013-09-25). It was built and tested under R-devel (2015-11-04 r69597) and Travis CI. 
 
-Installation has been tested on Windows, Linux, OSX and Solaris platforms. See 'CRAN Package Check Results' [here](https://cran.r-project.org/web/checks/check_results_PRIMsrc.html)
+Installation has been tested on Windows, Linux, OSX and Solaris platforms. See 'CRAN Package Check Results' [here](https://cran.r-project.org/web/checks/check_results_PRIMsrc.html).
 
 =============
 Installation: 
