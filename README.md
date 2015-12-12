@@ -51,8 +51,7 @@ References:
 
 Open access to companion papers (accepted for publication):
 
-- [Statistical Analysis and Data Mining (2015-12-09) to appear](http://onlinelibrary.wiley.com/journal/10.1002/(ISSN)1932-1872)
-- The ASA Data Science Journal.
+- [Statistical Analysis and Data Mining (2015-12-09)](http://onlinelibrary.wiley.com/journal/10.1002/(ISSN)1932-1872). The ASA Data Science Journal (to appear).
 
 - [Archives arXiv v1:v8 (2015-01-16 : 2015-11-20)](http://arxiv.org/abs/1501.03856).
 
