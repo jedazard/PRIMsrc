@@ -1,6 +1,6 @@
 #### General Remarks
 
-Grand-total number of downloads since initial release to CRAN (2015-07-28), as logged by [RStudio CRAN mirror](http://cran-logs.rstudio.com/):
+Grand-total number of downloads since initial release to CRAN (2015-07-28), as logged by [RStudio CRAN mirror](http://cran-logs.rstudio.com/) since October 1, 2012, the month it started publishing logs:
 
 ![](http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc) 
 
@@ -64,7 +64,7 @@ Requirements:
 =============
 PRIMsrc 0.6.3 requires R-3.0.2 (2013-09-25). It was built and tested under R-devel (2015-11-04 r69597) and Travis CI. 
 
-Installation has been tested on Windows, Linux, OSX and Solaris platforms. See 'CRAN Package Check Results' [here](https://cran.r-project.org/web/checks/check_results_PRIMsrc.html).
+Installation has been tested on Windows, Linux, OSX and Solaris platforms. See [CRAN Package Check Results](https://cran.r-project.org/web/checks/check_results_PRIMsrc.html).
 
 =============
 Installation: 
