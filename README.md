@@ -1,7 +1,9 @@
 #### General Remarks
 
 Grand-total number of downloads since initial release, as logged by [RStudio CRAN mirror](http://cran-logs.rstudio.com/): ![](http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc) 
-Monthly number of downloads since the begining of the month: ![](http://cranlogs.r-pkg.org/badges/PRIMsrc) 
+
+Monthly number of downloads since the begining of the month: ![](http://cranlogs.r-pkg.org/badges/PRIMsrc)
+
 Travis CI build result: ![](https://travis-ci.org/jedazard/PRIMsrc.svg)
 
 ============
