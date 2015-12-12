@@ -1,7 +1,6 @@
 #### General Remarks
 
-Total grand-total number of downloads since October of 2012, the month the
-[RStudio CRAN mirror](http://cran-logs.rstudio.com/) started publishing logs:
+Grand-total number of downloads since initial release, as logged by [RStudio CRAN mirror](http://cran-logs.rstudio.com/):
 ![](http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc) 
  
 Monthly number of downloads since the begining of the month:
