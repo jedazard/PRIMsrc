@@ -1,16 +1,13 @@
-#### General remarks
+#### General Remarks
 
 Total grand-total number of downloads since October of 2012, the month the
-[RStudio CRAN mirror](http://cran-logs.rstudio.com/) started publishing logs, with `grand-total`:
-
+[RStudio CRAN mirror](http://cran-logs.rstudio.com/) started publishing logs:
 ![](http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc) 
  
 Monthly number of downloads since the begining of the month:
-
 ![](http://cranlogs.r-pkg.org/badges/PRIMsrc) 
 
 Travis CI build result:
-
 ![](https://travis-ci.org/jedazard/PRIMsrc.svg)
 
 ============
