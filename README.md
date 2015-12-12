@@ -47,13 +47,13 @@ All the codes are in the R folder and a manual (PRIMsrc.pdf) details the end-use
 ===========
 References:
 ===========
-[CRAN release](https://cran.r-project.org/web/packages/PRIMsrc/index.html) with change log [here](https://cran.r-project.org/web/packages/PRIMsrc/NEWS).
+[CRAN release (2015-07-28)](https://cran.r-project.org/web/packages/PRIMsrc/index.html) with change log [here](https://cran.r-project.org/web/packages/PRIMsrc/NEWS).
 
 Open access to companion papers (accepted for publication):
 
 - [Statistical Analysis and Data Mining (2015-12-09)](http://onlinelibrary.wiley.com/journal/10.1002/(ISSN)1932-1872). The ASA Data Science Journal (to appear).
 
-- [Archives arXiv v1:v8 (2015-01-16 : 2015-11-20)](http://arxiv.org/abs/1501.03856).
+- [arXiv v1:v8 (2015-01-16 : 2015-11-20)](http://arxiv.org/abs/1501.03856). The Cornell University Library Archives.
 
 - [ASA-IMS JSM Proceedings (2015)](https://www.amstat.org/membersonly/proceedings/2015/data/assets/pdf/233927.pdf).
 
