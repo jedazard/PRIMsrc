@@ -37,7 +37,7 @@ Branches:
 ========
 License:
 ========
-PRIMsrc is Open Source / Free Software, and is freely available under the GNU General Public License, version 3.
+PRIMsrc is Open Source / Free Software, available under the GNU General Public License, version 3. See details [here](https://github.com/jedazard/PRIMsrc/blob/master/LICENSE).
 
 =========================
 Documentation and Manual: 
@@ -47,7 +47,7 @@ All the codes are in the R folder and a manual (PRIMsrc.pdf) details the end-use
 ===========
 References:
 ===========
-[CRAN release](https://cran.r-project.org/web/packages/PRIMsrc/index.html) with change log: [here](https://cran.r-project.org/web/packages/PRIMsrc/NEWS)
+[CRAN release](https://cran.r-project.org/web/packages/PRIMsrc/index.html) with change log [here](https://cran.r-project.org/web/packages/PRIMsrc/NEWS).
 
 Open access to companion papers (accepted for publication):
 
