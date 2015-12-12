@@ -55,9 +55,9 @@ Open access to companion papers (accepted for publication):
 
 - [arXiv v1:v8 (2015-01-16 : 2015-11-20)](http://arxiv.org/abs/1501.03856). The Cornell University Library Archives.
 
-- [JSM (2015)](https://www.amstat.org/membersonly/proceedings/2015/data/assets/pdf/233927.pdf). The ASA Proceedings of the annual Joint Statistical Meetings (Vancouver).
+- [JSM (2015)](https://www.amstat.org/membersonly/proceedings/2015/data/assets/pdf/233927.pdf). The ASA Proceedings of the annual Joint Statistical Meetings (Vancouver, BC, Canada).
 
-- [JSM (2014)](https://www.amstat.org/membersonly/proceedings/2014/data/assets/pdf/312982_90342.pdf). The ASA Proceedings of the annual Joint Statistical Meetings (Boston).
+- [JSM (2014)](https://www.amstat.org/membersonly/proceedings/2014/data/assets/pdf/312982_90342.pdf). The ASA Proceedings of the annual Joint Statistical Meetings (Boston, MA, USA).
 
 =============
 Requirements:
