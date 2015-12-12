@@ -47,7 +47,7 @@ All the codes are in the R folder and a manual (PRIMsrc.pdf) details the end-use
 ===========
 References:
 ===========
-[CRAN release (2015-07-28)](https://cran.r-project.org/web/packages/PRIMsrc/index.html).
+[CRAN release](https://cran.r-project.org/web/packages/PRIMsrc/index.html) with change log: [here](https://cran.r-project.org/web/packages/PRIMsrc/NEWS)
 
 Open access to companion papers (accepted for publication):
 
