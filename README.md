@@ -51,13 +51,13 @@ References:
 
 Open access to companion papers (accepted for publication):
 
-- [ASA-IMS JSM Proceedings (2014)](https://www.amstat.org/membersonly/proceedings/2014/data/assets/pdf/312982_90342.pdf).
-
-- [ASA-IMS JSM Proceedings (2015)](https://www.amstat.org/membersonly/proceedings/2015/data/assets/pdf/233927.pdf).
+- Statistical Analysis and Data Mining. The ASA Data Science Journal: [(to appear)](http://onlinelibrary.wiley.com/journal/10.1002/(ISSN)1932-1872).
 
 - [Archives arXiv](http://arxiv.org/abs/1501.03856).
 
-- Statistical Analysis and Data Mining. The ASA Data Science Journal: [(to appear)](http://onlinelibrary.wiley.com/journal/10.1002/(ISSN)1932-1872).
+- [ASA-IMS JSM Proceedings (2015)](https://www.amstat.org/membersonly/proceedings/2015/data/assets/pdf/233927.pdf).
+
+- [ASA-IMS JSM Proceedings (2014)](https://www.amstat.org/membersonly/proceedings/2014/data/assets/pdf/312982_90342.pdf).
 
 =============
 Requirements:
