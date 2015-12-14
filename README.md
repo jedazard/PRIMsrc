@@ -33,7 +33,7 @@ exceeds or dominates that of samples (p > n or p >> n paradigm).
 
 =========
 Branches:
-========= - 
+=========
 The default branch (master) hosts the current development release (version 
 0.6.3) of the survival bump hunting procedure that implements the case of a 
 survival response. At this point, this version is also restricted to a 
