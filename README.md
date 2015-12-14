@@ -1,4 +1,3 @@
-============
 ### General Remarks
 ============
 Grand-total number of CRAN downloads since initial release to CRAN (2015-07-28), 
