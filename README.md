@@ -3,24 +3,24 @@
 Grand-total number of CRAN downloads since initial release to CRAN (2015-07-28), 
 as logged by [RStudio CRAN mirror](http://cran-logs.rstudio.com/):
 
-![](http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc)](http://cran.rstudio.com/web/packages/PRIMsrc/index.html)
 
-Number of CRAN downloads in the last 30 days:
+Number of CRAN downloads in the last month:
 
-![](http://cranlogs.r-pkg.org/badges/last-month/PRIMsrc)
+[!![](http://cranlogs.r-pkg.org/badges/last-month/PRIMsrc)](http://cran.rstudio.com/web/packages/PRIMsrc/index.html)
 
 Number of CRAN downloads in the last week:
 
-![](http://cranlogs.r-pkg.org/badges/last-week/PRIMsrc)
+[!![](http://cranlogs.r-pkg.org/downloads/total/last-week/PRIMsrc)](http://cran.rstudio.com/web/packages/PRIMsrc/index.html)
 
 =======
 Travis CI build result:
 
 [![Build Status](https://travis-ci.org/jedazard/PRIMsrc.png?branch=master)](https://travis-ci.org/jedazard/PRIMsrc)
 
-CRAN release:
+CRAN checks:
 
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/PRIMsrc)](http://cran.r-project.org/package=PRIMsrc) with CRAN [checks](https://cran.r-project.org/web/checks/check_results_PRIMsrc.html).
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/PRIMsrc)](https://cran.r-project.org/web/checks/check_results_PRIMsrc.html).
 
 ===============
 ### Description
