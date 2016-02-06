@@ -5,7 +5,11 @@ as logged by [RStudio CRAN mirror](http://cran-logs.rstudio.com/):
 
 ![](http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc) 
  
+<<<<<<< HEAD
 Number of CRAN downloads in the last 30 days: 
+=======
+Number of CRAN downloads in the last 30 days:
+>>>>>>> origin/master
 
 ![](http://cranlogs.r-pkg.org/badges/PRIMsrc) 
 
@@ -21,6 +25,12 @@ CRAN release:
 ================
 #### Description
 
+<<<<<<< HEAD
+=======
+===============
+### Description
+
+>>>>>>> origin/master
 PRIMsrc performs a unified treatment of Bump 
 Hunting by Patient Rule Induction Method (PRIM) in Survival, Regression and 
 Classification settings (SRC). The method generates decision rules 
@@ -36,9 +46,14 @@ censored (Survival). It is intended to handle low and high-dimensional
 multivariate datasets, including the situation where the number of covariates 
 exceeds or dominates that of samples (p > n or p >> n paradigm). 
 
+<<<<<<< HEAD
 
 =============
 #### Branches
+=======
+============
+### Branches
+>>>>>>> origin/master
 
 The default branch (master) hosts the current development release (version 
 0.6.3) of the survival bump hunting procedure that implements the case of a 
@@ -60,20 +75,37 @@ Concordance Error Rate (CER), Log-Rank Test (LRT), or Log-Hazard Ratio (LHR) (se
 
 - The second branch (unified) will host the future complete version of the code (version 1.0.0), including undirected peeling search by Patient Rule Induction Method (PRIM) that will allow the unified treatment of bump hunting for every type of common response: Survival, Regression and Classification (SRC).
 
+<<<<<<< HEAD
 ============
 #### License
+=======
+===========
+### License
+>>>>>>> origin/master
 
 PRIMsrc is Open Source / Free Software, available under the GNU General Public License, version 3. 
 See details [here](https://github.com/jedazard/PRIMsrc/blob/master/LICENSE).
 
+<<<<<<< HEAD
 =============================
 #### Documentation and Manual
+=======
+============================
+### Documentation and Manual
+>>>>>>> origin/master
 
 All the codes are in the R folder and a manual (PRIMsrc.pdf) details the end-user functions. At this stage and for simplicity, there is a unique end-user main function for fitting a cross-validated Survival Bump Hunting model (sbh(...)). There are 4 end-user specific plotting functions (`plot_****(...)`) along with 4 S3-generic functions: `summary(...)`, `predict(...)`, `plot(...)` and `print(...)`. 
 Available are also 5 synthetic datasets and 2 real datasets including altogether low and high-dimensional situations (for p < n, p > n and p >> n cases). See the "PRIMsrc-package" introduction section of the manual for more details and examples.
 
+<<<<<<< HEAD
 ===============
 #### References
+=======
+==============
+### References
+
+[CRAN release (2015-07-28)](https://cran.r-project.org/web/packages/PRIMsrc/index.html) with change log [here](https://cran.r-project.org/web/packages/PRIMsrc/NEWS).
+>>>>>>> origin/master
 
 Open access to companion papers (accepted for publication):
 
@@ -89,16 +121,26 @@ The ASA Proceedings of the annual Joint Statistical Meetings (Seattle, WA, USA).
 - [JSM (2014)](https://www.amstat.org/membersonly/proceedings/2014/data/assets/pdf/312982_90342.pdf). 
 The ASA Proceedings of the annual Joint Statistical Meetings (Boston, MA, USA).
 
+<<<<<<< HEAD
 =================
 #### Requirements
+=======
+================
+### Requirements
+>>>>>>> origin/master
 
 PRIMsrc 0.6.3 requires R-3.0.2 (2013-09-25). It was built and tested under R-devel (2015-11-04 r69597) and Travis CI. 
 
 Installation has been tested on Windows, Linux, OSX and Solaris platforms. 
 See [CRAN Package Check Results](https://cran.r-project.org/web/checks/check_results_PRIMsrc.html).
 
+<<<<<<< HEAD
 =================
 #### Installation
+=======
+================
+### Installation
+>>>>>>> origin/master
 
 - To install PRIMsrc from CRAN, simply download and install the current version (0.6.3) from the CRAN repository:
 
@@ -112,8 +154,13 @@ library("devtools")
 
 devtools::install_github("jedazard/PRIMsrc")
 
+<<<<<<< HEAD
 ==========
 #### Usage
+=======
+=========
+### Usage
+>>>>>>> origin/master
 
 - To load the PRIMsrc library in an R session and start using it:
 
