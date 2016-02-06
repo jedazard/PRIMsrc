@@ -3,12 +3,16 @@
 Grand-total number of CRAN downloads since initial release to CRAN (2015-07-28), 
 as logged by [RStudio CRAN mirror](http://cran-logs.rstudio.com/):
 
-[![](http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc)](http://cran.rstudio.com/web/packages/PRIMsrc/index.html)
+![](http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc)
 
 Number of CRAN downloads in the last 30 days:
 
-[![](http://cranlogs.r-pkg.org/badges/PRIMsrc)](http://cran.rstudio.com/web/packages/PRIMsrc/index.html)
- 
+![](http://cranlogs.r-pkg.org/badges/PRIMsrc)
+
+Number of CRAN downloads in the last week:
+
+![](http://cranlogs.r-pkg.org/downloads/total/last-week/PRIMsrc)
+
 =======
 Travis CI build result:
 
