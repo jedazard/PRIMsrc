@@ -7,7 +7,7 @@ as logged by [RStudio CRAN mirror](http://cran-logs.rstudio.com/):
 
 Number of CRAN downloads in the last 30 days:
 
-![](http://cranlogs.r-pkg.org/badges/PRIMsrc)
+![](http://cranlogs.r-pkg.org/badges/last-month/PRIMsrc)
 
 Number of CRAN downloads in the last week:
 
