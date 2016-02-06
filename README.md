@@ -6,7 +6,7 @@ as logged by [RStudio CRAN mirror](http://cran-logs.rstudio.com/):
 ![](http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc) 
  
 =======
-### Number of CRAN downloads in the last 30 days:
+Number of CRAN downloads in the last 30 days:
 
 ![](http://cranlogs.r-pkg.org/badges/PRIMsrc) 
 
@@ -16,7 +16,7 @@ Travis CI build result:
 
 CRAN release:
 
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/PRIMsrc)](http://cran.r-project.org/package=PRIMsrc) with CRAN checks [here](https://cran.r-project.org/web/checks/check_results_PRIMsrc.html).
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/PRIMsrc)](http://cran.r-project.org/package=PRIMsrc) with CRAN [checks](https://cran.r-project.org/web/checks/check_results_PRIMsrc.html).
 
 ===============
 ### Description
