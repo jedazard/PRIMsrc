@@ -11,7 +11,7 @@ Number of CRAN downloads in the last month:
 
 Number of CRAN downloads in the last week:
 
-[![](http://cranlogs.r-pkg.org/downloads/total/last-week/PRIMsrc)](http://cran.rstudio.com/web/packages/PRIMsrc/index.html)
+[![](http://cranlogs.r-pkg.org/badges/last-week/PRIMsrc)](http://cran.rstudio.com/web/packages/PRIMsrc/index.html)
 
 =======
 Travis CI build result:
