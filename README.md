@@ -5,11 +5,9 @@ as logged by [RStudio CRAN mirror](http://cran-logs.rstudio.com/):
 
 ![](http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc) 
  
-<<<<<<< HEAD
 Number of CRAN downloads in the last 30 days: 
 =======
 Number of CRAN downloads in the last 30 days:
->>>>>>> origin/master
 
 ![](http://cranlogs.r-pkg.org/badges/PRIMsrc) 
 
