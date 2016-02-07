@@ -63,72 +63,14 @@ Concordance Error Rate (CER), Log-Rank Test (LRT), or Log-Hazard Ratio (LHR) (se
 
 - The second branch (unified) will host the future complete version of the code (version 1.0.0), including undirected peeling search by Patient Rule Induction Method (PRIM) that will allow the unified treatment of bump hunting for every type of common response: Survival, Regression and Classification (SRC).
 
-
 ===========
 ### License
 
 PRIMsrc is Open Source / Free Software, available under the GNU General Public License, version 3. 
 See details [here](https://github.com/jedazard/PRIMsrc/blob/master/LICENSE).
 
-============================
-### Documentation and Manual
-
-All the codes are in the R folder and a manual (PRIMsrc.pdf) details the end-user functions. At this stage and for simplicity, there is a unique end-user main function for fitting a cross-validated Survival Bump Hunting model (sbh(...)). There are 4 end-user specific plotting functions (`plot_****(...)`) along with 4 S3-generic functions: `summary(...)`, `predict(...)`, `plot(...)` and `print(...)`. 
-Available are also 5 synthetic datasets and 2 real datasets including altogether low and high-dimensional situations (for p < n, p > n and p >> n cases). See the "PRIMsrc-package" introduction section of the manual for more details and examples.
-
 ==============
-### References
+### Wiki
 
-Open access to companion papers (accepted for publication):
+See Wiki page [here](https://github.com/jedazard/PRIMsrc/wiki) for Publications, Roadmap, Documentation and Manual, Usage and Examples, Installation, Requirements and Support.
 
-- [Statistical Analysis and Data Mining (2015-12-09)](http://onlinelibrary.wiley.com/journal/10.1002/(ISSN)1932-1872). 
-The American Statistical Association (ASA) Affiliated Data Science Journal (to appear).
-
-- [arXiv v1:v8 (2015-01-16 : 2015-11-20)](http://arxiv.org/abs/1501.03856). 
-The Cornell University Library Archives.
-
-- [JSM (2015)](https://www.amstat.org/membersonly/proceedings/2015/data/assets/pdf/233927.pdf). 
-The ASA Proceedings of the annual Joint Statistical Meetings (Seattle, WA, USA).
-
-- [JSM (2014)](https://www.amstat.org/membersonly/proceedings/2014/data/assets/pdf/312982_90342.pdf). 
-The ASA Proceedings of the annual Joint Statistical Meetings (Boston, MA, USA).
-
-================
-### Requirements
-
-PRIMsrc 0.6.3 requires R-3.0.2 (2013-09-25). It was built and tested under R-devel (2015-11-04 r69597) and Travis CI. 
-
-Installation has been tested on Windows, Linux, OSX and Solaris platforms. 
-See [CRAN Package Check Results](https://cran.r-project.org/web/checks/check_results_PRIMsrc.html).
-
-================
-### Installation
-
-- To install PRIMsrc from CRAN, simply download and install the current version (0.6.3) from the CRAN repository:
-
-install.packages("PRIMsrc")
-
-- Alternatively, you can install the most up-to-date version (0.6.3) from GitHub, using devtools:
-
-install.packages("devtools")
-
-library("devtools")
-
-devtools::install_github("jedazard/PRIMsrc")
-
-=========
-### Usage
-
-- To load the PRIMsrc library in an R session and start using it:
-
-library("PRIMsrc")
-
-- Check the package news with the R command:
-
-PRIMsrc.news()
-
-- Check on how to cite the package with the R command:
-
-citation("PRIMsrc")
-
-etc...
