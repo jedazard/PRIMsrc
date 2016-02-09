@@ -68,14 +68,9 @@ See Travis CI build result:
 
 [![Build Status](https://travis-ci.org/jedazard/PRIMsrc.png?branch=master)](https://travis-ci.org/jedazard/PRIMsrc)
 
-[Travis CI build Results](https://travis-ci.org/jedazard/PRIMsrc.png?branch=master)
-
 See CRAN checks:
 
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/PRIMsrc)](https://cran.r-project.org/web/checks/check_results_PRIMsrc.html).
-
-[CRAN Package Check Results](https://cran.r-project.org/web/checks/check_results_PRIMsrc.html).
-
 
 =========
 ### Usage
