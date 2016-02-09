@@ -13,33 +13,6 @@ Number of CRAN downloads in the last week:
 
 [![](http://cranlogs.r-pkg.org/badges/last-week/PRIMsrc)](http://cran.rstudio.com/web/packages/PRIMsrc/index.html)
 
-=======
-Travis CI build result:
-
-[![Build Status](https://travis-ci.org/jedazard/PRIMsrc.png?branch=master)](https://travis-ci.org/jedazard/PRIMsrc)
-
-CRAN checks:
-
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/PRIMsrc)](https://cran.r-project.org/web/checks/check_results_PRIMsrc.html).
-
-===============
-### Description
-
-PRIMsrc performs a unified treatment of Bump 
-Hunting by Patient Rule Induction Method (PRIM) in Survival, Regression and 
-Classification settings (SRC). The method generates decision rules 
-delineating a region in the predictor space, where the response is larger 
-than its average over the entire space. The region is shaped as a 
-hyperdimensional box or hyperrectangle that is not necessarily contiguous. 
-
-
-Assumptions are that the multivariate input covariates can be discrete or 
-continuous and the univariate response variable can be discrete 
-(Classification), continuous (Regression) or a time-to event, possibly 
-censored (Survival). It is intended to handle low and high-dimensional 
-multivariate datasets, including the situation where the number of covariates 
-exceeds or dominates that of samples (p > n or p >> n paradigm). 
-
 ============
 ### Branches
 
@@ -55,7 +28,6 @@ At this point, this is done by a cross-validated penalization of the partial lik
 
 In this version, the bump hunting procedure and the cross-validation procedures that control the model size and model peeling length are carried out by two separate procedures within a single main function `sbh()` that generates a unique S3-class object 'PRSP'.  
 
-
 - The first branch (devel) hosts a development version of the code (version 0.7.0) that is more rigorous and modular. 
 Here, a single internal cross-validation procedure is carried out to simultaneously control model size (#covariates) and model complexity (#peeling steps) before the model is fit. 
 Specifically, it does a univariate bump hunting variable selection procedure, where model size and model complexity are simultaneously optimized using the cross-validation criterion of choice: 
@@ -69,8 +41,60 @@ Concordance Error Rate (CER), Log-Rank Test (LRT), or Log-Hazard Ratio (LHR) (se
 PRIMsrc is Open Source / Free Software, available under the GNU General Public License, version 3. 
 See details [here](https://github.com/jedazard/PRIMsrc/blob/master/LICENSE).
 
+================
+### Installation
+
+* To install PRIMsrc from CRAN, simply download and install the current version (0.6.3) from the CRAN repository:
+
+`install.packages("PRIMsrc")`
+
+
+* Alternatively, you can install the most up-to-date version (0.6.3) from GitHub, using devtools:
+
+`install.packages("devtools")`
+
+`library("devtools")`
+
+`devtools::install_github("jedazard/PRIMsrc")`
+
+================
+### Requirements
+
+PRIMsrc 0.6.3 requires R-3.0.2 (2013-09-25). It was built and tested under R-devel (2015-11-04 r69597) and Travis CI. 
+
+Installation has been tested on Windows, Linux, OSX and Solaris platforms. 
+
+Travis CI build result:
+
+[![Build Status](https://travis-ci.org/jedazard/PRIMsrc.png?branch=master)](https://travis-ci.org/jedazard/PRIMsrc)
+
+CRAN checks:
+
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/PRIMsrc)](https://cran.r-project.org/web/checks/check_results_PRIMsrc.html).
+
+See [CRAN Package Check Results](https://cran.r-project.org/web/checks/check_results_PRIMsrc.html).
+
+See [Travis CI build Results](https://travis-ci.org/jedazard/PRIMsrc.png?branch=master)
+
+=========
+### Usage
+
+* To load the PRIMsrc library in an R session and start using it:
+
+`library("PRIMsrc")`
+
+* Check the package news with the R command:
+
+`PRIMsrc.news()`
+
+* Check on how to cite the package with the R command:
+
+`citation("PRIMsrc")`
+
+etc...
+
 ==============
 ### Wiki
 
-See Wiki page [here](https://github.com/jedazard/PRIMsrc/wiki) for Publications, Roadmap, Documentation and Manual, Usage and Examples, Installation, Requirements and Support.
+See Wiki page [here](https://github.com/jedazard/PRIMsrc/wiki) for Roadmap, Publications, Case Studies, Documentation and Manual, Examples and Support.
 
