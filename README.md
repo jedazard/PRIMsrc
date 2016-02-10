@@ -92,5 +92,4 @@ etc...
 ==============
 ### Wiki
 
-See Wiki page [here](https://github.com/jedazard/PRIMsrc/wiki) for Roadmap, Publications, Case Studies, Documentation and Manual, Examples and Support.
-
+See [Wiki](https://github.com/jedazard/PRIMsrc/wiki) page for Roadmap, Publications, Case Studies, Documentation and Manual, Examples and Support.
