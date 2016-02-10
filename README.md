@@ -13,6 +13,7 @@ Number of CRAN downloads in the last week:
 
 [![](http://cranlogs.r-pkg.org/badges/last-week/PRIMsrc)](http://cran.rstudio.com/web/packages/PRIMsrc/index.html)
 
+
 ============
 ### Branches
 
@@ -35,11 +36,13 @@ Concordance Error Rate (CER), Log-Rank Test (LRT), or Log-Hazard Ratio (LHR) (se
 
 - The second branch (unified) will host the future complete version of the code (version 1.0.0), including undirected peeling search by Patient Rule Induction Method (PRIM) that will allow the unified treatment of bump hunting for every type of common response: Survival, Regression and Classification (SRC).
 
+
 ===========
 ### License
 
 PRIMsrc is Open Source / Free Software, available under the GNU General Public License, version 3. 
 See details [here](https://github.com/jedazard/PRIMsrc/blob/master/LICENSE).
+
 
 ================
 ### Installation
@@ -48,7 +51,6 @@ See details [here](https://github.com/jedazard/PRIMsrc/blob/master/LICENSE).
 
 `install.packages("PRIMsrc")`
 
-
 * Alternatively, you can install the most up-to-date version (0.6.3) from GitHub, using devtools:
 
 `install.packages("devtools")`
@@ -56,6 +58,7 @@ See details [here](https://github.com/jedazard/PRIMsrc/blob/master/LICENSE).
 `library("devtools")`
 
 `devtools::install_github("jedazard/PRIMsrc")`
+
 
 ================
 ### Requirements
@@ -71,6 +74,7 @@ See Travis CI build result:
 See CRAN checks:
 
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/PRIMsrc)](https://cran.r-project.org/web/checks/check_results_PRIMsrc.html).
+
 
 =========
 ### Usage
@@ -89,7 +93,9 @@ See CRAN checks:
 
 etc...
 
+
 ==============
 ### Wiki
 
 See [Wiki](https://github.com/jedazard/PRIMsrc/wiki) page for Roadmap, Publications, Case Studies, Documentation and Manual, Examples and Support.
+
