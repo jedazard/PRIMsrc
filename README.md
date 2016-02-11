@@ -53,12 +53,11 @@ See details [here](https://github.com/jedazard/PRIMsrc/blob/master/LICENSE).
 
 * Alternatively, you can install the most up-to-date version (0.6.3) from GitHub, using devtools:
 
-`install.packages("devtools")`
-
-`library("devtools")`
-
-`devtools::install_github("jedazard/PRIMsrc")`
-
+```{r}
+install.packages("devtools")
+library("devtools")
+devtools::install_github("jedazard/PRIMsrc")
+```
 
 ================
 ### Requirements
