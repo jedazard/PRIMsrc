@@ -49,7 +49,9 @@ See details [here](https://github.com/jedazard/PRIMsrc/blob/master/LICENSE).
 
 * To install PRIMsrc from CRAN, simply download and install the current version (0.6.3) from the CRAN repository:
 
-`install.packages("PRIMsrc")`
+```{r}
+install.packages("PRIMsrc")
+```
 
 * Alternatively, you can install the most up-to-date version (0.6.3) from GitHub, using devtools:
 
@@ -80,15 +82,21 @@ See CRAN checks:
 
 * To load the PRIMsrc library in an R session and start using it:
 
-`library("PRIMsrc")`
+```{r}
+library("PRIMsrc")
+```
 
 * Check the package news with the R command:
 
-`PRIMsrc.news()`
+```{r}
+PRIMsrc.news()
+```
 
 * Check on how to cite the package with the R command:
 
-`citation("PRIMsrc")`
+```{r}
+citation("PRIMsrc")
+```
 
 etc...
 
