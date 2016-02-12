@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>PRIMsrc by jedazard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">PRIMsrc</h1>
+      <h2 class="project-tagline">Bump Hunting by Patient Rule Induction Method for Survival, Regression and Classification</h2>
+      <a href="https://github.com/jedazard/PRIMsrc" class="btn">View on GitHub</a>
+      <a href="https://github.com/jedazard/PRIMsrc/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/jedazard/PRIMsrc/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h3>
+<a id="general-remarks" class="anchor" href="#general-remarks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>General Remarks</h3>
+
+<p>Grand-total number of CRAN downloads since initial release to CRAN (2015-07-28), 
+as logged by <a href="http://cran-logs.rstudio.com/">RStudio CRAN mirror</a>:</p>
+
+<p><a href="http://cran.rstudio.com/web/packages/PRIMsrc/index.html"><img src="http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc" alt=""></a></p>
+
+<p>Number of CRAN downloads in the last month:</p>
+
+<p><a href="http://cran.rstudio.com/web/packages/PRIMsrc/index.html"><img src="http://cranlogs.r-pkg.org/badges/last-month/PRIMsrc" alt=""></a></p>
+
+<p>Number of CRAN downloads in the last week:</p>
+
+<p><a href="http://cran.rstudio.com/web/packages/PRIMsrc/index.html"><img src="http://cranlogs.r-pkg.org/badges/last-week/PRIMsrc" alt=""></a></p>
+
+<h1></h1>
+
+<h3>
+<a id="branches" class="anchor" href="#branches" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Branches</h3>
+
+<p>The default branch (master) hosts the current development release (version 
+0.6.3) of the survival bump hunting procedure that implements the case of a 
+survival response. At this point, this version is also restricted to a 
+directed peeling search of the first box covered by the recursive coverage 
+(outer) loop of our Patient Recursive Survival Peeling (PRSP) algorithm. New 
+features will be added soon as they are available. </p>
+
+<p>The main function relies on an optional variable pre-selection procedure that is run before the PRSP algorithm. 
+At this point, this is done by a cross-validated penalization of the partial likelihood using the R package <a href="https://cran.r-project.org/web/packages/glmnet/index.html"><code>glmnet</code></a>.</p>
+
+<p>In this version, the bump hunting procedure and the cross-validation procedures that control the model size and model peeling length are carried out by two separate procedures within a single main function <code>sbh()</code> that generates a unique S3-class object 'PRSP'.  </p>
+
+<ul>
+<li><p>The first branch (devel) hosts a development version of the code (version 0.7.0) that is more rigorous and modular. 
+Here, a single internal cross-validation procedure is carried out to simultaneously control model size (#covariates) and model complexity (#peeling steps) before the model is fit. 
+Specifically, it does a univariate bump hunting variable selection procedure, where model size and model complexity are simultaneously optimized using the cross-validation criterion of choice: 
+Concordance Error Rate (CER), Log-Rank Test (LRT), or Log-Hazard Ratio (LHR) (see companion paper below for details).</p></li>
+<li><p>The second branch (unified) will host the future complete version of the code (version 1.0.0), including undirected peeling search by Patient Rule Induction Method (PRIM) that will allow the unified treatment of bump hunting for every type of common response: Survival, Regression and Classification (SRC).</p></li>
+</ul>
+
+<h1></h1>
+
+<h3>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h3>
+
+<p>PRIMsrc is Open Source / Free Software, available under the GNU General Public License, version 3. 
+See details <a href="https://github.com/jedazard/PRIMsrc/blob/master/LICENSE">here</a>.</p>
+
+<h1></h1>
+
+<h3>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h3>
+
+<ul>
+<li>To install PRIMsrc from CRAN, simply download and install the current version (0.6.3) from the CRAN repository:</li>
+</ul>
+
+<div class="highlight highlight-source-r"><pre>install.packages(<span class="pl-s"><span class="pl-pds">"</span>PRIMsrc<span class="pl-pds">"</span></span>)</pre></div>
+
+<ul>
+<li>Alternatively, you can install the most up-to-date version (0.6.3) from GitHub, using devtools:</li>
+</ul>
+
+<div class="highlight highlight-source-r"><pre>install.packages(<span class="pl-s"><span class="pl-pds">"</span>devtools<span class="pl-pds">"</span></span>)
+library(<span class="pl-s"><span class="pl-pds">"</span>devtools<span class="pl-pds">"</span></span>)
+<span class="pl-e">devtools</span><span class="pl-k">::</span>install_github(<span class="pl-s"><span class="pl-pds">"</span>jedazard/PRIMsrc<span class="pl-pds">"</span></span>)</pre></div>
+
+<h1></h1>
+
+<h3>
+<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h3>
+
+<p>PRIMsrc 0.6.3 requires R-3.0.2 (2013-09-25). It was built and tested under R-devel (2015-11-04 r69597) and Travis CI. </p>
+
+<p>Installation has been tested on Windows, Linux, OSX and Solaris platforms. </p>
+
+<p>See Travis CI build result:</p>
+
+<p><a href="https://travis-ci.org/jedazard/PRIMsrc"><img src="https://travis-ci.org/jedazard/PRIMsrc.png?branch=master" alt="Build Status"></a></p>
+
+<p>See CRAN checks:</p>
+
+<p><a href="https://cran.r-project.org/web/checks/check_results_PRIMsrc.html"><img src="http://www.r-pkg.org/badges/version/PRIMsrc" alt="CRAN_Status_Badge"></a>.</p>
+
+<h1></h1>
+
+<h3>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h3>
+
+<ul>
+<li>To load the PRIMsrc library in an R session and start using it:</li>
+</ul>
+
+<div class="highlight highlight-source-r"><pre>library(<span class="pl-s"><span class="pl-pds">"</span>PRIMsrc<span class="pl-pds">"</span></span>)</pre></div>
+
+<ul>
+<li>Check the package news with the R command:</li>
+</ul>
+
+<div class="highlight highlight-source-r"><pre>PRIMsrc.news()</pre></div>
+
+<ul>
+<li>Check on how to cite the package with the R command:</li>
+</ul>
+
+<div class="highlight highlight-source-r"><pre>citation(<span class="pl-s"><span class="pl-pds">"</span>PRIMsrc<span class="pl-pds">"</span></span>)</pre></div>
+
+<p>etc...</p>
+
+<h1></h1>
+
+<h3>
+<a id="wiki" class="anchor" href="#wiki" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Wiki</h3>
+
+<p>See <a href="https://github.com/jedazard/PRIMsrc/wiki">Wiki</a> page for Roadmap, Publications, Case Studies, Documentation and Manual, Examples and Support.</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/jedazard/PRIMsrc">PRIMsrc</a> is maintained by <a href="https://github.com/jedazard">jedazard</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
