@@ -105,6 +105,5 @@ etc...
 ==========================
 ### Website - Wiki
 
-See [Website](https://github.com/jedazard.io/PRIMsrc) 
-
-See [Wiki](https://github.com/jedazard/PRIMsrc/wiki) for Roadmap, Publications, Case Studies, Documentation and Manual, Examples and Support.
+- See [Website](http://jedazard.github.io/PRIMsrc/) 
+- See [Wiki](https://github.com/jedazard/PRIMsrc/wiki) for Roadmap, Publications, Case Studies, Documentation and Manual, Examples and Support.
