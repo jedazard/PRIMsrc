@@ -40,8 +40,9 @@ Concordance Error Rate (CER), Log-Rank Test (LRT), or Log-Hazard Ratio (LHR) (se
 ===========
 ### License
 
-PRIMsrc is Open Source / Free Software, available under the GNU General Public License, version 3. 
-See details [here](https://github.com/jedazard/PRIMsrc/blob/master/LICENSE).
+PRIMsrc is open source / free software, licensed under the GNU General Public License, version 3 (GPLv3), 
+sponsored by the [Free Software Foundation](http://www.fsf.org/). To view a copy of this license, visit 
+[GNU Free Documentation License](http://www.gnu.org/licenses/gpl-3.0.html).
 
 
 ================
@@ -53,7 +54,7 @@ See details [here](https://github.com/jedazard/PRIMsrc/blob/master/LICENSE).
 install.packages("PRIMsrc")
 ```
 
-* Alternatively, you can install the most up-to-date version (0.6.3) from GitHub, using devtools:
+* Alternatively, you can install the most up-to-date development version (0.6.3) from GitHub, using devtools:
 
 ```{r}
 install.packages("devtools")
@@ -101,8 +102,9 @@ citation("PRIMsrc")
 etc...
 
 
-==============
-### Wiki
+==========================
+### Website - Wiki
 
-See [Wiki](https://github.com/jedazard/PRIMsrc/wiki) page for Roadmap, Publications, Case Studies, Documentation and Manual, Examples and Support.
+See [Website](https://github.com/jedazard.io/PRIMsrc) 
 
+See [Wiki](https://github.com/jedazard/PRIMsrc/wiki) for Roadmap, Publications, Case Studies, Documentation and Manual, Examples and Support.
