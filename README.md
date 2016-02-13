@@ -1,13 +1,13 @@
 ### General Remarks
 
-Grand-total number of CRAN downloads since initial release to CRAN (2015-07-28):
+CRAN downloads since initial release to CRAN (2015-07-28):
 [![](http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc)](http://cran.rstudio.com/web/packages/PRIMsrc/index.html)
 as tracked by [RStudio CRAN mirror](http://cran-logs.rstudio.com/)
 
-Number of CRAN downloads in the last month:
+CRAN downloads in the last month:
 [![](http://cranlogs.r-pkg.org/badges/last-month/PRIMsrc)](http://cran.rstudio.com/web/packages/PRIMsrc/index.html)
 
-Number of CRAN downloads in the last week:
+CRAN downloads in the last week:
 [![](http://cranlogs.r-pkg.org/badges/last-week/PRIMsrc)](http://cran.rstudio.com/web/packages/PRIMsrc/index.html)
 
 
