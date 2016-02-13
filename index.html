@@ -20,6 +20,44 @@
 
     <section class="main-content">
       <h3>
+<a id="description" class="anchor" href="#description" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><em>Description</em>
+</h3>
+
+<p>PRIMsrc performs a unified treatment of Bump 
+Hunting by Patient Rule Induction Method (PRIM) in Survival, Regression and 
+Classification settings (SRC). The method generates decision rules 
+delineating a region in the predictor space, where the response is larger 
+than its average over the entire space. The region is shaped as a 
+hyperdimensional box or hyperrectangle that is not necessarily contiguous. </p>
+
+<hr>
+
+<h3>
+<a id="idea" class="anchor" href="#idea" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><em>Idea</em>
+</h3>
+
+<p>The sunshine over the mountain range illustrates how light can uncover peaks, highlands and valleys, just like we want to do for data structures such as local/global extrema by using a PRIMsrc-based Bump Hunting approach.</p>
+
+<p><img src="https://github.com/jedazard/PRIMsrc/blob/master/Website/Mountain_Range.jpg" alt="Mountain_Range"></p>
+
+<p>(<a href="https://www.flickr.com/photos/wwwca/">Bill Wight Photography</a>, Copyright 2015, with permission)</p>
+
+<hr>
+
+<h3>
+<a id="assumptions" class="anchor" href="#assumptions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><em>Assumptions</em>
+</h3>
+
+<p>Assumptions are that the multivariate input covariates can be discrete or 
+continuous and the univariate response variable can be discrete 
+(Classification), continuous (Regression) or a time-to event, possibly 
+censored (Survival). It is intended to handle low and high-dimensional 
+multivariate datasets, including the situation where the number of covariates 
+exceeds or dominates that of samples (<em>p</em> &gt; <em>n</em> or <em>p</em> &gt;&gt; <em>n</em> paradigm). </p>
+
+<hr>
+
+<h3>
 <a id="general-remarks" class="anchor" href="#general-remarks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>General Remarks</h3>
 
 <p>CRAN downloads since initial release to CRAN (2015-07-28):
@@ -35,55 +73,11 @@ as tracked by <a href="http://cran-logs.rstudio.com/">RStudio CRAN mirror</a></p
 <h1></h1>
 
 <h3>
-<a id="branches" class="anchor" href="#branches" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Branches</h3>
-
-<p>The default branch (master) hosts the current development release (version 
-0.6.3) of the survival bump hunting procedure that implements the case of a 
-survival response. At this point, this version is also restricted to a 
-directed peeling search of the first box covered by the recursive coverage 
-(outer) loop of our Patient Recursive Survival Peeling (PRSP) algorithm. New 
-features will be added soon as they are available. </p>
-
-<p>The main function relies on an optional variable pre-selection procedure that is run before the PRSP algorithm. 
-At this point, this is done by a cross-validated penalization of the partial likelihood using the R package <a href="https://cran.r-project.org/web/packages/glmnet/index.html"><code>glmnet</code></a>.</p>
-
-<p>In this version, the bump hunting procedure and the cross-validation procedures that control the model size and model peeling length are carried out by two separate procedures within a single main function <code>sbh()</code> that generates a unique S3-class object <code>PRSP</code>.  </p>
-
-<ul>
-<li><p>The first branch (devel) hosts a development version of the code (version 0.7.0) that is more rigorous and modular. 
-Here, a single internal cross-validation procedure is carried out to simultaneously control model size (#covariates) and model complexity (#peeling steps) before the model is fit. 
-Specifically, it does a univariate bump hunting variable selection procedure, where model size and model complexity are simultaneously optimized using the cross-validation criterion of choice: 
-Concordance Error Rate (CER), Log-Rank Test (LRT), or Log-Hazard Ratio (LHR) (see companion paper below for details).</p></li>
-<li><p>The second branch (unified) will host the future complete version of the code (version 1.0.0), including undirected peeling search by Patient Rule Induction Method (PRIM) that will allow the unified treatment of bump hunting for every type of common response: Survival, Regression and Classification (SRC).</p></li>
-</ul>
-
-<h1></h1>
-
-<h3>
 <a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h3>
 
 <p>PRIMsrc is open source / free software, licensed under the GNU General Public License version 3 (GPLv3), 
 sponsored by the <a href="http://www.fsf.org/">Free Software Foundation</a>. To view a copy of this license, visit 
 <a href="http://www.gnu.org/licenses/gpl-3.0.html">GNU Free Documentation License</a>.</p>
-
-<h1></h1>
-
-<h3>
-<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h3>
-
-<ul>
-<li>To install PRIMsrc from CRAN, simply download and install the current version (0.6.3) from the CRAN repository:</li>
-</ul>
-
-<div class="highlight highlight-source-r"><pre>install.packages(<span class="pl-s"><span class="pl-pds">"</span>PRIMsrc<span class="pl-pds">"</span></span>)</pre></div>
-
-<ul>
-<li>Alternatively, you can install the most up-to-date development version (0.6.3) from GitHub, using devtools:</li>
-</ul>
-
-<div class="highlight highlight-source-r"><pre>install.packages(<span class="pl-s"><span class="pl-pds">"</span>devtools<span class="pl-pds">"</span></span>)
-library(<span class="pl-s"><span class="pl-pds">"</span>devtools<span class="pl-pds">"</span></span>)
-<span class="pl-e">devtools</span><span class="pl-k">::</span>install_github(<span class="pl-s"><span class="pl-pds">"</span>jedazard/PRIMsrc<span class="pl-pds">"</span></span>)</pre></div>
 
 <h1></h1>
 
@@ -99,31 +93,6 @@ library(<span class="pl-s"><span class="pl-pds">"</span>devtools<span class="pl-
 
 <p>See CRAN checks:
 <a href="https://cran.r-project.org/web/checks/check_results_PRIMsrc.html"><img src="http://www.r-pkg.org/badges/version/PRIMsrc" alt="CRAN_Status_Badge"></a>.</p>
-
-<h1></h1>
-
-<h3>
-<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h3>
-
-<ul>
-<li>To load the PRIMsrc library in an R session and start using it:</li>
-</ul>
-
-<div class="highlight highlight-source-r"><pre>library(<span class="pl-s"><span class="pl-pds">"</span>PRIMsrc<span class="pl-pds">"</span></span>)</pre></div>
-
-<ul>
-<li>Check the package news with the R command:</li>
-</ul>
-
-<div class="highlight highlight-source-r"><pre>PRIMsrc.news()</pre></div>
-
-<ul>
-<li>Check on how to cite the package with the R command:</li>
-</ul>
-
-<div class="highlight highlight-source-r"><pre>citation(<span class="pl-s"><span class="pl-pds">"</span>PRIMsrc<span class="pl-pds">"</span></span>)</pre></div>
-
-<p>etc...</p>
 
 <h1></h1>
 
