@@ -22,18 +22,15 @@
       <h3>
 <a id="general-remarks" class="anchor" href="#general-remarks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>General Remarks</h3>
 
-<p>Grand-total number of CRAN downloads since initial release to CRAN (2015-07-28), 
-as logged by <a href="http://cran-logs.rstudio.com/">RStudio CRAN mirror</a>:</p>
+<p>CRAN downloads since initial release to CRAN (2015-07-28):
+<a href="http://cran.rstudio.com/web/packages/PRIMsrc/index.html"><img src="http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc" alt=""></a>
+as tracked by <a href="http://cran-logs.rstudio.com/">RStudio CRAN mirror</a></p>
 
-<p><a href="http://cran.rstudio.com/web/packages/PRIMsrc/index.html"><img src="http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc" alt=""></a></p>
+<p>CRAN downloads in the last month:
+<a href="http://cran.rstudio.com/web/packages/PRIMsrc/index.html"><img src="http://cranlogs.r-pkg.org/badges/last-month/PRIMsrc" alt=""></a></p>
 
-<p>Number of CRAN downloads in the last month:</p>
-
-<p><a href="http://cran.rstudio.com/web/packages/PRIMsrc/index.html"><img src="http://cranlogs.r-pkg.org/badges/last-month/PRIMsrc" alt=""></a></p>
-
-<p>Number of CRAN downloads in the last week:</p>
-
-<p><a href="http://cran.rstudio.com/web/packages/PRIMsrc/index.html"><img src="http://cranlogs.r-pkg.org/badges/last-week/PRIMsrc" alt=""></a></p>
+<p>CRAN downloads in the last week:
+<a href="http://cran.rstudio.com/web/packages/PRIMsrc/index.html"><img src="http://cranlogs.r-pkg.org/badges/last-week/PRIMsrc" alt=""></a></p>
 
 <h1></h1>
 
@@ -50,7 +47,7 @@ features will be added soon as they are available. </p>
 <p>The main function relies on an optional variable pre-selection procedure that is run before the PRSP algorithm. 
 At this point, this is done by a cross-validated penalization of the partial likelihood using the R package <a href="https://cran.r-project.org/web/packages/glmnet/index.html"><code>glmnet</code></a>.</p>
 
-<p>In this version, the bump hunting procedure and the cross-validation procedures that control the model size and model peeling length are carried out by two separate procedures within a single main function <code>sbh()</code> that generates a unique S3-class object 'PRSP'.  </p>
+<p>In this version, the bump hunting procedure and the cross-validation procedures that control the model size and model peeling length are carried out by two separate procedures within a single main function <code>sbh()</code> that generates a unique S3-class object <code>PRSP</code>.  </p>
 
 <ul>
 <li><p>The first branch (devel) hosts a development version of the code (version 0.7.0) that is more rigorous and modular. 
@@ -65,7 +62,7 @@ Concordance Error Rate (CER), Log-Rank Test (LRT), or Log-Hazard Ratio (LHR) (se
 <h3>
 <a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h3>
 
-<p>PRIMsrc is open source / free software, licensed under the GNU General Public License, version 3 (GPLv3), 
+<p>PRIMsrc is open source / free software, licensed under the GNU General Public License version 3 (GPLv3), 
 sponsored by the <a href="http://www.fsf.org/">Free Software Foundation</a>. To view a copy of this license, visit 
 <a href="http://www.gnu.org/licenses/gpl-3.0.html">GNU Free Documentation License</a>.</p>
 
@@ -97,13 +94,11 @@ library(<span class="pl-s"><span class="pl-pds">"</span>devtools<span class="pl-
 
 <p>Installation has been tested on Windows, Linux, OSX and Solaris platforms. </p>
 
-<p>See Travis CI build result:</p>
+<p>See Travis CI build result:
+<a href="https://travis-ci.org/jedazard/PRIMsrc"><img src="https://travis-ci.org/jedazard/PRIMsrc.png?branch=master" alt="Build Status"></a></p>
 
-<p><a href="https://travis-ci.org/jedazard/PRIMsrc"><img src="https://travis-ci.org/jedazard/PRIMsrc.png?branch=master" alt="Build Status"></a></p>
-
-<p>See CRAN checks:</p>
-
-<p><a href="https://cran.r-project.org/web/checks/check_results_PRIMsrc.html"><img src="http://www.r-pkg.org/badges/version/PRIMsrc" alt="CRAN_Status_Badge"></a>.</p>
+<p>See CRAN checks:
+<a href="https://cran.r-project.org/web/checks/check_results_PRIMsrc.html"><img src="http://www.r-pkg.org/badges/version/PRIMsrc" alt="CRAN_Status_Badge"></a>.</p>
 
 <h1></h1>
 
