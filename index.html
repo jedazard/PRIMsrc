@@ -19,13 +19,13 @@
     </section>
 
     <section class="main-content">
-      <p>PRIMsrc performs a unified treatment of Bump Hunting by Patient Rule Induction Method (PRIM) in Survival, Regression and Classification settings (SRC). The method generates decision rules delineating a region in the predictor space, where the response is larger than its average over the entire space. The region is shaped as a hyper-dimensional box or hyper-rectangle, possibly disjointed. </p>
-
-<hr>
+      <hr>
 
 <h3>
 <a id="idea" class="anchor" href="#idea" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><em>Idea</em>
 </h3>
+
+<p>PRIMsrc performs a unified treatment of Bump Hunting by Patient Rule Induction Method (PRIM) in Survival, Regression and Classification settings (SRC). The method generates decision rules delineating a region in the predictor space, where the response is larger (or smaller) than its average over the entire space. </p>
 
 <p>The sunshine over the mountain range illustrates how light can uncover peaks, highlands and valleys, just like we want to do for data structures such as local/global extrema by using a PRIMsrc-based Bump Hunting approach.</p>
 
@@ -35,10 +35,60 @@
 <hr>
 
 <h3>
+<a id="goal---description" class="anchor" href="#goal---description" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><em>Goal</em> - <em>Description</em>
+</h3>
+
+<p>Consider a supervised setting, where the function of interest is a univariate response variable (discrete or continuous, censored or not) in a multivariate setting of input explanatory variables (continuous or discrete).</p>
+
+<p>Denote by R^{<em>p</em>} a <em>p</em>-dimensional Euclidean space and <em>f</em>(<strong>x</strong>) the unknown target function of interest of input explanatory variables <strong>x</strong>=(<strong>x</strong>_{1}, <strong>x</strong>_{2}, … , <strong>x</strong>_{p}) of support <em>S</em> \subseteq R^{<em>p</em>}.</p>
+
+<p>The goal is three fold :</p>
+
+<ul>
+<li>Characterize a sub-region <em>R</em> \subseteq <em>S</em> in the input space over which the target function <em>f</em>(<strong>x</strong>) is expected to have a local maximum (≠ noise). The region <em>R</em> could be any smooth shape (e.g. a convex hull), possibly disjointed</li>
+<li>Determine which of the input variables (<strong>x</strong>_{1}, <strong>x</strong>_{2}, … , <strong>x</strong>_{p}) are important/relevant in the above task</li>
+<li>Identify corresponding sub-groups of samples within region <em>R</em>
+</li>
+</ul>
+
+<p>We chose to achieve these goals simultaneously by using a "Bump Hunting" approach. PRIMsrc implements a unified treatment of non-parametric Bump Hunting in Survival, Regression and Classification settings (SRC) using an algorithm derived from the Patient Rule Induction Method (PRIM), initially introduced by <a href="http://link.springer.com/article/10.1023%2FA%3A1008894516817">Fisher &amp; Friedman in 1999</a>. PRIMsrc estimates the target region <em>R</em> of interest where the response is larger (or smaller) than its average over the entire space. This is done by generating decision rules delineating an approximation of the region <em>R</em>, which is shaped in PRIMsrc as a hyper-dimensional box or hyper-rectangle, possibly disjointed.</p>
+
+<hr>
+
+<h3>
 <a id="assumptions" class="anchor" href="#assumptions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><em>Assumptions</em>
 </h3>
 
-<p>Assumptions are that the multivariate input variables can be discrete or continuous and the univariate response variable can be discrete (Classification), continuous (Regression) or a time-to-event, possibly censored (Survival). It is intended to handle low and high-dimensional multivariate datasets, including the situation where the number of variables exceeds or dominates that of samples (<em>p</em> &gt; <em>n</em> or <em>p</em> &gt;&gt; <em>n</em> paradigm). </p>
+<p>Assumptions are that the multivariate input variables can be discrete or continuous and the univariate response variable can be discrete (Classification), continuous (Regression) or a time-to event, possibly censored (Survival). It is intended to handle low and high-dimensional multivariate datasets, including the situation where the number of covariates <em>p</em> exceeds or dominates the number <em>n</em> of samples (<em>p</em> &gt; <em>n</em> or <em>p</em> &gt;&gt; <em>n</em> paradigm).</p>
+
+<hr>
+
+<h3>
+<a id="why-use-primsrc" class="anchor" href="#why-use-primsrc" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><em>Why Use PRIMsrc?</em>
+</h3>
+
+<p>The problem of "Bump Hunting" covers mathematical / statistical tasks such as:</p>
+
+<ul>
+<li>Mode(s) Hunting</li>
+<li>Local/Global Extremum(a) Finding</li>
+<li>Subgroup(s) Identification</li>
+<li>Outlier(s) Detection</li>
+<li>…</li>
+</ul>
+
+<p>Direct applications are multiple, such as:</p>
+
+<ul>
+<li>characterization and stratification of patient groups with respect to diagnostic and/or prognostic purposes with benefits in personalized and economical medicine</li>
+<li>system reliability analysis in engineering<br>
+</li>
+<li>duration analysis/modeling in economics</li>
+<li>event history analysis in sociology</li>
+<li>financial securities return</li>
+<li>insurance risk assessment</li>
+<li>…</li>
+</ul>
 
 <hr>
 
