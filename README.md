@@ -67,11 +67,9 @@ PRIMsrc 0.6.3 requires R-3.0.2 (2013-09-25). It was built and tested under R-dev
 Installation has been tested on Windows, Linux, OSX and Solaris platforms. 
 
 See Travis CI build result:
-
 [![Build Status](https://travis-ci.org/jedazard/PRIMsrc.png?branch=master)](https://travis-ci.org/jedazard/PRIMsrc)
 
 See CRAN checks:
-
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/PRIMsrc)](https://cran.r-project.org/web/checks/check_results_PRIMsrc.html).
 
 
