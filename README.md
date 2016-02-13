@@ -43,6 +43,20 @@ Concordance Error Rate (CER), Log-Rank Test (LRT), or Log-Hazard Ratio (LHR) (se
 
 
 ================
+### Requirements
+
+PRIMsrc 0.6.3 requires R-3.0.2 (2013-09-25). It was built and tested under R-devel (2015-11-04 r69597) and Travis CI. 
+
+Installation has been tested on Windows, Linux, OSX and Solaris platforms. 
+
+See Travis CI build result:
+[![Build Status](https://travis-ci.org/jedazard/PRIMsrc.png?branch=master)](https://travis-ci.org/jedazard/PRIMsrc)
+
+See CRAN checks:
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/PRIMsrc)](https://cran.r-project.org/web/checks/check_results_PRIMsrc.html).
+
+
+================
 ### Installation
 
 * To install PRIMsrc from CRAN, simply download and install the current version (0.6.3) from the CRAN repository:
@@ -58,20 +72,6 @@ install.packages("devtools")
 library("devtools")
 devtools::install_github("jedazard/PRIMsrc")
 ```
-
-================
-### Requirements
-
-PRIMsrc 0.6.3 requires R-3.0.2 (2013-09-25). It was built and tested under R-devel (2015-11-04 r69597) and Travis CI. 
-
-Installation has been tested on Windows, Linux, OSX and Solaris platforms. 
-
-See Travis CI build result:
-[![Build Status](https://travis-ci.org/jedazard/PRIMsrc.png?branch=master)](https://travis-ci.org/jedazard/PRIMsrc)
-
-See CRAN checks:
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/PRIMsrc)](https://cran.r-project.org/web/checks/check_results_PRIMsrc.html).
-
 
 =========
 ### Usage
@@ -97,8 +97,8 @@ citation("PRIMsrc")
 etc...
 
 
-==========================
+==================
 ### Website - Wiki
 
-- See Project [Website](http://jedazard.github.io/PRIMsrc/) 
-- See [Wiki](https://github.com/jedazard/PRIMsrc/wiki) for Roadmap, Publications, Case Studies, Documentation and Manual, Examples and Support.
+- See Project [Website](http://jedazard.github.io/PRIMsrc/) for General Remarks and Why Use PRIMsrc.
+- See Project [Wiki](https://github.com/jedazard/PRIMsrc/wiki) for Roadmap, Documentation and Examples, Publications, Case Studies, Support and How to contribute (code and documentation).
