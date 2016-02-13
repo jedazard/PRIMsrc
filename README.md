@@ -1,4 +1,12 @@
-### General Remarks
+### License
+
+PRIMsrc is open source / free software, licensed under the GNU General Public License version 3 (GPLv3), 
+sponsored by the [Free Software Foundation](http://www.fsf.org/). To view a copy of this license, visit 
+[GNU Free Documentation License](http://www.gnu.org/licenses/gpl-3.0.html).
+
+
+=============
+### Downloads
 
 CRAN downloads since initial release to CRAN (2015-07-28):
 [![](http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc)](http://cran.rstudio.com/web/packages/PRIMsrc/index.html)
@@ -32,14 +40,6 @@ Specifically, it does a univariate bump hunting variable selection procedure, wh
 Concordance Error Rate (CER), Log-Rank Test (LRT), or Log-Hazard Ratio (LHR) (see companion paper below for details).
 
 - The second branch (unified) will host the future complete version of the code (version 1.0.0), including undirected peeling search by Patient Rule Induction Method (PRIM) that will allow the unified treatment of bump hunting for every type of common response: Survival, Regression and Classification (SRC).
-
-
-===========
-### License
-
-PRIMsrc is open source / free software, licensed under the GNU General Public License version 3 (GPLv3), 
-sponsored by the [Free Software Foundation](http://www.fsf.org/). To view a copy of this license, visit 
-[GNU Free Documentation License](http://www.gnu.org/licenses/gpl-3.0.html).
 
 
 ================
