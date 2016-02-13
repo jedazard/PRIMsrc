@@ -27,7 +27,7 @@ features will be added soon as they are available.
 The main function relies on an optional variable pre-selection procedure that is run before the PRSP algorithm. 
 At this point, this is done by a cross-validated penalization of the partial likelihood using the R package [`glmnet`](https://cran.r-project.org/web/packages/glmnet/index.html).
 
-In this version, the bump hunting procedure and the cross-validation procedures that control the model size and model peeling length are carried out by two separate procedures within a single main function `sbh()` that generates a unique S3-class object 'PRSP'.  
+In this version, the bump hunting procedure and the cross-validation procedures that control the model size and model peeling length are carried out by two separate procedures within a single main function `sbh()` that generates a unique S3-class object `PRSP`.  
 
 - The first branch (devel) hosts a development version of the code (version 0.7.0) that is more rigorous and modular. 
 Here, a single internal cross-validation procedure is carried out to simultaneously control model size (#covariates) and model complexity (#peeling steps) before the model is fit. 
