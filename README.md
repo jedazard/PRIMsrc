@@ -100,5 +100,5 @@ etc...
 ==================
 ### Website - Wiki
 
-- See Project [Website](http://jedazard.github.io/PRIMsrc/) for General Remarks and Why Use PRIMsrc.
+- See Project [Website](http://jedazard.github.io/PRIMsrc/) for General Remarks, Goal and Why Use PRIMsrc.
 - See Project [Wiki](https://github.com/jedazard/PRIMsrc/wiki) for Roadmap, Documentation and Examples, Publications, Case Studies, Support and How to contribute (code and documentation).
