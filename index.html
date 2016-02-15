@@ -40,7 +40,7 @@
 <a id="formal-goal---description" class="anchor" href="#formal-goal---description" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><em>Formal</em> <em>Goal</em> - <em>Description</em>
 </h3>
 
-<p>Consider a supervised setting, where the target function of interest is a univariate response vector (discrete, continuous or possibly  censored) of a multivariate vector of input explanatory variables (continuous or discrete).</p>
+<p>Consider a supervised setting, where the target function of interest is a response vector of a multivariate vector of input explanatory variables.</p>
 
 <p>Denote by R^{<em>p</em>} a <em>p</em>-dimensional Euclidean space and <em>f</em>(<strong>x</strong>) the unknown target function of interest of input explanatory variables <strong>x</strong>=(<strong>x</strong>_{1}, <strong>x</strong>_{2}, … , <strong>x</strong>_{p}) of support <em>S</em> \subseteq R^{<em>p</em>}.</p>
 
@@ -53,7 +53,7 @@
 </li>
 </ul>
 
-<p>We chose to achieve these goals simultaneously by using a Bump Hunting approach. PRIMsrc implements a unified treatment of non-parametric Bump Hunting in Survival, Regression and Classification settings (SRC) using an algorithm derived from the Patient Rule Induction Method (PRIM), initially introduced by Fisher &amp; Friedman in 1999 <a href="https://github.com/jedazard/PRIMsrc/wiki/4)-Publications">(See publications list on the Wiki page)</a>. PRIMsrc estimates the target region <em>R</em> of interest where the response is larger (or smaller) than its average over the entire space. This is done by generating decision rules delineating an approximation of the region <em>R</em>, which is shaped in PRIMsrc as a hyper-dimensional box or hyper-rectangle, possibly disjointed.</p>
+<p>We chose to achieve these goals simultaneously by using a Bump Hunting approach. PRIMsrc implements a unified treatment of non-parametric Bump Hunting in Survival, Regression and Classification settings (SRC) using an algorithm derived from the Patient Rule Induction Method (PRIM), initially introduced by Fisher &amp; Friedman in 1999 <a href="https://github.com/jedazard/PRIMsrc/wiki/4)-Publications">(See publications list on the Wiki page)</a>. PRIMsrc estimates the target region <em>R</em> of interest where the response is larger (or smaller) than its average over the entire space. This is done by generating decision rules delineating an approximation of the region <em>R</em>, which is shaped in PRIMsrc as a hyper-dimensional box or hyper-rectangle, parallel to the coordinate axes and possibly disjointed.</p>
 
 <hr>
 
@@ -61,7 +61,7 @@
 <a id="assumptions" class="anchor" href="#assumptions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><em>Assumptions</em>
 </h3>
 
-<p>Assumptions are that the multivariate input variables can be discrete or continuous and the univariate response variable can be discrete (Classification), continuous (Regression) or a time-to event, possibly censored (Survival). It is intended to handle low and high-dimensional multivariate datasets, including the situation where the number of covariates <em>p</em> exceeds or dominates the number <em>n</em> of samples (<em>p</em> &gt; <em>n</em> or <em>p</em> &gt;&gt; <em>n</em> paradigm).</p>
+<p>Assumptions are that the multivariate inputs are assumed to be real-valued, discrete or continuous variables, and the response variable is assumed to be a real-valued, bounded, univariate variable that can be discrete (Classification), continuous (Regression) or a censored time-to event (Survival). It is intended to handle low and high-dimensional multivariate datasets, including the situation where the number of covariates <em>p</em> exceeds or dominates the number <em>n</em> of samples (<em>p</em> &gt; <em>n</em> or <em>p</em> &gt;&gt; <em>n</em> paradigm).</p>
 
 <hr>
 
