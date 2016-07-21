@@ -1,0 +1,49 @@
+/* Override default borders -------------------------------------------------- */
+.slick-header-column, .slick-header-column.ui-state-default {
+  background-color: #eee;
+  border-bottom: 1px solid #ccc;
+}
+.slick-cell {
+  border-bottom: 0 solid #fff;
+  border-right: 1px solid #ccc;
+}
+.slick-cell.l0, .slick-cell.r0 {
+  border-left: 1px solid #ccc;
+}
+
+/* Inline bar graphs -------------------------------------------------------- */
+
+.bar {
+  display: inline-block;
+  height: 100%;
+  -moz-top-border-radius: 0 4px 4px 0;
+  -webkit-border-radius: 0 4px 4px 0;
+  background-color: #666;
+}
+
+.slick-cell.negative {
+  text-align: right;
+}
+.slick-cell.negative .bar {
+  background-color: #C7333F;
+  -moz-top-border-radius: 4px 0 0 4px;
+  -webkit-border-radius: 4px 0 0 4px;
+  min-width: 1px;
+}
+
+
+/* Code formatting ---------------------------------------------------------- */
+
+.slick-cell.code, .slick-cell.lineno {
+  font-family: Inconsolata, monospace;
+  white-space: pre;
+}
+
+.slick-cell.code {
+  padding-left: 4px;
+}
+
+.slick-cell.lineno {
+  text-align: right;
+  padding-right: 4px;
+}
