@@ -1,5 +1,5 @@
-# MVR
-Mean Variance Regularization
+# PRIMsrc
+Bump Hunting by Patient Rule Induction Method for Survival, Regression and Classification 
 
 
 ### License
