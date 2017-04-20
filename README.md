@@ -9,14 +9,14 @@ sponsored by the [Free Software Foundation](http://www.fsf.org/). To view a copy
 ### Downloads
 
 CRAN downloads since initial release to CRAN (2015-07-28):
-[![](http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc)](http://cran.rstudio.com/web/packages/PRIMsrc/index.html)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc)](https://CRAN.R-project.org/package=PRIMsrc)
 as tracked by [RStudio CRAN mirror](http://cran-logs.rstudio.com/)
 
 CRAN downloads in the last month:
-[![](http://cranlogs.r-pkg.org/badges/last-month/PRIMsrc)](http://cran.rstudio.com/web/packages/PRIMsrc/index.html)
+[![](http://cranlogs.r-pkg.org/badges/last-month/PRIMsrc)](https://CRAN.R-project.org/package=PRIMsrc)
 
 CRAN downloads in the last week:
-[![](http://cranlogs.r-pkg.org/badges/last-week/PRIMsrc)](http://cran.rstudio.com/web/packages/PRIMsrc/index.html)
+[![](http://cranlogs.r-pkg.org/badges/last-week/PRIMsrc)](https://CRAN.R-project.org/package=PRIMsrc)
 
 
 ============
@@ -30,7 +30,7 @@ directed peeling search of the first box covered by the recursive coverage
 features will be added soon as they are available. 
 
 The main function relies on an optional variable pre-selection procedure that is run before the PRSP algorithm. 
-At this point, this is done by a cross-validated penalization of the partial likelihood using the R package [`glmnet`](https://cran.r-project.org/web/packages/glmnet/index.html).
+At this point, this is done by a cross-validated penalization of the partial likelihood using the R package [`glmnet`](https://CRAN.R-project.org/package=glmnet).
 
 In this version, the bump hunting procedure and the cross-validation procedures that control the model size and model peeling length are carried out by two separate procedures within a single main function `sbh()` that generates a unique S3-class object `PRSP`.  
 
