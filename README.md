@@ -1,3 +1,7 @@
+# MVR
+Mean Variance Regularization
+
+
 ### License
 
 PRIMsrc is open source / free software, licensed under the GNU General Public License version 3 (GPLv3), 
