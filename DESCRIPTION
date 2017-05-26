@@ -18,9 +18,9 @@ Authors@R: c(person("Jean-Eudes", "Dazard",
 Author: Jean-Eudes Dazard [aut, cre], Michael Choe [ctb], Michael LeBlanc [ctb], Alberto Santana [ctb]
 Maintainer: Jean-Eudes Dazard <jean-eudes.dazard@case.edu>
 Description: Performs a unified treatment of Bump Hunting by Patient Rule Induction Method (PRIM) in Survival, Regression and Classification settings (SRC). The current version is a development release that only implements the case of a survival response. New features will be added soon as they are available.
-Depends: R (>= 3.0.2)
-Imports: survival, Hmisc, MASS, glmnet, superpc, quantreg
-Suggests: parallel, Rmpi
+Depends: R (>= 3.0.2), survival, glmnet, superpc, Hmisc, quantreg 
+Imports: parallel, Rmpi
+NeedsCompilation: yes
 URL: https://github.com/jedazard/PRIMsrc, http://www.primsrc.com
 Repository: PRIMsrc, GitHub, Inc.
 License: GPL (>= 3) | file LICENSE
