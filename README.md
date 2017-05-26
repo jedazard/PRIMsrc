@@ -1,8 +1,3 @@
-# PRIMsrc
-Bump Hunting by Patient Rule Induction Method for Survival, Regression and Classification 
-
-
-=============
 ### License
 
 PRIMsrc is open source / free software, licensed under the GNU General Public License version 3 (GPLv3), 
@@ -14,7 +9,6 @@ sponsored by the [Free Software Foundation](http://www.fsf.org/). To view a copy
 ### Downloads
 
 CRAN downloads since initial release to CRAN (2015-07-28):
-<<<<<<< HEAD
 [![](https://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc)](https://CRAN.R-project.org/package=PRIMsrc)
 as tracked by [RStudio CRAN mirror](http://cran-logs.rstudio.com/)
 
@@ -23,16 +17,6 @@ CRAN downloads in the last month:
 
 CRAN downloads in the last week:
 [![](https://cranlogs.r-pkg.org/badges/last-week/PRIMsrc)](https://CRAN.R-project.org/package=PRIMsrc)
-=======
-[![](http://cranlogs.r-pkg.org/badges/grand-total/PRIMsrc)](https://CRAN.R-project.org/package=PRIMsrc)
-as tracked by [RStudio CRAN mirror](http://cran-logs.rstudio.com/)
-
-CRAN downloads in the last month:
-[![](http://cranlogs.r-pkg.org/badges/last-month/PRIMsrc)](https://CRAN.R-project.org/package=PRIMsrc)
-
-CRAN downloads in the last week:
-[![](http://cranlogs.r-pkg.org/badges/last-week/PRIMsrc)](https://CRAN.R-project.org/package=PRIMsrc)
->>>>>>> origin/master
 
 
 ============
@@ -40,12 +24,7 @@ CRAN downloads in the last week:
 
 - The default branch (master) hosts the current development release (version 0.7.0) of the survival bump hunting procedure that implements the case of a survival response. At this point, this version is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our Patient Recursive Survival Peeling (PRSP) algorithm (Dazard et al., 2014, 2015, 2016). New features will be added soon as they are available. 
 
-<<<<<<< HEAD
 The package relies on an optional variable screening (pre-selection) procedure that is run before the PRSP algorithm and final variable usage (selection) procedure is done. This is done by four possible cross-validated variable screening (pre-selection) procedures offered to the user from the main end-user survival Bump Hunting function `sbh()`. At this point, the user can choose between:
-=======
-The main function relies on an optional variable pre-selection procedure that is run before the PRSP algorithm. 
-At this point, this is done by a cross-validated penalization of the partial likelihood using the R package [`glmnet`](https://CRAN.R-project.org/package=glmnet).
->>>>>>> origin/master
 
    + Univariate Patient Recursive Survival Peeling algorithm (default of package `PRIMsrc`)
    + Penalized Censored Quantile Regression (by Semismooth Newton Coordinate Descent algorithm adapted from package `hqreg`)
