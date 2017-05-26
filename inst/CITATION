@@ -5,6 +5,18 @@ year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
 vers <- paste("R package version", meta$Version)
 
 citEntry(entry       = "Article",
+         title       = "Variable Selection Strategies for High-Dimensional Survival Bump Hunting using Recursive Peeling Methods",
+         author      = personList(person(family="Dazard", given="J-E."),
+                                  person(family="Rao", given="J.S.")), 	
+         journal     = "in prep",
+         year        = "2017",
+         volume      = "",
+         number      = "",
+         pages       = "",
+         textVersion = "Dazard J-E. and Rao J.S. (2017).
+                        Variable Selection Strategies for High-Dimensional Survival Bump Hunting using Recursive Peeling Methods, (in prep).")
+
+citEntry(entry       = "Article",
          title       = "Cross-validation and Peeling Strategies for Survival Bump Hunting using Recursive Peeling Methods",
          author      = personList(person(family="Dazard", given="J-E."),
                                   person(family="Choe", given="M."),
@@ -52,4 +64,3 @@ citEntry(entry       = "Proceedings",
                         Cross-Validation of Survival Bump Hunting by Recursive Peeling Methods.
                         In JSM Proceedings, Survival Methods for Risk Estimation/Prediction Section. Boston, MA, USA.
                         American Statistical Association-IMS, p. 3366-3380.")
-

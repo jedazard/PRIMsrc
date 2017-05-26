@@ -1,86 +1,9 @@
 Package: PRIMsrc
 
 ---------------------------------------------------------------------------------
-Date   : 2015-01-20
-o RELEASE 0.1.0
-- Initial release to GitHub.
-- Built and tested under R 3.1.2 and release update to GitHub.
----------------------------------------------------------------------------------
-Date   : 2015-01-22
-o RELEASE 0.2.0
-- Built and tested under R 3.1.2 and release update to GitHub.
----------------------------------------------------------------------------------
-Date   : 2015-02-01
-o RELEASE 0.3.0
-- Minor updates in the manual, email and version number.
-- Built and tested under R 3.1.2 and release update to GitHub.
----------------------------------------------------------------------------------
-Date   : 2015-02-27
-o RELEASE 0.4.0
-- Extension to high-dimensional p > n and p >> n cases by adding an 
-  internal variable selection procedure using the Elasticnet-Regularized Cox Regression 
-  function of the 'glmnet' package.
-- Removed (temporarily) interactive option in sbh() in case no variables are selected by glmnet(...).
-- Added dependency to glmnet package for initial variable selection.
-- Added synthetic dataset #5 and example with p > n.
-- Added real dataset #2 and example with p >> n.
-- Added new ouputs 'selected' and 'used' in main function sbh(...) for variables effectively 
-  selected and used for peeling. 
-- Removed returned values of box vertices that were redudant with the returned rules.
-- Changed return value of variable traces: now also returns the matrix of traces by replication.
-- Corrected superfluous codes in the parallelization section, before clusterCall(...) in sbh(...).
-- Corrected number of replications in sbh(...) in case of parallelization. 
-- Corrected stepwise variable selection procedure in peel.box() to account for missing values.
-- Corrected definition of the cross-validated box vertices (definition) 
-  in the case of "combined CV" technique.
-- Corrected generation of random seed when none is provided. 
-- Minor updates, bugs and code improvements in sbh(...) and internal peel.box(...) functions.
-- Updated manual, version number.
-- Built and tested under R 3.1.2 and release update to GitHub.
----------------------------------------------------------------------------------
-Date   : 2015-03-04
-o RELEASE 0.5.0
-- Change of package name and GitHub repository name from PrimSRC to PRIMsrc.
-- Added CRAN/GitHub subfolder doc for PDF documentation files 
-  (including manual and applied study abstract).
-- Removed option for overlaying plots of multiple PRSP objects 
-  in plot_boxtrace(...) and plot_boxtraj(...).
-- Added argument "toplot" to choose which covariates should be plotted in 
-  plot_boxtrace(...) and plot_boxtraj(...).
-- Corrected handling of empty PRSP object (failed peeling) in all plotting functions.
-- Implementation of plotting device now internal to all plotting functions.
-- Removed internal functions from the manual, updated manual, version number.
-- Built and tested under R 3.1.2 and release update to GitHub.
----------------------------------------------------------------------------------
-Date   : 2015-03-16
-o RELEASE 0.5.3
-- Added S3-generic 'summary' function.
-- Added S3-generic 'predict' function.
-- Built and tested under R 3.1.2 and release update to GitHub.
----------------------------------------------------------------------------------
-Date   : 2015-04-10
-o RELEASE 0.5.5
-- Removed argument 'discr' in the main function: no special rounding of discrete covariate 
-  decision rules is done any longer.
-- Made the internal variable selection procedure conditional on whether p <= n or not.
-- Corrected treatment of missing values in case of replications for the variable traces.
-- Corrected output of variable trace modal values.
-- Corrected pre-selected variable output.
-- Several minor bugs corrected.
-- Built and tested under R 3.1.2 and release update to GitHub.
----------------------------------------------------------------------------------
-Date   : 2015-06-19
-o RELEASE 0.5.6
-- Correction/extension of internal variable pre-selection procedure by cross-validing 
-  both parameters alpha (mixing) and lambda (shrinkage) of the 'glmnet' package. 
-  This allows to get true lasso-ridge shrinkage estimates.
-- Improved robustness in internal functions list2mat and list2array.
-- Minor improvement in internal function cv.folds.
-- Added vignettes
-- Built and tested under R 3.0.2 and release update to GitHub.
----------------------------------------------------------------------------------
 Date   : 2015-07-28
 o RELEASE 0.5.7
+- Initial release to CRAN.
 - Compliance with new R CMD check, which now checks code usage via 'codetools'.
   Functions and packages from default packages other than base which are used in the package
   code are now imported via the package namespace file (NAMESPACE).
@@ -88,8 +11,7 @@ o RELEASE 0.5.7
   to match the functions and packages newly imported via NAMESPACE.
 - Added Cumulative Hazard Summary statistic (derived from the Nelson-Aalen estimator) 
   as new peeling criterion option in the PRSP algorithm.
-- Built and tested under R-devel (2015-07-20 r68705). 
-- Initial release to CRAN and update to GitHub.
+- Built and tested under R-devel (2015-07-20 r68705) and release update to GitHub. 
 ---------------------------------------------------------------------------------
 Date   : 2015-08-28
 o RELEASE 0.5.8
@@ -106,7 +28,7 @@ o RELEASE 0.5.8
 ---------------------------------------------------------------------------------
 Date   : 2015-09-07
 o RELEASE 0.5.9
-- Replaced plotting function plot_scatter(...) by S3-generic `plot` function.
+- Replaced plotting function `plot_scatter(...)` by S3-generic `plot()` function.
 - Corrected all plotting functions for the case of a NULL graphical device.
 - Cross-validated estimates of box endpoint quantities of interest now contains 
   sample size for all peeling steps.
@@ -116,17 +38,16 @@ o RELEASE 0.5.9
 ---------------------------------------------------------------------------------
 Date   : 2015-09-15
 o RELEASE 0.6.0
-- The matrix of original dataset is now returned by the main function sbh() 
+- The matrix of original dataset is now returned by the main function `sbh()` 
   and not the submatrix of pre-selected covariates only.
-- Corrected bugs in the output of main function sbh(): 
-  . the returned vectors of `pre-selected` and `used` covariates are now in reference 
+- Corrected bugs in the output of main function `sbh()`: 
+  . the returned vectors of 'screened' and 'used' covariates are now in reference 
     to the original index of variables.
   . the value of traces and rules are now matched accordingly.
-  . plot_boxtraj() and plot_boxtrace() are now corrected accordingly.  
 - The value of `object$cvfit$cv.trace` of the `PRSP` object that is returned 
   by the main function sbh() now only contains the vector of the modal trace values 
   of covariate usage at each step.
-- Updated S3-generic 'summary' and 'print' functions.
+- Updated S3-generic `print()` function as well as `plot_boxtraj()` and `plot_boxtrace()` accordingly.  
 - Minor updates and corrections in the documentation file and manual.
 - Built and tested under R-devel (2015-09-14 r69384) and release update to GitHub.
 ---------------------------------------------------------------------------------
@@ -134,13 +55,13 @@ Date   : 2015-10-11
 o RELEASE 0.6.2
 - Rename example datasets #4 and #5 into #1b and #4, respectively, 
   for consistency with companion article.
-- Added argument `decimals` to main function sbh() to output results in
+- Added argument `decimals` to main function `sbh()` to output results in
   user-specified significant decimals.
 - Added examples for all S3-generic functions.
 - Corrected output of decision rules in S3-generic `print` function in case `vs=TRUE`. 
-- Renamed results 'varsign`, `selected` and `used` to 'CV.sign`, `CV.selected` and `CV.used` and
-  moved them to `cvfit` field of return `PRSP` object.
-- Minor improvement in output plot axes names of plot_boxtrace() function.  
+- Renamed results 'varsign', 'selected' and 'used' to 'CV.sign', 'CV.selected' and 'CV.used' and
+  moved them to 'cvfit' field of return `PRSP` object.
+- Minor improvement in output plot axes names of `plot_boxtrace()` function.  
 - Updates of corresponding modifications in the documentation file and manual.
 - Built and tested under R-devel (2015-09-14 r69384) and release update to GitHub.
 ---------------------------------------------------------------------------------
@@ -149,15 +70,75 @@ o RELEASE 0.6.3
 - Changed random splitting in the cross-validation step to random stratified splitting 
   with/by conservation of events.
 - Changed default values of metaparameters `alpha` to 0.05 (instead of 0.10) 
-                                            `minn` to 5    (instead of 10).
+                                           `minn` to 5     (instead of 10).
 - Modified computation of replicated cross-validated maximal peeling length in order to avoid 
   getting below the minimal box support threshold (i.e. the greater of `beta*n` or `minn`) 
   that could occur when combining results from the cross-validation loops and replicates. 
 - Corrected behaviors in case `n` is less than `minn` and `n` is equal to `minn`.
-- Corrected minor errors in list2array() and list2mat() internal functions.
-- Corrected minor errors in plot() and predict() S3-generic functions.
+- Corrected minor errors in `list2array()` and `list2mat()` internal functions.
+- Corrected minor errors in `plot()` and `predict()` S3-generic functions.
 - Updates in the manual file, including added explanation about the outputs of 
   averaged covariate traces, box membership indicators and box decision rules.  
 - Updates in the CITATION file.  
 - Built and tested under R-devel (2015-11-04 r69597) and release update to GitHub.
+---------------------------------------------------------------------------------
+Date   : 2017-05-26
+o RELEASE 0.7.0
+SIGNIFICANT USER-VISIBLE CHANGES
+- Renamed class object `PRSP` by `sbh`.
+- Renamed input value `arg` by `cvarg`.
+- Renamed input value `cpv` by `pv`.
+- Renamed input value of `parallel` by `parallel.rep` and added two more parallelization options 
+  `parallel.vs` and `parallel.pv` for variable screening (pre-selection) 
+  and computation of p-values, respectively.
+- Renamed output value `selected` by `screened`.
+- Removed input value `cvcriterion`. Now specified in `cvarg` (see below).
+- Removed options `NULL` and `none` from cross-validation type `cvtype` and criterion `cvcriterion`.
+- Removed argument `thr`. Now done internally.
+- Added new user option `cv` in main function `sbh()` for optional cross-validation.
+- Added new user option `vs` in main function `sbh()` for optional variable screening (pre-selection) procedure.
+- Added new user option `vstype` in main function `sbh()` for variable screening (pre-selection) type.
+- Added new user option `vsarg` in main function `sbh()` for variable screening (pre-selection) parameters.
+- Added new user option `onese` in main function `sbh()` for using the 1SE rule.
+- Added new user option `verbose` in main function `sbh()`.
+- Modified user input in main function `sbh()` by using (`X`, `y`, `delta`) instead of `dataset`.
+- Modified `sbh()` output values of `object$cvfit$cv.rules` and `object$cvfit$cv.sign` of the `sbh` object. 
+  Results now contain `used` (selected) covariates instead of `screened` (pre-selected) ones.
+- Changed default value of replications `B` to 30 (instead of 10).
+- Changed default value of metaparameter `alpha` to 0.01 (instead of 0.05).
+- Changed format and values of argument `conf` for setting up the parallel backend in case a parallel 
+  cluster of computers is desired. 
+NEW FEATURES
+- Implemented four variable screening (pre-selection) procedures before variable usage (selection) procedure is done. 
+  User can now choose between: 
+  1. Univariate Patient Recursive Survival Peeling algorithm (default of our package "PRIMsrc")
+  2. Penalized Censored Quantile Regression (by Semismooth Newton Coordinate Descent algorithm adapted from package "hqreg")
+  3. Penalized Partial Likelihood (adapted from package "glmnet")
+  4. Supervised Principal Component Analysis (adapted from package "superpc"). 
+- New `sbh()` output values in `object$cvprofiles` of the `sbh` object (in matrix format) to plot 
+  cross-validation criterion as a funtion of both variables screening size profiles 
+  and peeling length profiles, as it applies.
+BUG FIXES
+- Improved treatment of no variable pre-selection.
+- Removed extraneous codes in main function `sbh()`.
+- Corrected rare error in the determination of cross-validated parameter tuning in `cv.ppl()` and `cv.pcqr()` 
+  for variable selection procedures 2 and 3 above, respectively.
+- Corrected discrepancy in a given step between `object$cvfit$cv.boxind` and `object$cvfit$cv.stats`. 
+- Corrected internal function `cv.folds()` to handle degenerate cases of cross-validation and the case 
+  when an outcome `y` is not provided (in which case a regular random splitting is performed that is not 
+  supervised stratified).
+- Simplified management of replications in case of failure: any failed replication is simply removed.
+- Corrected number of replications to match the exact same number as user request and not a multiple 
+  of the number of available cpus.
+- Seed now applies to computation of p-values.
+UTILITIES
+- Updated real dataset #2 of lung cancer genomic data (miRNA) to inlude 5 additional clinical variables.
+DEPRECATED AND DEFUNCT
+- Management of parallelization is now done by specific user input, independently of `cvtype` 
+  and `cvcriterion` options.
+- Parallel cluster or communication mechanism now only allows type 'Socket' or 
+  'Message-Passing Interface' ('MPI'). "PRIMsrc" no longer supports 'Parallel Virtual Machine' ('PVM').
+PACKAGE INSTALLATION
+- Updated Rd, DESCRIPTION, NEWS and CITATION files.  
+- Built and tested under R version 3.4.0 (2017-04-21) and release update to GitHub.
 ---------------------------------------------------------------------------------
