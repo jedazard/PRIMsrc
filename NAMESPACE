@@ -1,3 +1,18 @@
+# Refer to all C/Fortran routines by their name prefixed by C_
+useDynLib("PRIMsrc", .registration=TRUE, .fixes = "C_")
+
+import("survival")
+import("glmnet")
+import("superpc")
+importFrom("Hmisc", "rcorr.cens")
+importFrom("quantreg", "crq")
+importFrom("MASS", "eqscplot")
+
+import("parallel")
+import("graphics") 
+import("grDevices") 
+import("stats")
+
 export("PRIMsrc.news", 
        "sbh",
        "plot_profile",
@@ -5,10 +20,13 @@ export("PRIMsrc.news",
        "plot_boxtrace",
        "plot_boxkm")
 
-import("parallel", "survival", "Hmisc", "glmnet", "MASS")
-import("graphics", "grDevices", "stats")
+S3method("summary", "sbh")
+S3method("predict", "sbh")
+S3method("print", "sbh")
+S3method("plot", "sbh")
 
-S3method("summary","PRSP")
-S3method("predict","PRSP")
-S3method("print","PRSP")
-S3method("plot","PRSP")
+export("summary", 
+       "predict",
+       "print",
+       "plot")
+
