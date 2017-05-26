@@ -304,29 +304,29 @@ cv.presel <- function(X,
 
       # Determination of directions of peeling of all covariates
       if (cv) {
-         cv.fit <- cv.glmnet(x=X,
-                             y=survival::Surv(time=y, event=delta),
-                             alpha=0,
-                             nlambda=100,
-                             nfolds=pmax(3,K),
-                             family="cox",
-                             maxit=1e+05)
-         fit <- glmnet(x=X,
-                       y=survival::Surv(time=y, event=delta),
-                       alpha=0,
-                       family="cox",
-                       maxit=1e+05)
+         cv.fit <- glmnet::cv.glmnet(x=X,
+                                     y=survival::Surv(time=y, event=delta),
+                                     alpha=0,
+                                     nlambda=100,
+                                     nfolds=pmax(3,K),
+                                     family="cox",
+                                     maxit=1e+05)
+         fit <- glmnet::glmnet(x=X,
+                               y=survival::Surv(time=y, event=delta),
+                               alpha=0,
+                               family="cox",
+                               maxit=1e+05)
          if (onese) {
             cv.coef <- as.numeric(coef(fit, s=cv.fit$lambda.1se))
          } else {
             cv.coef <- as.numeric(coef(fit, s=cv.fit$lambda.min))
          }
       } else{
-         fit <- glmnet(x=X,
-                       y=survival::Surv(time=y, event=delta),
-                       alpha=0,
-                       family="cox",
-                       maxit=1e+05)
+         fit <- glmnet::glmnet(x=X,
+                               y=survival::Surv(time=y, event=delta),
+                               alpha=0,
+                               family="cox",
+                               maxit=1e+05)
          cv.coef <- as.numeric(coef(fit, s=fit$lambda[50]))
       }
 
@@ -1741,14 +1741,14 @@ cv.ppl <- function(X,
       cv.errmu <- vector(mode="list", length=nalpha)
       cv.errse <- vector(mode="list", length=nalpha)
       for (i in 1:nalpha) {
-         cv.fit <- cv.glmnet(x=traindata,
-                             y=survival::Surv(time=traintime, event=trainstatus),
-                             alpha=enalpha[i],
-                             nlambda=nlambda,
-                             nfolds=pmax(3,K),
-                             family="cox",
-                             parallel=parallel,
-                             maxit=1e5)
+         cv.fit <- glmnet::cv.glmnet(x=traindata,
+                                     y=survival::Surv(time=traintime, event=trainstatus),
+                                     alpha=enalpha[i],
+                                     nlambda=nlambda,
+                                     nfolds=pmax(3,K),
+                                     family="cox",
+                                     parallel=parallel,
+                                     maxit=1e5)
          cv.errmu[[i]] <- cv.fit$cvm
          cv.errse[[i]] <- cv.fit$cvsd
          enlambda[[i]] <- cv.fit$lambda
@@ -1766,11 +1766,11 @@ cv.ppl <- function(X,
          enalpha.1se <- enalpha[index.1se[1]]
          enlambda.min <- enlambda[[index.min[1]]][index.min[2]]
          enlambda.1se <- enlambda[[index.1se[1]]][index.1se[2]]
-         fit <- glmnet(x=traindata,
-                       y=survival::Surv(time=traintime, event=trainstatus),
-                       alpha=ifelse(test=onese, yes=enalpha.1se, no=enalpha.min),
-                       family="cox",
-                       maxit=1e5)
+         fit <- glmnet::glmnet(x=traindata,
+                               y=survival::Surv(time=traintime, event=trainstatus),
+                               alpha=ifelse(test=onese, yes=enalpha.1se, no=enalpha.min),
+                               family="cox",
+                               maxit=1e5)
          w <- apply(X=fit$beta, MARGIN=2, FUN=function(x) {sum(!(is.na(x)) & (x != 0))})
          if (all(w == 0)) {
             varsel.list[[k]] <- list(NA, NA)
@@ -1957,20 +1957,20 @@ cv.spca <- function(X,
       pca.test.data  <- list(x=t(testdata),  y=testtime,  censoring.status=teststatus)
 
       # Compute trained Wald scores for each variable
-      ws.train <- superpc.train(data=pca.train.data, type="survival", s0.perc=NULL)
+      ws.train <- superpc::superpc.train(data=pca.train.data, type="survival", s0.perc=NULL)
       lower <- quantile(x=abs(ws.train$feature.scores), probs = 0)
       upper <- quantile(x=abs(ws.train$feature.scores), probs = 1 - (n.var/ncol(traindata)))
       var.thres <- seq(from=lower, to=upper, length=n.thres)
 
       # Finding the optimal trained PCR model by internal CV of the Likelihood Ratio Statistic (LRS)
       # Return LRS from full CV w.r.t. threshold values and #PCs
-      superpccv <- superpc.cv(fit=ws.train,
-                              data=pca.train.data,
-                              n.threshold=n.thres,
-                              n.fold=K,
-                              n.components=n.pcs,
-                              min.features=n.var,
-                              max.features=ncol(traindata))
+      superpccv <- superpc::superpc.cv(fit=ws.train,
+                                       data=pca.train.data,
+                                       n.threshold=n.thres,
+                                       n.fold=K,
+                                       n.components=n.pcs,
+                                       min.features=n.var,
+                                       max.features=ncol(traindata))
       lrs <- superpccv$scor
       max.mat <- which(lrs == max(lrs, na.rm=TRUE), arr.ind=TRUE)
       max.mat <- max.mat[1,,drop=FALSE]
@@ -1978,12 +1978,12 @@ cv.spca <- function(X,
       max.thr <- max.mat[2]
 
       # Trained model used to predict the survival times on the test set
-      fit <- superpc.predict(object=ws.train,
-                             data=pca.train.data,
-                             newdata=pca.test.data,
-                             prediction.type="continuous",
-                             threshold=var.thres[max.thr],
-                             n.components=max.npcs)
+      fit <- superpc::superpc.predict(object=ws.train,
+                                      data=pca.train.data,
+                                      newdata=pca.test.data,
+                                      prediction.type="continuous",
+                                      threshold=var.thres[max.thr],
+                                      n.components=max.npcs)
 
       # List of selected variables (exceeding threshold) used in each fold
       varsel <- which(fit$which.features)
@@ -1994,19 +1994,19 @@ cv.spca <- function(X,
          varsel.list[[k]] <- varsel
          # Feature selection for supervised principal components
          # Forms reduced model to approximate the supervised principal component predictor.
-         ft <- superpc.predict.red(fit=ws.train,
-                                   data=pca.train.data,
-                                   data.test=pca.test.data,
-                                   threshold=var.thres[max.thr],
-                                   n.components=max.npcs,
-                                   n.shrinkage=n.thres,
-                                   prediction.type="continuous")
+         ft <- superpc::superpc.predict.red(fit=ws.train,
+                                            data=pca.train.data,
+                                            data.test=pca.test.data,
+                                            threshold=var.thres[max.thr],
+                                            n.components=max.npcs,
+                                            n.shrinkage=n.thres,
+                                            prediction.type="continuous")
          # Importance scores of selected features for PC#1
          scores <- ft$import[varsel,1]
          # Cox scores for selected features in order of decreasing absolute value of importance score for PC#1
-         lt <- superpc.listfeatures(data=pca.train.data, train.obj=ws.train,
-                                    fit.red=ft,
-                                    component.number=1)
+         lt <- superpc::superpc.listfeatures(data=pca.train.data, train.obj=ws.train,
+                                             fit.red=ft,
+                                             component.number=1)
          ordscor <- order(abs(scores), decreasing = TRUE)
          rawscor <- as.numeric(lt[,"Raw-score"])
          names(rawscor) <- names(scores[ordscor])

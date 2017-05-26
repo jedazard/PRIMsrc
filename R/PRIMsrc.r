@@ -868,7 +868,7 @@ plot.sbh <- function(x,
             steps <- object$cvfit$cv.nsteps
 
          L <- length(steps)
-         MASS::eqscplot(x=x, type="p", pch=pch, cex=cex, col=1, main=NULL, xlab=x.names[1], ylab=x.names[2], ...)
+         plot(x=x, type="p", pch=pch, cex=cex, col=1, main=NULL, xlab=x.names[1], ylab=x.names[2], ...)
          if (splom) {
             for (i in 1:L) {
                w <- object$cvfit$cv.boxind[steps[i],]
