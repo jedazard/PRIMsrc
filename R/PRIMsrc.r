@@ -578,9 +578,6 @@ sbh <- function(X,
    # Stopping the cluster and cleaning all MPI states
    if ((parallel.rep) || (parallel.vs) || (parallel.pv)) {
       parallel::stopCluster(cl=cluster)
-      if (conf$type == "MPI") {
-         Rmpi::mpi.finalize()
-      }
    }
 
    # Returning the final 'sbh' object
