@@ -8,7 +8,6 @@ importFrom("Hmisc", "rcorr.cens")
 importFrom("quantreg", "crq")
 
 import("parallel")
-import("Rmpi")
 import("graphics") 
 import("grDevices") 
 import("stats")
