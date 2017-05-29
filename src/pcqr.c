@@ -49,7 +49,7 @@ void derivative_quantapprox(double *d1, double *d2, double *r, double gamma, dou
 }
 
 // Semismooth Newton Coordinate Descent (SNCD)
-static void sncd_huber(double *beta, int *iter, double *lambda, int *saturated, int *numv, double *x, double *y, 
+void C_huber(double *beta, int *iter, double *lambda, int *saturated, int *numv, double *x, double *y, 
 		               double *pf, double *gamma_, double *alpha_, double *eps_, double *lambda_min_, int *nlam_, 
 		               int *n_, int *p_, int *ppflag_, int *scrflag_, int *intercept_, int *dfmax_, int *max_iter_, int *user_, int *message_)
 {
@@ -265,7 +265,7 @@ static void sncd_huber(double *beta, int *iter, double *lambda, int *saturated, 
   Free(nonconst);
 }
 
-static void sncd_quantile(double *beta, int *iter, double *lambda, int *saturated, int *numv, double *x, double *y, 
+void C_quantile(double *beta, int *iter, double *lambda, int *saturated, int *numv, double *x, double *y, 
 			              double *pf, double *tau_, double *alpha_, double *eps_, double *lambda_min_, int *nlam_, 
 			              int *n_, int *p_, int *ppflag_, int *scrflag_, int *intercept_, int *dfmax_, int *max_iter_, int *user_, int *message_)
 {
@@ -501,7 +501,7 @@ static void sncd_quantile(double *beta, int *iter, double *lambda, int *saturate
   Free(nonconst);
 }
 
-static void sncd_squared(double *beta, int *iter, double *lambda, int *saturated, int *numv, double *x, double *y, 
+void C_squared(double *beta, int *iter, double *lambda, int *saturated, int *numv, double *x, double *y, 
 			             double *pf, double *alpha_, double *eps_, double *lambda_min_, int *nlam_, int *n_, int *p_, 
 			             int *ppflag_, int *scrflag_, int *intercept_, int *dfmax_, int *max_iter_, int *user_, int *message_)
 {
@@ -694,7 +694,7 @@ static void sncd_squared(double *beta, int *iter, double *lambda, int *saturated
 }
 
 // alpha = 0, pure l2 penalty
-static void sncd_huber_l2(double *beta, int *iter, double *lambda, double *x, double *y, double *pf, double *gamma_, double *eps_, 
+void C_huber_l2(double *beta, int *iter, double *lambda, double *x, double *y, double *pf, double *gamma_, double *eps_, 
 			              double *lambda_min_, int *nlam_, int *n_, int *p_, int *ppflag_, int *intercept_, int *max_iter_, int *user_, int *message_)
 {
   // Declarations
@@ -815,7 +815,7 @@ static void sncd_huber_l2(double *beta, int *iter, double *lambda, double *x, do
   Free(nonconst);
 }
 
-static void sncd_quantile_l2(double *beta, int *iter, double *lambda, double *x, double *y, double *pf, 
+void C_quantile_l2(double *beta, int *iter, double *lambda, double *x, double *y, double *pf, 
 			                 double *tau_, double *eps_, double *lambda_min_, int *nlam_, int *n_, int *p_, 
 			                 int *ppflag_, int *intercept_, int *max_iter_, int *user_, int *message_)
 {
@@ -960,7 +960,7 @@ static void sncd_quantile_l2(double *beta, int *iter, double *lambda, double *x,
   Free(nonconst);
 }
 
-static void sncd_squared_l2(double *beta, int *iter, double *lambda, double *x, double *y, double *pf, 
+void C_squared_l2(double *beta, int *iter, double *lambda, double *x, double *y, double *pf, 
 			                double *eps_, double *lambda_min_, int *nlam_, int *n_, int *p_, int *ppflag_, 
                             int *intercept_, int *max_iter_, int *user_, int *message_)
 {
@@ -1056,23 +1056,4 @@ static void sncd_squared_l2(double *beta, int *iter, double *lambda, double *x, 
   Free(beta_old);
   Free(r);
   Free(nonconst);
-}
-
-
-static const R_CMethodDef cMethods[] = {
-  {"C_huber", (DL_FUNC) &sncd_huber, 22},
-  {"C_quant", (DL_FUNC) &sncd_quantile, 22},
-  {"C_squared", (DL_FUNC) &sncd_squared, 21},
-  {"C_huber_l2", (DL_FUNC) &sncd_huber_l2, 17},
-  {"C_quant_l2", (DL_FUNC) &sncd_quantile_l2, 17},
-  {"C_squared_l2", (DL_FUNC) &sncd_squared_l2, 16},
-  {NULL}
-};
-
-void R_init_PRIMsrc(DllInfo *info)
-{
-  R_registerRoutines(info,cMethods,NULL,NULL,NULL);
-  //  To controll visibility (see R-extension 6.15):
-  R_useDynamicSymbols(info, FALSE); 
-  R_forceSymbols(info, TRUE);
 }
