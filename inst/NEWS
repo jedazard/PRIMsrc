@@ -82,7 +82,7 @@ o RELEASE 0.6.3
 - Updates in the CITATION file.  
 - Built and tested under R-devel (2015-11-04 r69597) and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2017-05-26
+Date   : 2017-05-28
 o RELEASE 0.7.0
 SIGNIFICANT USER-VISIBLE CHANGES
 - Renamed class object `PRSP` by `sbh`.
@@ -130,7 +130,7 @@ BUG FIXES
 - Simplified management of replications in case of failure: any failed replication is simply removed.
 - Corrected number of replications to match the exact same number as user request and not a multiple 
   of the number of available cpus.
-- Seed now applies to computation of p-values.
+- The seed now applies to the computation of permutation p-values.
 UTILITIES
 - Updated real dataset #2 of lung cancer genomic data (miRNA) to inlude 5 additional clinical variables.
 DEPRECATED AND DEFUNCT
