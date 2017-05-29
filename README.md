@@ -1,3 +1,54 @@
+# PRIMsrc
+Bump Hunting by Patient Rule Induction Method for Survival, Regression and Classification
+
+
+===============
+### Description
+
+PRIMsrc performs a unified treatment of Bump Hunting by Patient Rule Induction Method (PRIM) in Survival, Regression and Classification settings (SRC). 
+The method generates decision rules delineating a region in the predictor space, where the response is larger than its average over the entire space. 
+The region is shaped as a hyperdimensional box or hyperrectangle that is not necessarily contiguous. Assumptions are that the multivariate input 
+variables can be discrete or continuous and the univariate response variable can be discrete (Classification), continuous (Regression) 
+or a time-to event, possibly censored (Survival). It is intended to handle low and high-dimensional multivariate datasets, 
+including the situation where the number of covariates exceeds or dominates that of samples (\eqn{p > n} or \eqn{p \gg n} paradigm).
+
+The current version is a development release that only implements the case of a survival response. At this point, this version is also restricted 
+to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our Patient Recursive Survival Peeling (PRSP) algorithm 
+(Dazard et al., 2014, 2015, 2016). New features will be added soon as they are available. 
+
+The package relies on an optional variable screening (pre-selection) procedure that is run before the PRSP algorithm and final variable usage (selection) procedure is done. 
+This is done by four possible cross-validated variable screening (pre-selection) procedures offered to the user from the main end-user survival Bump Hunting function `sbh()`. 
+At this point, the user can choose between:
+
+   + Univariate Patient Recursive Survival Peeling algorithm (default of package `PRIMsrc`)
+   + Penalized Censored Quantile Regression (by Semismooth Newton Coordinate Descent algorithm adapted from package `hqreg`)
+   + Penalized Partial Likelihood (adapted from package `glmnet`)
+   + Supervised Principal Component Analysis (adapted from package `superpc`)
+   
+In this version, the Cross-Validation (CV) procedure and Bump Hunting procedures that control model size (#covariates) and model complexity (#peeling steps), respectively, 
+to fit the Survival Bump Hunting model, are carried out internally by two consecutive tasks within a single main end-user survival Bump Hunting function `sbh()`. 
+The returned S3-class `sbh` object contains cross-validated estimates of all the decision-rules of used covariates and all other statistical quantities of interest 
+at each iteration of the peeling sequence (inner loop of the PRSP algorithm). This enables the graphical display of results of profiling curves for model selection/tuning, 
+peeling trajectories, covariate traces and survival distributions (see companion papers Dazard et al., 2014, 2015, 2016 for details). 
+
+The package `PRIMsrc` offers a number of options for the number of replications of the fitting procedure to be perfomed: \eqn{B}; 
+the type of \eqn{K}-fold cross-validation desired: (replicated)-averaged or-combined; as well as the peeling and cross-validation critera 
+for model selection/tuning, and a few more parameters for the PRSP algorithm. The package takes advantage of the 
+R packages `parallel` and `snow`, which allows users to create a parallel backend within an R session, enabling access to a cluster 
+of compute cores and/or nodes on a local and/or remote machine(s) with either. 
+The package supports two types of communication mechanisms between master and worker processes: 'Socket' or  'Message-Passing Interface' ('MPI').
+
+
+============
+### Branches
+
+This branch (master) is the  default one, that hosts the current development release (version 0.7.0) of the survival bump hunting procedure that implements the case of a survival response. 
+
+The second branch (unified) will host the future complete version of the code (version 1.0.0), including undirected peeling search derived from the 
+Patient Rule Induction Method (PRIM), that will allow the unified treatment of bump hunting for every type of common response: Survival, Regression and Classification (SRC).
+
+
+===========
 ### License
 
 PRIMsrc is open source / free software, licensed under the GNU General Public License version 3 (GPLv3), 
@@ -17,25 +68,6 @@ CRAN downloads in the last month:
 
 CRAN downloads in the last week:
 [![](https://cranlogs.r-pkg.org/badges/last-week/PRIMsrc)](https://CRAN.R-project.org/package=PRIMsrc)
-
-
-============
-### Branches
-
-- The default branch (master) hosts the current development release (version 0.7.0) of the survival bump hunting procedure that implements the case of a survival response. At this point, this version is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our Patient Recursive Survival Peeling (PRSP) algorithm (Dazard et al., 2014, 2015, 2016). New features will be added soon as they are available. 
-
-The package relies on an optional variable screening (pre-selection) procedure that is run before the PRSP algorithm and final variable usage (selection) procedure is done. This is done by four possible cross-validated variable screening (pre-selection) procedures offered to the user from the main end-user survival Bump Hunting function `sbh()`. At this point, the user can choose between:
-
-   + Univariate Patient Recursive Survival Peeling algorithm (default of package `PRIMsrc`)
-   + Penalized Censored Quantile Regression (by Semismooth Newton Coordinate Descent algorithm adapted from package `hqreg`)
-   + Penalized Partial Likelihood (adapted from package `glmnet`)
-   + Supervised Principal Component Analysis (adapted from package `superpc`)
-   
-In this version, the Cross-Validation (CV) procedure and Bump Hunting procedures that control model size (#covariates) and model complexity (#peeling steps), respectively, to fit the Survival Bump Hunting model, are carried out internally by two consecutive tasks within a single main end-user survival Bump Hunting function `sbh()`. The returned S3-class `sbh` object contains cross-validated estimates of all the decision-rules of used covariates and all other statistical quantities of interest at each iteration of the peeling sequence (inner loop of the PRSP algorithm). This enables the graphical display of results of profiling curves for model selection/tuning, peeling trajectories, covariate traces and survival distributions (see companion papers Dazard et al., 2014, 2015, 2016 for details). 
-
-The package `PRIMsrc` offers a number of options for the number of replications of the fitting procedure to be perfomed: \eqn{B}; the type of \eqn{K}-fold cross-validation desired: (replicated)-averaged or-combined; as well as the peeling and cross-validation critera for model selection/tuning, and a few more parameters for the PRSP algorithm. The package takes advantage of the R packages `parallel` and `snow`, which allows users to create a parallel backend within an R session, enabling access to a cluster of compute cores and/or nodes on a local and/or remote machine(s) with either. The package supports two types of communication mechanisms between master and worker processes: 'Socket' or  'Message-Passing Interface' ('MPI').
-
-- The second branch (unified) will host the future complete version of the code (version 1.0.0), including undirected peeling search derived from the Patient Rule Induction Method (PRIM), that will allow the unified treatment of bump hunting for every type of common response: Survival, Regression and Classification (SRC).
 
 
 ================
@@ -121,23 +153,31 @@ Funding/Provision/Help:
 ==============
 ### References
 
-   + Dazard J-E. and Rao J.S. (2017). 
+   + Dazard J-E. and Rao J.S. 
       *Variable Selection Strategies for High-Dimensional Survival Bump Hunting using Recursive Peeling Methods*. 
-      (in prep).
-   + Yi C. and Huang J. (2016).
+      [submitted (2017)].
+      
+   + Yi C. and Huang J.
       *Semismooth Newton Coordinate Descent Algorithm for Elastic-Net Penalized Huber Loss Regression and Quantile Regression*. 
-      J. Comp Graph. Statistics, DOI: 10.1080/10618600.2016.1256816.
-   + Dazard J-E., Choe M., LeBlanc M. and Rao J.S. (2016). 
+      [J. Comp Graph. Statistics (2016)](http://amstat.tandfonline.com/doi/abs/10.1080/10618600.2016.1256816?journalCode=ucgs20), DOI: 10.1080/10618600.2016.1256816. 
+
+   + Dazard J-E., Choe M., LeBlanc M. and Rao J.S. 
       *Cross-validation and Peeling Strategies for Survival Bump Hunting using Recursive Peeling Methods*. 
-      Statistical Analysis and Data Mining, 9(1):12-42. 
-   + Dazard J-E., Choe M., LeBlanc M. and Rao J.S. (2015). 
+      [Statistical Analysis and Data Mining (2016)](http://onlinelibrary.wiley.com/doi/10.1002/sam.11301/full), 9(1):12-42. 
+      (The American Statistical Association Data Science Journal)
+
+   + Dazard J-E., Choe M., LeBlanc M. and Rao J.S. 
       *R package PRIMsrc: Bump Hunting by Patient Rule Induction Method for Survival, Regression and Classification*. 
       In JSM Proceedings, Statistical Programmers and Analysts Section. Seattle, WA, USA. 
-      American Statistical Association IMS - JSM, p. 650-664. 
-   + Dazard J-E., Choe M., LeBlanc M. and Rao J.S. (2014).
+      American Statistical Association IMS - JSM, p. 650-664.
+      [JSM (2015)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4718587/).
+
+   + Dazard J-E., Choe M., LeBlanc M. and Rao J.S.
       *Cross-Validation of Survival Bump Hunting by Recursive Peeling Methods*. 
       In JSM Proceedings, Survival Methods for Risk Estimation/Prediction Section. Boston, MA, USA. 
       American Statistical Association IMS - JSM, p. 3366-3380. 
-   + Dazard J-E. and J.S. Rao (2010).
+      [JSM (2014)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4795911/).
+      
+   + Dazard J-E. and J.S. Rao.
       *Local Sparse Bump Hunting*. 
-      J. Comp Graph. Statistics, 19(4):900-92.
+      [J. Comp Graph. Statistics (2010)](http://amstat.tandfonline.com/doi/abs/10.1198/jcgs.2010.09029), 19(4):900-92.
