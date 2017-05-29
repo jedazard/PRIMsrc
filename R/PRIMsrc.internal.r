@@ -1532,7 +1532,7 @@ pcqreg <- function (X,
                    as.double(penalty.factor), as.double(gamma), as.double(alpha), as.double(eps), as.double(lambda.min), as.integer(nlambda),
                    as.integer(n), as.integer(p), as.integer(ppflag), as.integer(scrflag), 1L, as.integer(dfmax), as.integer(max.iter), as.integer(user), as.integer(verbose))
       } else if ((method == "quantile") || (method == "cquantile")) {
-         fit <- .C("C_quant", double(p*nlambda), integer(nlambda), as.double(lambda), integer(1), integer(1), as.double(XX), as.double(yy),
+         fit <- .C("C_quantile", double(p*nlambda), integer(nlambda), as.double(lambda), integer(1), integer(1), as.double(XX), as.double(yy),
                    as.double(penalty.factor), as.double(tau), as.double(alpha), as.double(eps), as.double(lambda.min), as.integer(nlambda),
                    as.integer(n), as.integer(p), as.integer(ppflag), as.integer(scrflag), 1L, as.integer(dfmax), as.integer(max.iter), as.integer(user), as.integer(verbose))
       } else {
@@ -1556,7 +1556,7 @@ pcqreg <- function (X,
                    as.double(penalty.factor), as.double(gamma), as.double(eps), as.double(lambda.min), as.integer(nlambda),
                    as.integer(n), as.integer(p), as.integer(ppflag), 1L, as.integer(max.iter), as.integer(user), as.integer(verbose))
       } else if ((method == "quantile") || (method == "cquantile")) {
-         fit <- .C("C_quant_l2", double(p*nlambda), integer(nlambda), as.double(lambda), as.double(XX), as.double(yy),
+         fit <- .C("C_quantile_l2", double(p*nlambda), integer(nlambda), as.double(lambda), as.double(XX), as.double(yy),
                    as.double(penalty.factor), as.double(tau), as.double(eps), as.double(lambda.min), as.integer(nlambda),
                    as.integer(n), as.integer(p), as.integer(ppflag), 1L, as.integer(max.iter), as.integer(user), as.integer(verbose))
       } else {
@@ -4294,7 +4294,8 @@ is.empty <- function(x) {
 
 .onAttach <- function(libname, pkgname) {
 
-   SSver <- read.dcf(file=system.file("DESCRIPTION", package=pkgname), fields="Version")
+   SSver <- read.dcf(file=system.file("DESCRIPTION", package=pkgname), 
+                     fields="Version")
    packageStartupMessage(paste(pkgname, " ", SSver, " is a major release with significant user-visible changes.", sep=""))
    packageStartupMessage("Type PRIMsrc.news() to see new features, changes, and bug fixes.")
 
