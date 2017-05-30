@@ -10,7 +10,7 @@ The method generates decision rules delineating a region in the predictor space,
 The region is shaped as a hyperdimensional box or hyperrectangle that is not necessarily contiguous. Assumptions are that the multivariate input 
 variables can be discrete or continuous and the univariate response variable can be discrete (Classification), continuous (Regression) 
 or a time-to event, possibly censored (Survival). It is intended to handle low and high-dimensional multivariate datasets, 
-including the situation where the number of covariates exceeds or dominates that of samples (_p_ > _n_ or _p_ >> _n_ paradigm).
+including the paradigm where the number of covariates (_p_) exceeds or dominates that of samples (_n_): _p_ > _n_ or _p_ >> _n_.
 
 The current version is a development release that only implements the case of a survival response. At this point, this version is also restricted 
 to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our Patient Recursive Survival Peeling (PRSP) algorithm 
@@ -31,8 +31,8 @@ The returned S3-class `sbh` object contains cross-validated estimates of all the
 at each iteration of the peeling sequence (inner loop of the PRSP algorithm). This enables the graphical display of results of profiling curves for model selection/tuning, 
 peeling trajectories, covariate traces and survival distributions (see companion papers Dazard et al., 2014, 2015, 2016 for details). 
 
-The package `PRIMsrc` offers a number of options for the number of replications of the fitting procedure to be perfomed: \eqn{B}; 
-the type of \eqn{K}-fold cross-validation desired: (replicated)-averaged or-combined; as well as the peeling and cross-validation critera 
+The package `PRIMsrc` offers a number of options for the number of replications of the fitting procedure to be perfomed: _B_; 
+the type of _K_-fold cross-validation desired: (replicated)-averaged or-combined; as well as the peeling and cross-validation critera 
 for model selection/tuning, and a few more parameters for the PRSP algorithm. The package takes advantage of the 
 R packages `parallel` and `snow`, which allows users to create a parallel backend within an R session, enabling access to a cluster 
 of compute cores and/or nodes on a local and/or remote machine(s) with either. 
