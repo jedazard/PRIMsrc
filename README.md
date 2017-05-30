@@ -42,7 +42,9 @@ The package supports two types of communication mechanisms between master and wo
 ============
 ### Branches
 
-This branch (master) is the  default one, that hosts the current development release (version 0.7.0) of the survival bump hunting procedure that implements the case of a survival response. 
+This branch (master) is the  default one, that hosts the current development release (version 0.7.0) of the survival bump hunting procedure 
+that implements the case of a survival response. Note that `PRIMsrc` is still a non-production release and that version 0.7.0 implements 
+significant user-visible changes. Check details of new features, changes, and bug fixes in the "Usage" section below.
 
 The second branch (unified) will host the future complete version of the code (version 1.0.0), including undirected peeling search derived from the 
 Patient Rule Induction Method (PRIM), and unified treatment of bump hunting for every type of common response: Survival, Regression and Classification (SRC).
@@ -110,8 +112,7 @@ devtools::install_github("jedazard/PRIMsrc")
 library("PRIMsrc")
 ```
 
-* Version 0.7.0 is a major release with significant user-visible changes.
-Check details of new features, changes, and bug fixes with the following R command:
+* Check details of new features, changes, and bug fixes with the following R command:
 
 ```{r}
 PRIMsrc.news()
