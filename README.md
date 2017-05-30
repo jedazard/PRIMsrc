@@ -10,7 +10,7 @@ The method generates decision rules delineating a region in the predictor space,
 The region is shaped as a hyperdimensional box or hyperrectangle that is not necessarily contiguous. Assumptions are that the multivariate input 
 variables can be discrete or continuous and the univariate response variable can be discrete (Classification), continuous (Regression) 
 or a time-to event, possibly censored (Survival). It is intended to handle low and high-dimensional multivariate datasets, 
-including the situation where the number of covariates exceeds or dominates that of samples (\eqn{p > n} or \eqn{p \gg n} paradigm).
+including the situation where the number of covariates exceeds or dominates that of samples (_p_ > _n_ or _p_ >> _n_ paradigm).
 
 The current version is a development release that only implements the case of a survival response. At this point, this version is also restricted 
 to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our Patient Recursive Survival Peeling (PRSP) algorithm 
