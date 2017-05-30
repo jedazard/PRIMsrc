@@ -18,9 +18,9 @@ o RELEASE 0.5.8
 - Removed pre-selection of variables (covariates) by regular Cox-regression
   and made the remaining Elastic-Net pre-selection of variables optional by
   passing an additional argument in the main function sbh().
-- Main function sbh() now returns the parameters used for configuring the parallelization.
+- Main function `sbh()` now returns the parameters used for configuring the parallelization.
 - Replaced real dataset #2 of breast cancer data with lung cancer data for reason of size.
-- Added S3-generic 'print' function and updated S3-generic 'summary' function.
+- Added S3-generic `print` function and updated S3-generic `summary` function.
 - Created a new internal subroutine cv.presel() for (optional) variable pre-selection.
 - Changed main argument of plot functions from `x` to `object`.
 - Minor corrections in the manual.
@@ -82,7 +82,7 @@ o RELEASE 0.6.3
 - Updates in the CITATION file.  
 - Built and tested under R-devel (2015-11-04 r69597) and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2017-05-28
+Date   : 2017-05-30
 o RELEASE 0.7.0
 SIGNIFICANT USER-VISIBLE CHANGES
 - Renamed class object `PRSP` by `sbh`.
