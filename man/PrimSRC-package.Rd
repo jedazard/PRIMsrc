@@ -66,10 +66,14 @@
             variable screening (pre-selection) procedures that is run before the PRSP algorithm and final variable usage (selection) 
             procedure is done. At this point, the user can choose between:
             \enumerate{
-                \item{Univariate Patient Recursive Survival Peeling algorithm (default of package \code{\link{PRIMsrc}})}
-                \item{Penalized Censored Quantile Regression (by Semismooth Newton Coordinate Descent algorithm adapted from package \code{\link{hqreg}})}
-                \item{Penalized Partial Likelihood (adapted from package \code{\link{glmnet}})}
-                \item{Supervised Principal Component Analysis (adapted from package \code{\link{superpc}})} 
+                \item{Univariate Patient Recursive Survival Peeling algorithm (default of package 
+                    \href{https://CRAN.R-project.org/package=PRIMsrc}{PRIMsrc})}
+                \item{Penalized Censored Quantile Regression (by Semismooth Newton Coordinate Descent algorithm adapted from package 
+                    \href{https://CRAN.R-project.org/package=hqreg}{hqreg})}
+                \item{Penalized Partial Likelihood (adapted from package
+                    \href{https://CRAN.R-project.org/package=glmnet}{glmnet})}
+                \item{Supervised Principal Component Analysis (adapted from package
+                    \href{https://CRAN.R-project.org/package=superpc}{superpc})} 
             }
             In this version, the Cross-Validation (CV) procedure and Bump Hunting procedures that control model size (#covariates) 
             and model complexity (#peeling steps), respectively, to fit the Survival Bump Hunting model, are carried out internally 
@@ -82,7 +86,7 @@
             (replicated)-averaged or-combined; as well as the peeling and cross-validation critera for model selection/tuning,
             and a few more parameters for the PRSP algorithm. The function takes advantage of the R packages \pkg{parallel} and \pkg{snow}, 
             which allows users to create a parallel backend within an R session, enabling access to a cluster of compute cores 
-            and/or nodes on a local and/or remote machine(s) with either . The \pkg{PRIMsrc} supports two types of communication mechanisms 
+            and/or nodes on a local and/or remote machine(s) with either. \pkg{PRIMsrc} supports two types of communication mechanisms 
             between master and worker processes: 'Socket' or  'Message-Passing Interface' ('MPI').\cr
 
       \item{END-USER PLOTTING FUNCTIONS FOR MODEL VALIDATION AND VISUALIZATION OF RESULTS} \cr
