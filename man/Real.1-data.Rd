@@ -15,9 +15,10 @@
   and "Treatment Initiation (HAART)". However, for simplification purposes, only the first of the two competing events 
   (i.e. the time to AIDS/Death), was used. Likewise, for simplification in this clinical dataset example, 
   only complete cases were used. Variables included history of Injection Drug Use ("IDU") 
-  at enrollment, African American ethnicity ('Race'), age ('Age'), and baseline CD4 count ('CD4'). 
-  The question in this dataset example was whether it is possible to achieve a prognostication of patients 
-  for AIDS and HAART. See Bacon et al. (2005) and the WIHS website for more details.
+  at enrollment, African American ethnicity ('Race'), age ('Age'), and baseline CD4 count ('CD4') for a total of 
+  \eqn{p=4} clinical covariates. The question in this dataset example was whether it is possible to achieve a 
+  prognostication of patients for AIDS and HAART. See Bacon et al. (2005) and the \href{https://statepi.jhsph.edu/wihs/wordpress/}{WIHS} 
+  website for more details.
 }
 
 \usage{Real.1}
@@ -62,6 +63,9 @@
         \item Dazard J-E. and J.S. Rao (2010).
               "\emph{Local Sparse Bump Hunting.}"
               J. Comp Graph. Statistics, 19(4):900-92.
+        \item Bacon M.C., von Wyl V., Alden C. et al. (2005).
+              "\emph{The Women's Interagency HIV Study: an observational cohort brings clinical sciences to the bench.}" 
+              Clin. Diagn. Lab. Immunol., 12(9):1013-1019.
     }
 }
 
@@ -75,6 +79,6 @@
 
 \seealso{
     \itemize{
-        \url{statepiaps.jhsph.edu/wihs/}
+        Women's Interagency HIV cohort Study website: \url{https://statepi.jhsph.edu/wihs/wordpress/}
     }
 }

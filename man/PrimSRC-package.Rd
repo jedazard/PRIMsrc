@@ -121,7 +121,7 @@
       \code{\link[PRIMsrc]{Synthetic.3}}, 
       \code{\link[PRIMsrc]{Synthetic.4}}
       \bold{Five Datasets From Simulated Regression Survival Models} \cr
-            Five datasets from simulated regression survival models #1-4 as described in Dazard et al. (2015) 
+            Five datasets from simulated regression survival models #1-4 as described in Dazard et al. (2015), 
             representing low- and high-dimensional situations, and where regression parameters represent various types 
             of relationship between survival times and covariates including saturated and noisy situations. 
             In three datasets where non-informative noisy covariates were used, these covariates were not part of the design matrix 
@@ -138,10 +138,10 @@
             or administrative censoring. The studied outcomes were the competing risks "AIDS/Death (before HAART)" 
             and "Treatment Initiation (HAART)". However, for simplification purposes, only the first of the two competing events 
             (i.e. the time to AIDS/Death), was used. Likewise, for simplification in this clinical dataset example, 
-             only complete cases were used. Variables included history of Injection Drug Use ("IDU") 
+            only \eqn{n=485} complete cases were used. Variables included history of Injection Drug Use ("IDU") 
             at enrollment, African American ethnicity ('Race'), age ('Age'), and baseline CD4 count ('CD4'). 
             The question in this dataset example was whether it is possible to achieve a prognostication of patients 
-            for AIDS and HAART. See Bacon et al. (2005) and the WIHS website for more details.\cr
+            for AIDS and HAART. See dataset documentation for more details.\cr
 
       \code{\link[PRIMsrc]{Real.2}}
       \bold{Genomic Dataset} \cr
@@ -155,7 +155,7 @@
             In addition to the genomic data, five clinical variables, also evaluated on the cohort samples, are included as 
             continuous variable ('Age') and nominal variables ('Type','KRAS.status','EGFR.status','P53.status'). 
             This dataset represents a situation where the number of covariates dominates the number of complete observations, 
-            or \eqn{p >> n} case. See dataset for more details.\cr
+            or \eqn{p >> n} case. See dataset documentation for more details.\cr
     }
     Known Bugs/Problems : None at this time.
 }

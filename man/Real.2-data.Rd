@@ -19,7 +19,8 @@
   In addition to the genomic data, five clinical variables, also evaluated on the cohort samples, are included as 
   continuous variable ('Age') and nominal variables ('Type','KRAS.status','EGFR.status','P53.status'). 
   This dataset represents a situation where the number of covariates dominates the number of complete observations, 
-  or \eqn{p >> n} case. 
+  or \eqn{p >> n} case.  See Lazar et al. (2013) and the \href{http://www.chemores.ki.se/index.html}{CHEMORES Consortium} 
+  website for more details.
 }
 
 \usage{Real.2}
@@ -64,6 +65,9 @@
         \item Dazard J-E. and J.S. Rao (2010).
               "\emph{Local Sparse Bump Hunting.}"
               J. Comp Graph. Statistics, 19(4):900-92.
+        \item Lazar V. et al. (2013).
+               "\emph{Integrated molecular portrait of non-small cell lung cancers.}"
+              BMC Medical Genomics 6:53-65.
     }
 }
 
@@ -78,11 +82,9 @@
 \seealso{
     \itemize{
        Array Express data repository at the European Bioinformatics Institute.
-       Accession number: #E-MTAB-1134 (MIR).
-       \url{www.ebi.ac.uk/arrayexpress/}
+       Accession number: #E-MTAB-1134 (MIR): \url{www.ebi.ac.uk/arrayexpress/}
     }
     \itemize{
-       CHEMORES Consortium and website.
-       \url{www.chemores.ki.se/index.html}
+       CHEMORES Consortium website: \url{http://www.chemores.ki.se/index.html}
     }
 }
