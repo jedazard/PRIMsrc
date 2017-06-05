@@ -88,8 +88,7 @@
     \item{vsarg}{
         \code{Character} \code{vector} specifying the parameters of cross-validated variable screening 
         (pre-selection) procedure. 
-        Defaults to PPL with its suggested parameters values:\cr
-        \code{vsarg="alpha=1,nalpha=1,nlambda=100,vscons=0.5"}.
+        Defaults to PPL with its suggested parameters values: \code{vsarg="alpha=1,nalpha=1,nlambda=100,vscons=0.5"}.
         Note that \code{vsarg} comes as a characters string between double quotes, with comas separated values 
         without white spaces. All the following parameters are ignored if \code{vs} is \code{FALSE}.\cr
         PRSP: 

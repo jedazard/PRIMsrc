@@ -10,7 +10,7 @@
   Dataset from simulated regression survival model #4 as described in Dazard et al. (2015).
   Here, the regression function uses 1/10 of informative predictors in a \eqn{p > n} situation with \eqn{p = 1000} and \eqn{n = 100}. 
   The rest represents non-informative noisy covariates, which are not part of the design matrix. 
-  Survival time was generated from an exponential model with rate parameter \eqn{\lambda} (and mean \eqn{\frac{1}{\lambda}})
+  Survival time was generated from an exponential model with rate parameter \eqn{\lambda} (and mean 1/\eqn{\lambda})
   according to a Cox-PH model with hazard exp(eta), where eta(.) is the regression function.
   Censoring indicator were generated from a uniform distribution on [0, 2].
   In this synthetic example, all covariates are continuous, i.i.d. from a multivariate standard normal distribution.
