@@ -2593,7 +2593,7 @@ cv.pval <- function(X,
          for (l in 1:(L)) {
             pval[l] <- 1 - pchisq(q=obs.chisq[l], df=1)
          }
-         pval <- round(pval, digits=floor(log(base=10, A)))
+         pval <- round(pval, digits=decimals)
          names(pval) <- paste("step", 0:(L-1), sep="")
 
          return(list("pval"=pval, "seed"=seed))
