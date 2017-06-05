@@ -74,8 +74,8 @@
         }
     } 
     \item{A}{
-        Positive \code{integer} of the number of permutations for the computation of cross-validated p-values. 
-        Defaults to 1000. Ignored if \code{pv} is \code{FALSE}.
+        Positive \code{integer} of the number of permutations for the computation of log-rank permutation \eqn{p}-values. 
+        Defaults to 1000. Ignored if \code{pv=FALSE} or \code{cv=FALSE}.
     }
     \item{vs}{
         \code{logical} scalar. Flag for optional variable (covariate) screening (pre-selection). 
@@ -87,10 +87,11 @@
     }
     \item{vsarg}{
         \code{Character} \code{vector} specifying the parameters of cross-validated variable screening 
-        (pre-selection) procedure. Defaults to PPL with its suggested parameters values. 
-        Note that \code{vsarg} comes as a characters string (between double quotes), 
-        with comas separated values without white spaces. All the following parameters are ignored if 
-        \code{vs} is \code{FALSE}\cr
+        (pre-selection) procedure. 
+        Defaults to PPL with its suggested parameters values:\cr
+        \code{vsarg="alpha=1,nalpha=1,nlambda=100,vscons=0.5"}.
+        Note that \code{vsarg} comes as a characters string between double quotes, with comas separated values 
+        without white spaces. All the following parameters are ignored if \code{vs} is \code{FALSE}.\cr
         PRSP: 
         \itemize{
             \item{\code{alpha}} = fraction to peel off at each step. Suggests 0.01.
@@ -170,9 +171,9 @@
         \code{logical} scalar. Flag for optional cross-validation (CV) of parameters of variable screening 
         (pre-selection) and variable usage (selection) by PRSP algorithm. Defaults to \code{TRUE}. 
         If \code{FALSE}, no cross-validation at will be performed, the value of \code{K} 
-        will be overwritten to 1, and traditional log-rank Mantel-Haenszel p-values will be computed,
-        (using the Chi-Squared distribution with 1df for the null distribution) instead of
-        log-rank permutation p-values (using the permutation distribution for the null distribution).
+        will be overwritten to 1, and traditional log-rank Mantel-Haenszel \eqn{p}-values will be computed,
+        (using the Chi-Squared distribution with 1 df for the null distribution) instead of
+        log-rank permutation \eqn{p}-values (using the permutation distribution for the null distribution).
     }
     \item{cvtype}{
         \code{character} \code{vector} in \{"combined", "averaged"\} specifying the cross-validation technique.
@@ -180,9 +181,10 @@
     }
     \item{cvarg}{
         \code{character} \code{vector} describing the parameters used in the PRSP algorithm of the 
-        Survival Bump Hunting function. Defaults to \cr "alpha=0.01,beta=0.05,minn=5,L=NULL,peelcriterion=\"lrt\",
-        cvcriterion=\"cer\"". Note that \code{cvarg} comes as a characters string (between double quotes), 
-        with comas separated values without white spaces.
+        Survival Bump Hunting function. Defaults to: \cr 
+        \code{cvarg="alpha=0.01,beta=0.05,minn=5,L=NULL,peelcriterion=\"lrt\",cvcriterion=\"cer\""}. 
+        Note that \code{cvarg} comes as a characters string between double quotes, with comas separated values 
+        without white spaces.
         \itemize{ 
             \item{\code{alpha}} = fraction to peel off at each step. 
                 Defaults to 0.01.
@@ -204,7 +206,7 @@
         }
     }
     \item{pv}{
-        \code{logical} scalar. Flag for computation of log-rank p-values. 
+        \code{logical} scalar. Flag for computation of log-rank \eqn{p}-values. 
         Defaults to \code{FALSE}.
     }
     \item{decimals}{
@@ -216,10 +218,12 @@
         when tuning/optimizing model parameters. Defaults to \code{FALSE}.
     }
     \item{probval}{
-        \code{numeric} scalar of the survival probability at which we want to get the endpoint box survival time. Defaults to NULL.
+        \code{numeric} scalar of the survival probability at which we want to get the endpoint box survival time. 
+        Defaults to NULL (i.e. maximal survival probability value).
     }
     \item{timeval}{
-        \code{numeric} scalar of the survival time at which we want to get the endpoint box survival probability. Defaults to NULL.
+        \code{numeric} scalar of the survival time at which we want to get the endpoint box survival probability.
+        Defaults to NULL (i.e. maximal survival time value).
     }
     \item{parallel.vs}{
         \code{logical}. Is parallelization to be performed for variable screening? 
@@ -229,7 +233,7 @@
         \code{logical}. Is parallelization to be performed for replications? Defaults to \code{FALSE}.
     }
     \item{parallel.pv}{
-        \code{logical}. Is parallelization to be performed for computation of log-rank p-values? Defaults to \code{FALSE}.
+        \code{logical}. Is parallelization to be performed for computation of log-rank \eqn{p}-values? Defaults to \code{FALSE}.
     }
     \item{conf}{
         \code{list} of 5 fields containing the parameters values needed for creating the parallel backend (cluster configuration).
@@ -309,7 +313,7 @@
               the above "Replicated CV" box membership indicators (i.e. \emph{not} as equation #23 in Dazard et al. 2016).
     }
     
-    If the computation of log-rank \emph{p}-values is desired, then running with the parallelization option is strongly advised 
+    If the computation of log-rank \eqn{p}-values is desired, then running with the parallelization option is strongly advised 
     as it may take a while. In case of large (\eqn{p > n}) or very large (\eqn{p >> n}) datasets, it is also highly recommended to use the 
     parallelization option. 
   
@@ -351,14 +355,14 @@
     \item{delta}{\code{numeric} \code{vector} of observed event indicator in \{1,0\}.}
     \item{B}{positive \code{integer} of the number of replications used in the cross-validation procedure.}
     \item{K}{positive \code{integer} of the number of folds used in the cross-validation procedure.}
-    \item{A}{positive \code{integer} of the number of permutations used for the computation of log-rank p-values.}
+    \item{A}{positive \code{integer} of the number of permutations used for the computation of log-rank \eqn{p}-values.}
     \item{vs}{\code{logical} scalar of returned flag of optional variable pre-selection.}
     \item{vstype}{\code{character} \code{vector} of the optional variable pre-selection procdure used.}
     \item{vsarg}{\code{character} \code{vector} of the parameters used in the pre-selection procedure.}
     \item{cv}{\code{logical} scalar of returned flag of optional cross-validation.}
     \item{cvtype}{\code{character} \code{vector} of the cross-validation technique used.}
     \item{cvarg}{\code{character} \code{vector} of the parameters used in the Survival Bump Hunting procedure.}
-    \item{pv}{\code{logical} scalar of returned flag of optional computation of log-rank p-values.}
+    \item{pv}{\code{logical} scalar of returned flag of optional computation of log-rank \eqn{p}-values.}
     \item{onese}{\code{logical} scalar of returned flag of 1-standard error rule.}
     \item{decimals}{\code{integer} of the number of user-specified significant decimals.}
     \item{probval}{\code{Numeric} scalar of survival probability used.}
@@ -402,8 +406,8 @@
             \item{cv.used: \code{numeric} \code{vector} of covariates used (selected) for peeling, indexed in reference to original index.}
             \item{cv.stats: \code{numeric} \code{matrix} of box endpoint quantities of interest (columns) for all peeling steps (rows).}
             \item{cv.pval: \code{list} with 2 fields of two \code{vectors}. 
-                The first \code{pval} is a \code{numeric} \code{vector} for log-rank p-values of separation of survival distributions,
-                The second \code{seed} is is an \code{integer} scalar if parallelization is used, or an \code{integer} \code{vector} 
+                The first \code{cvfit$pval} is a \code{numeric} \code{vector} for log-rank \eqn{p}-values of separation of survival distributions,
+                The second \code{cvfit$seed} is is an \code{integer} scalar if parallelization is used, or an \code{integer} \code{vector} 
                 of \code{A} values, one for each permutation, if parallelization is not used.}
         }
     }
@@ -427,6 +431,11 @@
         \item Dazard J-E. and Rao J.S. (2017).
               "\emph{Variable Selection Strategies for High-Dimensional Survival Bump Hunting using Recursive Peeling Methods.}"
               (in prep).
+        \item Diaz-Pachon D.A., Dazard J-E. and Rao J.S. (2017).
+              "\emph{Unsupervised Bump Hunting Using Principal Components.}"           
+              In: Ahmed SE, editor. Big and Complex Data Analysis: Methodologies and Applications. 
+              Contributions to Statistics, vol. Edited Refereed Volume. 
+              Springer International Publishing, Cham Switzerland, p. 325-345.
         \item Yi C. and Huang J. (2016).
               "\emph{Semismooth Newton Coordinate Descent Algorithm for Elastic-Net Penalized Huber Loss Regression and Quantile Regression}."
               J. Comp Graph. Statistics, DOI: 10.1080/10618600.2016.1256816.
@@ -504,7 +513,7 @@ library("PRIMsrc")
 # With Combined Cross-Validation (RCCV)
 # Without Replications (B = 1)
 # Without variable screening (pre-selection)
-# Without computation of log-rank permutation p-values
+# Without computation of log-rank \eqn{p}-values
 # Without parallelization
 #===================================================
 synt1 <- sbh(X = Synthetic.1[ , -c(1,2), drop=FALSE],
@@ -643,7 +652,7 @@ plot_boxkm(object = synt1,
     # With Combined Cross-Validation (RCCV)
     # With Replications (B = 30)
     # With variable screening (pre-selection) (PPL)
-    # With computation of log-rank permutation p-values
+    # With computation of log-rank \eqn{p}-values
     # With parallelization
     #===================================================                         
     synt1 <- sbh(X = Synthetic.1[ , -c(1,2), drop=FALSE],

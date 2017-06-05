@@ -46,7 +46,7 @@
     \code{Character} \code{vector}. y-axis label. Defaults to "Probability".
   }
   \item{precision}{
-    Precision of cross-validated log-rank p-values of separation between two survival curves.
+    Precision of log-rank \eqn{p}-values of separation between two survival curves.
     Defaults to 1e-3.
   }
   \item{mark}{
@@ -106,8 +106,8 @@
 \details{
   Some of the plotting parameters are further defined in the function \code{plot.survfit} (R package \pkg{survival}).
   Step #0 always corresponds to the situation where the starting box covers the entire test-set data before peeling.
-  Cross-validated LRT, LHR of inbox samples and log-rank p-values of separation are shown at the bottom of the plot
-  with the corresponding peeling step. P-values are lower-bounded by the precision limit given by \eqn{1/A}, 
+  Cross-validated LRT, LHR of inbox samples and log-rank \eqn{p}-values of separation are shown at the bottom of the plot
+  with the corresponding peeling step. \eqn{P}-values are lower-bounded by the precision limit given by \eqn{1/A}, 
   where \eqn{A} is the number of permutations.
 }
 
@@ -130,6 +130,11 @@
         \item Dazard J-E. and Rao J.S. (2017).
               "\emph{Variable Selection Strategies for High-Dimensional Survival Bump Hunting using Recursive Peeling Methods.}"
               (in prep).
+        \item Diaz-Pachon D.A., Dazard J-E. and Rao J.S. (2017).
+              "\emph{Unsupervised Bump Hunting Using Principal Components.}"           
+              In: Ahmed SE, editor. Big and Complex Data Analysis: Methodologies and Applications. 
+              Contributions to Statistics, vol. Edited Refereed Volume. 
+              Springer International Publishing, Cham Switzerland, p. 325-345.
         \item Yi C. and Huang J. (2016).
               "\emph{Semismooth Newton Coordinate Descent Algorithm for Elastic-Net Penalized Huber Loss Regression and Quantile Regression}."
               J. Comp Graph. Statistics, DOI: 10.1080/10618600.2016.1256816.

@@ -126,6 +126,11 @@
         \item Dazard J-E. and Rao J.S. (2017).
               "\emph{Variable Selection Strategies for High-Dimensional Survival Bump Hunting using Recursive Peeling Methods.}"
               (in prep).
+        \item Diaz-Pachon D.A., Dazard J-E. and Rao J.S. (2017).
+              "\emph{Unsupervised Bump Hunting Using Principal Components.}"           
+              In: Ahmed SE, editor. Big and Complex Data Analysis: Methodologies and Applications. 
+              Contributions to Statistics, vol. Edited Refereed Volume. 
+              Springer International Publishing, Cham Switzerland, p. 325-345.
         \item Yi C. and Huang J. (2016).
               "\emph{Semismooth Newton Coordinate Descent Algorithm for Elastic-Net Penalized Huber Loss Regression and Quantile Regression}."
               J. Comp Graph. Statistics, DOI: 10.1080/10618600.2016.1256816.
