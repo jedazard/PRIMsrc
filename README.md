@@ -42,8 +42,8 @@ The package supports two types of communication mechanisms between master and wo
 ============
 ### Branches
 
-This branch (master) is the  default one, that hosts the current development release (version 0.7.0) of the survival bump hunting procedure 
-that implements the case of a survival response. Note that `PRIMsrc` is still a non-production release and that version 0.7.0 implements 
+This branch (master) is the  default one, that hosts the current development release (version 0.7.1) of the survival bump hunting procedure 
+that implements the case of a survival response. Note that `PRIMsrc` is still a non-production release and that version 0.7.1 implements 
 significant user-visible changes. Check details of new features, changes, and bug fixes in the "Usage" section below.
 
 The second branch (unified) will host the future complete version of the code (version 1.0.0), including undirected peeling search derived from the 
@@ -75,7 +75,7 @@ CRAN downloads in the last week:
 ================
 ### Requirements
 
-PRIMsrc 0.7.0 requires R-3.0.2 (2013-09-25). It was built and tested under R version 3.4.0 (2017-04-21) and Travis CI. 
+PRIMsrc 0.7.1 requires R-3.0.2 (2013-09-25). It was built and tested under R version 3.4.0 (2017-04-21) and Travis CI. 
 
 Installation has been tested on Windows, Linux, OSX and Solaris platforms. 
 
@@ -95,7 +95,7 @@ See CRAN checks:
 install.packages("PRIMsrc")
 ```
 
-* Alternatively, you can install the most up-to-date development version (>= 0.7.0) of [`PRIMsrc` from GitHub repository](https://github.com/jedazard/PRIMsrc) using devtools, simply run:
+* Alternatively, you can install the most up-to-date development version (>= 0.7.1) of [`PRIMsrc` from GitHub repository](https://github.com/jedazard/PRIMsrc) using devtools, simply run:
 
 ```{r}
 install.packages("devtools")
