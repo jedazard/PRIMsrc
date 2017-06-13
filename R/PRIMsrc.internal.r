@@ -1513,7 +1513,7 @@ pcqreg <- function (X,
    } else if (method == "cquantile") {
       obj <- tryCatch({coef(object=quantreg::crq(formula=survival::Surv(time=y, event=delta, type="right") ~ 1, taus=tau, method="Portnoy"),taus=tau)},
                       error=function(){NULL})
-      if (is.null(obj)) {
+      if ((is.na(obj)) || (is.empty(obj))) {
          shift <- quantile(y, tau)
       } else {
          shift <- coef(object=quantreg::crq(formula=survival::Surv(time=y, event=delta, type="right") ~ 1, taus=tau, method="Portnoy"),taus=tau)
@@ -4294,7 +4294,7 @@ is.empty <- function(x) {
 
 .onAttach <- function(libname, pkgname) {
 
-   SSver <- read.dcf(file=system.file("DESCRIPTION", package=pkgname), 
+   SSver <- read.dcf(file=system.file("DESCRIPTION", package=pkgname),
                      fields="Version")
    packageStartupMessage(paste(pkgname, " ", SSver, " is a major release with significant user-visible changes.", sep=""))
    packageStartupMessage("Type PRIMsrc.news() to see new features, changes, and bug fixes.")
