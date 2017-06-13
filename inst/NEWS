@@ -142,10 +142,13 @@ PACKAGE INSTALLATION
 - Updated Rd, DESCRIPTION, NEWS and CITATION files.  
 - Built and tested under R version 3.4.0 (2017-04-21) and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2017-06-05
+Date   : 2017-06-12
 o RELEASE 0.7.1
+BUG FIXES
+- Corrected rare error case when `pcqr` variable selection could fail.
 - Minor correction in the precision of computation of log-rank p-values if no cross-validation is requested:
   Now default to `decimals` parameter.
+PACKAGE INSTALLATION
 - Minor updates and correction in manual and documentation files: Updated Rd, DESCRIPTION, NEWS and CITATION files.  
 - Built and tested under R version 3.4.0 (2017-04-21) and release update to GitHub.
 ---------------------------------------------------------------------------------
