@@ -75,7 +75,7 @@ CRAN downloads in the last week:
 ================
 ### Requirements
 
-PRIMsrc 0.7.1 requires R-3.0.2 (2013-09-25). It was built and tested under R version 3.4.0 (2017-04-21) and Travis CI. 
+PRIMsrc (>= 0.7.0) requires R-3.0.2 (2013-09-25). It was built and tested under R version 3.4.0 (2017-04-21) and Travis CI. 
 
 Installation has been tested on Windows, Linux, OSX and Solaris platforms. 
 
@@ -89,13 +89,15 @@ See CRAN checks:
 ================
 ### Installation
 
-* To install [`PRIMsrc` from CRAN repository](https://CRAN.R-project.org/package=PRIMsrc), simply download and install the current version (0.7.0) from the CRAN repository:
+* To install the stable version (0.7.0) of `PRIMsrc` from the [CRAN](https://CRAN.R-project.org/package=PRIMsrc) repository, 
+simply download and install the current version (0.7.0) from the CRAN repository:
 
 ```{r}
 install.packages("PRIMsrc")
 ```
 
-* Alternatively, you can install the most up-to-date development version (>= 0.7.1) of [`PRIMsrc` from GitHub repository](https://github.com/jedazard/PRIMsrc) using devtools, simply run:
+* Alternatively, you can install the most up-to-date development version (0.7.1) of `PRIMsrc` from the [GitHub](https://github.com/jedazard/PRIMsrc) repository, 
+simply run the following using devtools:
 
 ```{r}
 install.packages("devtools")
