@@ -234,7 +234,7 @@ sbh <- function(X,
    # Survival Bump Hunting model using the PRSP algorithm
    if (!success) {
 
-      if (vs) cat("Did not find any informative covariates. Exiting ...\n\n", sep="")
+      if (vs) cat("Did not find any informative covariates. Exiting ... \n\n", sep="")
 
       # List of CV profiles
       CV.profiles <- NULL
@@ -281,11 +281,11 @@ sbh <- function(X,
       }
 
       # CV profiles of screening CV criterion from all replicates
-      CV.varprofiles <- cv.presel.obj$varprofile
-      CV.varprofiles.mean <- cv.presel.obj$varprofile.mean
-      CV.varprofiles.se <- cv.presel.obj$varprofile.se
-      CV.varset.opt <- cv.presel.obj$varset.opt
-      CV.varset.1se <- cv.presel.obj$varset.1se
+      CV.varprofiles <- cv.presel.obj$boxstat.profile
+      CV.varprofiles.mean <- cv.presel.obj$boxstat.mean
+      CV.varprofiles.se <- cv.presel.obj$boxstat.se
+      CV.varset.opt <- cv.presel.obj$boxstat.opt
+      CV.varset.1se <- cv.presel.obj$boxstat.1se
 
       # Fitting the Survival Bump Hunting model using the PRSP algorithm
       cat("Fitting the Survival Bump Hunting model using the PRSP algorithm ... \n")
@@ -354,7 +354,7 @@ sbh <- function(X,
          # Adjusted maximum peeling length, thresholded by minimal box support, from all replicates
          CV.maxsteps <- max(which(apply(CV.boxind, 1, function(x) {length(which(x))/n >= max(minn/n, beta)})))
 
-         # Adjusted profiles of peeling steps and optimal peeling lengths from all replicates
+         # Adjusted cross-validated profiles of peeling steps and optimal peeling lengths from all replicates
          if (!cv) {
             CV.stepprofiles <- NULL
             CV.stepprofiles.mean <- NULL
@@ -373,20 +373,47 @@ sbh <- function(X,
                CV.stepprofiles <- CV.lhr.mat
                CV.stepprofiles.mean <- apply(CV.lhr.mat, 2, mean, na.rm=TRUE)
                CV.stepprofiles.se <- apply(CV.lhr.mat, 2, sd, na.rm=TRUE)
-               CV.nsteps.opt <- which.max(CV.stepprofiles.mean)
-               CV.nsteps.1se <- min(which(CV.stepprofiles.mean >= CV.stepprofiles.mean[CV.nsteps.opt]-CV.stepprofiles.se[CV.nsteps.opt]))
+               if (all(is.na(CV.stepprofiles.mean)) || is.empty(CV.stepprofiles.mean)) {
+                  CV.nsteps.opt <- NA
+               } else {
+                  CV.nsteps.opt <- which.max(CV.stepprofiles.mean)
+               }
+               w <- CV.stepprofiles.mean >= CV.stepprofiles.mean[CV.nsteps.opt]-CV.stepprofiles.se[CV.nsteps.opt]
+               if (all(is.na(w)) || is.empty(w)) {
+                  CV.nsteps.1se <- NA
+               } else {
+                  CV.nsteps.1se <- min(which(w))
+               }
             } else if (cvcriterion=="lrt") {
                CV.stepprofiles <- CV.lrt.mat
                CV.stepprofiles.mean <- apply(CV.lrt.mat, 2, mean, na.rm=TRUE)
                CV.stepprofiles.se <- apply(CV.lrt.mat, 2, sd, na.rm=TRUE)
-               CV.nsteps.opt <- which.max(CV.stepprofiles.mean)
-               CV.nsteps.1se <- min(which(CV.stepprofiles.mean >= CV.stepprofiles.mean[CV.nsteps.opt]-CV.stepprofiles.se[CV.nsteps.opt]))
+               if (all(is.na(CV.stepprofiles.mean)) || is.empty(CV.stepprofiles.mean)) {
+                  CV.nsteps.opt <- NA
+               } else {
+                  CV.nsteps.opt <- which.max(CV.stepprofiles.mean)
+               }
+               w <- CV.stepprofiles.mean >= CV.stepprofiles.mean[CV.nsteps.opt]-CV.stepprofiles.se[CV.nsteps.opt]
+               if (all(is.na(w)) || is.empty(w)) {
+                  CV.nsteps.1se <- NA
+               } else {
+                  CV.nsteps.1se <- min(which(w))
+               }
             } else if (cvcriterion=="cer") {
                CV.stepprofiles <- CV.cer.mat
                CV.stepprofiles.mean <- apply(CV.cer.mat, 2, mean, na.rm=TRUE)
                CV.stepprofiles.se <- apply(CV.cer.mat, 2, sd, na.rm=TRUE)
-               CV.nsteps.opt <- which.min(CV.stepprofiles.mean)
-               CV.nsteps.1se <- min(which(CV.stepprofiles.mean <= CV.stepprofiles.mean[CV.nsteps.opt]+CV.stepprofiles.se[CV.nsteps.opt]))
+               if (all(is.na(CV.stepprofiles.mean)) || is.empty(CV.stepprofiles.mean)) {
+                  CV.nsteps.opt <- NA
+               } else {
+                  CV.nsteps.opt <- which.min(CV.stepprofiles.mean)
+               }
+               w <- CV.stepprofiles.mean <= CV.stepprofiles.mean[CV.nsteps.opt]+CV.stepprofiles.se[CV.nsteps.opt]
+               if (all(is.na(w)) || is.empty(w)) {
+                  CV.nsteps.1se <- NA
+               } else {
+                  CV.nsteps.1se <- min(which(w))
+               }
             } else {
                stop("Invalid CV criterion option. Exiting ... \n\n")
             }
@@ -399,7 +426,7 @@ sbh <- function(X,
             CV.nsteps <- CV.nsteps.opt
          }
 
-         # Adjusted box membership indicator of all observations at each step
+         # Adjusted box membership indicator of all observations at each step using the modal or majority vote value over the replicates
          cat("Generating box memberships ...\n")
          CV.boxind <- CV.boxind[1:CV.nsteps,,drop=FALSE]
 
@@ -447,12 +474,12 @@ sbh <- function(X,
             # Covariates used in all replicates:
             CV.used <- sort(unique(CV.trace[-out]))
             names(CV.used) <- colnames(X)[CV.used]
-            cat("Covariates used:\n")
+            cat("Covariates used: \n")
             print(CV.used)
 
             # Directions of directed peeling of used covariates
             CV.sign <- CV.screened.sign[names(CV.used)]
-            cat("Directions of directed peeling of used covariates :\n", sep="")
+            cat("Directions of directed peeling of used covariates: \n", sep="")
             print(CV.sign)
 
             # Box rules of used covariates at each step
