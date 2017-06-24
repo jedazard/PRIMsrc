@@ -96,7 +96,7 @@ simply download and install the current version (0.7.1) from the CRAN repository
 install.packages("PRIMsrc")
 ```
 
-* Alternatively, you can install the most up-to-date development version (0.7.1) of `PRIMsrc` from the [GitHub](https://github.com/jedazard/PRIMsrc) repository, 
+* Alternatively, you can install the most up-to-date development version (>= 0.7.1) of `PRIMsrc` from the [GitHub](https://github.com/jedazard/PRIMsrc) repository, 
 simply run the following using devtools:
 
 ```{r}
