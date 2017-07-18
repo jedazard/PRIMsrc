@@ -375,14 +375,15 @@ sbh <- function(X,
                CV.stepprofiles.se <- apply(CV.lhr.mat, 2, sd, na.rm=TRUE)
                if (all(is.na(CV.stepprofiles.mean)) || is.empty(CV.stepprofiles.mean)) {
                   CV.nsteps.opt <- NA
-               } else {
-                  CV.nsteps.opt <- which.max(CV.stepprofiles.mean)
-               }
-               w <- CV.stepprofiles.mean >= CV.stepprofiles.mean[CV.nsteps.opt]-CV.stepprofiles.se[CV.nsteps.opt]
-               if (all(is.na(w)) || is.empty(w)) {
                   CV.nsteps.1se <- NA
                } else {
-                  CV.nsteps.1se <- min(which(w))
+                  CV.nsteps.opt <- which.max(CV.stepprofiles.mean)
+                  w <- CV.stepprofiles.mean >= CV.stepprofiles.mean[CV.nsteps.opt]-CV.stepprofiles.se[CV.nsteps.opt]
+                  if (all(is.na(w)) || is.empty(w)) {
+                     CV.nsteps.1se <- NA
+                  } else {
+                     CV.nsteps.1se <- min(which(w))
+                  }
                }
             } else if (cvcriterion=="lrt") {
                CV.stepprofiles <- CV.lrt.mat
@@ -390,14 +391,15 @@ sbh <- function(X,
                CV.stepprofiles.se <- apply(CV.lrt.mat, 2, sd, na.rm=TRUE)
                if (all(is.na(CV.stepprofiles.mean)) || is.empty(CV.stepprofiles.mean)) {
                   CV.nsteps.opt <- NA
-               } else {
-                  CV.nsteps.opt <- which.max(CV.stepprofiles.mean)
-               }
-               w <- CV.stepprofiles.mean >= CV.stepprofiles.mean[CV.nsteps.opt]-CV.stepprofiles.se[CV.nsteps.opt]
-               if (all(is.na(w)) || is.empty(w)) {
                   CV.nsteps.1se <- NA
                } else {
-                  CV.nsteps.1se <- min(which(w))
+                  CV.nsteps.opt <- which.max(CV.stepprofiles.mean)
+                  w <- CV.stepprofiles.mean >= CV.stepprofiles.mean[CV.nsteps.opt]-CV.stepprofiles.se[CV.nsteps.opt]
+                  if (all(is.na(w)) || is.empty(w)) {
+                     CV.nsteps.1se <- NA
+                  } else {
+                     CV.nsteps.1se <- min(which(w))
+                  }
                }
             } else if (cvcriterion=="cer") {
                CV.stepprofiles <- CV.cer.mat
@@ -405,14 +407,15 @@ sbh <- function(X,
                CV.stepprofiles.se <- apply(CV.cer.mat, 2, sd, na.rm=TRUE)
                if (all(is.na(CV.stepprofiles.mean)) || is.empty(CV.stepprofiles.mean)) {
                   CV.nsteps.opt <- NA
-               } else {
-                  CV.nsteps.opt <- which.min(CV.stepprofiles.mean)
-               }
-               w <- CV.stepprofiles.mean <= CV.stepprofiles.mean[CV.nsteps.opt]+CV.stepprofiles.se[CV.nsteps.opt]
-               if (all(is.na(w)) || is.empty(w)) {
                   CV.nsteps.1se <- NA
                } else {
-                  CV.nsteps.1se <- min(which(w))
+                  CV.nsteps.opt <- which.min(CV.stepprofiles.mean)
+                  w <- CV.stepprofiles.mean <= CV.stepprofiles.mean[CV.nsteps.opt]+CV.stepprofiles.se[CV.nsteps.opt]
+                  if (all(is.na(w)) || is.empty(w)) {
+                     CV.nsteps.1se <- NA
+                  } else {
+                     CV.nsteps.1se <- min(which(w))
+                  }
                }
             } else {
                stop("Invalid CV criterion option. Exiting ... \n\n")

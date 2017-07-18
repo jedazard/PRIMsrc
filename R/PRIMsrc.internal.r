@@ -43,8 +43,6 @@
 #
 #===============================================================================================================================#
 
-
-
 cv.presel <- function(X,
                       y,
                       delta,
@@ -181,8 +179,8 @@ cv.presel <- function(X,
             } else if ((cvtype == "averaged") || (cvtype == "combined")) {
                boxstat.profile <- list2mat(list=boxstat.profile.list, fill=NA, coltrunc=M)
                colnames(boxstat.profile) <- paste("size=", size, sep="")
-               boxstat.mean <- numeric(M)
-               boxstat.se <- numeric(M)
+               boxstat.mean <- rep(NA, M)
+               boxstat.se <- rep(NA, M)
                names(boxstat.mean) <- paste("size=", size, sep="")
                names(boxstat.se) <- paste("size=", size, sep="")
                if (cvcriterion == "lhr") {
@@ -196,14 +194,15 @@ cv.presel <- function(X,
                   }
                   if (all(is.na(boxstat.mean)) || is.empty(boxstat.mean)) {
                      boxstat.opt <- NA
-                  } else {
-                     boxstat.opt <- which.max(boxstat.mean)
-                  }
-                  w <- boxstat.mean >= boxstat.mean[boxstat.opt]-boxstat.se[boxstat.opt]
-                  if (all(is.na(w)) || is.empty(w)) {
                      boxstat.1se <- NA
                   } else {
-                     boxstat.1se <- min(which(w))
+                     boxstat.opt <- which.max(boxstat.mean)
+                     w <- boxstat.mean >= boxstat.mean[boxstat.opt]-boxstat.se[boxstat.opt]
+                     if (all(is.na(w)) || is.empty(w)) {
+                        boxstat.1se <- NA
+                     } else {
+                        boxstat.1se <- min(which(w))
+                     }
                   }
                } else if (cvcriterion == "lrt") {
                   for (m in 1:M) {
@@ -216,14 +215,15 @@ cv.presel <- function(X,
                   }
                   if (all(is.na(boxstat.mean)) || is.empty(boxstat.mean)) {
                      boxstat.opt <- NA
-                  } else {
-                     boxstat.opt <- which.max(boxstat.mean)
-                  }
-                  w <- boxstat.mean >= boxstat.mean[boxstat.opt]-boxstat.se[boxstat.opt]
-                  if (all(is.na(w)) || is.empty(w)) {
                      boxstat.1se <- NA
                   } else {
-                     boxstat.1se <- min(which(w))
+                     boxstat.opt <- which.max(boxstat.mean)
+                     w <- boxstat.mean >= boxstat.mean[boxstat.opt]-boxstat.se[boxstat.opt]
+                     if (all(is.na(w)) || is.empty(w)) {
+                        boxstat.1se <- NA
+                     } else {
+                        boxstat.1se <- min(which(w))
+                     }
                   }
                } else if (cvcriterion == "cer") {
                   for (m in 1:M) {
@@ -234,32 +234,22 @@ cv.presel <- function(X,
                      boxstat.mean[m] <- mean(sumcer, na.rm=TRUE)
                      boxstat.se[m] <- sd(sumcer, na.rm=TRUE)
                   }
-
                   if (all(is.na(boxstat.mean)) || is.empty(boxstat.mean)) {
                      boxstat.opt <- NA
-                  } else {
-                     boxstat.opt <- which.min(boxstat.mean)
-                  }
-                  w <- boxstat.mean <= boxstat.mean[boxstat.opt]+boxstat.se[boxstat.opt]
-                  if (all(is.na(w)) || is.empty(w)) {
                      boxstat.1se <- NA
                   } else {
-                     boxstat.1se <- min(which(w))
+                     boxstat.opt <- which.min(boxstat.mean)
+                     w <- boxstat.mean <= boxstat.mean[boxstat.opt]+boxstat.se[boxstat.opt]
+                     if (all(is.na(w)) || is.empty(w)) {
+                        boxstat.1se <- NA
+                     } else {
+                        boxstat.1se <- min(which(w))
+                     }
                   }
                } else {
-                  boxstat.profile <- matrix(data=NA, nrow=B, ncol=M)
-                  boxstat.mean <- rep(NA, M)
-                  boxstat.se <- rep(NA, M)
-                  boxstat.opt <- NA
-                  boxstat.1se <- NA
                   stop("Invalid CV criterion option. Exiting ... \n\n")
                }
             } else {
-               boxstat.profile <- matrix(data=NA, nrow=B, ncol=M)
-               boxstat.mean <- rep(NA, M)
-               boxstat.se <- rep(NA, M)
-               boxstat.opt <- NA
-               boxstat.1se <- NA
                stop("Invalid CV type option. Exiting ... \n\n")
             }
          } else {
@@ -722,9 +712,9 @@ cv.prsp <- function(X,
       boxstat.1se <- NA
       success <- FALSE
    } else {
-      # Get the averaged CV profiles of peeling criterion for each model from all folds
-      boxstat.mean <- numeric(M)
-      boxstat.se <- numeric(M)
+      # Get the averaged CV profiles of screening criterion for each model from all folds
+      boxstat.mean <- rep(NA, M)
+      boxstat.se <- rep(NA, M)
       names(boxstat.mean) <- paste("size=", size, sep="")
       names(boxstat.se) <- paste("size=", size, sep="")
       if (cvcriterion == "lhr") {
@@ -738,14 +728,15 @@ cv.prsp <- function(X,
          }
          if (all(is.na(boxstat.mean)) || is.empty(boxstat.mean)) {
             boxstat.opt <- NA
-         } else {
-            boxstat.opt <- which.max(boxstat.mean)
-         }
-         w <- boxstat.mean >= boxstat.mean[boxstat.opt]-boxstat.se[boxstat.opt]
-         if (all(is.na(w)) || is.empty(w)) {
             boxstat.1se <- NA
          } else {
-            boxstat.1se <- min(which(w))
+            boxstat.opt <- which.max(boxstat.mean)
+            w <- boxstat.mean >= boxstat.mean[boxstat.opt]-boxstat.se[boxstat.opt]
+            if (all(is.na(w)) || is.empty(w)) {
+               boxstat.1se <- NA
+            } else {
+               boxstat.1se <- min(which(w))
+            }
          }
       } else if (cvcriterion == "lrt") {
          for (m in 1:M) {
@@ -758,14 +749,15 @@ cv.prsp <- function(X,
          }
          if (all(is.na(boxstat.mean)) || is.empty(boxstat.mean)) {
             boxstat.opt <- NA
-         } else {
-            boxstat.opt <- which.max(boxstat.mean)
-         }
-         w <- boxstat.mean >= boxstat.mean[boxstat.opt]-boxstat.se[boxstat.opt]
-         if (all(is.na(w)) || is.empty(w)) {
             boxstat.1se <- NA
          } else {
-            boxstat.1se <- min(which(w))
+            boxstat.opt <- which.max(boxstat.mean)
+            w <- boxstat.mean >= boxstat.mean[boxstat.opt]-boxstat.se[boxstat.opt]
+            if (all(is.na(w)) || is.empty(w)) {
+               boxstat.1se <- NA
+            } else {
+               boxstat.1se <- min(which(w))
+            }
          }
       } else if (cvcriterion == "cer") {
          for (m in 1:M) {
@@ -778,34 +770,17 @@ cv.prsp <- function(X,
          }
          if (all(is.na(boxstat.mean)) || is.empty(boxstat.mean)) {
             boxstat.opt <- NA
-         } else {
-            boxstat.opt <- which.min(boxstat.mean)
-         }
-         w <- boxstat.mean <= boxstat.mean[boxstat.opt]+boxstat.se[boxstat.opt]
-         if (all(is.na(w)) || is.empty(w)) {
             boxstat.1se <- NA
          } else {
-            boxstat.1se <- min(which(w))
+            boxstat.opt <- which.min(boxstat.mean)
+            w <- boxstat.mean <= boxstat.mean[boxstat.opt]+boxstat.se[boxstat.opt]
+            if (all(is.na(w)) || is.empty(w)) {
+               boxstat.1se <- NA
+            } else {
+               boxstat.1se <- min(which(w))
+            }
          }
       } else {
-         boxstat.mean <- rep(NA, M)
-         boxstat.opt <- NA
-         boxstat.1se <- NA
-         auc.mean <- rep(NA, M)
-         auc.opt <- NA
-         auc.1se <- NA
-         tnr.mean <- rep(NA, M)
-         tnr.opt <- NA
-         tnr.1se <- NA
-         tpr.mean <- rep(NA, M)
-         tpr.opt <- NA
-         tpr.1se <- NA
-         fdr.mean <- rep(NA, M)
-         fdr.opt <- NA
-         fdr.1se <- NA
-         for.mean <- rep(NA, M)
-         for.opt <- NA
-         for.1se <- NA
          stop("Invalid CV criterion option. Exiting ... \n\n")
       }
       # Get the selected covariates with their signs from all folds for each model
@@ -1331,13 +1306,6 @@ cv.pcqr <- function(X,
             }
          }
       }
-      if (onese) {
-         varsel <- varsel[[1]]
-         varsign <- varsign[[1]]
-      } else {
-         varsel <- varsel[[2]]
-         varsign <- varsign[[2]]
-      }
       if (all(is.na(varsel))) {
          varsel <- NA
          varsign <- NA
@@ -1347,6 +1315,13 @@ cv.pcqr <- function(X,
          enlambda.1se <- NA
          success <- FALSE
       } else {
+         if (onese) {
+            varsel <- varsel[[1]]
+            varsign <- varsign[[1]]
+         } else {
+            varsel <- varsel[[2]]
+            varsign <- varsign[[2]]
+         }
          success <- TRUE
       }
    }
@@ -1966,13 +1941,6 @@ cv.ppl <- function(X,
             }
          }
       }
-      if (onese) {
-         varsel <- varsel[[1]]
-         varsign <- varsign[[1]]
-      } else {
-         varsel <- varsel[[2]]
-         varsign <- varsign[[2]]
-      }
       if (all(is.na(varsel))) {
          varsel <- NA
          varsign <- NA
@@ -1982,6 +1950,13 @@ cv.ppl <- function(X,
          enlambda.1se <- NA
          success <- FALSE
       } else {
+         if (onese) {
+            varsel <- varsel[[1]]
+            varsign <- varsign[[1]]
+         } else {
+            varsel <- varsel[[2]]
+            varsign <- varsign[[2]]
+         }
          success <- TRUE
       }
    }
@@ -2184,8 +2159,6 @@ cv.spca <- function(X,
          varsign <- NA
          success <- FALSE
       } else {
-         varsel <- varsel
-         varsign <- varsign
          success <- TRUE
       }
    }
