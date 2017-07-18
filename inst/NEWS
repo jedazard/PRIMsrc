@@ -146,11 +146,20 @@ Date   : 2017-06-24
 o RELEASE 0.7.1
 BUG FIXES
 - Corrected `prsp` variable selection procedure in the case `cvcriterion`=`cer`: the procedure now looks 
-for a minimizer instead of the maximizer of the profile.
+  for a minimizer instead of the maximizer of the profile.
 - Corrected misbehavior of `pcqr` and `prsp` variable selections when one replication could fail.
 - Minor correction in the precision of computation of log-rank p-values if no cross-validation is requested:
   Now default to `decimals` parameter.
 PACKAGE INSTALLATION
 - Minor updates and correction in manual and documentation files: Updated Rd, DESCRIPTION, NEWS and CITATION files.  
 - Built and tested under R version 3.4.0 (2017-04-21) and release update to GitHub.
+---------------------------------------------------------------------------------
+Date   : 2017-07-18
+o RELEASE 0.7.2
+BUG FIXES
+- Corrected return value of the 1-SE optimal value in cross-validated variable screening (pre-selection) subroutines in case the cross-validation could fail.
+- Corrected return values of screened variables (with directions of directed peeling) in case the cross-validation could fail.
+PACKAGE INSTALLATION
+- Minor updates and correction in manual and documentation files: Updated Rd, DESCRIPTION, NEWS and CITATION files.  
+- Built and tested under R version 3.4.1 (2017-06-30) and release update to GitHub.
 ---------------------------------------------------------------------------------
