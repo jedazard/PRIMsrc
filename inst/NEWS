@@ -111,10 +111,10 @@ SIGNIFICANT USER-VISIBLE CHANGES
 NEW FEATURES
 - Implemented four variable screening (pre-selection) procedures before variable usage (selection) procedure is done. 
   User can now choose between: 
-  1. Univariate Patient Recursive Survival Peeling algorithm (default of our package "PRIMsrc")
-  2. Penalized Censored Quantile Regression (by Semismooth Newton Coordinate Descent algorithm adapted from package "hqreg")
-  3. Penalized Partial Likelihood (adapted from package "glmnet")
-  4. Supervised Principal Component Analysis (adapted from package "superpc"). 
+  1. "prsp": Univariate Patient Recursive Survival Peeling algorithm (default of our package "PRIMsrc")
+  2. "pcqr": Penalized Censored Quantile Regression (by Semismooth Newton Coordinate Descent algorithm adapted from package "hqreg")
+  3. "ppl": Penalized Partial Likelihood (adapted from package "glmnet")
+  4. "spca": Supervised Principal Component Analysis (adapted from package "superpc"). 
 - New `sbh()` output values in `object$cvprofiles` of the `sbh` object (in matrix format) to plot 
   cross-validation criterion as a funtion of both variables screening size profiles 
   and peeling length profiles, as it applies.
@@ -147,7 +147,7 @@ o RELEASE 0.7.1
 BUG FIXES
 - Corrected `prsp` variable selection procedure in the case `cvcriterion`=`cer`: the procedure now looks 
   for a minimizer instead of the maximizer of the profile.
-- Corrected misbehavior of `pcqr` and `prsp` variable selections when one replication could fail.
+- Corrected misbehavior of "pcqr" and "prsp" variable selection procedures when one replication could fail.
 - Minor correction in the precision of computation of log-rank p-values if no cross-validation is requested:
   Now default to `decimals` parameter.
 PACKAGE INSTALLATION
@@ -163,3 +163,12 @@ PACKAGE INSTALLATION
 - Minor updates and correction in manual and documentation files: Updated Rd, DESCRIPTION, NEWS and CITATION files.  
 - Built and tested under R version 3.4.1 (2017-06-30) and release update to GitHub.
 ---------------------------------------------------------------------------------
+Date   : 2017-08-04
+o RELEASE 0.7.3
+SIGNIFICANT USER-VISIBLE CHANGES
+- Changed default value of maximum variables screening size (S), that is used for the cross-validation of the optimal number of screened variables in the "prsp" variable selection procedure (case when 'S' is set to "NULL" by user).
+PACKAGE INSTALLATION
+- Updated manual and documentation files: Updated Rd, DESCRIPTION and NEWS files.  
+- Built and tested under R version 3.4.1 (2017-06-30) and release update to GitHub.
+---------------------------------------------------------------------------------
+
