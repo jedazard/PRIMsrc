@@ -160,7 +160,7 @@ cv.presel <- function(X,
             }
             L <- max(1,floor(L))
             if (is.null(S)) {
-               S <- max(1,floor(p/10))
+               S <- max(1,floor(p/5))
                size <- unique(ceiling(seq(from=max(1,floor(S/100)), to=S, length=min(S,floor(100*S/p)))))
             } else {
                if (S > p) {
@@ -607,7 +607,7 @@ cv.prsp <- function(X,
    }
    L <- max(1,floor(L))
    if (is.null(S)) {
-      S <- max(1,floor(p/10))
+      S <- max(1,floor(p/5))
       size <- unique(ceiling(seq(from=max(1,floor(S/100)), to=S, length=min(S,floor(100*S/p)))))
    } else {
       if (S > p) {
