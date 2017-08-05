@@ -101,7 +101,7 @@
             \item{\code{S}} = maximum variables screening size in [1,\eqn{p}] (i.e. the maximum cardinal subset of 
                 top-screened variables), that is used for the cross-validation of the optimal number of screened variables. 
                 Setting \code{S} to \code{NULL} will create a grid of \code{min}(\code{S}, \code{floor}(100 * \code{S}/\eqn{p}))
-                values in [1,\code{floor}(\eqn{p}/10)] that will be used to determine the optimal number of screened variables. 
+                values in [1,\code{floor}(\eqn{p}/5)] that will be used to determine the optimal number of screened variables. 
                 Setting \code{S} to a single upper bound value in [1,\eqn{p}] will fix the number of screened variables up to it.
                 Suggests \code{S}=\code{floor}(\eqn{p}/10) to reduce computational complexity.
             \item{\code{peelcriterion}} in \{"lhr", "lrt", "chs"\} standing for Log-Hazard Ratio (LHR), 
@@ -170,7 +170,7 @@
         \code{logical} scalar. Flag for optional cross-validation (CV) of parameters of variable screening 
         (pre-selection) and variable usage (selection) by PRSP algorithm. Defaults to \code{TRUE}. 
         If \code{FALSE}, no cross-validation at will be performed, the value of \code{K} 
-        will be overwritten to 1, and traditional log-rank Mantel-Haenszel \eqn{p}-values will be computed,
+        will be overwritten to 1, and traditional log-rank Mantel-Haenszel \eqn{p}-values will be computed
         (using the Chi-Squared distribution with 1 df for the null distribution) instead of
         log-rank permutation \eqn{p}-values (using the permutation distribution for the null distribution).
     }
