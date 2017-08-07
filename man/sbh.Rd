@@ -63,10 +63,11 @@
         Defaults to 30.
     }
     \item{K}{
-        Postitive \code{integer} of the number of cross-validation folds (partitions) into which the observations (\eqn{n}) 
-        should be randomly split. \code{K} must be bigger than 2 for a regular \code{K}-fold cross-validation procedure 
-        to work and should be greater than 3  for a regular procedure to make sense; \code{K} \eqn{\in} \{5,...,10\} 
-        is recommended; defaults to \code{K}=5. Setting \code{K} also specifies the type of cross-validation to be done:
+        Postitive \code{integer} of the number of cross-validation folds (partitions) into which the total number 
+        of observations (\eqn{n}) should be randomly split. \code{K} must be bigger than 2 for a regular \code{K}-fold 
+        cross-validation procedure to work and should be greater than 3  for a regular procedure to make sense; 
+        \code{K} \eqn{\in} \{5,...,10\} is recommended; defaults to \code{K}=5. Setting \code{K} also specifies the type 
+        of cross-validation to be done:
         \itemize{
             \item{\code{K}} = 1 carries no cross-validation out, or set-value when \code{cv} = \code{FALSE} (see below).
             \item{\code{K}} \eqn{\in} \{2,...,\eqn{n-1}\} carries out \code{K}-fold cross-validation.
@@ -82,71 +83,75 @@
         Defaults to \code{TRUE}.
     }
     \item{vstype}{
-        \code{character} \code{vector} in \{"prsp", "pcqr", "ppl", "spca"\} specifying the variable screening 
-        (pre-selection) procedure. Defaults to "ppl". Reset to \code{NA} if \code{vs} is \code{FALSE}.
+        \code{character} \code{vector} in \{"prsp", "pcqr", "ppl", "spca"\} of one of the four possible variable screening 
+        (pre-selection) procedure. See details below. Defaults to "ppl". Reset to \code{NA} if \code{vs} is \code{FALSE}.    
     }
     \item{vsarg}{
-        \code{Character} \code{vector} specifying the parameters of cross-validated variable screening 
-        (pre-selection) procedure. 
-        Defaults to PPL with its suggested parameters values: \code{vsarg="alpha=1,nalpha=1,nlambda=100,vscons=0.5"}.
-        Note that \code{vsarg} comes as a characters string between double quotes, with comas separated values 
-        without white spaces. All the following parameters are ignored if \code{vs} is \code{FALSE}.\cr
+        \code{Character} \code{vector} of parameters of the cross-validated variable screening (pre-selection) procedure. 
+        Defaults to parameters values of default variable screening (pre-selection) procedure "ppl": 
+        \code{vsarg="alpha=1,nalpha=1,nlambda=100,vscons=0.5"}. Note that \code{vsarg} comes as a characters string between 
+        double quotes, with comas separated values without white spaces. All the following parameters are ignored 
+        if \code{vs} is \code{FALSE}.\cr
         PRSP: 
         \itemize{
-            \item{\code{alpha}} = fraction to peel off at each step. Suggests 0.01.
-            \item{\code{beta}} = minimum support size resulting from the peeling sequence. Suggests 0.05.
-            \item{\code{minn}} = minimum number of observation that we want to be able to detect in a box. Suggests 5.
-            \item{\code{L}} = maximum peeling length in [1,\code{ceiling}(\code{log}(1/\eqn{n}) / \code{log}(1 - (1/\eqn{n})))]. 
-                See details below. Suggests \code{ceiling}(\code{log}(\code{beta}) / \code{log}(1 - \code{alpha})/3).
-            \item{\code{S}} = maximum variables screening size in [1,\eqn{p}] (i.e. the maximum cardinal subset of 
-                top-screened variables), that is used for the cross-validation of the optimal number of screened variables. 
-                Setting \code{S} to \code{NULL} will create a grid of \code{min}(\code{S}, \code{floor}(100 * \code{S}/\eqn{p}))
-                values in [1,\code{floor}(\eqn{p}/5)] that will be used to determine the optimal number of screened variables. 
-                Setting \code{S} to a single upper bound value in [1,\eqn{p}] will fix the number of screened variables up to it.
-                Suggests \code{S}=\code{floor}(\eqn{p}/10) to reduce computational complexity.
-            \item{\code{peelcriterion}} in \{"lhr", "lrt", "chs"\} standing for Log-Hazard Ratio (LHR), 
-                Log-Rank Test (LRT), and Cumulative Hazard Summary (CHS), respectively, specifying 
-                the peeling criterion used in the PRSP algorithm. Suggests "lrt".
-            \item{\code{cvcriterion}} in \{"lhr", "lrt", "cer"\} standing for Log-Hazard Ratio (LHR),
-                Log-Rank Test (LRT), and Concordance Error Rate (CER), respectively, specifying
-                the cross-validation criterion used for tuning/optimizing the maximum variables screening 
-                size in the PRSP variable screening procedure. Suggests "cer".
-            \item{\code{vscons}} = \code{numeric} scalar in [1/\code{K}, 1], specifying the conservativeness of 
-                the variable screening (pre-selection) procedure, where 1/\code{K} is the least conservative 
-                and 1 is the most. Suggests 0.5.
+            \item{\code{alpha}} = \code{numeric} data quantile in (0,1) to peel off at each step of the peeling 
+                sequence of the PRSP algorithm. 
+                Suggests 0.01.
+            \item{\code{beta}} = \code{numeric} scalar of minimum box support at the end of the peeling sequence. 
+                Suggests 0.05.
+            \item{\code{minn}} = positive \code{integer} of minimum number of observations in the box at the end 
+                of the peeling sequence. 
+                Suggests 5.
+            \item{\code{L}} = positive \code{integer} of maximum peeling length set by user within the allowable range 
+                [1,\code{ceiling}(\code{log}(1/\eqn{n}) / \code{log}(1 - (1/\eqn{n})))]. See below for details and 
+                the meaning of \code{L}=\code{NULL}.
+                Suggests \code{NULL}.
+            \item{\code{S}} = positive \code{integer} of maximum size (cardinal) of subset of top-screened variables within the 
+                allowable range [1,\code{floor}(\eqn{p})]. See below for details and the meaning of \code{S}=\code{NULL}.
+                Suggests \code{floor}(\eqn{p}/5).
+            \item{\code{peelcriterion}} in \{"lhr", "lrt", "chs"\} peeling criterion Log-Hazard Ratio (LHR), 
+                Log-Rank Test (LRT), or Cumulative Hazard Summary (CHS), respectively, that is used in the PRSP algorithm. 
+                Suggests "lrt".
+            \item{\code{peelcriterion}} in \{"lhr", "lrt", "chs"\} stands for the peeling criterion Log-Hazard Ratio (LHR), 
+                Log-Rank Test (LRT), or Cumulative Hazard Summary (CHS), respectively, that is used in the PRSP algorithm. 
+                Suggests "lrt".
+            \item{\code{cvcriterion}} in \{"lhr", "lrt", "cer"\} stands for the cross-validation criterion Log-Hazard Ratio (LHR),
+                Log-Rank Test (LRT), or Concordance Error Rate (CER), respectively, that is used for tuning/optimizing 
+                the variables screening size in the PRSP variable screening procedure. 
+                Suggests "cer".
         }
         PCQR: 
         \itemize{
-            \item{\code{tau}} = quantile in [0, 0.5] used in the censored quantile regression model. 
+            \item{\code{tau}} = \code{numeric} quantile in [0, 0.5] used in the censored quantile regression model. 
                 It is the tuning parameter of the censored quantile loss. It represents the conditional 
                 censored quantile of the survival response to be estimated. It includes the absolute loss 
                 when \code{tau}=0.5. Suggests 0.5.
-            \item{\code{alpha}} = elasticnet mixing parameter in [0, 1] that controls the relative 
+            \item{\code{alpha}} = \code{numeric} elasticnet mixing parameter in [0, 1] that controls the relative 
                 contribution from the lasso and the ridge penalty. The penalty is defined as
                 (1-\code{alpha})/2||\code{beta}||_2^2+\code{alpha}||\code{beta}||_1. 
                 \code{alpha} = 1 is the lasso penalty, and \code{alpha} = 0 the ridge penalty. 
                 If \code{alpha} is set to \code{NULL}, a vector of values of length \code{nalpha} is used,
                 else \code{alpha} value is used and \code{nalpha} is set to 1. Suggests \code{alpha}=1 (lasso). 
-            \item{\code{nalpha}} = number of elasticnet penalization alpha values to consider in the grid search. 
-            Suggests 1 (see above: lasso).
-            \item{\code{nlambda}} = number of elasticnet penalization lambda values to consider in the grid search. 
-                Suggests 100.
+            \item{\code{nalpha}} = positive \code{integer} of number of \code{alpha} values to consider in the grid search. 
+                 Suggests 1 (see above: lasso).
+            \item{\code{nlambda}} = positive \code{integer} of number of elasticnet penalization \code{lambda} values 
+                to consider in the grid search. Suggests 100.
             \item{\code{vscons}} = \code{numeric} scalar in [1/\code{K}, 1], specifying the conservativeness of 
                 the variable screening (pre-selection) procedure, where 1/\code{K} is the least conservative 
                 and 1 is the most. Suggests 0.5.
         }
         PPL: 
         \itemize{
-            \item{\code{alpha}} = elasticnet mixing parameter in [0, 1] that controls the relative 
+            \item{\code{alpha}} = \code{numeric} elasticnet mixing parameter in [0, 1] that controls the relative 
                 contribution from the lasso and the ridge penalty. See R package \pkg{glmnet}. The penalty is 
                 defined as (1-\code{alpha})/2||\code{beta}||_2^2+\code{alpha}||\code{beta}||_1.
                 \code{alpha} = 1 is the lasso penalty, and \code{alpha} = 0 the ridge penalty. 
                 If \code{alpha} is set to \code{NULL}, a vector of values of length \code{nalpha} is used,
                 else \code{alpha} value is used and \code{nalpha} is set to 1. Suggests \code{alpha}=1 (lasso).
-            \item{\code{nalpha}} = number of elasticnet penalization alpha values to consider in the grid search. 
-                Suggests 1 (see above: lasso).
-            \item{\code{nlambda}} = number of elasticnet penalization lambda values to consider in the grid search. 
-                Suggests 100.
+            \item{\code{nalpha}} = positive \code{integer} of number of \code{alpha} values to consider in the grid search. 
+                 Suggests 1 (see above: lasso).
+            \item{\code{nlambda}} = positive \code{integer} of number of elasticnet penalization \code{lambda} values 
+                to consider in the grid search. Suggests 100.
             \item{\code{vscons}} = \code{numeric} scalar in [1/\code{K}, 1], specifying the conservativeness of 
                 the variable screening (pre-selection) procedure, where 1/\code{K} is the least conservative 
                 and 1 is the most. Suggests 0.5.
@@ -185,22 +190,24 @@
         Note that \code{cvarg} comes as a characters string between double quotes, with comas separated values 
         without white spaces.
         \itemize{ 
-            \item{\code{alpha}} = fraction to peel off at each step. 
+            \item{\code{alpha}} = \code{numeric} data quantile in (0,1) to peel off at each step of the peeling
+                sequence of the PRSP algorithm. 
                 Defaults to 0.01.
-            \item{\code{beta}} = minimum support size resulting from the peeling sequence. 
+            \item{\code{beta}} = \code{numeric} scalar of minimum box support at the end of the peeling sequence. 
                 Defaults to 0.05.
-            \item{\code{minn}} = minimum number of observation that we want to be able to detect in a box. 
+            \item{\code{minn}} = positive \code{integer} of minimum number of observations in the box at the end 
+                of the peeling sequence. 
                 Defaults to 5.
-            \item{\code{L}} = maximum peeling length in [1,\code{ceiling}(\code{log}(1/\eqn{n}) / \code{log}(1 - (1/\eqn{n})))]. 
-                See details below. Defaults to \code{NULL}, that is, with automatic selection.
-            \item{\code{peelcriterion}} in \{"lhr", "lrt", "chs"\} standing for Log-Hazard Ratio (LHR), 
-                Log-Rank Test (LRT), and Cumulative Hazard Summary (CHS), respectively, specifying 
-                the peeling criterion used in the PRSP algorithm. 
+            \item{\code{L}} = positive \code{integer} of maximum peeling length set by user within the allowable range 
+                [1,\code{ceiling}(\code{log}(1/\eqn{n}) / \code{log}(1 - (1/\eqn{n})))]. See below for details and 
+                the meaning of \code{L}=\code{NULL}.
+                Defaults to \code{NULL}.
+            \item{\code{peelcriterion}} in \{"lhr", "lrt", "chs"\} stands for the peeling criterion Log-Hazard Ratio (LHR), 
+                Log-Rank Test (LRT), or Cumulative Hazard Summary (CHS), respectively, that is used in the PRSP algorithm. 
                 Defaults to "lrt".
-            \item{\code{cvcriterion}} in \{"lhr", "lrt", "cer"\} standing for Log-Hazard Ratio (LHR),
-                Log-Rank Test (LRT), and Concordance Error Rate (CER), respectively, specifying
-                the cross-validation criterion used for tuning/optimizing the peeling sequence length 
-                (i.e. number of peeling steps) in the PRSP algorithm. 
+            \item{\code{cvcriterion}} in \{"lhr", "lrt", "cer"\} stands for the cross-validation criterion Log-Hazard Ratio (LHR),
+                Log-Rank Test (LRT), or Concordance Error Rate (CER), respectively, that is used for tuning/optimizing 
+                the optimal peeling sequence length (i.e. optimal number of peeling steps) in the PRSP algorithm. 
                 Defaults to "cer". Ignored if \code{cv} is \code{FALSE}.
         }
     }
@@ -259,11 +266,13 @@
     before the variable usage (selection) procedure is done by our PRSP algorithm. User can choose between four possible procedures:
     \itemize{
         \item Patient Recursive Survival Peeling (PRSP) (by univariate screening of our algorithm)
-        \item Penalized Censored Quantile Regression (PCQR) (by Semismooth Newton Coordinate Descent fiting algorithm adapted from package \pkg{hqreg})
+        \item Penalized Censored Quantile Regression (PCQR) (by Semismooth Newton Coordinate Descent fiting 
+              algorithm adapted from package \pkg{hqreg})
         \item Penalized Partial Likelihood (PPL) (by Elasticnet Regularization adapted from package \pkg{glmnet})
-        \item Supervised Principal Component Analysis (SPCA) (by Supervised Principal Component adapted from package \pkg{superpc})
+        \item Supervised Principal Component Analysis (SPCA) (by Supervised Principal Component adapted from 
+              package \pkg{superpc})
     }
-    There is no default, but it is recommended to use PPL or SPCA for computational efficiency. Variable screening (pre-selection) is done 
+    The recommendation is to use PPL or SPCA because of computational efficiency. Variable screening (pre-selection) is done 
     by computing occurrence frequencies of top-ranking variables over the cross-validation folds and replicates. 
     The conservativeness of the procedure is controled by the argument \code{vscons}. Example of calls for pre-selection are as follows:
     \itemize{
@@ -275,17 +284,28 @@
     conservativeness. Final variable usage (selection) is done after running our PRSP algorithm on previously screened variables 
     by collecting those variables that have the maximum occurrence frequency in each peeling step over cross-validation folds and replicates.
     
-    In the PRSP algorithm, the maximal number of peeling steps is determined either by \code{alpha} and \code{beta} metaparameters or 
-    the smallest possible fraction of the training data, i.e. \eqn{\frac{1}{n}}:
+    In the PRSP variable selection procedure (\code{vsarg}). Setting \code{S} to a value within the allowable range [1,\code{floor}(\eqn{p})] 
+    will override the cross-validation procedure that determines the optimal size (cardinal) of subset of top-screened variables, 
+    but will also reduce computational burden. Setting \code{S} to \code{NULL} will automaticaly generate a vector of values within 
+    the restricted range [1,\code{floor}(\eqn{p}/5)] that will be used to determine the optimal size (cardinal) of subset of top-screened variables 
+    by cross-validation. Setting \code{L} to a single value within the allowable range [1,\code{ceiling}(\code{log}(1/\eqn{n}) / \code{log}(1 - (1/\eqn{n})))] 
+    will override the internal peeling stopping rule of the PRSP algorithm and arbitrarily fix the maximal number of peeling steps to that value. 
+    Note that the upper bound of the allowable range is further restricted in case of cross-validation and when any of the metaparameters 
+    \{\code{alpha}, \code{beta}\} takes on the smallest possible fraction of the training data i.e. \eqn{\frac{1}{n^t}}, 
+    where \eqn{n^t} is the training sample size:
     \itemize{
-        \item{\code{ceiling}(\code{log}(\code{beta}) / \code{log}(1 - \code{alpha})) : \code{alpha} and \code{beta} are fixed by user}
-        \item{\code{ceiling}(\code{log}(1/\eqn{n}) / \code{log}(1 - \code{alpha}))   : \code{alpha} is fixed by user and \code{beta} is fixed by data}
-        \item{\code{ceiling}(\code{log}(\code{beta}) / \code{log}(1 - (1/\eqn{n})))  : \code{alpha} is fixed by data and \code{beta} is fixed by user}
-        \item{\code{ceiling}(\code{log}(1/\eqn{n}) / \code{log}(1 - (1/\eqn{n})))    : \code{alpha} and \code{beta} are fixed by data}
+        \item{\code{ceiling}(\code{log}(\code{beta}) / \code{log}(1 - \code{alpha}))  : \code{alpha} and \code{beta} fixed by user}
+        \item{\code{ceiling}(\code{log}(1/\eqn{n^t}) / \code{log}(1 - \code{alpha}))  : \code{alpha} fixed by user and \code{beta} fixed by data}
+        \item{\code{ceiling}(\code{log}(\code{beta}) / \code{log}(1 - (1/\eqn{n^t}))) : \code{alpha} fixed by data and \code{beta} fixed by user}
+        \item{\code{ceiling}(\code{log}(1/\eqn{n^t}) / \code{log}(1 - (1/\eqn{n^t}))) : \code{alpha} and \code{beta} fixed by data}
     }
-    If \code{L} is not used to specify a fixed number of peeling steps (i.e. \code{NULL}), then \code{beta} and \code{minn} are used in 
-    the stopping rule instead.
-
+    Setting \code{L} to \code{NULL} will let the maximal number of peeling steps be internally determined by the peeling stopping rule of 
+    the PRSP algorithm.
+    
+    In the PRSP algorithm itself (\code{cvarg}), setting \code{L} to a non-\code{NULL} value (within the allowable range) 
+    will override the cross-validation procedure, but will also reduce computational burden. Setting \code{L} to \code{NULL} will let 
+    the optimal peeling sequence length be determined by cross-validation.
+    
     If a cross-validation is requested, the function performs a supervised (stratified) random splitting of the data based on the outcome, 
     which is in that case the \code{delta} argument. This is because it is desireable that the data splitting balances the class 
     distributions of the outcome (events) within the cross-validation splits. For each screening method and for building (by PRSP algorithm) 

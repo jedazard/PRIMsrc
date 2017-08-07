@@ -110,7 +110,8 @@
 }
 
 \details{
-  The scatterplot is drawn on a graphical device with geometrically equal scales on the \eqn{x} and \eqn{y} axes.
+  The scatterplot is drawn only if the number of used covariates of the \code{sbh} object is greater than two.
+  It is drawn on a graphical device with geometrically equal scales on the \eqn{x} and \eqn{y} axes.
 }
 
 \value{
