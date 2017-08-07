@@ -299,7 +299,7 @@ sbh <- function(X,
                            cvarg=paste("alpha=", alpha,
                                        ",beta=", beta,
                                        ",minn=", minn,
-                                       ",L=", L,
+                                       ",L=", ifelse(test=is.null(L), yes="NULL", no=L),
                                        ",peelcriterion=\"", peelcriterion, "\"", sep=""),
                            decimals=decimals,
                            probval=probval,
@@ -327,23 +327,23 @@ sbh <- function(X,
 
          CV.maxsteps <- CV.box.obj$cv.maxsteps
          CV.trace.list <- CV.box.obj$cv.trace
-         CV.boxind <- CV.box.obj$cv.boxind
-         CV.boxcut <- CV.box.obj$cv.boxcut
-         CV.support <- CV.box.obj$cv.support
-         CV.size <- CV.box.obj$cv.size
-         CV.lhr <- CV.box.obj$cv.lhr
-         CV.lrt <- CV.box.obj$cv.lrt
-         CV.cer <- CV.box.obj$cv.cer
-         CV.time.bar <- CV.box.obj$cv.time.bar
-         CV.prob.bar <- CV.box.obj$cv.prob.bar
-         CV.max.time.bar <- CV.box.obj$cv.max.time.bar
-         CV.min.prob.bar <- CV.box.obj$cv.min.prob.bar
+         CV.boxind.list <- CV.box.obj$cv.boxind
+         CV.boxcut.list <- CV.box.obj$cv.boxcut
+         CV.support.list <- CV.box.obj$cv.support
+         CV.size.list <- CV.box.obj$cv.size
+         CV.lhr.list <- CV.box.obj$cv.lhr
+         CV.lrt.list <- CV.box.obj$cv.lrt
+         CV.cer.list <- CV.box.obj$cv.cer
+         CV.time.bar.list <- CV.box.obj$cv.time.bar
+         CV.prob.bar.list <- CV.box.obj$cv.prob.bar
+         CV.max.time.bar.list <- CV.box.obj$cv.max.time.bar
+         CV.min.prob.bar.list <- CV.box.obj$cv.min.prob.bar
 
          # Maximum peeling length from all replicates
          CV.maxsteps <- ceiling(mean(CV.maxsteps))
 
          # Box membership indicator vector of all observations at each step over the replicates
-         CV.boxind <- lapply.array(X=CV.boxind,
+         CV.boxind <- lapply.array(X=CV.boxind.list,
                                    rowtrunc=CV.maxsteps,
                                    MARGIN=c(1,2),
                                    FUN=function(x) {
@@ -363,9 +363,9 @@ sbh <- function(X,
             CV.nsteps.1se <- CV.maxsteps
          } else if ((cvtype == "averaged") || (cvtype == "combined")) {
             cat("Generating cross-validated profiles of peeling steps and optimal peeling lengths from all replicates ...\n")
-            CV.lhr.mat <- list2mat(list=CV.lhr, fill=NA, coltrunc=CV.maxsteps)
-            CV.lrt.mat <- list2mat(list=CV.lrt, fill=NA, coltrunc=CV.maxsteps)
-            CV.cer.mat <- list2mat(list=CV.cer, fill=NA, coltrunc=CV.maxsteps)
+            CV.lhr.mat <- list2mat(list=CV.lhr.list, fill=NA, coltrunc=CV.maxsteps)
+            CV.lrt.mat <- list2mat(list=CV.lrt.list, fill=NA, coltrunc=CV.maxsteps)
+            CV.cer.mat <- list2mat(list=CV.cer.list, fill=NA, coltrunc=CV.maxsteps)
             colnames(CV.lhr.mat) <- paste("step", 0:(CV.maxsteps-1), sep="")
             colnames(CV.lrt.mat) <- paste("step", 0:(CV.maxsteps-1), sep="")
             colnames(CV.cer.mat) <- paste("step", 0:(CV.maxsteps-1), sep="")
@@ -423,10 +423,14 @@ sbh <- function(X,
          } else {
             stop("Invalid CV type option. Exiting ... \n\n")
          }
-         if (onese) {
-            CV.nsteps <- CV.nsteps.1se
+         if (!(is.null(L))) {
+            CV.nsteps <- L
          } else {
-            CV.nsteps <- CV.nsteps.opt
+            if (onese) {
+               CV.nsteps <- CV.nsteps.1se
+            } else {
+               CV.nsteps <- CV.nsteps.opt
+            }
          }
 
          # Adjusted box membership indicator of all observations at each step using the modal or majority vote value over the replicates
@@ -487,8 +491,8 @@ sbh <- function(X,
 
             # Box rules of used covariates at each step
             cat("Generating box rules of used covariates ...\n")
-            CV.boxcut.mu <- round(lapply.array(X=CV.boxcut, rowtrunc=CV.nsteps, FUN=function(x){mean(x, na.rm=TRUE)}, MARGIN=1:2), digits=decimals)
-            CV.boxcut.sd <- round(lapply.array(X=CV.boxcut, rowtrunc=CV.nsteps, FUN=function(x){sd(x, na.rm=TRUE)}, MARGIN=1:2), digits=decimals)
+            CV.boxcut.mu <- round(lapply.array(X=CV.boxcut.list, rowtrunc=CV.nsteps, FUN=function(x){mean(x, na.rm=TRUE)}, MARGIN=1:2), digits=decimals)
+            CV.boxcut.sd <- round(lapply.array(X=CV.boxcut.list, rowtrunc=CV.nsteps, FUN=function(x){sd(x, na.rm=TRUE)}, MARGIN=1:2), digits=decimals)
             rownames(CV.boxcut.mu) <- paste("step", 0:(CV.nsteps-1), sep="")
             rownames(CV.boxcut.sd) <- paste("step", 0:(CV.nsteps-1), sep="")
             colnames(CV.boxcut.mu) <- colnames(X.sel)
@@ -510,23 +514,23 @@ sbh <- function(X,
             # Box statistics at each step
             cat("Generating box statistics ...\n")
             CV.support.mu <- round(CV.boxind.support, digits=decimals)
-            CV.support.sd <- round(lapply.mat(X=CV.support, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+            CV.support.sd <- round(lapply.mat(X=CV.support.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
             CV.size.mu <- round(CV.boxind.size, digits=0)
-            CV.size.sd <- round(lapply.mat(X=CV.size, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-            CV.lhr.mu <- round(lapply.mat(X=CV.lhr, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-            CV.lhr.sd <- round(lapply.mat(X=CV.lhr, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-            CV.lrt.mu <- round(lapply.mat(X=CV.lrt, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-            CV.lrt.sd <- round(lapply.mat(X=CV.lrt, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-            CV.cer.mu <- round(lapply.mat(X=CV.cer, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-            CV.cer.sd <- round(lapply.mat(X=CV.cer, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-            CV.time.bar.mu <- round(lapply.mat(X=CV.time.bar, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-            CV.time.bar.sd <- round(lapply.mat(X=CV.time.bar, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-            CV.prob.bar.mu <- round(lapply.mat(X=CV.prob.bar, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-            CV.prob.bar.sd <- round(lapply.mat(X=CV.prob.bar, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-            CV.max.time.bar.mu <- round(lapply.mat(X=CV.max.time.bar, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-            CV.max.time.bar.sd <- round(lapply.mat(X=CV.max.time.bar, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-            CV.min.prob.bar.mu <- round(lapply.mat(X=CV.min.prob.bar, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-            CV.min.prob.bar.sd <- round(lapply.mat(X=CV.min.prob.bar, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+            CV.size.sd <- round(lapply.mat(X=CV.size.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+            CV.lhr.mu <- round(lapply.mat(X=CV.lhr.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+            CV.lhr.sd <- round(lapply.mat(X=CV.lhr.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+            CV.lrt.mu <- round(lapply.mat(X=CV.lrt.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+            CV.lrt.sd <- round(lapply.mat(X=CV.lrt.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+            CV.cer.mu <- round(lapply.mat(X=CV.cer.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+            CV.cer.sd <- round(lapply.mat(X=CV.cer.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+            CV.time.bar.mu <- round(lapply.mat(X=CV.time.bar.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+            CV.time.bar.sd <- round(lapply.mat(X=CV.time.bar.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+            CV.prob.bar.mu <- round(lapply.mat(X=CV.prob.bar.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+            CV.prob.bar.sd <- round(lapply.mat(X=CV.prob.bar.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+            CV.max.time.bar.mu <- round(lapply.mat(X=CV.max.time.bar.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+            CV.max.time.bar.sd <- round(lapply.mat(X=CV.max.time.bar.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+            CV.min.prob.bar.mu <- round(lapply.mat(X=CV.min.prob.bar.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+            CV.min.prob.bar.sd <- round(lapply.mat(X=CV.min.prob.bar.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
             CV.stats.mu <- data.frame("Support"=CV.support.mu,
                                       "Size"=CV.size.mu,
                                       "LHR"=CV.lhr.mu,
@@ -871,107 +875,109 @@ plot.sbh <- function(x,
    if (!inherits(x, 'sbh'))
       stop("Primary argument `x` must be an object of class 'sbh'. Exiting ... \n\n")
 
-   if (x$success) {
+   if (length(x$cvfit$cv.used) >= 2) {
+      if (x$success) {
 
-      scatterplot <- function(object,
-                              main,
-                              proj, splom, boxes,
-                              steps,
-                              add.legend, pch, cex, col,
-                              col.box, lty.box, lwd.box, ...) {
+         scatterplot <- function(object,
+                                 main,
+                                 proj, splom, boxes,
+                                 steps,
+                                 add.legend, pch, cex, col,
+                                 col.box, lty.box, lwd.box, ...) {
 
-         if (!is.null(main)) {
-            par(mfrow=c(1, 1), oma=c(0, 0, 3, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
-         } else {
-            par(mfrow=c(1, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
-         }
-
-         toplot <- object$cvfit$cv.used[proj]
-         varnames <- colnames(object$X)
-         x <- object$X[,varnames[toplot],drop=FALSE]
-         x.names <- colnames(x)
-
-         if (is.null(steps))
-            steps <- object$cvfit$cv.nsteps
-
-         L <- length(steps)
-         plot(x=x, type="p", pch=pch, cex=cex, col=1, main=NULL, xlab=x.names[1], ylab=x.names[2], ...)
-         if (splom) {
-            for (i in 1:L) {
-               w <- object$cvfit$cv.boxind[steps[i],]
-               points(x=object$X[w,varnames[toplot],drop=FALSE], type="p", pch=pch, cex=cex, col=col[i], ...)
+            if (!is.null(main)) {
+               par(mfrow=c(1, 1), oma=c(0, 0, 3, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
+            } else {
+               par(mfrow=c(1, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
             }
-         }
-         if (boxes) {
-            x.range <- apply(X=x, MARGIN=2, FUN=range)
-            boxcut <- object$cvfit$cv.rules$mean[steps,varnames[toplot],drop=FALSE]
-            varsign <- object$cvfit$cv.sign[varnames[toplot]]
-            vertices <- vector(mode="list", length=L)
-            for (i in 1:L) {
-               vertices[[i]] <- matrix(data=NA, nrow=2, ncol=2, dimnames=list(c("LB","UB"), x.names))
-               for (j in 1:2) {
-                  vertices[[i]][1,j] <- ifelse(test=(varsign[j] > 0),
-                                               yes=max(x.range[1,j], boxcut[i,j]),
-                                               no=min(x.range[1,j], boxcut[i,j]))
-                  vertices[[i]][2,j] <- ifelse(test=(varsign[j] < 0),
-                                               yes=min(x.range[2,j], boxcut[i,j]),
-                                               no=max(x.range[2,j], boxcut[i,j]))
+
+            toplot <- object$cvfit$cv.used[proj]
+            varnames <- colnames(object$X)
+            x <- object$X[,varnames[toplot],drop=FALSE]
+            x.names <- colnames(x)
+
+            if (is.null(steps))
+               steps <- object$cvfit$cv.nsteps
+
+            L <- length(steps)
+            plot(x=x, type="p", pch=pch, cex=cex, col=1, main=NULL, xlab=x.names[1], ylab=x.names[2], ...)
+            if (splom) {
+               for (i in 1:L) {
+                  w <- object$cvfit$cv.boxind[steps[i],]
+                  points(x=object$X[w,varnames[toplot],drop=FALSE], type="p", pch=pch, cex=cex, col=col[i], ...)
                }
             }
-            for (i in 1:L) {
-               rect(vertices[[i]][1,1], vertices[[i]][1,2], vertices[[i]][2,1], vertices[[i]][2,2],
-                    border=col.box[i], col=NA, lty=lty.box[i], lwd=lwd.box[i])
+            if (boxes) {
+               x.range <- apply(X=x, MARGIN=2, FUN=range)
+               boxcut <- object$cvfit$cv.rules$mean[steps,varnames[toplot],drop=FALSE]
+               varsign <- object$cvfit$cv.sign[varnames[toplot]]
+               vertices <- vector(mode="list", length=L)
+               for (i in 1:L) {
+                  vertices[[i]] <- matrix(data=NA, nrow=2, ncol=2, dimnames=list(c("LB","UB"), x.names))
+                  for (j in 1:2) {
+                     vertices[[i]][1,j] <- ifelse(test=(varsign[j] > 0),
+                                                  yes=max(x.range[1,j], boxcut[i,j]),
+                                                  no=min(x.range[1,j], boxcut[i,j]))
+                     vertices[[i]][2,j] <- ifelse(test=(varsign[j] < 0),
+                                                  yes=min(x.range[2,j], boxcut[i,j]),
+                                                  no=max(x.range[2,j], boxcut[i,j]))
+                  }
+               }
+               for (i in 1:L) {
+                  rect(vertices[[i]][1,1], vertices[[i]][1,2], vertices[[i]][2,1], vertices[[i]][2,2],
+                       border=col.box[i], col=NA, lty=lty.box[i], lwd=lwd.box[i])
+               }
+            }
+            if (!is.null(main)) {
+               mtext(text=main, cex=1, side=3, outer=TRUE)
+            }
+            if (add.legend) {
+               legend("topleft", xpd=TRUE, inset=0.01, legend=paste("Step: ", steps, sep=""), pch=pch, col=col, cex=cex)
             }
          }
-         if (!is.null(main)) {
-            mtext(text=main, cex=1, side=3, outer=TRUE)
-         }
-         if (add.legend) {
-            legend("topleft", xpd=TRUE, inset=0.01, legend=paste("Step: ", steps, sep=""), pch=pch, col=col, cex=cex)
-         }
-      }
 
-      if (is.null(device)) {
-         scatterplot(object=x,
-                     main=main,
-                     proj=proj, splom=splom, boxes=boxes, steps=steps,
-                     add.legend=add.legend, pch=pch, cex=cex, col=col,
-                     col.box=col.box, lty.box=lty.box, lwd.box=lwd.box)
-      } else if (device == "PS") {
-         path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
-         file <- paste(file, ".ps", sep="")
-         cat("\nOUTPUT: \n")
-         cat("Filename : ", file, "\n")
-         cat("Directory: ", path, "\n")
-         postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
-         scatterplot(object=x,
-                     main=main,
-                     proj=proj, splom=splom, boxes=boxes, steps=steps,
-                     add.legend=add.legend, pch=pch, cex=cex, col=col,
-                     col.box=col.box, lty.box=lty.box, lwd.box=lwd.box)
-         dev.off()
-      } else if (device == "PDF") {
-         path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
-         file <- paste(file, ".pdf", sep="")
-         cat("\nOUTPUT: \n")
-         cat("Filename : ", file, "\n")
-         cat("Directory: ", path, "\n")
-         pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
-         scatterplot(object=x,
-                     main=main,
-                     proj=proj, splom=splom, boxes=boxes, steps=steps,
-                     add.legend=add.legend, pch=pch, cex=cex, col=col,
-                     col.box=col.box, lty.box=lty.box, lwd.box=lwd.box)
-         dev.off()
+         if (is.null(device)) {
+            scatterplot(object=x,
+                        main=main,
+                        proj=proj, splom=splom, boxes=boxes, steps=steps,
+                        add.legend=add.legend, pch=pch, cex=cex, col=col,
+                        col.box=col.box, lty.box=lty.box, lwd.box=lwd.box)
+         } else if (device == "PS") {
+            path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
+            file <- paste(file, ".ps", sep="")
+            cat("\nOUTPUT: \n")
+            cat("Filename : ", file, "\n")
+            cat("Directory: ", path, "\n")
+            postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
+            scatterplot(object=x,
+                        main=main,
+                        proj=proj, splom=splom, boxes=boxes, steps=steps,
+                        add.legend=add.legend, pch=pch, cex=cex, col=col,
+                        col.box=col.box, lty.box=lty.box, lwd.box=lwd.box)
+            dev.off()
+         } else if (device == "PDF") {
+            path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
+            file <- paste(file, ".pdf", sep="")
+            cat("\nOUTPUT: \n")
+            cat("Filename : ", file, "\n")
+            cat("Directory: ", path, "\n")
+            pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
+            scatterplot(object=x,
+                        main=main,
+                        proj=proj, splom=splom, boxes=boxes, steps=steps,
+                        add.legend=add.legend, pch=pch, cex=cex, col=col,
+                        col.box=col.box, lty.box=lty.box, lwd.box=lwd.box)
+            dev.off()
+         } else {
+            stop("Currently allowed display devices are \"PS\" (Postscript) or \"PDF\" (Portable Document Format. Exiting ... \n\n) \n")
+         }
+
       } else {
-         stop("Currently allowed display devices are \"PS\" (Postscript) or \"PDF\" (Portable Document Format. Exiting ... \n\n) \n")
+         cat("Either the covariate screening or the Survival Bump Hunting modeling failed for this dataset.\n
+              So, there is nothing to plot here.\n")
       }
-
    } else {
-
-      cat("Either the covariate screening or the Survival Bump Hunting modeling failed for this dataset.\n
-           So, there is nothing to plot here.\n")
-
+      cat("Cannot draw a scatter plot: The number of used covariates of the 'sbh' object is less than two. Exiting ... \n\n")
    }
 
    invisible()
@@ -1169,18 +1175,22 @@ plot_profile <- function(object,
                n <- nrow(object$X)
                p <- ncol(object$X)
                Lmax <- ceiling(log(1/n) / log(1 - (1/n)))
-               if (L > Lmax) {
-                  L <- pmin(Lmax, L)
+               if (!is.null(L)) {
+                  L <- max(1,floor(L))
+                  if (L > Lmax) {
+                     L <- min(Lmax, L)
+                  }
                }
-               L <- max(1,floor(L))
-               if (is.null(S)) {
+               Smax <- max(1,floor(p))
+               if (!is.null(S)) {
+                  S <- max(1,floor(S))
+                  if (S > Smax) {
+                     S <- min(Smax, S)
+                  }
+                  size <- S
+               } else {
                   S <- max(1,floor(p/5))
                   size <- unique(ceiling(seq(from=max(1,floor(S/100)), to=S, length=min(S,floor(100*S/p)))))
-               } else {
-                  if (S > p) {
-                     S <- pmin(p, S)
-                  }
-                  size <- max(1,floor(S))
                }
 
                if (is.null(xlim)) {
@@ -1312,7 +1322,7 @@ plot_profile <- function(object,
                         pch=pch, col=col, lty=lty, lwd=lwd, cex=cex)
             dev.off()
          } else {
-            stop("Currently allowed display devices are \"PS\" (Postscript) or \"PDF\" (Portable Document Format). Exiting ... \n\n")
+            cat("Currently allowed display devices are \"PS\" (Postscript) or \"PDF\" (Portable Document Format). Exiting ... \n\n")
          }
 
       } else {
@@ -1535,7 +1545,7 @@ plot_boxtraj <- function(object,
                      nr=nr, nc=nc)
          dev.off()
       } else {
-         stop("Currently allowed display devices are \"PS\" (Postscript) or \"PDF\" (Portable Document Format). Exiting ... \n\n")
+         cat("Currently allowed display devices are \"PS\" (Postscript) or \"PDF\" (Portable Document Format). Exiting ... \n\n")
       }
 
    } else {
@@ -1708,7 +1718,7 @@ plot_boxtrace <- function(object,
                       cex=cex, add.legend=add.legend, text.legend=text.legend)
          dev.off()
       } else {
-         stop("Currently allowed display devices are \"PS\" (Postscript) or \"PDF\" (Portable Document Format). Exiting ... \n\n")
+         cat("Currently allowed display devices are \"PS\" (Postscript) or \"PDF\" (Portable Document Format). Exiting ... \n\n")
       }
 
    } else {
@@ -1860,7 +1870,7 @@ plot_boxkm <- function(object,
                    nr=nr, nc=nc)
          dev.off()
       } else {
-         stop("Currently allowed display devices are \"PS\" (Postscript) or \"PDF\" (Portable Document Format). Exiting ... \n\n")
+         cat("Currently allowed display devices are \"PS\" (Postscript) or \"PDF\" (Portable Document Format). Exiting ... \n\n")
       }
 
    } else {

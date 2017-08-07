@@ -155,18 +155,22 @@ cv.presel <- function(X,
             n <- nrow(X)
             p <- ncol(X)
             Lmax <- ceiling(log(1/n) / log(1 - (1/n)))
-            if (L > Lmax) {
-               L <- pmin(Lmax, L)
+            if (!is.null(L)) {
+               L <- max(1,floor(L))
+               if (L > Lmax) {
+                  L <- min(Lmax, L)
+               }
             }
-            L <- max(1,floor(L))
-            if (is.null(S)) {
+            Smax <- max(1,floor(p))
+            if (!is.null(S)) {
+               S <- max(1,floor(S))
+               if (S > Smax) {
+                  S <- min(Smax, S)
+               }
+               size <- S
+            } else {
                S <- max(1,floor(p/5))
                size <- unique(ceiling(seq(from=max(1,floor(S/100)), to=S, length=min(S,floor(100*S/p)))))
-            } else {
-               if (S > p) {
-                  S <- pmin(p, S)
-               }
-               size <- max(1,floor(S))
             }
             M <- length(size)
             # Get the averaged CV profiles
@@ -601,20 +605,24 @@ cv.prsp <- function(X,
    n <- nrow(X)
    p <- ncol(X)
    Lmax <- ceiling(log(1/n) / log(1 - (1/n)))
-   if (L > Lmax) {
-      L <- pmin(Lmax, L)
-      cat("Warning: Parameter `L` was greater than what is allowed by the sample size of the data and was reset to ", Lmax, ".\n\n", sep="")
+   if (!is.null(L)) {
+      L <- max(1,floor(L))
+      if (L > Lmax) {
+         L <- min(Lmax, L)
+         cat("Warning: Parameter `L` was greater than the allowed range and was reset to ", Lmax, ".\n\n", sep="")
+      }
    }
-   L <- max(1,floor(L))
-   if (is.null(S)) {
+   Smax <- max(1,floor(p))
+   if (!is.null(S)) {
+      S <- max(1,floor(S))
+      if (S > Smax) {
+         S <- min(Smax, S)
+         cat("Warning: Parameter `S` was greater than the allowed range and was reset to ", Smax, ".\n\n", sep="")
+      }
+      size <- S
+   } else {
       S <- max(1,floor(p/5))
       size <- unique(ceiling(seq(from=max(1,floor(S/100)), to=S, length=min(S,floor(100*S/p)))))
-   } else {
-      if (S > p) {
-         S <- pmin(p, S)
-         cat("Warning: Parameter `S` was greater than what is allowed by the dimensionality of the data and was reset to ", p, ".\n\n", sep="")
-      }
-      size <- max(1,floor(S))
    }
    M <- length(size)
 
@@ -622,7 +630,7 @@ cv.prsp <- function(X,
    arg <- paste("alpha=", alpha,
                 ",beta=", beta,
                 ",minn=", minn,
-                ",L=", L,
+                ",L=", ifelse(test=is.null(L), yes="NULL", no=L),
                 ",peelcriterion=\"", peelcriterion, "\"",
                 ",cvcriterion=\"", cvcriterion, "\"", sep="")
 
@@ -899,7 +907,7 @@ cv.prsp.tune <- function(traindata,
    arg <- paste("alpha=", alpha,
                 ",beta=", beta,
                 ",minn=", minn,
-                ",L=", L,
+                ",L=", ifelse(test=is.null(L), yes="NULL", no=L),
                 ",peelcriterion=\"", peelcriterion, "\"", sep="")
 
    if (!parallel) {
@@ -3717,8 +3725,9 @@ prsp <- function(traindata,
    # Constants
    n <- nrow(traindata)                                   # Number of samples
    p <- ncol(traindata)                                   # Number of initially screened covariates
+   alpha <- max(1/n, alpha)                               # Minimal peeling quantile
    beta <- max(minn/n, beta)                              # Threshold of minimal box support by `minn` points
-   ncut <- ceiling(log(1/n) / log(1 - (1/n)))             # Maximal possible number of peeling steps
+   ncut <- ceiling(log(beta) / log(1 - alpha))            # Maximal possible number of peeling steps
 
    # Directions of peeling
    if (is.null(varsign)) {
@@ -3759,6 +3768,7 @@ prsp <- function(traindata,
    varpeel <- (apply(traindata, 2, "var") > 10^(-digits)) # Initial selection of covariates for peeling
    continue <- TRUE
    if (!(is.null(L))) {
+      L <- min(L, ncut)
       switch <- 1
    } else {
       L <- 1
