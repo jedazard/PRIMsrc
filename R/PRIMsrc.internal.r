@@ -917,15 +917,14 @@ cv.prsp.tune <- function(traindata,
       varsign <- vector(mode="list", length=M)
       varcut <- vector(mode="list", length=M)
       boxstat <- vector(mode="list", length=M)
+      peelobj <- cv.prsp.univ(traindata=traindata,
+                              traintime=traintime,
+                              trainstatus=trainstatus,
+                              arg=arg,
+                              verbose=verbose)
       m <- 1
       while (m <= M) {
          if (verbose) cat("Model: ", m, "\n")
-         peelobj <- cv.prsp.univ(traindata=traindata,
-                                 traintime=traintime,
-                                 trainstatus=trainstatus,
-                                 arg=arg,
-                                 size=size[m],
-                                 verbose=verbose)
          if (is.empty(peelobj$varsel)) {
             success <- FALSE
             varsel <- NULL
@@ -935,9 +934,9 @@ cv.prsp.tune <- function(traindata,
          } else {
             success <- TRUE
             # Retrieving screened variables and box from the univariate screening
-            varsel[[m]] <- peelobj$varsel
-            varsign[[m]] <- peelobj$varsign
-            varcut[[m]] <- peelobj$varcut
+            varsel[[m]] <- peelobj$varsel[1:size[m]]
+            varsign[[m]] <- peelobj$varsign[1:size[m]]
+            varcut[[m]] <- peelobj$varcut[1:size[m]]
             # Extract the rule and sign as one vector
             test.cut <- t(t(testdata[,varsel[[m]], drop=FALSE]) * varsign[[m]])
             test.ind <- t(t(test.cut) >= varcut[[m]] * varsign[[m]])
@@ -979,7 +978,6 @@ cv.prsp.tune <- function(traindata,
                               traintime=traintime,
                               trainstatus=trainstatus,
                               arg=arg,
-                              size=size,
                               verbose=verbose)
       if (is.empty(peelobj$varsel)) {
          success <- FALSE
@@ -989,9 +987,9 @@ cv.prsp.tune <- function(traindata,
       } else {
          # Retrieving screened variables and box from the univariate screening
          success <- TRUE
-         varsel <- peelobj$varsel
-         varsign <- peelobj$varsign
-         varcut <- peelobj$varcut
+         varsel <- peelobj$varsel[1:size]
+         varsign <- peelobj$varsign[1:size]
+         varcut <- peelobj$varcut[1:size]
          # Extract the rule and sign as one vector
          test.cut <- t(t(testdata[,varsel, drop=FALSE]) * varsign)
          test.ind <- t(t(test.cut) >= varcut * varsign)
@@ -1043,7 +1041,6 @@ cv.prsp.univ <- function(traindata,
                          traintime,
                          trainstatus,
                          arg,
-                         size,
                          verbose) {
 
    # Parsing and evaluating 'arg' parameters to evaluate 'peelcriterion'
@@ -1070,7 +1067,7 @@ cv.prsp.univ <- function(traindata,
                        varsign=NULL,
                        initcutpts=NULL,
                        arg=arg)
-      if (verbose) cat("covariate: ", j, "\t (maxstep: ", prsp.fit$nsteps, ")\n")
+      if (verbose) cat("covariate: ", j, "\t (maxstep: ", prsp.fit$nsteps, ")\n", sep="")
       varsign[j] <- prsp.fit$varsign
       varcut[j] <- prsp.fit$boxcut[1,,drop=TRUE]
       if (peelcriterion == "lrt") {
@@ -1083,11 +1080,12 @@ cv.prsp.univ <- function(traindata,
          stop("Invalid peeling criterion. Exiting ... \n\n")
       }
    }
+
    # order stat screening
    ord <- order(stat, decreasing=TRUE, na.last=TRUE)
-   varsel <- varsel[ord[1:size]]
-   varsign <- varsign[ord[1:size]]
-   varcut <- varcut[ord[1:size]]
+   varsel <- varsel[ord]
+   varsign <- varsign[ord]
+   varcut <- varcut[ord]
 
    return(list("varsel"=varsel,
                "varsign"=varsign,
@@ -3777,14 +3775,11 @@ prsp <- function(traindata,
    l <- 1
 
    # PRSP loop
-   while ((boxmass >= beta) & (l*switch < L) & (continue)) {
-
+   while ((boxmass >= beta) & (l*switch <= L) & (continue)) {
       xsign <- t(t(xsel) * varsign)
-
       # Potential cutpts by dimension
       cutpts.sign <- updatecut(X=xsign, fract=alpha)
       cutpts <- cutpts.sign * varsign
-
       # Update box membership indicator by dimension
       boxes <- as.matrix(t((t(traindata) * varsign) >= as.vector(cutpts.sign)) & sel)
 
@@ -3826,38 +3821,30 @@ prsp <- function(traindata,
             varpeel[j] <- FALSE
          }
       }
-
       # If the previous attempted peeling succeeded
       if (sum(varpeel) > 0 && (!is.empty(vmd[(!is.nan(vmd)) & (!is.infinite(vmd)) & (!is.na(vmd))]))) {
-
          # Maximizing the rate of increase of peeling criterion.
          # Only one variable (the first one in rank) is selected in case of ties
          varj <- which(vmd == max(vmd[(!is.nan(vmd)) & (!is.infinite(vmd))], na.rm=TRUE))[1]
-
          # Updating
          sel <- boxes[, varj, drop=TRUE]
          boxmass <- mean(1 * sel)
          xsel <- traindata[sel, ,drop=FALSE]
          varpeel <- (apply(xsel, 2, "var") > 10^(-digits))
          boxcutpts[varj] <- cutpts[varj]
-
          # Saving trained box quantities of interest for the current peeling step
          boxcut[l, ] <- boxcutpts
          vartrace[l] <- varj
-
          # Else exiting the loop
       } else {
          continue <- FALSE
       }
       l <- l + 1
-
    }
-
    l <- l - 1
    lrt <- lrtlj[l,,drop=TRUE]
    lhr <- lhrlj[l,,drop=TRUE]
    chs <- chslj[l,,drop=TRUE]
-
    # Prepending the first step box covering all the data
    boxcut <- rbind(initcutpts, boxcut[1:l, , drop=FALSE])
    vartrace <- c(0, vartrace[1:l])
@@ -3865,7 +3852,7 @@ prsp <- function(traindata,
    colnames(boxcut) <- colnames(traindata)
    names(vartrace) <- paste("step", 0:l, sep="")
 
-   return(list("nsteps"=l+1,
+   return(list("nsteps"=l,
                "boxcut"=boxcut,
                "vartrace"=vartrace,
                "varsign"=varsign,
@@ -4394,10 +4381,15 @@ cbindlist <- function(list, trunc) {
 is.empty <- function(x) {
 
    if (is.vector(x)) {
-      if((length(x) == 0) || (x == "")) {
-         return(TRUE)
-      } else {
+      y <- which(is.na(x))
+      if (length(y) != 0) {
          return(FALSE)
+      } else {
+         if((length(x) == 0) || (x == "")) {
+            return(TRUE)
+         } else {
+            return(FALSE)
+         }
       }
    } else if (is.matrix(x) || is.data.frame(x)) {
       return( ((nrow(x) == 0) || (ncol(x) == 0)) )
