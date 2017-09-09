@@ -936,11 +936,11 @@ cv.prsp.tune <- function(traindata,
             # Retrieving screened variables and box from the univariate screening
             varsel[[m]] <- peelobj$varsel[1:size[m]]
             varsign[[m]] <- peelobj$varsign[1:size[m]]
-            varcut[[m]] <- peelobj$varcut[1:size[m]]
             # Extract the rule and sign as one vector
+            varcut <- peelobj$varcut[1:size[m]]
             test.cut <- t(t(testdata[,varsel[[m]], drop=FALSE]) * varsign[[m]])
-            test.ind <- t(t(test.cut) >= varcut[[m]] * varsign[[m]])
-            # Set as TRUE which test observations are TRUE for all covariates
+            test.ind <- t(t(test.cut) >= varcut * varsign[[m]])
+            # Select which test observations are `TRUE` for all screened covariates
             pred <- (rowMeans(test.ind) == 1)
             test.ind1 <- 1*pred
             if ((sum(pred, na.rm=TRUE) != length(pred[!is.na(pred)])) && (sum(pred, na.rm=TRUE) != 0)) {
@@ -1051,7 +1051,7 @@ cv.prsp.univ <- function(traindata,
    peelcriterion <- NULL
    eval(parse( text=unlist(strsplit(x=arg, split=",")) ))
 
-   # univariate screening
+   # Univariate screening
    p <- ncol(traindata)
    stat <- numeric(p)
    varsel <- 1:p
@@ -1067,9 +1067,9 @@ cv.prsp.univ <- function(traindata,
                        varsign=NULL,
                        initcutpts=NULL,
                        arg=arg)
-      if (verbose) cat("covariate: ", j, "\t (maxstep: ", prsp.fit$nsteps, ")\n", sep="")
+      if (verbose) cat("covariate: ", j, "\t Maximum number of steps (counting step #0): ", prsp.fit$nsteps, "\n", sep="")
       varsign[j] <- prsp.fit$varsign
-      varcut[j] <- prsp.fit$boxcut[1,,drop=TRUE]
+      varcut[j] <- prsp.fit$boxcut[1,1,drop=TRUE]
       if (peelcriterion == "lrt") {
          stat[j] <- prsp.fit$lrt
       } else if (peelcriterion == "lhr") {
@@ -1081,7 +1081,7 @@ cv.prsp.univ <- function(traindata,
       }
    }
 
-   # order stat screening
+   # Order stat screening
    ord <- order(stat, decreasing=TRUE, na.last=TRUE)
    varsel <- varsel[ord]
    varsign <- varsign[ord]
@@ -3852,7 +3852,7 @@ prsp <- function(traindata,
    colnames(boxcut) <- colnames(traindata)
    names(vartrace) <- paste("step", 0:l, sep="")
 
-   return(list("nsteps"=l,
+   return(list("nsteps"=l+1,
                "boxcut"=boxcut,
                "vartrace"=vartrace,
                "varsign"=varsign,
