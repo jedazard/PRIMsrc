@@ -920,8 +920,7 @@ cv.prsp.tune <- function(traindata,
       peelobj <- cv.prsp.univ(traindata=traindata,
                               traintime=traintime,
                               trainstatus=trainstatus,
-                              arg=arg,
-                              verbose=verbose)
+                              arg=arg)
       m <- 1
       while (m <= M) {
          if (verbose) cat("Model: ", m, "\n")
@@ -977,8 +976,7 @@ cv.prsp.tune <- function(traindata,
       peelobj <- cv.prsp.univ(traindata=traindata,
                               traintime=traintime,
                               trainstatus=trainstatus,
-                              arg=arg,
-                              verbose=verbose)
+                              arg=arg)
       if (is.empty(peelobj$varsel)) {
          success <- FALSE
          varsel <- NULL
@@ -1040,8 +1038,7 @@ cv.prsp.tune <- function(traindata,
 cv.prsp.univ <- function(traindata,
                          traintime,
                          trainstatus,
-                         arg,
-                         verbose) {
+                         arg) {
 
    # Parsing and evaluating 'arg' parameters to evaluate 'peelcriterion'
    alpha <- NULL
@@ -1067,7 +1064,6 @@ cv.prsp.univ <- function(traindata,
                        varsign=NULL,
                        initcutpts=NULL,
                        arg=arg)
-      if (verbose) cat("covariate: ", j, "\t Maximum number of steps (counting step #0): ", prsp.fit$nsteps, "\n", sep="")
       varsign[j] <- prsp.fit$varsign
       varcut[j] <- prsp.fit$boxcut[1,1,drop=TRUE]
       if (peelcriterion == "lrt") {
@@ -2901,7 +2897,7 @@ cv.ave.box <- function(X,
    boxstat.list <- vector(mode="list", length=K)
    boxcut.list <- vector(mode="list", length=K)
    trace.list <- vector(mode="list", length=K)
-   nsteps <- numeric(K)
+   maxsteps <- numeric(K)
 
    for (k in 1:K) {
       if (verbose) cat("Fold : ", k, "\n", sep="")
@@ -2923,14 +2919,14 @@ cv.ave.box <- function(X,
                              probval=probval, timeval=timeval,
                              varsign=varsign, initcutpts=initcutpts, arg=cvarg)
       # Store the test set results from each fold
-      nsteps[k] <- peelobj$nsteps
+      maxsteps[k] <- peelobj$maxsteps
       boxstat.list[[k]] <- peelobj$boxstat
       boxcut.list[[k]] <- peelobj$boxcut
       trace.list[[k]] <- peelobj$trace
    }
 
    # Cross-validated maximum peeling length from all folds
-   CV.Lm <- min(nsteps)
+   CV.Lm <- min(maxsteps)
 
    # Truncate the cross-validated quantities from all folds to the same cross-validated length
    for (k in 1:K) {
@@ -3221,7 +3217,7 @@ cv.comb.box <- function(X,
    boxind.list <- vector(mode="list", length=K)
    boxcut.list <- vector(mode="list", length=K)
    trace.list <- vector(mode="list", length=K)
-   nsteps <- numeric(K)
+   maxsteps <- numeric(K)
 
    for (k in 1:K) {
       if (verbose) cat("Fold : ", k, "\n", sep="")
@@ -3244,14 +3240,14 @@ cv.comb.box <- function(X,
                               testdata=testdata, teststatus=teststatus, testtime=testtime,
                               varsign=varsign, initcutpts=initcutpts, arg=cvarg)
       # Store the test set results from each fold
-      nsteps[k] <- peelobj$nsteps
+      maxsteps[k] <- peelobj$maxsteps
       boxind.list[[k]] <- peelobj$boxind
       boxcut.list[[k]] <- peelobj$boxcut
       trace.list[[k]] <- peelobj$trace
    }
 
    # Cross-validated maximum peeling length from all folds
-   CV.Lm <- min(nsteps)
+   CV.Lm <- min(maxsteps)
 
    # Get the test box membership indicator vector of all observations for each step from all the folds
    # Based on the combined membership indicator vectors over the folds
@@ -3537,14 +3533,14 @@ cv.ave.peel <- function(traindata,
    # Training the model
    peelobj <- prsp(traindata=traindata, traintime=traintime, trainstatus=trainstatus,
                    varsign=varsign, initcutpts=initcutpts, arg=arg)
-   nsteps <- peelobj$nsteps
+   maxsteps <- peelobj$maxsteps
 
    # Compute the box statistics for all steps, each entry or row signifies a step
-   boxstat <- vector(mode="list", length=nsteps)
-   timemat <- matrix(NA, nrow=nsteps, ncol=nrow(testdata))
-   probmat <- matrix(NA, nrow=nsteps, ncol=nrow(testdata))
+   boxstat <- vector(mode="list", length=maxsteps)
+   timemat <- matrix(NA, nrow=maxsteps, ncol=nrow(testdata))
+   probmat <- matrix(NA, nrow=maxsteps, ncol=nrow(testdata))
    ind.rem <- numeric(0)
-   for (l in 1:nsteps) {
+   for (l in 1:maxsteps) {
       # Extract the rule and sign as one vector
       boxcut <- peelobj$boxcut[l, ] * varsign
       test.cut <- t(t(testdata) * varsign)
@@ -3584,13 +3580,13 @@ cv.ave.peel <- function(traindata,
          ind.rem <- c(ind.rem, l)
       }
    }
-   if (length(ind.rem) != nsteps) {
+   if (length(ind.rem) != maxsteps) {
       endobj <- endpoints (ind=ind.rem, timemat=timemat, probmat=probmat, timeval=timeval, probval=probval)
       time.bar <- endobj$time.bar
       prob.bar <- endobj$prob.bar
       max.time.bar <- endobj$max.time.bar
       min.prob.bar <- endobj$min.prob.bar
-      for (l in 1:nsteps) {
+      for (l in 1:maxsteps) {
          if (!(l %in% ind.rem)) {
             boxstat[[l]] <- c(boxstat[[l]], time.bar[l], prob.bar[l], max.time.bar[l], min.prob.bar[l])
          } else {
@@ -3598,12 +3594,12 @@ cv.ave.peel <- function(traindata,
          }
       }
    } else {
-      for (l in 1:nsteps) {
+      for (l in 1:maxsteps) {
          boxstat[[l]] <- rep(x=NA, times=7)
       }
    }
 
-   return(list("nsteps"=nsteps, "boxstat"=boxstat, "boxcut"=peelobj$boxcut, "trace"=peelobj$vartrace))
+   return(list("maxsteps"=maxsteps, "boxstat"=boxstat, "boxcut"=peelobj$boxcut, "trace"=peelobj$vartrace))
 }
 #===============================================================================================================================#
 
@@ -3650,11 +3646,11 @@ cv.comb.peel <- function(traindata,
    # Training the model
    peelobj <- prsp(traindata=traindata, traintime=traintime, trainstatus=trainstatus,
                    varsign=varsign, initcutpts=initcutpts, arg=arg)
-   nsteps <- peelobj$nsteps
+   maxsteps <- peelobj$maxsteps
 
    # Create the indicator matrix of the test data that is within the box for each step
-   boxind <- matrix(NA, nrow=nsteps, ncol=nrow(testdata))
-   for (l in 1:nsteps) {
+   boxind <- matrix(NA, nrow=maxsteps, ncol=nrow(testdata))
+   for (l in 1:maxsteps) {
       # Extract the rule and sign as one vector
       boxcut <- peelobj$boxcut[l, ] * varsign
       test.cut <- t(t(testdata) * varsign)
@@ -3663,7 +3659,7 @@ cv.comb.peel <- function(traindata,
       boxind[l, ] <- (rowMeans(test.ind) == 1)
    }
 
-   return(list("boxind"=boxind, "nsteps"=nsteps, "boxcut"=peelobj$boxcut, "trace"=peelobj$vartrace))
+   return(list("boxind"=boxind, "maxsteps"=maxsteps, "boxcut"=peelobj$boxcut, "trace"=peelobj$vartrace))
 }
 #===============================================================================================================================#
 
@@ -3684,12 +3680,6 @@ cv.comb.peel <- function(traindata,
 #===============#
 # Description   :
 #===============#
-#	Note: The maximal number of peeling steps (ncut) is determined either by alpha and beta metaparameters
-#   or the smallest fraction of data, i.e. 1/n:
-#      ceiling(log(beta) / log(1 - alpha)) # if alpha and beta fixed by user
-#	    ceiling(log(1/n) / log(1 - alpha))  # if alpha fixed by user and beta fixed by data
-#	    ceiling(log(beta) / log(1 - (1/n))) # if alpha fixed by data and beta fixed by user
-#	    ceiling(log(1/n) / log(1 - (1/n)))  # if alpha and beta fixed by data
 #
 #===============#
 # Arguments     :
@@ -3852,7 +3842,7 @@ prsp <- function(traindata,
    colnames(boxcut) <- colnames(traindata)
    names(vartrace) <- paste("step", 0:l, sep="")
 
-   return(list("nsteps"=l+1,
+   return(list("maxsteps"=l+1,
                "boxcut"=boxcut,
                "vartrace"=vartrace,
                "varsign"=varsign,
