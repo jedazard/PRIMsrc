@@ -89,8 +89,8 @@ See CRAN checks:
 ================
 ### Installation
 
-* To install the stable version (0.7.3) of `PRIMsrc` from the [CRAN](https://CRAN.R-project.org/package=PRIMsrc) repository, 
-simply download and install the current version (0.7.3) from the CRAN repository:
+* To install the stable version (0.7.4) of `PRIMsrc` from the [CRAN](https://CRAN.R-project.org/package=PRIMsrc) repository, 
+simply download and install the current version (0.7.4) from the CRAN repository:
 
 ```{r}
 install.packages("PRIMsrc")
