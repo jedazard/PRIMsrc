@@ -111,10 +111,10 @@ SIGNIFICANT USER-VISIBLE CHANGES
 NEW FEATURES
 - Implemented four variable screening (pre-selection) procedures before variable usage (selection) procedure is done. 
   User can now choose between: 
-  1. "prsp": Univariate Patient Recursive Survival Peeling (PRSP) algorithm
-  2. "pcqr": Penalized Censored Quantile Regression by Semismooth Newton Coordinate Descent algorithm adapted from package "hqreg"
-  3. "ppl": Penalized Partial Likelihood adapted from package "glmnet" (default)
-  4. "spca": Supervised Principal Component Analysis adapted from package "superpc"
+  1. PRSP: Univariate Patient Recursive Survival Peeling (PRSP) algorithm
+  2. PCQR: Penalized Censored Quantile Regression by Semismooth Newton Coordinate Descent algorithm adapted from package "hqreg"
+  3. PPL: Penalized Partial Likelihood adapted from package "glmnet" (default)
+  4. SPCA: Supervised Principal Component Analysis adapted from package "superpc"
 - New `sbh()` output values in `object$cvprofiles` of the `sbh` object (in matrix format) to plot 
   cross-validation criterion as a funtion of both variables screening size profiles 
   and peeling length profiles, as it applies.
@@ -139,53 +139,69 @@ DEPRECATED AND DEFUNCT
 - Parallel cluster or communication mechanism now only allows type 'Socket' or 
   'Message-Passing Interface' ('MPI'). "PRIMsrc" no longer supports 'Parallel Virtual Machine' ('PVM').
 PACKAGE INSTALLATION
-- Updated Rd, DESCRIPTION, NEWS and CITATION files.  
+- Corrections and updates in manual and documentation files (Rd files).
+- Updates in documentation files (DESCRIPTION, NEWS and CITATION).
 - Built and tested under R version 3.4.0 (2017-04-21) and release update to GitHub.
 ---------------------------------------------------------------------------------
 Date   : 2017-06-24
 o RELEASE 0.7.1
 BUG FIXES
-- Corrected `prsp` variable selection procedure in the case `cvcriterion`=`cer`: the procedure now looks 
+- Corrected `prsp` variable screening procedure in the case `cvcriterion`=`cer`: the procedure now looks 
   for a minimizer instead of the maximizer of the profile.
-- Corrected misbehavior of "pcqr" and "prsp" variable selection procedures when one replication could fail.
+- Corrected misbehavior of PCQR and PRSP variable screening procedures when one replication could fail.
 - Minor correction in the precision of computation of log-rank p-values if no cross-validation is requested:
   Now default to `decimals` parameter.
 PACKAGE INSTALLATION
-- Minor updates and correction in manual and documentation files: Updated Rd, DESCRIPTION, NEWS and CITATION files.  
+- Corrections and updates in manual and documentation files (Rd files).
+- Updates in documentation files (DESCRIPTION and NEWS).
 - Built and tested under R version 3.4.0 (2017-04-21) and release update to GitHub.
 ---------------------------------------------------------------------------------
 Date   : 2017-07-18
 o RELEASE 0.7.2
 BUG FIXES
-- Corrected return value of the 1-SE optimal value in cross-validated variable screening (pre-selection) subroutines 
+- Corrected return value of the 1-SE optimal value in cross-validated variable screening subroutines 
   in case the cross-validation could fail.
 - Corrected return values of screened variables (with directions of directed peeling) in case the cross-validation 
   could fail.
 PACKAGE INSTALLATION
-- Minor updates and correction in manual and documentation files: Updated Rd, DESCRIPTION, NEWS and CITATION files.  
+- Corrections and updates in manual and documentation files (Rd files).
+- Updates in documentation files (DESCRIPTION and NEWS).
 - Built and tested under R version 3.4.1 (2017-06-30) and release update to GitHub.
 ---------------------------------------------------------------------------------
 Date   : 2017-08-07
 o RELEASE 0.7.3
 SIGNIFICANT USER-VISIBLE CHANGES
-- Changed default values and behavior of parameters 'S' and 'L' in the "prsp" variable selection procedure 
-  and PRSP algorithm, that are used for the cross-validation of the optimal number of screened variables 
-  and the optimal peeling sequence length in the PRSP algorithm, respectively. See manual.
+- Changed default values and behavior of parameters 'S' and 'L' in the PRSP variable screening procedure 
+  and PRSP algorithm itself, that are used for the cross-validation of the optimal model size (cardinal of 
+  subset of top-screened variables) and the optimal number of peeling steps (optimal peeling sequence length). 
+  See manual.
 BUG FIXES
 - Updated S3-generic `plot()` function. The scatterplot is now drawn only if the number of used covariates 
   of the `sbh` object is greater than two.
 PACKAGE INSTALLATION
-- Correction and clarification of corresponding manual (Rd files) and minor updates in documentation files (DESCRIPTION and NEWS).
+- Corrections and clarifications in manual and documentation files (Rd files).
+- Updates in documentation files (DESCRIPTION and NEWS).
 - Built and tested under R version 3.4.1 (2017-06-30) and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2017-09-08
+Date   : 2017-09-21
 o RELEASE 0.7.4
-- Improved speed of the "prsp" variable selection procedure. 
+SIGNIFICANT USER-VISIBLE CHANGES
+- Simplified user experience by removing the PRSP parameter `minn` that was redundant with `beta`.
+- Simplified user experience by removing the PRSP parameter `L` used in the PRSP variable screening 
+  procedure and for fitting the Survival Bump Hunting model itself that was redundant with the automatic 
+  cross-validation option. The optimal number of peeling steps (optimal peeling sequence length) is 
+  now determined systematically by cross-validation. See manual.
+- Changed name and default value of parameter 'S' in the PRSP variable screening procedure to 'msize' 
+  and NULL, respectively.
+UTILITIES
+- Improved speed of the PRSP variable screening procedure. 
 BUG FIXES
 - NA values are now correctly handled in the internal function `is.empty()`.
-- One-step only peeling (L=1) is now correctly handled by the internal function `prsp()` of the PRSP algorithm.
+- One-step only peeling is now correctly handled by the PRSP algorithm.
+- Vector of peeling steps in S3-generic `predict()` and `plot()` functions now correctly handled.  
 PACKAGE INSTALLATION
-- Minor updates in documentation files (DESCRIPTION and NEWS).
+- Corrections and clarifications in manual and documentation files (Rd files).
+- Updates in documentation files (DESCRIPTION and NEWS).
 - Built and tested under R version 3.4.1 (2017-06-30) and release update to GitHub.
 ---------------------------------------------------------------------------------
 
