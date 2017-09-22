@@ -604,11 +604,11 @@ cv.prsp <- function(X,
    } else {
       Smax <- max(1,floor(p/5))
       msize <- unique(ceiling(seq(from=max(1,floor(Smax/100)), to=Smax, length=min(msize,floor(100*Smax/p)))))
-      cat("Models sizes to be explored by cross-validation: ", msize, "\n", sep="")
+      cat("Models sizes to be explored by cross-validation: ", msize, "\n", sep=" ")
    }
    M <- length(msize)
 
-   # Creating argument `arg` of `cv.prsp.tune` for variable selection parameters
+   # Creating argument `cvarg` of `cv.prsp.tune` for variable selection parameters
    cvarg <- paste("alpha=", alpha,
                   ",beta=", beta,
                   ",L=", Lmax,
