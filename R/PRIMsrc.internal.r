@@ -2138,15 +2138,15 @@ cv.spca <- function(X,
       max.thr <- max.mat[2]
 
       # Trained model used to predict the survival times on the test set
-      fit <- superpc::superpc.predict(object=ws.train,
-                                      data=pca.train.data,
-                                      newdata=pca.test.data,
-                                      prediction.type="continuous",
-                                      threshold=var.thres[max.thr],
-                                      n.components=max.npcs)
+      superpcfit <- superpc::superpc.predict(object=ws.train,
+                                             data=pca.train.data,
+                                             newdata=pca.test.data,
+                                             prediction.type="continuous",
+                                             threshold=var.thres[max.thr],
+                                             n.components=max.npcs)
 
       # List of selected variables (exceeding threshold) used in each fold
-      varsel <- which(fit$which.features)
+      varsel <- which(superpcfit$which.features)
       if (is.empty(varsel)) {
          varsel.list[[k]] <- NA
          varsign.list[[k]] <- NA
@@ -2172,7 +2172,7 @@ cv.spca <- function(X,
          names(rawscor) <- names(scores[ordscor])
          varsign.list[[k]] <- sign(rawscor)
          # Determining the separating threshold of median survival time and formation of the two prognostic groups
-         pred.pcr <- fit$v.pred.1df
+         pred.pcr <- superpcfit$v.pred.1df
          pred.ind <- (pred.pcr <= median(pred.pcr))
       }
       k <- k + 1
