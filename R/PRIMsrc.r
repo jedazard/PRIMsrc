@@ -26,8 +26,6 @@
 #                       cvtype="combined",
 #                       cvarg="alpha=0.01,
 #                              beta=0.05,
-#                              minn=5,
-#                              L=NULL,
 #                              peelcriterion=\"lrt\"",
 #                              cvcriterion=\"cer\"",
 #                       pv=FALSE,
@@ -72,8 +70,6 @@ sbh <- function(X,
                 cvtype="combined",
                 cvarg="alpha=0.01,
                beta=0.05,
-               minn=5,
-               L=NULL,
                peelcriterion=\"lrt\",
                cvcriterion=\"cer\"",
                 pv=FALSE,
@@ -91,13 +87,44 @@ sbh <- function(X,
    # Parsing and evaluating PRSP parameters of SBH
    alpha <- NULL
    beta <- NULL
-   minn <- NULL
-   L <- NULL
    peelcriterion <- NULL
    cvcriterion <- NULL
    eval(parse( text=unlist(strsplit(x=cvarg, split=",")) ))
 
-   # Checking matching of parameters
+   # Checking inputs of data
+   if ((!is.wholenumber(B)) || (B <= 0)) {
+      stop("\n'B' must be a positive integer. Exiting ... \n\n")
+   }
+   if ((!is.wholenumber(K)) || (K <= 0)) {
+      stop("\n'K' must be a positive integer. Exiting ... \n\n")
+   }
+   if ((!is.wholenumber(A)) || (A <= 0)) {
+      stop("\n'A' must be a positive integer. Exiting ... \n\n")
+   }
+   if (missing(X)) {
+      stop("\nNo explanatory variables provided! Exiting ... \n\n")
+   }
+   if (missing(y)) {
+      stop("\nNo outcome variable provided! Exiting ... \n\n")
+   }
+   if (missing(delta)) {
+      stop("\nNo censoring variable provided! Exiting ... \n\n")
+   }
+
+   # Constants
+   n <- nrow(X)
+   p <- ncol(X)
+   if (alpha < 1/n) {
+      cat("Warning: Parameter `alpha` was less than the minimal allowed value and was reset to ", 1/n, ".\n\n", sep="")
+   }
+   alpha <- max(1/n, alpha)                               # Minimal peeling quantile
+   if (beta < 1/n) {
+      cat("Warning: Parameter `beta` was less than the minimal allowed value and was reset to ", 1/n, ".\n\n", sep="")
+   }
+   beta <- max(1/n, beta)                                 # Minimal box support
+   Lmax <- ceiling(log(beta) / log(1 - alpha))            # Maximal possible number of peeling steps
+
+   # Checking inputs of parameters and
    if (vs) {
       vstype <- match.arg(arg=vstype, choices=c("pcqr", "ppl", "spca", "prsp"), several.ok=FALSE)
    } else {
@@ -106,43 +133,24 @@ sbh <- function(X,
    if (cv) {
       cvtype <- match.arg(arg=cvtype, choices=c("combined", "averaged"), several.ok=FALSE)
    } else {
-      cvtype <- NA
+      cvtype <- "combined"
    }
 
-   # Checking inputs
-   B <- as.integer(B)
-   K <- as.integer(K)
-   A <- as.integer(A)
-   if (B <= 0) {
-      stop("\n'B' must be a positive integer. Exiting ... \n\n")
-   }
-   if (K <= 0) {
-      stop("\n'K' must be a positive integer. Exiting ... \n\n")
-   }
-   if (A <= 0) {
-      stop("\n'A' must be a positive integer. Exiting ... \n\n")
-   }
-   if (missing(X)) {
-      stop("\nNo dataset provided! Exiting ... \n\n")
-   }
+   # Preparing the data
    if (!(is.matrix(X))) {
       X <- as.matrix(X)
    }
    mode(X) <- "numeric"
-   n <- nrow(X)
-   p <- ncol(X)
+
+   digits <- getOption("digits")
+   y[y <= 0] <- 10^(-digits)
+
    if (is.null(rownames(X))) {
       rownames(X) <- 1:n
    }
    if (is.null(colnames(X))) {
       colnames(X) <- paste("X", 1:p, sep="")
    }
-   mini <- max(minn, ceiling(beta*n))
-   if (n < mini) {
-      stop("The number of data points must be greater than the threshold of ", mini, " points. Exiting ... \n\n")
-   }
-   digits <- getOption("digits")
-   y[y <= 0] <- 10^(-digits)
 
    # Summarizing user choices
    if (!cv) {
@@ -178,8 +186,6 @@ sbh <- function(X,
    cat("PRSP Peeling criterion: ", toupper(x=peelcriterion), "\n")
    cat("PRSP Peeling percentile: ", alpha*100, "%\n")
    cat("PRSP Minimal box support: ", beta*100, "%\n")
-   cat("PRSP Minimal box sample size: ", minn, "\n")
-   cat("PRSP Maximum peeling length: ", ifelse(is.null(L), yes="AUTOMATIC", no=L), "\n")
    cat("Computation of p-values: ", pv, "\n")
    cat("Decision rule: ", ifelse(onese, yes="1SE", no="EXTREMUM"), "\n")
    if (vs) {
@@ -189,6 +195,7 @@ sbh <- function(X,
    if (pv) {
       cat("Parallelization of computation of p-values:", parallel.pv, "\n")
    }
+   cat("\n")
 
    # Setting the cluster up
    if ((parallel.rep) || (parallel.vs) || (parallel.pv)) {
@@ -219,7 +226,6 @@ sbh <- function(X,
                               vstype=vstype,
                               vsarg=vsarg,
                               cv=cv,
-                              cvtype=cvtype,
                               onese=onese,
                               parallel.vs=parallel.vs,
                               parallel.rep=parallel.rep,
@@ -298,9 +304,9 @@ sbh <- function(X,
                            cvtype=cvtype,
                            cvarg=paste("alpha=", alpha,
                                        ",beta=", beta,
-                                       ",minn=", minn,
-                                       ",L=", ifelse(test=is.null(L), yes="NULL", no=L),
-                                       ",peelcriterion=\"", peelcriterion, "\"", sep=""),
+                                       ",L=", Lmax,
+                                       ",peelcriterion=\"", peelcriterion, "\"",
+                                       ",cvcriterion=\"", cvcriterion, "\"", sep=""),
                            decimals=decimals,
                            probval=probval,
                            timeval=timeval,
@@ -352,7 +358,7 @@ sbh <- function(X,
          dimnames(CV.boxind) <- list(paste("step", 0:(CV.maxsteps-1), sep=""), rownames(X.sel))
 
          # Adjusted maximum peeling length, thresholded by minimal box support, from all replicates
-         CV.maxsteps <- max(which(apply(CV.boxind, 1, function(x) {length(which(x))/n >= max(minn/n, beta)})))
+         CV.maxsteps <- max(which(apply(CV.boxind, 1, function(x) {length(which(x))/n >= max(1/n, beta)})))
 
          # Adjusted cross-validated profiles of peeling steps and optimal peeling lengths from all replicates
          if (!cv) {
@@ -423,14 +429,10 @@ sbh <- function(X,
          } else {
             stop("Invalid CV type option. Exiting ... \n\n")
          }
-         if (!(is.null(L))) {
-            CV.nsteps <- L
+         if (onese) {
+            CV.nsteps <- CV.nsteps.1se
          } else {
-            if (onese) {
-               CV.nsteps <- CV.nsteps.1se
-            } else {
-               CV.nsteps <- CV.nsteps.opt
-            }
+            CV.nsteps <- CV.nsteps.opt
          }
 
          # Adjusted box membership indicator of all observations at each step using the modal or majority vote value over the replicates
@@ -569,9 +571,9 @@ sbh <- function(X,
                                initcutpts=initcutpts,
                                cvarg=paste("alpha=", alpha,
                                            ",beta=", beta,
-                                           ",minn=", minn,
                                            ",L=", CV.nsteps,
-                                           ",peelcriterion=\"", peelcriterion, "\"", sep=""),
+                                           ",peelcriterion=\"", peelcriterion, "\"",
+                                           ",cvcriterion=\"", cvcriterion, "\"", sep=""),
                                obs.chisq=CV.stats$mean$LRT,
                                parallel.pv=parallel.pv,
                                clus.pv=cluster,
@@ -614,6 +616,12 @@ sbh <- function(X,
       parallel::stopCluster(cl=cluster)
    }
 
+   # Returning argument 'cvarg' of PRSP parameters in a list format
+   cvarg <- list("alpha"=alpha,
+                 "beta"=beta,
+                 "peelcriterion"=peelcriterion,
+                 "cvcriterion"=cvcriterion)
+
    # Returning the final 'sbh' object
    return(structure(list("X"=X,
                          "y"=y,
@@ -623,7 +631,7 @@ sbh <- function(X,
                          "A"=A,
                          "vs"=vs,
                          "vstype"=vstype,
-                         "vsarg"=vsarg,
+                         "vsarg"=cv.presel.obj$vsarg,
                          "cv"=cv,
                          "cvtype"=cvtype,
                          "cvarg"=cvarg,
@@ -705,14 +713,6 @@ summary.sbh <- function(object, ...) {
    if (!inherits(object, 'sbh'))
       stop("Primary argument `object` must be an object of class 'sbh'. Exiting ... \n\n")
 
-   alpha <- NULL
-   beta <- NULL
-   minn <- NULL
-   L <- NULL
-   peelcriterion <- NULL
-   cvcriterion <- NULL
-   eval(parse( text=unlist(strsplit(x=object$cvarg, split=",")) ))
-
    cat("\nS3-class object: '", attr(x=object, "class"), "' \n\n")
    if (!object$cv) {
       if (object$B > 1) {
@@ -729,17 +729,19 @@ summary.sbh <- function(object, ...) {
    }
    cat("VARIABLE SCREENING:\n")
    cat("\t Variable screening: ", object$vs, "\n")
-   cat("\t Variable screening technique: ", toupper(x=object$vstype), "\n\n")
+   if (object$vs) {
+      cat("\t Variable screening technique: ", toupper(x=object$vstype), "\n\n")
+   }
    cat("CROSS-VALIDATION:\n")
    cat("\t Cross-validation: ", object$cv, "\n")
-   cat("\t Cross-validation technique: ", toupper(x=object$cvtype), "\n\n")
+   if (object$cv) {
+      cat("\t Cross-validation technique: ", toupper(x=object$cvtype), "\n")
+   }
    cat("PRSP PARAMETERS:\n")
-   cat("\t Cross-validation criterion: ", toupper(x=cvcriterion), "\n")
-   cat("\t Peeling criterion: ", toupper(x=peelcriterion), "\n")
-   cat("\t Peeling percentile: ", alpha*100, "%\n")
-   cat("\t Minimal box support: ", beta*100, "%\n")
-   cat("\t Minimal box sample size: ", minn, "\n")
-   cat("\t Maximum peeling length: ", ifelse(is.null(L), yes="AUTOMATIC", no=L), "\n\n")
+   cat("\t Cross-validation criterion: ", toupper(x=object$cvarg$cvcriterion), "\n")
+   cat("\t Peeling criterion: ", toupper(x=object$cvarg$peelcriterion), "\n")
+   cat("\t Peeling percentile: ", object$cvarg$alpha*100, "%\n")
+   cat("\t Minimal box support: ", object$cvarg$beta*100, "%\n")
    cat("REPORTING:\n")
    cat("\t Decision rule: ", ifelse(object$onese, yes="1SE", no="EXTREMUM"), "\n")
    cat("\t Number of decimals: ", object$decimals, "\n")
@@ -819,6 +821,14 @@ print.sbh <- function(x, ...) {
       print(x$cvfit$cv.boxind)
       cat("\n")
 
+      cat("Variable selection parameters:\n")
+      print(x$vsarg)
+      cat("\n")
+
+      cat("PRSP parameters:\n")
+      print(x$cvarg)
+      cat("\n")
+
    } else {
 
       cat("Either the covariate screening or the Survival Bump Hunting modeling failed for this dataset.\n
@@ -841,7 +851,7 @@ print.sbh <- function(x, ...) {
 #                    plot(x,
 #                         main=NULL,
 #                         proj=c(1,2), splom=TRUE, boxes=FALSE,
-#                         steps=x$cvfit$cv.nsteps,
+#                         steps=1:x$cvfit$cv.nsteps,
 #                         pch=16, cex=0.5, col=, col=2:(length(steps)+1),
 #                         col.box=2:(length(steps)+1), lty.box=rep(2,length(steps)), lwd.box=rep(1,length(steps)),
 #                         add.legend=TRUE,
@@ -864,13 +874,23 @@ print.sbh <- function(x, ...) {
 
 plot.sbh <- function(x,
                      main=NULL,
-                     proj=c(1,2), splom=TRUE, boxes=FALSE,
-                     steps=x$cvfit$cv.nsteps,
-                     pch=16, cex=0.5, col=2:(length(steps)+1),
-                     col.box=2:(length(steps)+1), lty.box=rep(2,length(steps)), lwd.box=rep(1,length(steps)),
+                     proj=c(1,2),
+                     splom=TRUE,
+                     boxes=FALSE,
+                     steps=1:x$cvfit$cv.nsteps,
+                     pch=16,
+                     cex=0.5,
+                     col=2:(length(steps)+1),
+                     col.box=2:(length(steps)+1),
+                     lty.box=rep(2,length(steps)),
+                     lwd.box=rep(1,length(steps)),
                      add.legend=TRUE,
-                     device=NULL, file="Scatter Plot", path=getwd(),
-                     horizontal=FALSE, width=5, height=5, ...) {
+                     device=NULL,
+                     file="Scatter Plot",
+                     path=getwd(),
+                     horizontal=FALSE,
+                     width=5,
+                     height=5, ...) {
 
    if (!inherits(x, 'sbh'))
       stop("Primary argument `x` must be an object of class 'sbh'. Exiting ... \n\n")
@@ -893,39 +913,37 @@ plot.sbh <- function(x,
 
             toplot <- object$cvfit$cv.used[proj]
             varnames <- colnames(object$X)
+            L <- length(steps)
             x <- object$X[,varnames[toplot],drop=FALSE]
             x.names <- colnames(x)
-
-            if (is.null(steps))
-               steps <- object$cvfit$cv.nsteps
-
-            L <- length(steps)
             plot(x=x, type="p", pch=pch, cex=cex, col=1, main=NULL, xlab=x.names[1], ylab=x.names[2], ...)
             if (splom) {
-               for (i in 1:L) {
-                  w <- object$cvfit$cv.boxind[steps[i],]
-                  points(x=object$X[w,varnames[toplot],drop=FALSE], type="p", pch=pch, cex=cex, col=col[i], ...)
+               for (l in 1:L) {
+                  i <- steps[l]
+                  w <- object$cvfit$cv.boxind[i,]
+                  points(x=object$X[w,varnames[toplot],drop=FALSE], type="p", pch=pch, cex=cex, col=col[l], ...)
                }
             }
             if (boxes) {
                x.range <- apply(X=x, MARGIN=2, FUN=range)
-               boxcut <- object$cvfit$cv.rules$mean[steps,varnames[toplot],drop=FALSE]
+               boxcut <- object$cvfit$cv.rules$mean[,varnames[toplot],drop=FALSE]
                varsign <- object$cvfit$cv.sign[varnames[toplot]]
                vertices <- vector(mode="list", length=L)
-               for (i in 1:L) {
-                  vertices[[i]] <- matrix(data=NA, nrow=2, ncol=2, dimnames=list(c("LB","UB"), x.names))
+               for (l in 1:L) {
+                  i <- steps[l]
+                  vertices[[l]] <- matrix(data=NA, nrow=2, ncol=2, dimnames=list(c("LB","UB"), x.names))
                   for (j in 1:2) {
-                     vertices[[i]][1,j] <- ifelse(test=(varsign[j] > 0),
+                     vertices[[l]][1,j] <- ifelse(test=(varsign[j] > 0),
                                                   yes=max(x.range[1,j], boxcut[i,j]),
                                                   no=min(x.range[1,j], boxcut[i,j]))
-                     vertices[[i]][2,j] <- ifelse(test=(varsign[j] < 0),
+                     vertices[[l]][2,j] <- ifelse(test=(varsign[j] < 0),
                                                   yes=min(x.range[2,j], boxcut[i,j]),
                                                   no=max(x.range[2,j], boxcut[i,j]))
                   }
                }
-               for (i in 1:L) {
-                  rect(vertices[[i]][1,1], vertices[[i]][1,2], vertices[[i]][2,1], vertices[[i]][2,2],
-                       border=col.box[i], col=NA, lty=lty.box[i], lwd=lwd.box[i])
+               for (l in 1:L) {
+                  rect(vertices[[l]][1,1], vertices[[l]][1,2], vertices[[l]][2,1], vertices[[l]][2,2],
+                       border=col.box[l], col=NA, lty=lty.box[l], lwd=lwd.box[l])
                }
             }
             if (!is.null(main)) {
@@ -994,8 +1012,8 @@ plot.sbh <- function(x,
 #===============#
 #                   predict(object,
 #                           newdata,
-#                           steps,
-#                           na.action = na.omit, ...)
+#                           steps=1:object$cvfit$cv.nsteps,
+#                           na.action=na.omit, ...)
 #
 #===============#
 # Description   :
@@ -1013,8 +1031,8 @@ plot.sbh <- function(x,
 
 predict.sbh <- function (object,
                          newdata,
-                         steps,
-                         na.action = na.omit, ...) {
+                         steps=1:object$cvfit$cv.nsteps,
+                         na.action=na.omit, ...) {
 
    if (object$success) {
 
@@ -1029,21 +1047,17 @@ predict.sbh <- function (object,
 
       toplot <- object$cvfit$cv.used
       varnames <- colnames(object$X)
-
       if (length(toplot) != p) {
          stop("Non-matching dimensionality of newdata to 'sbh' object of used covariates. Exiting ... \n\n")
       }
-
-      if (missing(steps) || is.null(steps))
-         steps <- object$cvfit$cv.nsteps
-
       L <- length(steps)
-      boxcut <- object$cvfit$cv.rules$mean[steps,varnames[toplot],drop=FALSE]
+      boxcut <- object$cvfit$cv.rules$mean[,varnames[toplot],drop=FALSE]
       varsign <- object$cvfit$cv.sign[varnames[toplot]]
 
       pred.boxind <- matrix(NA, nrow=L, ncol=n, dimnames=list(paste("step ", steps, sep=""), rownames(x)))
       for (l in 1:L) {
-         boxcutsign <- boxcut[l, ] * varsign
+         i <- steps[l]
+         boxcutsign <- boxcut[i,] * varsign
          x.cut <- t(t(x) * varsign)
          x.ind <- t(t(x.cut) >= boxcutsign)
          pred.boxind[l,] <- (rowMeans(x.ind) == 1)  # Set as TRUE which observations are inside the box boundaries for all axes directions
@@ -1051,13 +1065,14 @@ predict.sbh <- function (object,
 
       pred.vertices <- vector(mode="list", length=L)
       names(pred.vertices) <- paste("step ", steps, sep="")
-      for (i in 1:L) {
-         pred.vertices[[i]] <- matrix(data=NA, nrow=2, ncol=p, dimnames=list(c("LB","UB"), x.names))
+      for (l in 1:L) {
+         i <- steps[l]
+         pred.vertices[[l]] <- matrix(data=NA, nrow=2, ncol=p, dimnames=list(c("LB","UB"), x.names))
          for (j in 1:p) {
-            pred.vertices[[i]][1,j] <- ifelse(test=(varsign[j] > 0),
+            pred.vertices[[l]][1,j] <- ifelse(test=(varsign[j] > 0),
                                               yes=max(x.range[1,j], boxcut[i,j]),
                                               no=min(x.range[1,j], boxcut[i,j]))
-            pred.vertices[[i]][2,j] <- ifelse(test=(varsign[j] < 0),
+            pred.vertices[[l]][2,j] <- ifelse(test=(varsign[j] < 0),
                                               yes=min(x.range[2,j], boxcut[i,j]),
                                               no=max(x.range[2,j], boxcut[i,j]))
          }
@@ -1109,11 +1124,22 @@ predict.sbh <- function (object,
 
 plot_profile <- function(object,
                          main=NULL,
-                         xlim=NULL, ylim=NULL,
-                         add.sd=TRUE, add.legend=TRUE, add.profiles=TRUE,
-                         pch=20, col=1, lty=1, lwd=0.5, cex=0.5,
-                         device=NULL, file="Profile Plots", path=getwd(),
-                         horizontal=FALSE, width=8.5, height=5.0, ...) {
+                         xlim=NULL,
+                         ylim=NULL,
+                         add.sd=TRUE,
+                         add.legend=TRUE,
+                         add.profiles=TRUE,
+                         pch=20,
+                         col=1,
+                         lty=1,
+                         lwd=0.5,
+                         cex=0.5,
+                         device=NULL,
+                         file="Profile Plots",
+                         path=getwd(),
+                         horizontal=FALSE,
+                         width=8.5,
+                         height=5.0, ...) {
 
    if (!inherits(object, 'sbh'))
       stop("Primary argument `object` must be an object of class 'sbh'. Exiting ... \n\n")
@@ -1126,15 +1152,7 @@ plot_profile <- function(object,
                                  add.sd, add.legend, add.profiles,
                                  pch, col, lty, lwd, cex, ...) {
 
-            # Parsing and evaluating PRSP parameters of SBH to retrieve 'cvcriterion' for CV of peeling length
-            alpha <- NULL
-            beta <- NULL
-            minn <- NULL
-            L <- NULL
-            peelcriterion <- NULL
-            cvcriterion <- NULL
-            eval(parse( text=unlist(strsplit(x=object$cvarg, split=",")) ))
-
+            cvcriterion <- object$cvarg$cvcriterion
             if (cvcriterion == "lhr") {
                txt <- "LHR"
             } else if (cvcriterion == "lrt") {
@@ -1159,42 +1177,10 @@ plot_profile <- function(object,
                } else {
                   cv.varset <- object$cvprofiles$cv.varset.opt
                }
-
-               # Parsing and evaluating PRSP parameters of SBH to retrieve 'S' for CV of variable selection
-               alpha <- NULL
-               beta <- NULL
-               minn <- NULL
-               L <- NULL
-               S <- NULL
-               peelcriterion <- NULL
-               cvcriterion <- NULL
-               vscons <- NULL
-               eval(parse( text=unlist(strsplit(x=object$vsarg, split=",")) ))
-
-               # Grid of cardinals of top-ranked variables subsets
-               n <- nrow(object$X)
-               p <- ncol(object$X)
-               Lmax <- ceiling(log(1/n) / log(1 - (1/n)))
-               if (!is.null(L)) {
-                  L <- max(1,floor(L))
-                  if (L > Lmax) {
-                     L <- min(Lmax, L)
-                  }
-               }
-               Smax <- max(1,floor(p))
-               if (!is.null(S)) {
-                  S <- max(1,floor(S))
-                  if (S > Smax) {
-                     S <- min(Smax, S)
-                  }
-                  size <- S
-               } else {
-                  S <- max(1,floor(p/5))
-                  size <- unique(ceiling(seq(from=max(1,floor(S/100)), to=S, length=min(S,floor(100*S/p)))))
-               }
+               msize <- object$vsarg$msize
 
                if (is.null(xlim)) {
-                  xlimv <- range(size, na.rm=TRUE)
+                  xlimv <- range(msize, na.rm=TRUE)
                } else {
                   xlimv <- xlim
                }
@@ -1209,22 +1195,22 @@ plot_profile <- function(object,
                           ylim=ylimv, pch=pch, lty=1, lwd=lwd/4, cex=cex/4, ...)
                   par(new=TRUE)
                }
-               plot(x=size, y=varprofiles.mean, type="b", axes=FALSE,
+               plot(x=msize, y=varprofiles.mean, type="b", axes=FALSE,
                     main="CV Tuning Profiles of Variable Screening Size", cex.main=0.8,
                     xlab="Cardinals of Top-Ranked Variables Subsets", ylab=paste(txt, " Mean Profiles", sep=""),
                     xlim=xlimv, ylim=ylimv,
                     pch=pch, col=col, lty=lty, lwd=lwd, cex=cex, ...)
-               axis(side=1, pos=min(ylimv), at=size, labels=size, col=1, cex.axis=1, cex.axis=1, line=NA)
+               axis(side=1, pos=min(ylimv), at=msize, labels=msize, col=1, cex.axis=1, cex.axis=1, line=NA)
                axis(side=2, pos=min(xlimv), at=pretty(ylimv), col=1, col.axis=1, cex.axis=1, line=NA)
-               segments(x0=size[cv.varset], y0=min(ylimv),
-                        x1=size[cv.varset], y1=varprofiles.mean[cv.varset],
+               segments(x0=msize[cv.varset], y0=min(ylimv),
+                        x1=msize[cv.varset], y1=varprofiles.mean[cv.varset],
                         col=col, lty=2, lwd=lwd)
                if (add.sd) {
-                  arrows(size, varprofiles.mean,
-                         size, varprofiles.mean - varprofiles.se,
+                  arrows(msize, varprofiles.mean,
+                         msize, varprofiles.mean - varprofiles.se,
                          length=0.03, angle=90, code=2, col=col, lwd=lwd)
-                  arrows(size, varprofiles.mean,
-                         size, varprofiles.mean + varprofiles.se,
+                  arrows(msize, varprofiles.mean,
+                         msize, varprofiles.mean + varprofiles.se,
                          length=0.03, angle=90, code=2, col=col, lwd=lwd)
                }
                if (add.legend) {
@@ -1376,12 +1362,23 @@ plot_profile <- function(object,
 plot_boxtraj <- function(object,
                          main=NULL,
                          toplot=object$cvfit$cv.used,
-                         col.cov, lty.cov, lwd.cov,
-                         col=1, lty=1, lwd=0.5, cex=0.5,
-                         add.legend=FALSE, text.legend=NULL,
-                         nr=NULL, nc=NULL,
-                         device=NULL, file="Trajectory Plots", path=getwd(),
-                         horizontal=FALSE, width=8.5, height=11, ...) {
+                         col.cov,
+                         lty.cov,
+                         lwd.cov,
+                         col=1,
+                         lty=1,
+                         lwd=0.5,
+                         cex=0.5,
+                         add.legend=FALSE,
+                         text.legend=NULL,
+                         nr=NULL,
+                         nc=NULL,
+                         device=NULL,
+                         file="Trajectory Plots",
+                         path=getwd(),
+                         horizontal=FALSE,
+                         width=8.5,
+                         height=11, ...) {
 
    if (!inherits(object, 'sbh'))
       stop("Primary argument must be an object of class 'sbh' \n")
@@ -1593,14 +1590,26 @@ plot_boxtraj <- function(object,
 
 plot_boxtrace <- function(object,
                           main=NULL,
-                          xlab="Box Mass", ylab="Covariate Range (centered)",
+                          xlab="Box Mass",
+                          ylab="Covariate Range (centered)",
                           toplot=object$cvfit$cv.used,
-                          center=TRUE, scale=FALSE,
-                          col.cov, lty.cov, lwd.cov,
-                          col=1, lty=1, lwd=0.5, cex=0.5,
-                          add.legend=FALSE, text.legend=NULL,
-                          device=NULL, file="Covariate Trace Plots", path=getwd(),
-                          horizontal=FALSE, width=8.5, height=8.5, ...) {
+                          center=TRUE,
+                          scale=FALSE,
+                          col.cov,
+                          lty.cov,
+                          lwd.cov,
+                          col=1,
+                          lty=1,
+                          lwd=0.5,
+                          cex=0.5,
+                          add.legend=FALSE,
+                          text.legend=NULL,
+                          device=NULL,
+                          file="Covariate Trace Plots",
+                          path=getwd(),
+                          horizontal=FALSE,
+                          width=8.5,
+                          height=8.5, ...) {
 
    if (!inherits(object, 'sbh'))
       stop("Primary argument must be an object of class 'sbh' \n")
@@ -1766,13 +1775,23 @@ plot_boxtrace <- function(object,
 
 plot_boxkm <- function(object,
                        main=NULL,
-                       xlab="Time", ylab="Probability",
-                       precision=1e-3, mark=3,
-                       col=2, lty=1, lwd=0.5, cex=0.5,
+                       xlab="Time",
+                       ylab="Probability",
+                       precision=1e-3,
+                       mark=3,
+                       col=2,
+                       lty=1,
+                       lwd=0.5,
+                       cex=0.5,
                        steps=1:object$cvfit$cv.nsteps,
-                       nr=3, nc=4,
-                       device=NULL, file="Survival Plots", path=getwd(),
-                       horizontal=TRUE, width=11, height=8.5, ...) {
+                       nr=3,
+                       nc=4,
+                       device=NULL,
+                       file="Survival Plots",
+                       path=getwd(),
+                       horizontal=TRUE,
+                       width=11,
+                       height=8.5, ...) {
 
    if (!inherits(object, 'sbh'))
       stop("Primary argument must be an object of class 'sbh' \n")
@@ -1789,11 +1808,14 @@ plot_boxkm <- function(object,
          } else {
             par(mfrow=c(nr, nc), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 0.0, 1.5), mgp=c(1.5, 0.5, 0))
          }
+
          y <- object$y
          delta <- object$delta
-         L <- object$cvfit$cv.nsteps
-         for (l in steps) {
-            boxind <- object$cvfit$cv.boxind[l,]
+         L <- length(steps)
+
+         for (l in 1:L) {
+            i <- steps[l]
+            boxind <- object$cvfit$cv.boxind[i,]
             ng <- length(unique(boxind[!is.na(boxind)]))
             if (ng == 1) {
                boxind <- 1*boxind
@@ -1801,7 +1823,7 @@ plot_boxkm <- function(object,
                boxind <- 2 - 1*boxind
             }
             surv <- survival::survfit(survival::Surv(time=y, event=delta) ~ 1 + boxind)
-            if (l == 1) {
+            if (i == 1) {
                plot(surv, main="", conf.int=TRUE, mark.time=FALSE, mark=NA, lty=2, lwd=lwd, col=col, cex=cex, xlab=xlab, ylab=ylab, ...)
                par(new=TRUE)
                plot(surv, main="", conf.int=FALSE, mark.time=TRUE, mark=mark, lty=lty, lwd=lwd, col=col, cex=cex, xlab=xlab, ylab=ylab, ...)
@@ -1812,19 +1834,19 @@ plot_boxkm <- function(object,
             }
             legend("topright", inset=0.01, legend=c("outbox", "inbox"), lty=c(lty,lty), lwd=c(lwd,lwd), col=c(1,2), cex=0.9*cex)
             if (object$pv) {
-               if (object$cvfit$cv.pval$pval[l] <= precision) {
+               if (object$cvfit$cv.pval$pval[i] <= precision) {
                   legend("bottom", inset=0.11, col="black", cex=0.9*cex, bty="n",
                          legend=bquote(italic(p) <= .(precision)))
                } else {
                   legend("bottom", inset=0.11, col="black", cex=0.9*cex, bty="n",
-                         legend=bquote(italic(p) == .(format(x=object$cvfit$cv.pval$pval[l], scientific=FALSE, digits=4, nsmall=4))))
+                         legend=bquote(italic(p) == .(format(x=object$cvfit$cv.pval$pval[i], scientific=FALSE, digits=4, nsmall=4))))
                }
             }
             legend("bottom", inset=0.01, col="black", cex=0.9*cex, bty="n",
-                   legend=substitute(group("", list(paste(italic(LHR) == x, sep="")), ""), list(x=format(x=object$cvfit$cv.stats$mean$LHR[l], digits=3, nsmall=3))))
+                   legend=substitute(group("", list(paste(italic(LHR) == x, sep="")), ""), list(x=format(x=object$cvfit$cv.stats$mean$LHR[i], digits=3, nsmall=3))))
             legend("bottom", inset=0.06, col="black", cex=0.9*cex, bty="n",
-                   legend=substitute(group("", list(paste(italic(LRT) == x, sep="")), ""), list(x=format(x=object$cvfit$cv.stats$mean$LRT[l], digits=3, nsmall=3))))
-            legend("bottom", inset=0.16, legend=paste("Step ", l-1, sep=""), col=1, cex=0.9*cex, bty="n")
+                   legend=substitute(group("", list(paste(italic(LRT) == x, sep="")), ""), list(x=format(x=object$cvfit$cv.stats$mean$LRT[i], digits=3, nsmall=3))))
+            legend("bottom", inset=0.16, legend=paste("Step ", i-1, sep=""), col=1, cex=0.9*cex, bty="n")
          }
          if (!is.null(main)) {
             mtext(text=main, cex=1, side=3, outer=TRUE)
