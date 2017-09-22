@@ -19,7 +19,7 @@
      proj = c(1,2), 
      splom = TRUE, 
      boxes = FALSE,
-     steps = x$cvfit$cv.nsteps,
+     steps = 1:x$cvfit$cv.nsteps,
      pch = 16, 
      cex = 0.5, 
      col = 2:(length(steps)+1), 
@@ -29,7 +29,7 @@
      add.legend = TRUE, 
      device = NULL, 
      file = "Scatter Plot", 
-     path=getwd(), 
+     path = getwd(), 
      horizontal = FALSE, 
      width = 5, 
      height = 5, ...)
@@ -54,7 +54,7 @@
   }
   \item{steps}{
     \code{Integer} \code{vector}. Vector of peeling steps at which to plot the in-box samples and box vertices. 
-    Defaults to the last peeling step of \code{sbh} object.
+    Defaults to all the peeling steps of \code{sbh} object \code{x}.
   }
   \item{pch}{
     \code{Integer} scalar of symbol number for the scatter plot. Defaults to 16.

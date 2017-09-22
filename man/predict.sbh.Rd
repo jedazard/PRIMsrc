@@ -14,7 +14,7 @@
 \usage{
   \method{predict}{sbh}(object, 
         newdata, 
-        steps, 
+        steps = 1:object$cvfit$cv.nsteps, 
         na.action = na.omit, ...)
 }
 
@@ -29,7 +29,7 @@
   }
   \item{steps}{
     \code{Integer} \code{vector}. Vector of peeling steps at which to predict the box memberships 
-    and box vertices. Defaults to the last peeling step only.
+    and box vertices. Defaults to all the peeling steps of \code{sbh} object \code{object}.
   }
   \item{na.action}{
     A function to specify the action to be taken if NAs are found.

@@ -28,7 +28,7 @@
                nc = NULL,
                device = NULL, 
                file = "Trajectory Plots", 
-               path=getwd(), 
+               path = getwd(), 
                horizontal = FALSE, 
                width = 8.5, 
                height = 11, ...)

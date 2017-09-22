@@ -26,7 +26,7 @@
              nc = 4,
              device = NULL, 
              file = "Survival Plots", 
-             path=getwd(), 
+             path = getwd(), 
              horizontal = TRUE, 
              width = 11, 
              height = 8.5, ...)
@@ -40,10 +40,10 @@
     \code{Character} \code{vector}. Main Title. Defaults to \code{NULL}.
   }
   \item{xlab}{
-    \code{Character} \code{vector}. x-axis label. Defaults to "Time".
+    \code{Character} \code{vector}. X-axis label. Defaults to "Time".
   }
   \item{ylab}{
-    \code{Character} \code{vector}. y-axis label. Defaults to "Probability".
+    \code{Character} \code{vector}. Y-axis label. Defaults to "Probability".
   }
   \item{precision}{
     Precision of log-rank \eqn{p}-values of separation between two survival curves.

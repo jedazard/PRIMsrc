@@ -30,7 +30,7 @@
                 text.legend = NULL,
                 device = NULL, 
                 file = "Covariate Trace Plots", 
-                path=getwd(), 
+                path = getwd(), 
                 horizontal = FALSE, 
                 width = 8.5, 
                 height = 8.5, ...)
@@ -44,10 +44,10 @@
     \code{Character} \code{vector}. Main Title. Defaults to.
   }
   \item{xlab}{
-    \code{Character} \code{vector}. x-axis label. Defaults to "Box Mass".
+    \code{Character} \code{vector}. X-axis label. Defaults to "Box Mass".
   }\code{NULL}
   \item{ylab}{
-    \code{Character} \code{vector}. y-axis label. Defaults to "Covariate Range (centered)".
+    \code{Character} \code{vector}. Y-axis label. Defaults to "Covariate Range (centered)".
   }
   \item{toplot}{
     \code{Numeric} \code{vector}. Which of the pre-selected covariates to plot (in reference to the original index of covariates).

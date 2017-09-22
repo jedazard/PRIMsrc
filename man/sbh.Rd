@@ -29,8 +29,6 @@
       cvtype = "combined", 
       cvarg = "alpha=0.01,
                beta=0.05,
-               minn=5,
-               L=NULL,
                peelcriterion=\"lrt\",
                cvcriterion=\"cer\"",
       pv = FALSE,
@@ -65,7 +63,7 @@
     \item{K}{
         Postitive \code{integer} of the number of cross-validation folds (partitions) into which the total number 
         of observations (\eqn{n}) should be randomly split. \code{K} must be bigger than 2 for a regular \code{K}-fold 
-        cross-validation procedure to work and should be greater than 3  for a regular procedure to make sense; 
+        cross-validation procedure to work and should be greater than 3 for a regular procedure to make sense; 
         \code{K} \eqn{\in} \{5,...,10\} is recommended; defaults to \code{K}=5. Setting \code{K} also specifies the type 
         of cross-validation to be done:
         \itemize{
@@ -84,41 +82,35 @@
     }
     \item{vstype}{
         \code{character} \code{vector} in \{"prsp", "pcqr", "ppl", "spca"\} of one of the four possible variable screening 
-        (pre-selection) procedure. See details below. Defaults to "ppl". Reset to \code{NA} if \code{vs} is \code{FALSE}.    
+        (pre-selection) procedure. See details below. Defaults to "ppl". Ignored if \code{vs} is \code{FALSE}.    
     }
     \item{vsarg}{
         \code{Character} \code{vector} of parameters of the cross-validated variable screening (pre-selection) procedure. 
         Defaults to parameters values of default variable screening (pre-selection) procedure "ppl": 
-        \code{vsarg="alpha=1,nalpha=1,nlambda=100,vscons=0.5"}. Note that \code{vsarg} comes as a characters string between 
-        double quotes, with comas separated values without white spaces. All the following parameters are ignored 
+        \code{vsarg="alpha=1,nalpha=1,nlambda=100,vscons=0.5"}. Note that \code{vsarg} comes as a character string between 
+        double quotes, with comas separated values, and without white spaces. All the following parameters are ignored 
         if \code{vs} is \code{FALSE}.\cr
         PRSP: 
         \itemize{
             \item{\code{alpha}} = \code{numeric} data quantile in (0,1) to peel off at each step of the peeling 
-                sequence of the PRSP algorithm. 
-                Suggests 0.01.
+                sequence of the PRSP algorithm. Suggests 0.01.
             \item{\code{beta}} = \code{numeric} scalar of minimum box support at the end of the peeling sequence. 
                 Suggests 0.05.
-            \item{\code{minn}} = positive \code{integer} of minimum number of observations in the box at the end 
-                of the peeling sequence. 
-                Suggests 5.
-            \item{\code{L}} = positive \code{integer} of maximum peeling length set by user within the allowable range 
-                [1,\code{ceiling}(\code{log}(1/\eqn{n}) / \code{log}(1 - (1/\eqn{n})))]. See below for details and 
-                the meaning of \code{L}=\code{NULL}.
-                Suggests \code{NULL}.
-            \item{\code{S}} = positive \code{integer} of maximum size (cardinal) of subset of top-screened variables within the 
-                allowable range [1,\code{floor}(\eqn{p})]. See below for details and the meaning of \code{S}=\code{NULL}.
-                Suggests \code{floor}(\eqn{p}/5).
+            \item{\code{msize}} = positive \code{integer} or \code{NULL} to control the model size, i.e the number of 
+                screened variables used for fitting the Survival Bump Hunting model. Use a single non-\code{NULL} value
+                as the maximum model size (cardinal of subset of top-screened variables) within the allowable range 
+                [1,\code{floor}(\eqn{p})]. Alternatively, use \code{msize=NULL} to allow the optimal model size to be 
+                determined by cross-validation. See below for details. Suggests \code{NULL}.
             \item{\code{peelcriterion}} in \{"lhr", "lrt", "chs"\} peeling criterion Log-Hazard Ratio (LHR), 
                 Log-Rank Test (LRT), or Cumulative Hazard Summary (CHS), respectively, that is used in the PRSP algorithm. 
                 Suggests "lrt".
-            \item{\code{peelcriterion}} in \{"lhr", "lrt", "chs"\} stands for the peeling criterion Log-Hazard Ratio (LHR), 
-                Log-Rank Test (LRT), or Cumulative Hazard Summary (CHS), respectively, that is used in the PRSP algorithm. 
-                Suggests "lrt".
             \item{\code{cvcriterion}} in \{"lhr", "lrt", "cer"\} stands for the cross-validation criterion Log-Hazard Ratio (LHR),
-                Log-Rank Test (LRT), or Concordance Error Rate (CER), respectively, that is used for tuning/optimizing 
-                the variables screening size in the PRSP variable screening procedure. 
-                Suggests "cer".
+                Log-Rank Test (LRT), or Concordance Error Rate (CER), respectively, that is used for optimizing the 
+                model size (cardinal of subset of top-screened variables) and the optimal number of peeling steps 
+                (optimal peeling sequence length) in the PRSP variable screening procedure. Suggests "cer".
+            \item{\code{vscons}} = \code{numeric} scalar in [1/\code{K}, 1], specifying the conservativeness of 
+                the variable screening (pre-selection) procedure, where 1/\code{K} is the least conservative 
+                and 1 is the most. Suggests 0.5.
         }
         PCQR: 
         \itemize{
@@ -170,44 +162,38 @@
                 the variable screening (pre-selection) procedure, where 1/\code{K} is the least conservative 
                 and 1 is the most. Suggests 0.5.
         }
-    } 
+    }
     \item{cv}{
-        \code{logical} scalar. Flag for optional cross-validation (CV) of parameters of variable screening 
-        (pre-selection) and variable usage (selection) by PRSP algorithm. Defaults to \code{TRUE}. 
-        If \code{FALSE}, no cross-validation at will be performed, the value of \code{K} 
-        will be overwritten to 1, and traditional log-rank Mantel-Haenszel \eqn{p}-values will be computed
-        (using the Chi-Squared distribution with 1 df for the null distribution) instead of
-        log-rank permutation \eqn{p}-values (using the permutation distribution for the null distribution).
+        \code{logical} scalar. Flag for optional cross-validation (CV) of variable screening (pre-selection) 
+        parameters and Survival Bump Hunting fitting by PRSP algorithm. Defaults to \code{TRUE}. If \code{TRUE},
+        the optimal number of peeling steps (optimal peeling sequence length) and the optimal model size (cardinal 
+        of subset of top-screened variables) will be determined by cross-validation. See below for details. 
+        If \code{FALSE}, no cross-validation at will be performed, the value of \code{K} will be overwritten to 1, 
+        and traditional log-rank Mantel-Haenszel \eqn{p}-values will be computed (using the Chi-Squared distribution 
+        with 1 df for the null distribution) instead of log-rank permutation \eqn{p}-values (using the permutation 
+        distribution for the null distribution).
     }
     \item{cvtype}{
         \code{character} \code{vector} in \{"combined", "averaged"\} specifying the cross-validation technique.
-        Defaults to "combined". Reset to \code{NA} if \code{cv} is \code{FALSE}.
+        Defaults to "combined". Ignored if \code{cv} is \code{FALSE}.
     }
     \item{cvarg}{
-        \code{character} \code{vector} describing the parameters used in the PRSP algorithm of the 
-        Survival Bump Hunting function. Defaults to: \cr 
-        \code{cvarg="alpha=0.01,beta=0.05,minn=5,L=NULL,peelcriterion=\"lrt\",cvcriterion=\"cer\""}. 
-        Note that \code{cvarg} comes as a characters string between double quotes, with comas separated values 
+        \code{character} \code{vector} describing the parameters used in the PRSP algorithm for fitting the 
+        Survival Bump Hunting model. Defaults to: \cr 
+        \code{cvarg="alpha=0.01,beta=0.05,peelcriterion=\"lrt\",cvcriterion=\"cer\""}. 
+        Note that \code{cvarg} comes as a character string between double quotes, with comas separated values, and 
         without white spaces.
         \itemize{ 
             \item{\code{alpha}} = \code{numeric} data quantile in (0,1) to peel off at each step of the peeling
-                sequence of the PRSP algorithm. 
-                Defaults to 0.01.
+                sequence of the PRSP algorithm. Defaults to 0.01.
             \item{\code{beta}} = \code{numeric} scalar of minimum box support at the end of the peeling sequence. 
                 Defaults to 0.05.
-            \item{\code{minn}} = positive \code{integer} of minimum number of observations in the box at the end 
-                of the peeling sequence. 
-                Defaults to 5.
-            \item{\code{L}} = positive \code{integer} of maximum peeling length set by user within the allowable range 
-                [1,\code{ceiling}(\code{log}(1/\eqn{n}) / \code{log}(1 - (1/\eqn{n})))]. See below for details and 
-                the meaning of \code{L}=\code{NULL}.
-                Defaults to \code{NULL}.
             \item{\code{peelcriterion}} in \{"lhr", "lrt", "chs"\} stands for the peeling criterion Log-Hazard Ratio (LHR), 
                 Log-Rank Test (LRT), or Cumulative Hazard Summary (CHS), respectively, that is used in the PRSP algorithm. 
                 Defaults to "lrt".
             \item{\code{cvcriterion}} in \{"lhr", "lrt", "cer"\} stands for the cross-validation criterion Log-Hazard Ratio (LHR),
                 Log-Rank Test (LRT), or Concordance Error Rate (CER), respectively, that is used for tuning/optimizing 
-                the optimal peeling sequence length (i.e. optimal number of peeling steps) in the PRSP algorithm. 
+                the optimal number of peeling steps (i.e. optimal peeling sequence length) in the PRSP algorithm. 
                 Defaults to "cer". Ignored if \code{cv} is \code{FALSE}.
         }
     }
@@ -263,7 +249,8 @@
 
 \details{
     At this point, the main function \code{sbh} relies on an optional variable screening (pre-selection) procedure that is run 
-    before the variable usage (selection) procedure is done by our PRSP algorithm. User can choose between four possible procedures:
+    before the variable usage (selection) procedure is done at the time of fitting the Survival Bump Hunting (SBH) model 
+    itself using our PRSP algorithm. User can choose between four possible procedures:
     \itemize{
         \item Patient Recursive Survival Peeling (PRSP) (by univariate screening of our algorithm)
         \item Penalized Censored Quantile Regression (PCQR) (by Semismooth Newton Coordinate Descent fiting 
@@ -272,26 +259,32 @@
         \item Supervised Principal Component Analysis (SPCA) (by Supervised Principal Component adapted from 
               package \pkg{superpc})
     }
-    The recommendation is to use PPL or SPCA because of computational efficiency. Variable screening (pre-selection) is done 
-    by computing occurrence frequencies of top-ranking variables over the cross-validation folds and replicates. 
-    The conservativeness of the procedure is controled by the argument \code{vscons}. Example of calls for pre-selection are as follows:
+    In case of high-dimensional data (\eqn{p >> n}), the recommendation is to use PPL or SPCA because of computational efficiency. 
+    Variable screening (pre-selection) is done by computing occurrence frequencies of top-ranking variables over the cross-validation 
+    folds and replicates. The conservativeness of the procedure is controled by the argument \code{vscons}. Example of \code{vscons} 
+    values for pre-selection are as follows:
     \itemize{
         \item{`1.0` represents a presence in all the folds (unanimity vote)}
         \item{`0.5` represents a presence in at least half of the folds (majority vote)}
         \item{`1/\code{K}` represents a presence in at least one of the folds (minority vote)}
     }
-    Although any value in the interval [1/\code{K},1] is accepted, we recommand using the interval [1/\code{K},1/2] to avoid excessive 
-    conservativeness. Final variable usage (selection) is done after running our PRSP algorithm on previously screened variables 
-    by collecting those variables that have the maximum occurrence frequency in each peeling step over cross-validation folds and replicates.
+    Although any value in the interval [1/\code{K},1] is accepted, we recommand using the interval [1/\code{K},1/2] to avoid 
+    excessive conservativeness. Final variable usage (selection) is done at the time of fitting the Survival Bump Hunting (SBH) model 
+    itself using our PRSP algorithm on previously screened variables by collecting those variables that have the maximum occurrence 
+    frequency in each peeling step over cross-validation folds and replicates.
     
-    In the PRSP variable selection procedure (\code{vsarg}). Setting \code{S} to a value within the allowable range [1,\code{floor}(\eqn{p})] 
-    will override the cross-validation procedure that determines the optimal size (cardinal) of subset of top-screened variables, 
-    but will also reduce computational burden. Setting \code{S} to \code{NULL} will automaticaly generate a vector of values within 
-    the restricted range [1,\code{floor}(\eqn{p}/5)] that will be used to determine the optimal size (cardinal) of subset of top-screened variables 
-    by cross-validation. Setting \code{L} to a single value within the allowable range [1,\code{ceiling}(\code{log}(1/\eqn{n}) / \code{log}(1 - (1/\eqn{n})))] 
-    will override the internal peeling stopping rule of the PRSP algorithm and arbitrarily fix the maximal number of peeling steps to that value. 
-    Note that the upper bound of the allowable range is further restricted in case of cross-validation and when any of the metaparameters 
-    \{\code{alpha}, \code{beta}\} takes on the smallest possible fraction of the training data i.e. \eqn{\frac{1}{n^t}}, 
+    In the PRSP variable screening procedure (\code{vsarg} of "prsp"), setting option \code{msize} to a single non-\code{NULL} value 
+    within the allowable range [1,\code{floor}(\eqn{p})] will override the cross-validation setting within the variable screening
+    procedure, but will also reduce computational burden. This could be recommended for high-dimensional data (\eqn{p >> n}), 
+    where we suggest an arbitrary value of \code{msize} within [\code{floor}(\eqn{p}/20), \code{floor}(\eqn{p}/5)]. Conversely, 
+    setting \code{msize=NULL} will force the cross-validation within the variable screening procedure by automaticaly generating a 
+    vector of model sizes (cardinals of subset of top-screened variables) within the restricted range [1,\code{floor}(\eqn{p}/5)] 
+    that will be used to determine the optimal value of model size.
+    
+    In fitting the Survival Bump Hunting (SBH) model itself, note that the result contains initial step #0, which corresponds 
+    to the entire set of the (training) data. Also, the number of peeling steps that is within the allowable range 
+    [1,\code{ceiling}(\code{log}(1/\eqn{n}) / \code{log}(1 - (1/\eqn{n})))] is further restricted when either of the metaparameter 
+    \code{alpha} or \code{beta} takes on values other than the smallest possible fraction of the (training) data, i.e. \eqn{\frac{1}{n^t}}, 
     where \eqn{n^t} is the training sample size:
     \itemize{
         \item{\code{ceiling}(\code{log}(\code{beta}) / \code{log}(1 - \code{alpha}))  : \code{alpha} and \code{beta} fixed by user}
@@ -299,24 +292,18 @@
         \item{\code{ceiling}(\code{log}(\code{beta}) / \code{log}(1 - (1/\eqn{n^t}))) : \code{alpha} fixed by data and \code{beta} fixed by user}
         \item{\code{ceiling}(\code{log}(1/\eqn{n^t}) / \code{log}(1 - (1/\eqn{n^t}))) : \code{alpha} and \code{beta} fixed by data}
     }
-    Setting \code{L} to \code{NULL} will let the maximal number of peeling steps be internally determined by the peeling stopping rule of 
-    the PRSP algorithm.
+
+    When cross-validation is requested (\code{cv=TRUE}), the function performs a supervised (stratified) random splitting of the observations 
+    accounting for the classes/strata provided by \code{delta} (censoring). This is because it is desireable that the data splitting balances 
+    the class distributions of the outcome within the cross-validation splits. For each screening method and for building the final 
+    Survival Bump Hunting (SBH) model, all model tuning parameters are simultaneously estimated by cross-validation. The function offers a 
+    number of options for the cross-validation to be perfomed: the number of replications \code{B}; the type of technique; the peeling 
+    criterion; and the optimization criterion.
     
-    In the PRSP algorithm itself (\code{cvarg}), setting \code{L} to a non-\code{NULL} value (within the allowable range) 
-    will override the cross-validation procedure, but will also reduce computational burden. Setting \code{L} to \code{NULL} will let 
-    the optimal peeling sequence length be determined by cross-validation.
-    
-    If a cross-validation is requested, the function performs a supervised (stratified) random splitting of the data based on the outcome, 
-    which is in that case the \code{delta} argument. This is because it is desireable that the data splitting balances the class 
-    distributions of the outcome (events) within the cross-validation splits. For each screening method and for building (by PRSP algorithm) 
-    the final Survival Bump Hunting (SBH) model, all model tuning parameters are simultaneously estimated by cross-validation. 
-    The function offers a number of options for the cross-validation to be perfomed: the number of replications \code{B}; the type of technique; 
-    the peeling criterion; and the optimization criterion.
-    
-    The returned S3-class \code{sbh} object contains cross-validated estimates of all the decision-rules of used (selected) covariates and 
-    all other statistical quantities of interest at each iteration of the peeling sequence (inner loop of the PRSP algorithm).
-    This enables the graphical display of results of profiling curves for model tuning, peeling trajectories, covariate traces and 
-    survival distributions (see plotting functions for more details).
+    The returned S3-class \code{sbh} object contains cross-validated estimates of all the decision-rules of used (selected) covariates 
+    and all other statistical quantities of interest at each iteration of the peeling sequence (inner loop of the PRSP algorithm).
+    This enables the graphical display of results of profiling curves for model tuning, peeling trajectories, covariate traces and survival 
+    distributions (see plotting functions for more details).
 
     In case replicated cross-validations are performed, a "summary report" of the outputs is done over the \code{B} replicates as follows:
     \itemize{
@@ -336,24 +323,27 @@
     as it may take a while. In case of large (\eqn{p > n}) or very large (\eqn{p >> n}) datasets, it is also highly recommended to use the 
     parallelization option. 
   
-    The function \code{sbh} relies on the R package \pkg{parallel} to create a parallel backend within an R session, enabling access to a cluster
-    of compute cores and/or nodes on a local and/or remote machine(s) and scaling-up with the number of CPU cores available and efficient parallel 
-    execution. To run a procedure in parallel (with parallel RNG), argument \code{parallel} is to be set to \code{TRUE} and argument \code{conf} 
-    is to be specified (i.e. non \code{NULL}). Argument \code{conf} uses the options described in function \code{makeCluster} of the R packages 
-    \pkg{parallel} and \pkg{snow}. \pkg{PRIMsrc} supports two types of communication mechanisms between master and worker processes: 
-    'Socket' or  'Message-Passing Interface' ('MPI'). In \pkg{PRIMsrc}, parallel 'Socket' clusters use sockets communication mechanisms only 
-    (no forking) and are therefore available on all platforms, including Windows, while parallel 'MPI' clusters use high-speed interconnects 
-    mechanism in networks of computers (with distributed memory) and are therefore available only in these architectures. A parallel 'MPI' 
-    cluster also requires R package \pkg{Rmpi} to be installed. Value \code{type} is used to setup a cluster of type 'Socket' ("SOCKET") 
-    or 'MPI' ("MPI"), respectively. Depending on this type, values of \code{spec} are to be used alternatively:
+    The function \code{sbh} relies on the R package \pkg{parallel} to create a parallel backend within an R session, enabling access to a 
+    cluster of compute cores and/or nodes on a local and/or remote machine(s) and scaling-up with the number of CPU cores available and 
+    efficient parallel execution. To run a procedure in parallel (with parallel RNG), argument \code{parallel} is to be set to \code{TRUE} 
+    and argument \code{conf} is to be specified (i.e. non \code{NULL}). Argument \code{conf} uses the options described in function 
+    \code{makeCluster} of the R packages \pkg{parallel} and \pkg{snow}. \pkg{PRIMsrc} supports two types of communication mechanisms 
+    between master and worker processes: 'Socket' or  'Message-Passing Interface' ('MPI'). In \pkg{PRIMsrc}, parallel 'Socket' clusters 
+    use sockets communication mechanisms only (no forking) and are therefore available on all platforms, including Windows, while parallel 
+    'MPI' clusters use high-speed interconnects mechanism in networks of computers (with distributed memory) and are therefore available 
+    only in these architectures. A parallel 'MPI' cluster also requires R package \pkg{Rmpi} to be installed. Value \code{type} is used 
+    to setup a cluster of type 'Socket' ("SOCKET") or 'MPI' ("MPI"), respectively. Depending on this type, values of \code{spec} are to 
+    be used alternatively:
     \itemize{
-        \item For 'Socket' clusters (\code{conf$type="SOCKET"}), \code{spec} should be a \code{character} \code{vector} naming the hosts on which 
-              to run the job; it can default to a unique local machine, in which case, one may use the unique host name "localhost".
+        \item For 'Socket' clusters (\code{conf$type="SOCKET"}), \code{spec} should be a \code{character} \code{vector} naming the hosts on 
+              which to run the job; it can default to a unique local machine, in which case, one may use the unique host name "localhost".
               Each host name can potentially be repeated to the number of CPU cores available on the local machine.
               It can also be an \code{integer} scalar specifying the number of processes to spawn on the local machine; 
-              or a list of machine specifications if you have ssh installed (a character value named host specifying the name or address of the host to use).
+              or a list of machine specifications if you have ssh installed (a character value named host specifying the name or address 
+              of the host to use).
         \item For 'MPI' clusters (\code{conf$type="MPI"}), \code{spec} should be an \code{integer} scalar 
-              specifying the total number of processes to be spawned across the network of available nodes, counting the workernodes and masternode.
+              specifying the total number of processes to be spawned across the network of available nodes, counting the workernodes and 
+              masternode.
     }
     The actual creation of the cluster, its initialization, and closing are all done internally. For more details, 
     see the reference manual of R package \pkg{snow} and examples below.
@@ -377,10 +367,10 @@
     \item{A}{positive \code{integer} of the number of permutations used for the computation of log-rank \eqn{p}-values.}
     \item{vs}{\code{logical} scalar of returned flag of optional variable pre-selection.}
     \item{vstype}{\code{character} \code{vector} of the optional variable pre-selection procdure used.}
-    \item{vsarg}{\code{character} \code{vector} of the parameters used in the pre-selection procedure.}
+    \item{vsarg}{\code{list} of parameters used in the pre-selection procedure.}
     \item{cv}{\code{logical} scalar of returned flag of optional cross-validation.}
     \item{cvtype}{\code{character} \code{vector} of the cross-validation technique used.}
-    \item{cvarg}{\code{character} \code{vector} of the parameters used in the Survival Bump Hunting procedure.}
+    \item{cvarg}{\code{list} of parameters used in the Survival Bump Hunting procedure.}
     \item{pv}{\code{logical} scalar of returned flag of optional computation of log-rank \eqn{p}-values.}
     \item{onese}{\code{logical} scalar of returned flag of 1-standard error rule.}
     \item{decimals}{\code{integer} of the number of user-specified significant decimals.}
@@ -412,8 +402,8 @@
     \item{cvfit}{\code{list} with 12 fields of cross-validated SBH output estimates,
         each of length \code{B} (one for each replicate):
         \itemize{
-            \item{cv.maxsteps: \code{numeric} scalar of maximal number of peeling steps over the replicates.}
-            \item{cv.nsteps: \code{numeric} scalar of optimal number of peeling steps according to the optimization criterion.}
+            \item{cv.maxsteps: \code{numeric} scalar of maximal number of peeling steps (counting step #0 - see Details section).}
+            \item{cv.nsteps: \code{numeric} scalar of optimal number of peeling steps (counting step #0 - see Details section).}
             \item{cv.boxind: \code{logical} \code{matrix} in {\code{TRUE}, \code{FALSE}} of individual observation box membership 
                 indicator (columns) for all peeling steps (rows).}
             \item{cv.boxind.size: \code{numeric} \code{vector} of box sample size for all peeling steps.}
@@ -545,8 +535,6 @@ synt1 <- sbh(X = Synthetic.1[ , -c(1,2), drop=FALSE],
              cvtype = "combined",
              cvarg = "alpha=0.10,
                       beta=0.05,
-                      minn=5,
-                      L=NULL,
                       peelcriterion=\"lrt\",
                       cvcriterion=\"lrt\"",
              pv = FALSE,
@@ -670,7 +658,7 @@ plot_boxkm(object = synt1,
     # Cross-Validation criterion = LRT
     # With Combined Cross-Validation (RCCV)
     # With Replications (B = 30)
-    # With variable screening (pre-selection) (PPL)
+    # With PPL variable screening (pre-selection)
     # With computation of log-rank \eqn{p}-values
     # With parallelization
     #===================================================                         
@@ -690,10 +678,50 @@ plot_boxkm(object = synt1,
                  cvtype = "combined",
                  cvarg = "alpha=0.01,
                           beta=0.05,
-                          minn=5,
-                          L=NULL,
                           peelcriterion=\"lrt\",
                           cvcriterion=\"lrt\"",
+                 pv = TRUE,
+                 decimals = 2,
+                 onese = FALSE,
+                 probval = 0.5,
+                 timeval = NULL,
+                 parallel.vs = FALSE,
+                 parallel.rep = TRUE,
+                 parallel.pv = TRUE,
+                 conf = conf,
+                 verbose = TRUE,
+                 seed = 123)
+                 
+    #===================================================
+    # Simulated dataset #4 (n=100, p=1000)
+    # Peeling criterion = LRT
+    # Cross-Validation criterion = CER
+    # With Combined Cross-Validation (RCCV)
+    # With Replications (B = 30)
+    # With PRSP variable screening (pre-selection)
+    # With computation of log-rank \eqn{p}-values
+    # With parallelization
+    #===================================================                         
+    synt4 <- sbh(X = Synthetic.4[ , -c(1,2), drop=FALSE],
+                 y = Synthetic.4[ ,1, drop=TRUE],
+                 delta = Synthetic.4[ ,2, drop=TRUE],
+                 B = 30,
+                 K = 5,
+                 A = 1000,
+                 vs = TRUE,
+                 vstype = "prsp",
+                 vsarg = "alpha=0.01,
+                          beta=0.05,
+                          msize=NULL,
+                          peelcriterion=\"lrt\",
+                          cvcriterion=\"cer\"",
+                          vscons=0.5",
+                 cv = TRUE,
+                 cvtype = "combined",
+                 cvarg = "alpha=0.01,
+                          beta=0.05,
+                          peelcriterion=\"lrt\",
+                          cvcriterion=\"cer\"",
                  pv = TRUE,
                  decimals = 2,
                  onese = FALSE,

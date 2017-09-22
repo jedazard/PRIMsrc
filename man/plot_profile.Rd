@@ -28,7 +28,7 @@
                cex = 0.5,
                device = NULL, 
                file = "Profile Plots", 
-               path=getwd(), 
+               path = getwd(), 
                horizontal = FALSE, 
                width = 8.5, 
                height = 5.0, ...)
