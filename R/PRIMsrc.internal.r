@@ -848,7 +848,6 @@ cv.prsp <- function(X,
    # Returning updated argument `vsarg` of variable selection parameters
    vsarg <- list("alpha"=alpha,
                  "beta"=beta,
-                 "msize"=msize,
                  "peelcriterion"=peelcriterion,
                  "cvcriterion"=cvcriterion,
                  "vscons"=vscons,
