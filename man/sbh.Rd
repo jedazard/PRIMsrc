@@ -276,10 +276,10 @@
     In the PRSP variable screening procedure (\code{vsarg} of "prsp"), setting option \code{msize} to a single non-\code{NULL} value 
     within the allowable range [1,\code{floor}(\eqn{p})] will override the cross-validation setting within the variable screening
     procedure, but will also reduce computational burden. This could be recommended for high-dimensional data (\eqn{p >> n}), 
-    where we suggest an arbitrary value of \code{msize} within [\code{floor}(\eqn{p}/20), \code{floor}(\eqn{p}/5)]. Conversely, 
-    setting \code{msize=NULL} will force the cross-validation within the variable screening procedure by automaticaly generating a 
-    vector of model sizes (cardinals of subset of top-screened variables) within the restricted range [1,\code{floor}(\eqn{p}/5)] 
-    that will be used to determine the optimal value of model size.
+    where we suggest an arbitrary value of \code{msize} within [1, \code{floor}(\eqn{p}/5)]. Conversely, setting \code{msize=NULL} 
+    will force the cross-validation within the variable screening procedure by automaticaly generating a vector of model sizes 
+    (cardinals of subset of top-screened variables) within the restricted range [1,\code{floor}(\eqn{p}/5)] that will be used to 
+    determine the optimal value of model size.
     
     In fitting the Survival Bump Hunting (SBH) model itself, note that the result contains initial step #0, which corresponds 
     to the entire set of the (training) data. Also, the number of peeling steps that is within the allowable range 
