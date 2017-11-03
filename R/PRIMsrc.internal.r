@@ -358,8 +358,8 @@ cv.presel <- function(X,
       } else {
          varsel <- (1:ncol(X))[w]
          varsign <- sign(cv.coef[w])
-         names(varsel) <- colnames(X)
-         names(varsign) <- colnames(X)
+         names(varsel) <- colnames(X)[w]
+         names(varsign) <- colnames(X)[w]
          success <- TRUE
       }
       boxstat.profile <- matrix(data=NA, nrow=B, ncol=M)
@@ -604,7 +604,7 @@ cv.prsp <- function(X,
    } else {
       Smax <- max(1,floor(p/5))
       msize <- unique(ceiling(seq(from=max(1,floor(Smax/100)), to=Smax, length=min(msize,floor(100*Smax/p)))))
-      cat("Models sizes to be explored by cross-validation: ", msize, "\n", sep=" ")
+      cat("Model sizes to be explored by cross-validation: ", msize, "\n", sep=" ")
    }
    M <- length(msize)
 
@@ -929,8 +929,8 @@ cv.prsp.tune <- function(traindata,
                } else if (cvcriterion == "lrt") {
                   boxstat[[m]] <- survival::survdiff(surv.formula, rho=0)$chisq
                } else if (cvcriterion == "cer") {
-                  coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1)
-                  predobj <- predict(object=coxobj, type="lp", reference="sample")
+                  coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1, na.action=na.exclude)
+                  predobj <- predict(object=coxobj, type="lp", reference="sample", na.action=na.exclude)
                   boxstat[[m]] <- Hmisc::rcorr.cens(x=predobj, S=survival::Surv(testtime, teststatus))['C Index']
                } else {
                   stop("Invalid CV criterion option. Exiting ... \n\n")
@@ -981,8 +981,8 @@ cv.prsp.tune <- function(traindata,
             } else if (cvcriterion == "lrt") {
                boxstat <- survival::survdiff(surv.formula, rho=0)$chisq
             } else if (cvcriterion == "cer") {
-               coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1)
-               predobj <- predict(object=coxobj, type="lp", reference="sample")
+               coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1, na.action=na.exclude)
+               predobj <- predict(object=coxobj, type="lp", reference="sample", na.action=na.exclude)
                boxstat <- Hmisc::rcorr.cens(x=predobj, S=survival::Surv(testtime, teststatus))['C Index']
             } else {
                stop("Invalid CV criterion option. Exiting ... \n\n")
@@ -1049,6 +1049,7 @@ cv.prsp.univ <- function(traindata,
                        varsign=NULL,
                        initcutpts=NULL,
                        arg=arg)
+      cat("covariate: ", j, "\t (maxstep: ", prsp.fit$maxsteps, ")\n", sep="")
       varcut[j] <- prsp.fit$boxcut[1,1,drop=TRUE]
       varsign[j] <- prsp.fit$varsign
       Lm <- prsp.fit$maxsteps
@@ -1070,8 +1071,8 @@ cv.prsp.univ <- function(traindata,
             } else if (cvcriterion == "lrt") {
                boxstat[l] <- survival::survdiff(surv.formula, rho=0)$chisq
             } else if (cvcriterion == "cer") {
-               coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1)
-               predobj <- predict(object=coxobj, type="lp", reference="sample")
+               coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1, na.action=na.exclude)
+               predobj <- predict(object=coxobj, type="lp", reference="sample", na.action=na.exclude)
                boxstat[l] <- Hmisc::rcorr.cens(x=predobj, S=survival::Surv(traintime, trainstatus))['C Index']
             } else {
                stop("Invalid CV criterion option. Exiting ... \n\n")
@@ -2122,20 +2123,25 @@ cv.spca <- function(X,
       upper <- quantile(x=abs(ws.train$feature.scores), probs = 1 - (n.var/ncol(traindata)))
       var.thres <- seq(from=lower, to=upper, length=n.thres)
 
-      # Finding the optimal trained PCR model by internal CV of the Likelihood Ratio Statistic (LRS)
-      # Return LRS from full CV w.r.t. threshold values and #PCs
-      superpccv <- superpc::superpc.cv(fit=ws.train,
-                                       data=pca.train.data,
-                                       n.threshold=n.thres,
-                                       n.fold=K,
-                                       n.components=n.pcs,
-                                       min.features=n.var,
-                                       max.features=ncol(traindata))
-      lrs <- superpccv$scor
-      max.mat <- which(lrs == max(lrs, na.rm=TRUE), arr.ind=TRUE)
-      max.mat <- max.mat[1,,drop=FALSE]
-      max.npcs <- max.mat[1]
-      max.thr <- max.mat[2]
+      if (cv) {
+         # Finding the optimal trained PCR model by internal CV of the Likelihood Ratio Statistic (LRS)
+         # Return LRS from full CV w.r.t. threshold values and #PCs
+         superpccv <- superpc::superpc.cv(fit=ws.train,
+                                          data=pca.train.data,
+                                          n.threshold=n.thres,
+                                          n.fold=K,
+                                          n.components=n.pcs,
+                                          min.features=n.var,
+                                          max.features=ncol(traindata))
+         lrs <- superpccv$scor
+         max.mat <- which(lrs == max(lrs, na.rm=TRUE), arr.ind=TRUE)
+         max.mat <- max.mat[1,,drop=FALSE]
+         max.npcs <- max.mat[1]
+         max.thr <- max.mat[2]
+      } else {
+         max.npcs <- n.pcs[length(n.pcs)]
+         max.thr <- n.thres[length(n.thres)]
+      }
 
       # Trained model used to predict the survival times on the test set
       superpcfit <- superpc::superpc.predict(object=ws.train,
@@ -2164,7 +2170,8 @@ cv.spca <- function(X,
          # Importance scores of selected features for PC#1
          scores <- ft$import[varsel,1]
          # Cox scores for selected features in order of decreasing absolute value of importance score for PC#1
-         lt <- superpc::superpc.listfeatures(data=pca.train.data, train.obj=ws.train,
+         lt <- superpc::superpc.listfeatures(data=pca.train.data,
+                                             train.obj=ws.train,
                                              fit.red=ft,
                                              component.number=1)
          ordscor <- order(abs(scores), decreasing = TRUE)
@@ -3450,10 +3457,10 @@ cv.comb.box <- function(X,
          timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
          probmat[l, (1:length(surv.fit$surv))] <- surv.fit$surv
          surv.formula <- (survival::Surv(CV.times, CV.status) ~ 1 + boxind1)
-         coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1)
+         coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1, na.action=na.exclude)
          CV.lhr[l] <- coxobj$coef
          CV.lrt[l] <- survival::survdiff(surv.formula, rho=0)$chisq
-         predobj <- predict(object=coxobj, type="lp", reference="sample")
+         predobj <- predict(object=coxobj, type="lp", reference="sample", na.action=na.exclude)
          CV.cer[l] <- Hmisc::rcorr.cens(x=predobj, S=survival::Surv(CV.times, CV.status))['C Index']
       } else {
          timemat[l, ] <- NA
@@ -3661,10 +3668,10 @@ cv.ave.peel <- function(traindata,
          probmat[l, (1:length(surv.fit$surv))] <- surv.fit$surv
       } else if ((sum(test.ind, na.rm=TRUE) != length(test.ind[!is.na(test.ind)])) && (sum(test.ind, na.rm=TRUE) != 0)) {
          surv.formula <- (survival::Surv(testtime, teststatus) ~ 1 + test.ind1)
-         coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1)
+         coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1, na.action=na.exclude)
          lhr <- coxobj$coef
          lrt <- survival::survdiff(surv.formula, rho=0)$chisq
-         predobj <- predict(object=coxobj, type="lp", reference="sample")
+         predobj <- predict(object=coxobj, type="lp", reference="sample", na.action=na.exclude)
          cer <- Hmisc::rcorr.cens(x=predobj, S=Surv(testtime, teststatus))['C Index']
          boxstat[[l]] <- c(lhr, lrt, cer)
          names(boxstat[[l]]) <- NULL
@@ -4532,7 +4539,7 @@ is.wholenumber <- function(x, tol=.Machine$double.eps^0.5) {
 
    SSver <- read.dcf(file=system.file("DESCRIPTION", package=pkgname),
                      fields="Version")
-   packageStartupMessage(paste(pkgname, " ", SSver, " is a major release with significant user-visible changes.", sep=""))
+   packageStartupMessage(paste(pkgname, " ", SSver, " and > 0.7.0 are major releases with significant user-visible changes.", sep=""))
    packageStartupMessage("Type PRIMsrc.news() to see new features, changes, and bug fixes.")
 
 }
