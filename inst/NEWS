@@ -4,7 +4,7 @@ Package: PRIMsrc
 Date   : 2015-07-28
 o RELEASE 0.5.7
 - Initial release to CRAN.
-- Compliance with new R CMD check, which now checks code usage via 'codetools'.
+- Compliance with new R CMD check, which now checks code usage via "codetools".
   Functions and packages from default packages other than base which are used in the package
   code are now imported via the package namespace file (NAMESPACE).
   Added new field 'Imports' in the package description file (DESCRIPTION) 
@@ -146,7 +146,7 @@ PACKAGE INSTALLATION
 Date   : 2017-06-24
 o RELEASE 0.7.1
 BUG FIXES
-- Corrected `prsp` variable screening procedure in the case `cvcriterion`=`cer`: the procedure now looks 
+- Corrected PRSP variable screening procedure in the case `cvcriterion`=`cer`: the procedure now looks 
   for a minimizer instead of the maximizer of the profile.
 - Corrected misbehavior of PCQR and PRSP variable screening procedures when one replication could fail.
 - Minor correction in the precision of computation of log-rank p-values if no cross-validation is requested:
@@ -204,8 +204,13 @@ PACKAGE INSTALLATION
 - Updates in documentation files (DESCRIPTION, NEWS and README).
 - Built and tested under R version 3.4.1 (2017-06-30) and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2017-10-11
-o RELEASE 0.7.4
+Date   : 2017-11-01
+o RELEASE 0.7.5
+BUG FIXES
+- Corrected variables names mismatch when no variable screening was requested.
+- Corrected handling of missing values in internal functions of package "survival".
+- Corrected handling of no cross-validation case in the SPCA variable screening procedure.
+PACKAGE INSTALLATION
 - Updates in documentation files (DESCRIPTION, NEWS and README).
 - Built and tested under R version 3.4.2 (2017-09-28) and release update to GitHub.
 ---------------------------------------------------------------------------------
