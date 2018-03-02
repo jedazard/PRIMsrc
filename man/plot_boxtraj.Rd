@@ -136,17 +136,20 @@
 
 \references{
     \itemize{
-        \item Dazard J-E. and Rao J.S. (2017).
+        \item Dazard J-E. and Rao J.S. (2018).
               "\emph{Variable Selection Strategies for High-Dimensional Survival Bump Hunting using Recursive Peeling Methods.}"
               (in prep).
+        \item Diaz-Pachon D.A., Saenz J.P., Dazard J-E. and Rao J.S. (2018).
+              "\emph{Mode Hunting through Active Information.}"
+              (in press).
         \item Diaz-Pachon D.A., Dazard J-E. and Rao J.S. (2017).
               "\emph{Unsupervised Bump Hunting Using Principal Components.}"           
               In: Ahmed SE, editor. Big and Complex Data Analysis: Methodologies and Applications. 
               Contributions to Statistics, vol. Edited Refereed Volume. 
               Springer International Publishing, Cham Switzerland, p. 325-345.
-        \item Yi C. and Huang J. (2016).
+        \item Yi C. and Huang J. (2017).
               "\emph{Semismooth Newton Coordinate Descent Algorithm for Elastic-Net Penalized Huber Loss Regression and Quantile Regression}."
-              J. Comp Graph. Statistics, DOI: 10.1080/10618600.2016.1256816.
+              J. Comp Graph. Statistics, 26(3):547-557.
         \item Dazard J-E., Choe M., LeBlanc M. and Rao J.S. (2016).
               "\emph{Cross-validation and Peeling Strategies for Survival Bump Hunting using Recursive Peeling Methods.}"
               Statistical Analysis and Data Mining, 9(1):12-42.
