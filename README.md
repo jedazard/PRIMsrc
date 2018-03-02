@@ -158,8 +158,12 @@ Funding/Provision/Help:
 
    + Dazard J-E. and Rao J.S. 
       *Variable Selection Strategies for High-Dimensional Survival Bump Hunting using Recursive Peeling Methods*. 
-      [submitted (2017)].
+      [2018 (in prep)].
       
+   + Diaz D.A., Saenz J.P., Dazard J-E. and Rao J.S. 
+     *Mode Hunting through Active Information*. 
+     [Applied Stochastic Models in Business and Industry (2018)](http://onlinelibrary.wiley.com/journal/10.1002/%28ISSN%291526-4025), in press.
+
    + Diaz D.A., Dazard J-E. and Rao J.S. 
      *Unsupervised Bump Hunting Using Principal Components*. 
      In: Ahmed SE, editor. Big and Complex Data Analysis: Methodologies and Applications. 
@@ -168,7 +172,7 @@ Funding/Provision/Help:
       
    + Yi C. and Huang J.
       *Semismooth Newton Coordinate Descent Algorithm for Elastic-Net Penalized Huber Loss Regression and Quantile Regression*. 
-      [J. Comp Graph. Statistics (2016)](http://amstat.tandfonline.com/doi/abs/10.1080/10618600.2016.1256816?journalCode=ucgs20), DOI: 10.1080/10618600.2016.1256816. 
+      [J. Comp Graph. Statistics (2017)](https://amstat.tandfonline.com/doi/abs/10.1080/10618600.2016.1256816?journalCode=ucgs20#.WpmoIOjwY-U), 26(3):547-557. 
 
    + Dazard J-E., Choe M., LeBlanc M. and Rao J.S. 
       *Cross-validation and Peeling Strategies for Survival Bump Hunting using Recursive Peeling Methods*. 
