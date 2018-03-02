@@ -9,12 +9,25 @@ citEntry(entry       = "Article",
          author      = personList(person(family="Dazard", given="J-E."),
                                   person(family="Rao", given="J.S.")), 	
          journal     = "in prep",
-         year        = "2017",
+         year        = "2018",
          volume      = "",
          number      = "",
          pages       = "",
-         textVersion = "Dazard J-E. and Rao J.S. (2017).
+         textVersion = "Dazard J-E. and Rao J.S. (2018).
                         Variable Selection Strategies for High-Dimensional Survival Bump Hunting using Recursive Peeling Methods, (in prep).")
+
+citEntry(entry       = "Article",
+         title       = "Mode Hunting through Active Information",
+         author      = personList(person(family="Dazard", given="J-E."),
+                                  person(family="Rao", given="J.S.")), 	
+         journal     = "Applied Stochastic Models in Business and Industry",
+         year        = "2018",
+         volume      = "",
+         number      = "",
+         pages       = "",
+         textVersion = "Diaz D.A., Saenz J.P., Dazard J-E. and Rao J.S. (2018).
+                        Mode Hunting through Active Information, 
+                        Applied Stochastic Models in Business and Industry (in press).")
 
 citEntry(entry       = "InBook",
          title       = "Unsupervised Bump Hunting Using Principal Components",
@@ -33,6 +46,19 @@ citEntry(entry       = "InBook",
                         In: Ahmed SE, editor. Big and Complex Data Analysis: Methodologies and Applications. 
 				   Contributions to Statistics, vol. Edited Refereed Volume. 
 				   Springer International Publishing, Cham Switzerland, p. 325-345")
+
+citEntry(entry       = "Article",
+         title       = "Semismooth Newton Coordinate Descent Algorithm for Elastic-Net Penalized Huber Loss Regression and Quantile Regression",
+         author      = personList(person(family="Yi", given="C."),
+                                  person(family="Huang", given="J.")), 	
+         journal     = "J. Comp Graph. Statistics",
+         year        = "2017",
+         volume      = "26",
+         number      = "3",
+         pages       = "547-557",
+         textVersion = "Yi C., Huang J. (2017).
+                        Semismooth Newton Coordinate Descent Algorithm for Elastic-Net Penalized Huber Loss Regression and Quantile Regression.
+                        J. Comp Graph. Statistics, 26(3):547-557.")
 
 citEntry(entry       = "Article",
          title       = "Cross-validation and Peeling Strategies for Survival Bump Hunting using Recursive Peeling Methods",
