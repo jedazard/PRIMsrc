@@ -1,0 +1,8 @@
+title: PRIMsrc
+description: Bump Hunting by Patient Rule Induction Method for Survival, Regression and Classification
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-cayman
+
+gems:
+  - jekyll-mentions
