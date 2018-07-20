@@ -1,8 +1,8 @@
 Package: PRIMsrc
 Type: Package
 Title: PRIM Survival Regression Classification
-Version: 0.7.5
-Date: 2017-11-01
+Version: 0.7.6
+Date: 2018-07-20
 Authors@R: c(person("Jean-Eudes", "Dazard",
                     role = c("aut", "cre"),
                     email = "jean-eudes.dazard@case.edu"),
@@ -14,8 +14,11 @@ Authors@R: c(person("Jean-Eudes", "Dazard",
                     email = "mleblanc@fhcrc.org"),
              person("Alberto", "Santana",
                     role = "ctb",
-	               email = "ahs4@case.edu"))
-Author: Jean-Eudes Dazard [aut, cre], Michael Choe [ctb], Michael LeBlanc [ctb], Alberto Santana [ctb]
+	               email = "ahs4@case.edu"),
+             person("J. Sunil", "Rao",
+                    role = "ctb",
+	               email = "Rao@biostat.med.miami.edu"))
+Author: Jean-Eudes Dazard [aut, cre], Michael Choe [ctb], Michael LeBlanc [ctb], Alberto Santana [ctb], J. Sunil Rao [ctb]
 Maintainer: Jean-Eudes Dazard <jean-eudes.dazard@case.edu>
 Description: Performs a unified treatment of Bump Hunting by Patient Rule Induction Method (PRIM) in Survival, Regression and Classification settings (SRC). The current version is a development release that only implements the case of a survival response. New features will be added soon as they are available.
 Depends: R (>= 3.0.2), survival, glmnet, superpc, Hmisc, quantreg 
