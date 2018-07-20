@@ -119,7 +119,7 @@
   The two dimensions (\code{proj}) of the projection plane, in which the scatter plot is to be plotted, must be 
   a subset of the used covariates of the \code{sbh} object. If the number of used covariates in the \code{sbh} object
   is zero, the scatterplot will not be drawn. If the number of used covariates is exactly one, 
-  the scatterplot will be drawn using one of the default first two dimensions \{1,2\} of argument \code{proj}.
+  the scatterplot will be drawn using one of the two dimensions of argument \code{proj}.
   
   The scatterplot is drawn on a graphical device with geometrically equal scales on 
   the \eqn{x} and \eqn{y} axes.
