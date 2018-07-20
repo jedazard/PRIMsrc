@@ -31,6 +31,7 @@
                beta=0.05,
                peelcriterion=\"lrt\",
                cvcriterion=\"cer\"",
+      groups=NULL,
       pv = FALSE,
       decimals = 2, 
       onese = FALSE,
@@ -101,8 +102,9 @@
                 as the maximum model size (cardinal of subset of top-screened variables) within the allowable range 
                 [1,\code{floor}(\eqn{p})]. Alternatively, use \code{msize=NULL} to allow the optimal model size to be 
                 determined by cross-validation. See below for details. Suggests \code{NULL}.
-            \item{\code{peelcriterion}} in \{"lhr", "lrt", "chs"\} peeling criterion Log-Hazard Ratio (LHR), 
-                Log-Rank Test (LRT), or Cumulative Hazard Summary (CHS), respectively, that is used in the PRSP algorithm. 
+            \item{\code{peelcriterion}} in \{"lhr", "lrt", "chs", "grp"\} peeling criterion Log-Hazard Ratio (LHR), 
+                Log-Rank Test (LRT), or Cumulative Hazard Summary (CHS), of Group (GRP), respectively, that is used 
+                in the PRSP algorithm (LHR, LRT, CHS) or the PRGSP algorithm (GRP). 
                 Suggests "lrt".
             \item{\code{cvcriterion}} in \{"lhr", "lrt", "cer"\} stands for the cross-validation criterion Log-Hazard Ratio (LHR),
                 Log-Rank Test (LRT), or Concordance Error Rate (CER), respectively, that is used for optimizing the 
@@ -196,6 +198,10 @@
                 the optimal number of peeling steps (i.e. optimal peeling sequence length) in the PRSP algorithm. 
                 Defaults to "cer". Ignored if \code{cv} is \code{FALSE}.
         }
+    }
+    \item{groups}{
+        \code{numeric} vector or group membership for the case of Patient Recursive Group Survival Peeling (PRGSP) 
+        algorithm (\code{peelcriterion} = "grp").
     }
     \item{pv}{
         \code{logical} scalar. Flag for computation of log-rank \eqn{p}-values. 

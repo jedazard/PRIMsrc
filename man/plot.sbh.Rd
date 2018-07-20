@@ -43,18 +43,21 @@
     \code{Character} \code{vector}. Main Title. Defaults to \code{NULL}.
   }
   \item{proj}{
-    \code{Integer} \code{vector} of length two, specifying the two dimensions of the projection plane of
-    of the used covariates of the \code{sbh} object. Defaults to first two dimensions: \{1,2\}.
+    \code{Integer} \code{vector} of length two, specifying the two dimensions of 
+    the projection plane in which the scatter plot is to be plotted. 
+    Defaults to first two dimensions: \{1,2\}.
   }
   \item{splom}{
-    \code{Logical} scalar. Shall the scatter plot of points inside the box(es) be plotted? Default to \code{TRUE}.
+    \code{Logical} scalar. Shall the scatter plot of points inside the box(es) be plotted? 
+    Default to \code{TRUE}.
   }
   \item{boxes}{
-    \code{Logical} scalar. Shall the box vertices be plotted or just the scatter of points? Default to \code{FALSE}.
+    \code{Logical} scalar. Shall the box vertices be plotted or just the scatter of points? 
+    Default to \code{FALSE}.
   }
   \item{steps}{
-    \code{Integer} \code{vector}. Vector of peeling steps at which to plot the in-box samples and box vertices. 
-    Defaults to all the peeling steps of \code{sbh} object \code{x}.
+    \code{Integer} \code{vector}. Vector of peeling steps at which to plot the 
+    in-box samples and box vertices. Defaults to all the peeling steps of \code{sbh} object \code{x}.
   }
   \item{pch}{
     \code{Integer} scalar of symbol number for the scatter plot. Defaults to 16.
@@ -83,11 +86,13 @@
     The vector is reused cyclically if it is shorter than the number of steps.
   }
   \item{add.legend}{
-    \code{Logical} scalar. Shall the legend of steps numbers be plotted? Defaults to \code{TRUE}.
+    \code{Logical} scalar. Shall the legend of steps numbers be plotted? 
+    Defaults to \code{TRUE}.
   }
   \item{device}{
     Graphic display device in \{NULL, "PS", "PDF"\}. Defaults to NULL (standard output screen).
-    Currently implemented graphic display devices are "PS" (Postscript) or "PDF" (Portable Document Format).
+    Currently implemented graphic display devices are "PS" (Postscript) 
+    or "PDF" (Portable Document Format).
   }
   \item{file}{
     File name for output graphic. Defaults to "Scatter Plot".
@@ -96,7 +101,8 @@
     Absolute path (without final (back)slash separator). Defaults to working directory path.
   }
   \item{horizontal}{
-    \code{Logical} scalar. Orientation of the printed image. Defaults to \code{FALSE}, that is potrait orientation.
+    \code{Logical} scalar. Orientation of the printed image. 
+    Defaults to \code{FALSE}, that is potrait orientation.
   }
   \item{width}{
     \code{Numeric} scalar. Width of the graphics region in inches. Defaults to 5.
@@ -110,8 +116,13 @@
 }
 
 \details{
-  The scatterplot is drawn only if the number of used covariates of the \code{sbh} object is greater than two.
-  It is drawn on a graphical device with geometrically equal scales on the \eqn{x} and \eqn{y} axes.
+  The two dimensions (\code{proj}) of the projection plane, in which the scatter plot is to be plotted, must be 
+  a subset of the used covariates of the \code{sbh} object. If the number of used covariates in the \code{sbh} object
+  is zero, the scatterplot will not be drawn. If the number of used covariates is exactly one, 
+  the scatterplot will be drawn using one of the default first two dimensions \{1,2\} of argument \code{proj}.
+  
+  The scatterplot is drawn on a graphical device with geometrically equal scales on 
+  the \eqn{x} and \eqn{y} axes.
 }
 
 \value{
