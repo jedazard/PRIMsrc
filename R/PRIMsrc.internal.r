@@ -1048,7 +1048,8 @@ cv.prsp.univ <- function(traindata,
                        trainstatus=trainstatus,
                        varsign=NULL,
                        initcutpts=NULL,
-                       arg=arg)
+                       arg=arg,
+                       traingroups=NULL)
       cat("covariate: ", j, "\t (maxstep: ", prsp.fit$maxsteps, ")\n", sep="")
       varcut[j] <- prsp.fit$boxcut[1,1,drop=TRUE]
       varsign[j] <- prsp.fit$varsign
@@ -2282,6 +2283,7 @@ cv.spca <- function(X,
 #                          cvarg,
 #                          varsign,
 #                          initcutpts,
+#                          groups,
 #                          decimals,
 #                          probval,
 #                          timeval,
@@ -2314,6 +2316,7 @@ cv.box <- function(X,
                    cvarg,
                    varsign,
                    initcutpts,
+                   groups,
                    decimals,
                    probval,
                    timeval,
@@ -2338,6 +2341,7 @@ cv.box <- function(X,
                                      cvtype=cvtype,
                                      varsign=varsign,
                                      initcutpts=initcutpts,
+                                     groups=groups,
                                      decimals=decimals,
                                      probval=probval,
                                      timeval=timeval,
@@ -2356,6 +2360,7 @@ cv.box <- function(X,
                              cvtype=cvtype,
                              varsign=varsign,
                              initcutpts=initcutpts,
+                             groups=groups,
                              decimals=decimals,
                              probval=probval,
                              timeval=timeval,
@@ -2431,6 +2436,7 @@ cv.box <- function(X,
 #                               varsign,
 #                               initcutpts,
 #                               decimals,
+#                               groups,
 #                               probval,
 #                               timeval,
 #                               parallel.rep,
@@ -2461,6 +2467,7 @@ cv.type.box <- function(X,
                         cvarg,
                         varsign,
                         initcutpts,
+                        groups,
                         decimals,
                         probval,
                         timeval,
@@ -2499,6 +2506,7 @@ cv.type.box <- function(X,
                                 K=K,
                                 cv=cv,
                                 cvarg=cvarg,
+                                groups=groups,
                                 decimals=decimals,
                                 probval=probval,
                                 timeval=timeval,
@@ -2513,6 +2521,7 @@ cv.type.box <- function(X,
                                  K=K,
                                  cv=cv,
                                  cvarg=cvarg,
+                                 groups=groups,
                                  decimals=decimals,
                                  probval=probval,
                                  timeval=timeval,
@@ -2549,6 +2558,7 @@ cv.type.box <- function(X,
                              K=K,
                              cv=cv,
                              cvarg=cvarg,
+                             groups=groups,
                              decimals=decimals,
                              probval=probval,
                              timeval=timeval,
@@ -2563,6 +2573,7 @@ cv.type.box <- function(X,
                               K=K,
                               cv=cv,
                               cvarg=cvarg,
+                              groups=groups,
                               decimals=decimals,
                               probval=probval,
                               timeval=timeval,
@@ -2831,6 +2842,7 @@ cv.null <- function(X,
                                         cvarg=cvarg,
                                         varsign=varsign,
                                         initcutpts=initcutpts,
+                                        groups=NULL,
                                         decimals=decimals,
                                         probval=NULL,
                                         timeval=NULL,
@@ -2852,6 +2864,7 @@ cv.null <- function(X,
                                          cvarg=cvarg,
                                          varsign=varsign,
                                          initcutpts=initcutpts,
+                                         groups=NULL,
                                          decimals=decimals,
                                          probval=NULL,
                                          timeval=NULL,
@@ -2941,6 +2954,7 @@ cv.null <- function(X,
 #                               cvarg,
 #                               varsign,
 #                               initcutpts,
+#                               groups,
 #                               decimals,
 #                               probval,
 #                               timeval,
@@ -2969,6 +2983,7 @@ cv.ave.box <- function(X,
                        cvarg,
                        varsign,
                        initcutpts,
+                       groups,
                        decimals,
                        probval,
                        timeval,
@@ -3003,31 +3018,35 @@ cv.ave.box <- function(X,
    maxsteps <- numeric(K)
 
    for (k in 1:K) {
-      if ((verbose) && (cv)) cat("Fold : ", k, "\n", sep="")
-      # Initialize training and test data
-      if (K == 1) {
-         traindata <- testdata <- X[folds$perm[(folds$which == k)], , drop=FALSE]
-         traintime <- testtime <- y[folds$perm[(folds$which == k)]]
-         trainstatus <- teststatus <- delta[folds$perm[(folds$which == k)]]
-      } else {
-         traindata <- X[folds$perm[(folds$which != k)], , drop=FALSE]
-         traintime <- y[folds$perm[(folds$which != k)]]
-         trainstatus <- delta[folds$perm[(folds$which != k)]]
-         testdata <- X[folds$perm[(folds$which == k)], , drop=FALSE]
-         testtime <- y[folds$perm[(folds$which == k)]]
-         teststatus <- delta[folds$perm[(folds$which == k)]]
-      }
-      peelobj <- cv.ave.peel(traindata=traindata, trainstatus=trainstatus, traintime=traintime,
-                             testdata=testdata, teststatus=teststatus, testtime=testtime,
-                             probval=probval, timeval=timeval,
-                             varsign=varsign, initcutpts=initcutpts, arg=arg)
-      # Store the test set results from each fold
-      maxsteps[k] <- peelobj$maxsteps
-      boxstat.list[[k]] <- peelobj$boxstat
-      boxcut.list[[k]] <- peelobj$boxcut
-      trace.list[[k]] <- peelobj$trace
+     if ((verbose) && (cv)) cat("Fold : ", k, "\n", sep="")
+     # Initialize training and test data
+     if (K == 1) {
+       traindata <- testdata <- X[folds$perm[(folds$which == k)], , drop=FALSE]
+       traintime <- testtime <- y[folds$perm[(folds$which == k)]]
+       trainstatus <- teststatus <- delta[folds$perm[(folds$which == k)]]
+       traingroups <- testgroups <- groups[folds$perm[(folds$which == k)]]
+     } else {
+       traindata <- X[folds$perm[(folds$which != k)], , drop=FALSE]
+       traintime <- y[folds$perm[(folds$which != k)]]
+       trainstatus <- delta[folds$perm[(folds$which != k)]]
+       traingroups <- groups[folds$perm[(folds$which != k)]]
+       testdata <- X[folds$perm[(folds$which == k)], , drop=FALSE]
+       testtime <- y[folds$perm[(folds$which == k)]]
+       teststatus <- delta[folds$perm[(folds$which == k)]]
+       testgroups <- groups[folds$perm[(folds$which == k)]]
+     }
+     peelobj <- cv.ave.peel(traindata=traindata, trainstatus=trainstatus, traintime=traintime,
+                            testdata=testdata, teststatus=teststatus, testtime=testtime,
+                            probval=probval, timeval=timeval,
+                            varsign=varsign, initcutpts=initcutpts, 
+                            arg=arg, traingroups=traingroups, testgroups=testgroups)
+     # Store the test set results from each fold
+     maxsteps[k] <- peelobj$maxsteps
+     boxstat.list[[k]] <- peelobj$boxstat
+     boxcut.list[[k]] <- peelobj$boxcut
+     trace.list[[k]] <- peelobj$trace
    }
-
+   
    # Cross-validated maximum peeling length from all folds
    CV.Lm <- min(maxsteps)
 
@@ -3264,6 +3283,7 @@ cv.ave.box <- function(X,
 #                                cvarg,
 #                                varsign,
 #                                initcutpts,
+#                                groups,
 #                                probval,
 #                                timeval,
 #                                decimals,
@@ -3293,6 +3313,7 @@ cv.comb.box <- function(X,
                         cvarg,
                         varsign,
                         initcutpts,
+                        groups,
                         decimals,
                         probval,
                         timeval,
@@ -3334,20 +3355,24 @@ cv.comb.box <- function(X,
          traindata <- testdata <- X[folds$perm[(folds$which == k)], , drop=FALSE]
          traintime <- testtime <- y[folds$perm[(folds$which == k)]]
          trainstatus <- teststatus <- delta[folds$perm[(folds$which == k)]]
+         traingroups <- testgroups <- groups[folds$perm[(folds$which == k)]]
       } else {
          traindata <- X[folds$perm[(folds$which != k)], , drop=FALSE]
          traintime <- y[folds$perm[(folds$which != k)]]
          trainstatus <- delta[folds$perm[(folds$which != k)]]
+         traingroups <- groups[folds$perm[(folds$which != k)]]
          testdata <- X[folds$perm[(folds$which == k)], , drop=FALSE]
          testtime <- y[folds$perm[(folds$which == k)]]
          teststatus <- delta[folds$perm[(folds$which == k)]]
+         testgroups <- groups[folds$perm[(folds$which == k)]]
       }
       # Store the test set data from each fold (Note: the order of observations of times and status from each fold is kept in the list)
       times.list[[k]] <- testtime
       status.list[[k]] <- teststatus
       peelobj <- cv.comb.peel(traindata=traindata, trainstatus=trainstatus, traintime=traintime,
                               testdata=testdata, teststatus=teststatus, testtime=testtime,
-                              varsign=varsign, initcutpts=initcutpts, arg=arg)
+                              varsign=varsign, initcutpts=initcutpts, 
+                              arg=arg, traingroups=traingroups, testgroups=testgroups)
       # Store the test set results from each fold
       maxsteps[k] <- peelobj$maxsteps
       boxind.list[[k]] <- peelobj$boxind
@@ -3446,20 +3471,20 @@ cv.comb.box <- function(X,
       boxind <- CV.boxind[l,]
       boxind1 <- 1*boxind
       if ((l == 1) && (sum(boxind, na.rm=TRUE) != 0)) {
-         surv.fit <- survival::survfit(survival::Surv(CV.times[boxind], CV.status[boxind]) ~ 1)
+         surv.fit <- survival::survfit(survival::Surv(CV.times[boxind], CV.status[boxind]) ~ 1, na.action=na.exclude)
          timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
          probmat[l, (1:length(surv.fit$surv))] <- surv.fit$surv
          CV.lhr[l] <- 0
          CV.lrt[l] <- 0
          CV.cer[l] <- 1
       } else if ((sum(boxind, na.rm=TRUE) != length(boxind[!is.na(boxind)])) && (sum(boxind, na.rm=TRUE) != 0)) {
-         surv.fit <- survival::survfit(survival::Surv(CV.times[boxind], CV.status[boxind]) ~ 1)
+         surv.fit <- survival::survfit(survival::Surv(CV.times[boxind], CV.status[boxind]) ~ 1, na.action=na.exclude)
          timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
          probmat[l, (1:length(surv.fit$surv))] <- surv.fit$surv
          surv.formula <- (survival::Surv(CV.times, CV.status) ~ 1 + boxind1)
          coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1, na.action=na.exclude)
          CV.lhr[l] <- coxobj$coef
-         CV.lrt[l] <- survival::survdiff(surv.formula, rho=0)$chisq
+         CV.lrt[l] <- survival::survdiff(surv.formula, na.action=na.exclude, rho=0)$chisq
          predobj <- predict(object=coxobj, type="lp", reference="sample", na.action=na.exclude)
          CV.cer[l] <- Hmisc::rcorr.cens(x=predobj, S=survival::Surv(CV.times, CV.status))['C Index']
       } else {
@@ -3604,12 +3629,15 @@ cv.comb.box <- function(X,
 #                    cv.ave.peel (traindata,
 #                                 trainstatus,
 #                                 traintime,
+#                                 traingroups, 
 #                                 testdata,
 #                                 teststatus,
 #                                 testtime,
+#                                 testgroups,
 #                                 varsign,
 #                                 initcutpts,
 #                                 arg,
+#                                 groups,
 #                                 probval,
 #                                 timeval)
 #
@@ -3630,9 +3658,11 @@ cv.comb.box <- function(X,
 cv.ave.peel <- function(traindata,
                         trainstatus,
                         traintime,
+                        traingroups, 
                         testdata,
                         teststatus,
                         testtime,
+                        testgroups,
                         varsign,
                         initcutpts,
                         arg,
@@ -3641,7 +3671,7 @@ cv.ave.peel <- function(traindata,
 
    # Training the model
    peelobj <- prsp(traindata=traindata, traintime=traintime, trainstatus=trainstatus,
-                   varsign=varsign, initcutpts=initcutpts, arg=arg)
+                   varsign=varsign, initcutpts=initcutpts, arg=arg, traingroups=traingroups)
    maxsteps <- peelobj$maxsteps
 
    # Compute the box statistics for all steps, each entry or row signifies a step
@@ -3663,19 +3693,19 @@ cv.ave.peel <- function(traindata,
          cer <- 1
          boxstat[[l]] <- c(lhr, lrt, cer)
          names(boxstat[[l]]) <- NULL
-         surv.fit <- survival::survfit(survival::Surv(testtime[test.ind], teststatus[test.ind]) ~ 1)
+         surv.fit <- survival::survfit(survival::Surv(testtime[test.ind], teststatus[test.ind]) ~ 1, na.action=na.exclude)
          timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
          probmat[l, (1:length(surv.fit$surv))] <- surv.fit$surv
       } else if ((sum(test.ind, na.rm=TRUE) != length(test.ind[!is.na(test.ind)])) && (sum(test.ind, na.rm=TRUE) != 0)) {
          surv.formula <- (survival::Surv(testtime, teststatus) ~ 1 + test.ind1)
          coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1, na.action=na.exclude)
          lhr <- coxobj$coef
-         lrt <- survival::survdiff(surv.formula, rho=0)$chisq
+         lrt <- survival::survdiff(surv.formula, na.action=na.exclude, rho=0)$chisq
          predobj <- predict(object=coxobj, type="lp", reference="sample", na.action=na.exclude)
          cer <- Hmisc::rcorr.cens(x=predobj, S=Surv(testtime, teststatus))['C Index']
          boxstat[[l]] <- c(lhr, lrt, cer)
          names(boxstat[[l]]) <- NULL
-         surv.fit <- survival::survfit(survival::Surv(testtime[test.ind], teststatus[test.ind]) ~ 1)
+         surv.fit <- survival::survfit(survival::Surv(testtime[test.ind], teststatus[test.ind]) ~ 1, na.action=na.exclude)
          timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
          probmat[l, (1:length(surv.fit$surv))] <- surv.fit$surv
       } else {
@@ -3722,11 +3752,14 @@ cv.ave.peel <- function(traindata,
 #                    cv.comb.peel (traindata,
 #                                  trainstatus,
 #                                  traintime,
+#                                  traingroups,
 #                                  testdata,
 #                                  teststatus,
 #                                  testtime,
+#                                  testgroups,
 #                                  varsign,
 #                                  initcutpts,
+#                                  groups,
 #                                  arg)
 #===============#
 # Description   :
@@ -3745,16 +3778,19 @@ cv.ave.peel <- function(traindata,
 cv.comb.peel <- function(traindata,
                          trainstatus,
                          traintime,
+                         traingroups,
                          testdata,
                          teststatus,
+                         testgroups,
                          testtime,
                          varsign,
                          initcutpts,
+                         groups,
                          arg) {
 
    # Training the model
    peelobj <- prsp(traindata=traindata, traintime=traintime, trainstatus=trainstatus,
-                   varsign=varsign, initcutpts=initcutpts, arg=arg)
+                   varsign=varsign, initcutpts=initcutpts, arg=arg, traingroups=traingroups)
    maxsteps <- peelobj$maxsteps
 
    # Create the indicator matrix of the test data that is within the box for each step
@@ -3782,6 +3818,7 @@ cv.comb.peel <- function(traindata,
 #                    prsp (traindata,
 #                          trainstatus,
 #                          traintime,
+#                          traingroups,
 #                          varsign,
 #                          initcutpts,
 #                          arg)
@@ -3803,146 +3840,216 @@ cv.comb.peel <- function(traindata,
 prsp <- function(traindata,
                  traintime,
                  trainstatus,
+                 traingroups,
                  varsign,
                  initcutpts,
                  arg) {
-
-   # Parsing and evaluating PRSP parameters
-   alpha <- NULL
-   beta <- NULL
-   L <- NULL
-   peelcriterion <- NULL
-   eval(parse( text=unlist(strsplit(x=arg, split=",")) ))
-
-   # Ensures that the training data is a numeric matrix
-   traindata <- as.matrix(traindata)
-   mode(traindata) <- "numeric"
-
-   # Constants
-   n <- nrow(traindata)                                   # Number of samples
-   p <- ncol(traindata)                                   # Number of initially screened covariates
-   Lmax <- ceiling(log(beta) / log(1 - alpha))            # Maximal possible number of peeling steps
-
-   # Directions of peeling
-   if (is.null(varsign)) {
-      varsign <- apply(X=traindata,
-                       MARGIN=2,
-                       FUN=function(x) {sign(survival::coxph(survival::Surv(traintime, trainstatus) ~ x, eps=0.01, singular.ok=T, iter.max=1)$coef)})
-   }
-   names(varsign) <- colnames(traindata)
-
-   # Initializations of box boundaries
-   if (is.null(initcutpts)) {
-      initcutpts <- numeric(p)
-      for (j in 1:p) {
-         if (varsign[j] == 1) {
-            initcutpts[j] <- min(traindata[,j], na.rm=TRUE)
-         } else if (varsign[j] == -1) {
-            initcutpts[j] <- max(traindata[,j], na.rm=TRUE)
-         } else {
-            warning("Covariate `", colnames(traindata)[j], "` has no direction of peeling! \n\n", sep="")
-         }
-      }
-   }
-
-   # Initializations of returned objects
-   vartrace <- numeric(Lmax)
-   boxcut <- matrix(data=NA, nrow=Lmax, ncol=p)
-   lhrlj <- matrix(NA, Lmax, p)
-   lrtlj <- matrix(NA, Lmax, p)
-   chslj <- matrix(NA, Lmax, p)
-
-   # Initializations for the PRSP loop
-   digits <- getOption("digits")
-   boxcutpts <- initcutpts
-   boxmass <- 1
-   boxes <- matrix(data=FALSE, nrow=n, ncol=p)            # Initial logical matrix of box membership indicator by dimension
-   sel <- rep(x=TRUE, times=n)                            # Initial logical vector of in-box samples
-   xsel <- traindata                                      # Initial selection of samples from training data
-   varpeel <- (apply(traindata, 2, "var") > 10^(-digits)) # Initial selection of covariates for peeling
-   continue <- TRUE
-   l <- 1
-
-   # PRSP loop
-   while ((boxmass >= beta) & (l <= L) & (continue)) {
-      xsign <- t(t(xsel) * varsign)
-      # Potential cutpts by dimension
-      cutpts.sign <- updatecut(X=xsign, fract=alpha)
-      cutpts <- cutpts.sign * varsign
-      # Update box membership indicator by dimension
-      boxes <- as.matrix(t((t(traindata) * varsign) >= as.vector(cutpts.sign)) & sel)
-
-      vmd <- rep(x=NA, times=p)
-      for (j in 1:p) {
-         boxes1j <- 1 * boxes[,j]
-         if ((sum(boxes1j) != length(boxes1j)) && (sum(boxes1j) != 0)) {
-            # Rate of increase of LHR (between in and out box)
-            if (peelcriterion == "lhr") {
-               fit <- survival::coxph(survival::Surv(traintime, trainstatus) ~ 1 + boxes1j, singular.ok=TRUE, iter.max=1)
-               lhrlj[l,j] <- fit$coef
-               if (l == 1) {
-                  vmd[j] <- (lhrlj[l,j] - 0) / (1 - mean(boxes1j))
-               } else {
-                  vmd[j] <- (lhrlj[l,j] - lhrlj[l-1,j]) / (boxmass - mean(boxes1j))
-               }
-               # Rate of increase of LRT (between in and out box)
-            } else if (peelcriterion == "lrt") {
-               fit <- survival::survdiff(survival::Surv(traintime, trainstatus) ~ 1 + boxes1j, rho=0)
-               lrtlj[l,j] <- fit$chisq
-               if (l == 1) {
-                  vmd[j] <- (lrtlj[l,j] - 0) / (1 - mean(boxes1j))
-               } else {
-                  vmd[j] <- (lrtlj[l,j] - lrtlj[l-1,j]) / (boxmass - mean(boxes1j))
-               }
-               # Rate of increase of CHS (between in and out box)
-            } else if (peelcriterion == "chs") {
-               fit <- survival::survfit(formula=survival::Surv(traintime, trainstatus) ~ 1, subset=(boxes1j == 1))
-               chslj[l,j] <- sum(cumsum(fit$n.event/fit$n.risk))
-               if (l == 1) {
-                  vmd[j] <- (chslj[l,j] - 0) / (1 - mean(boxes1j))
-               } else {
-                  vmd[j] <- (chslj[l,j] - chslj[l-1,j]) / (boxmass - mean(boxes1j))
-               }
-            } else {
-               stop("Invalid peeling criterion. Exiting ...\n\n")
-            }
-         } else {
-            varpeel[j] <- FALSE
-         }
-      }
-      # If the previous attempted peeling succeeded
-      if (sum(varpeel) > 0 && (!is.empty(vmd[(!is.nan(vmd)) & (!is.infinite(vmd)) & (!is.na(vmd))]))) {
-         # Maximizing the rate of increase of peeling criterion.
-         # Only one variable (the first one in rank) is selected in case of ties
-         varj <- which(vmd == max(vmd[(!is.nan(vmd)) & (!is.infinite(vmd))], na.rm=TRUE))[1]
-         # Updating
-         sel <- boxes[, varj, drop=TRUE]
-         boxmass <- mean(1 * sel)
-         xsel <- traindata[sel, ,drop=FALSE]
-         varpeel <- (apply(xsel, 2, "var") > 10^(-digits))
-         boxcutpts[varj] <- cutpts[varj]
-         # Saving trained box quantities of interest for the current peeling step
-         boxcut[l, ] <- boxcutpts
-         vartrace[l] <- varj
-         # Else exiting the loop
+  
+  # Parsing and evaluating PRSP parameters
+  alpha <- NULL
+  beta <- NULL
+  L <- NULL
+  peelcriterion <- NULL
+  eval(parse( text=unlist(strsplit(x=arg, split=",")) ))
+  
+  # Ensures that the training data is a numeric matrix
+  traindata <- as.matrix(traindata)
+  mode(traindata) <- "numeric"
+  
+  # Constants
+  n <- nrow(traindata)                                   # Number of samples
+  p <- ncol(traindata)                                   # Number of initially screened covariates
+  Lmax <- ceiling(log(beta) / log(1 - alpha))            # Maximal possible number of peeling steps
+  
+  # Directions of peeling
+  if (is.null(varsign)) {
+    varsign <- apply(X=traindata,
+                     MARGIN=2,
+                     FUN=function(x) {sign(survival::coxph(survival::Surv(traintime, trainstatus) ~ x, 
+                                                           eps=0.01, 
+                                                           na.action="na.omit", 
+                                                           singular.ok=T, 
+                                                           iter.max=1)$coef)})
+  }
+  names(varsign) <- colnames(traindata)
+  
+  # Initializations of box boundaries
+  if (is.null(initcutpts)) {
+    initcutpts <- numeric(p)
+    for (j in 1:p) {
+      if (varsign[j] == 1) {
+        initcutpts[j] <- min(traindata[,j], na.rm=TRUE)
+      } else if (varsign[j] == -1) {
+        initcutpts[j] <- max(traindata[,j], na.rm=TRUE)
       } else {
-         continue <- FALSE
+        warning("Covariate `", colnames(traindata)[j], "` has no direction of peeling! \n\n", sep="")
       }
-      l <- l + 1
-   }
-   l <- l - 1
-
-   # Prepending the first-step box covering all the training data
-   boxcut <- rbind(initcutpts, boxcut[1:l, , drop=FALSE])
-   vartrace <- c(0, vartrace[1:l])
-   rownames(boxcut) <- paste("step", 0:l, sep="")
-   colnames(boxcut) <- colnames(traindata)
-   names(vartrace) <- paste("step", 0:l, sep="")
-
-   return(list("maxsteps"=l+1,
-               "boxcut"=boxcut,
-               "vartrace"=vartrace,
-               "varsign"=varsign))
+    }
+  }
+  
+  # Initializations of returned objects
+  vartrace <- numeric(Lmax)
+  boxcut <- matrix(data=NA, nrow=Lmax, ncol=p)
+  
+  # Initializations for the PRSP loop
+  lhrlj <- matrix(NA, Lmax, p)
+  lrtlj <- matrix(NA, Lmax, p)
+  chslj <- matrix(NA, Lmax, p)
+  lrtdifflj <- matrix(NA, Lmax, p)
+  boxcutpts <- initcutpts
+  boxmass <- 1
+  sel <- rep(x=TRUE, times=n)                            # Initial logical vector of in-box samples
+  xsel <- traindata                                      # Initial selection of samples from training data
+  l <- 1
+  
+  # PRSP loop
+  while ((boxmass >= beta) & (l <= L)) {
+    xsign <- t(t(xsel) * varsign)
+    # Potential cutpts by dimension
+    cutpts.sign <- updatecut(X=xsign, fract=alpha)
+    cutpts <- cutpts.sign * varsign
+    # Update box membership indicator by dimension
+    boxes <- as.matrix(t((t(traindata) * varsign) >= as.vector(cutpts.sign)) & sel)
+    vmd <- rep(x=NA, times=p)
+    for (j in 1:p) {
+      boxes1j <- 1 * boxes[,j]
+      # Rate of increase of LHR (between in and out box)
+      if (peelcriterion == "lhr") {
+        if ((sum(boxes1j, na.rm=TRUE) != length(boxes1j[!is.na(boxes1j)])) && 
+            (sum(boxes1j, na.rm=TRUE) != 0)) {
+          fit <- survival::coxph(survival::Surv(traintime, trainstatus) ~ 1 + boxes1j, 
+                                 na.action="na.omit", 
+                                 singular.ok=TRUE, 
+                                 iter.max=1)
+          lhrlj[l,j] <- fit$coef
+          if (l == 1) {
+            vmd[j] <- (lhrlj[l,j] - 0) / (1 - mean(boxes1j))
+          } else {
+            vmd[j] <- (lhrlj[l,j] - lhrlj[l-1,j]) / (boxmass - mean(boxes1j))
+          }
+        }
+      # Rate of increase of LRT (between in and out box)
+      } else if (peelcriterion == "lrt") {
+        if ((sum(boxes1j, na.rm=TRUE) != length(boxes1j[!is.na(boxes1j)])) && 
+            (sum(boxes1j, na.rm=TRUE) != 0)) {
+          fit <- survival::survdiff(survival::Surv(traintime, trainstatus) ~ 1 + boxes1j, 
+                                    na.action="na.omit", 
+                                    rho=0)
+          lrtlj[l,j] <- fit$chisq
+          if (l == 1) {
+            vmd[j] <- (lrtlj[l,j] - 0) / (1 - mean(boxes1j))
+          } else {
+            vmd[j] <- (lrtlj[l,j] - lrtlj[l-1,j]) / (boxmass - mean(boxes1j))
+          }
+        }
+      # Rate of increase of CHS (between in and out box)
+      } else if (peelcriterion == "chs") {
+        if ((sum(boxes1j, na.rm=TRUE) != length(boxes1j[!is.na(boxes1j)])) && 
+            (sum(boxes1j, na.rm=TRUE) != 0)) {
+          fit <- survival::survfit(formula=survival::Surv(traintime, trainstatus) ~ 1, 
+                                   na.action="na.omit", 
+                                   subset=(boxes1j == 1))
+          chslj[l,j] <- sum(cumsum(fit$n.event/fit$n.risk))
+          if (l == 1) {
+            vmd[j] <- (chslj[l,j] - 0) / (1 - mean(boxes1j))
+          } else {
+            vmd[j] <- (chslj[l,j] - chslj[l-1,j]) / (boxmass - mean(boxes1j))
+          }
+        }
+      # (I) Rate of increase of LRT between in and out bump of one of the two groups
+      # (II) Rate of increase of LRT between in bump two groups 
+      # (III) Rate of increase of LRT diffeerence between in bump and out bump two groups
+      } else if (peelcriterion == "grp") {
+        
+        grp1 <- 1 * (traingroups == levels(traingroups)[1])
+        w <- which(grp1 == 1)
+        if ((sum(boxes1j[w], na.rm=TRUE) != length(boxes1j[w][!is.na(boxes1j[w])])) &&
+            (sum(boxes1j[w], na.rm=TRUE) != 0)) {
+          fit <- survival::survdiff(survival::Surv(traintime[w], trainstatus[w]) ~ 1 + boxes1j[w], 
+                                    na.action="na.omit", 
+                                    rho=0)
+          lrtdifflj[l,j] <- fit$chisq
+          if (l == 1) {
+            vmd[j] <- (lrtdifflj[l,j] - 0) / (1 - mean(boxes1j[w]))
+          } else {
+            vmd[j] <- (lrtdifflj[l,j] - lrtdifflj[l-1,j]) / (boxmass - mean(boxes1j[w]))
+          }
+        }
+        
+        #grp1 <- 1 * (traingroups == levels(traingroups)[1])
+        #w <- which(boxes1j == 1)
+        #if ((sum(grp1[w]) != length(grp1[w])) && 
+        #    (sum(grp1[w]) != 0)) {
+        #  fit <- survival::survdiff(survival::Surv(traintime[w], trainstatus[w]) ~ 1 + grp1[w], 
+        #                            na.action="na.omit", 
+        #                            rho=0)
+        #  lrtdifflj[l,j] <- fit$chisq
+        #  if (l == 1) {
+        #    vmd[j] <- (lrtdifflj[l,j] - 0) / (1 - mean(grp1[w]))
+        #  } else {
+        #   vmd[j] <- (lrtdifflj[l,j] - lrtdifflj[l-1,j]) / (boxmass - mean(grp1[w]))
+        #  }
+        #}
+        
+        #grp1 <- 1 * (traingroups == levels(traingroups)[1])
+        #w <- which(boxes1j == 1)
+        #if ((sum(grp1[w]) != length(grp1[w])) && 
+        #    (sum(grp1[-w]) != length(grp1[-w])) && 
+        #    (sum(grp1[w]) != 0) && 
+        #    (sum(grp1[-w]) != 0)) {
+        #  fit.in <- survival::survdiff(survival::Surv(traintime[w], trainstatus[w]) ~ 1 + grp1[w], 
+        #                               na.action="na.omit", 
+        #                               rho=0)
+        #  fit.out <- survival::survdiff(survival::Surv(traintime[-w], trainstatus[-w]) ~ 1 + grp1[-w], 
+        #                                na.action="na.omit", 
+        #                                rho=0)
+        #  lrtdifflj[l,j] <- abs(fit.in$chisq - fit.out$chisq)
+        #  if (l == 1) {
+        #    vmd[j] <- (lrtdifflj[l,j] - 0) / (1 - mean(grp1[w]))
+        #  } else {
+        #    vmd[j] <- (lrtdifflj[l,j] - lrtdifflj[l-1,j]) / (boxmass - mean(grp1[w]))
+        #  }
+        #}
+        
+      } else {
+        stop("Invalid peeling criterion. Exiting ...\n\n")
+      }
+    }
+    # If the previous attempted peeling succeeded
+    # Maximize the rate of increase of peeling criterion
+    # Only one variable has to be selected in case of ties
+    if ((!is.empty(vmd[(!is.nan(vmd)) & (!is.infinite(vmd)) & (!is.na(vmd))]))) {
+      varj <- which(vmd == max(vmd[(!is.nan(vmd)) & (!is.infinite(vmd)) & (!is.na(vmd))]))
+      if (length(varj) > 1) {
+        #varj <- sample(x=varj, size=1)
+        varj <- varj[1]
+      }
+    } else {
+      varj <- sample(x=1:p, size=1)
+    }
+    # Updating
+    sel <- boxes[, varj, drop=TRUE]
+    boxmass <- mean(1 * sel, na.rm=TRUE)
+    xsel <- traindata[sel, ,drop=FALSE]
+    boxcutpts[varj] <- cutpts[varj]
+    # Saving trained box quantities of interest for the current peeling step
+    boxcut[l, ] <- boxcutpts
+    vartrace[l] <- varj
+    l <- l + 1
+  }
+  l <- l - 1
+  
+  # Prepending the first-step box covering all the training data
+  boxcut <- rbind(initcutpts, boxcut[1:l, , drop=FALSE])
+  vartrace <- c(0, vartrace[1:l])
+  rownames(boxcut) <- paste("step", 0:l, sep="")
+  colnames(boxcut) <- colnames(traindata)
+  names(vartrace) <- paste("step", 0:l, sep="")
+  
+  return(list("maxsteps"=l+1,
+              "boxcut"=boxcut,
+              "vartrace"=vartrace,
+              "varsign"=varsign))
 }
 #===============================================================================================================================#
 
@@ -4041,7 +4148,7 @@ endpoints <- function(ind, timemat, probmat, timeval, probval) {
 updatecut <- function(X, fract) {
 
    p <- dim(X)[2]
-   cutpts <- apply(X, 2, "quantile", type=7, probs=fract)
+   cutpts <- apply(X, 2, "quantile", type=7, probs=fract, na.rm=TRUE)
 
    for (j in 1:p) {
       xunique <- sort(unique(X[, j]))
