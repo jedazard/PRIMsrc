@@ -4,31 +4,47 @@
 
 \docType{package}
 
-\title{Bump Hunting by Patient Rule Induction Method in Survival, Regression and Classification settings}
+\title{Bump Hunting by Patient Rule Induction Method in Survival, Regression, and Classification settings}
 
 \description{
-    Performs a unified treatment of Bump Hunting by Patient Rule Induction Method (PRIM) in Survival, Regression and Classification settings (SRC). 
-    The method generates decision rules delineating a region in the predictor space, where the response is larger than its average over the entire space. 
-    The region is shaped as a hyperdimensional box or hyperrectangle that is not necessarily contiguous. Assumptions are that the multivariate input 
-    variables can be discrete or continuous and the univariate response variable can be discrete (Classification), continuous (Regression) 
-    or a time-to event, possibly censored (Survival). It is intended to handle low and high-dimensional multivariate datasets, 
-    including the situation where the number of covariates exceeds or dominates that of samples (\eqn{p > n} or \eqn{p \gg n} paradigm).
+    "Bump Hunting" (BH) refers to the procedure of mapping out a local region of the multi-dimensional input space where a target function of interest, 
+    usually unknown, assumes smaller or larger values than its average over the entire space. In general, the region \eqn{R} could be any smooth shape 
+    (e.g. a convex hull) possibly disjoint.
+    
+    \pkg{PRIMsrc} implements a unified treatment of "Bump Hunting" (BH) by Patient Rule Induction Method (PRIM) with 
+    Survival, Regression and Classification outcomes (SRC). To estimate the region, PRIM generates decision rules delineating hyperdimensional boxes 
+    (hyperrectangles) of the input space, not necessarily contiguous, where the outcome is smaller or larger than its average over the entire space.
+    
+    Assumptions are that the multivariate input variables can be discrete or continuous, and the univariate outcome variable can be discrete 
+    (Classification), continuous (Regression), or a time-to-event, possibly censored (Survival). It is intended to handle low and high-dimensional 
+    multivariate datasets, including the paradigm where the number of covariates \eqn{p} exceeds or dominates that of samples 
+    (\eqn{p > n} or \eqn{p \gg n}).
+
+    Please note that the current version is a development release that only implements the case of a survival outcome. At this point, this version of 
+    `PRIMsrc` is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our Patient Recursive 
+    Survival Peeling (PRSP) algorithm (Dazard et al., 2014, 2015, 2016, 2018). New features will be added as soon as available.
 }
 
 \details{
-    The current version is a development release that only implements the case of a survival response. At this point, 
-    survival bump hunting is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our 
-    Patient Recursive Survival Peeling (PRSP) algorithm. New features will be added soon.
+    In a direct application, "Bump Hunting" (BH) can identify subgroups of observations for which their outcome 
+    is as extreme as possible. Similarly to this traditional goal of subgroup finding, \pkg{PRIMsrc} also implements the alternative goal of mapping 
+    out a region (possibly disjointed) of the input space where the outcome \emph{difference} between existing (fixed) groups of observations is as 
+    extreme as possible. We refer to the later goal as "Group Bump Hunting" (GBH).
+    
+    In the case of a time-to event, possibly censored (Survival) outcome, "Survival Bump Hunting" (SBH) is done by our Patient Recursive 
+    Survival Peeling (PRSP) algorithm (see Dazard et al. (2014, 2015, 2016, 2018) for details). Alternatively, "Group Survival Bump Hunting" (GSBH)
+    is done by using specifc peeling and cross-validation criterion in a derivation of PRSP, which we call Patient Recursive Group Survival Peeling 
+    (PRGSP) (see Rao et al. (2018) for details and an application in Survival Disparity Subtyping). 
     
     The package relies on an optional variable screening (pre-selection) procedure that is run before the PRSP algorithm 
-    and final variable usage (selection) procedure is done. This is done by four possible cross-validated variable screening (pre-selection) 
-    procedures offered to the user from the main end-user survival Bump Hunting function \code{\link{sbh}} (see below). 
+    and final variable usage (selection) procedure is done. This is done by four possible cross-validated variable screening 
+    (pre-selection) procedures offered to the user from the main end-user survival Bump Hunting function \code{\link{sbh}} 
+    (see below and Dazard et al. (2018) for details). 
     
-    The following describes the end-user functions that are needed to run a complete procedure.
-    The other internal subroutines are not documented in the manual and are not to be called by the end-user at any time. 
-    For computational efficiency, some end-user functions offer a parallelization option that is done by passing a few parameters 
-    needed to configure a cluster. This is indicated by an asterisk (* = optionally involving cluster usage). 
-    The R features are categorized as follows:
+    The following describes the end-user functions that are needed to run a complete procedure. The other internal subroutines 
+    are not documented in the manual and are not to be called by the end-user at any time. For computational efficiency, 
+    some end-user functions offer a parallelization option that is done by passing a few parameters needed to configure a cluster. 
+    This is indicated by an asterisk (* = optionally involving cluster usage). The R features are categorized as follows:
 
     \enumerate{
 
@@ -47,10 +63,13 @@
             S3-method print function to display the cross-validated estimated values of the \code{sbh} object.\cr
 
       \code{\link{plot}}
-      \bold{2D Visualization of Data Scatter and Box Vertices} \cr
-            S3-method plotting function for two-dimensional visualization of original or predicted data scatter 
-            as well as cross-validated box vertices of a \code{sbh} object. The scatter plot is for a given 
-            peeling step of the peeling sequence and a given plane, both specified by the user.\cr
+      \bold{2D Visualization of Data Scatter and Encapsulating Box} \cr           
+            S3-method plot function for two-dimensional visualization of scatter of data points 
+            and cross-validated encapsulating box of a \code{sbh} object for the highest risk (inbox) versus
+            lower-risk (outbox) groups (PRSP), and between the two specified fixed groups (PRGSP), 
+            if this option is used. The scatter plot is done for a given peeling step (or number of steps) 
+            of the peeling sequence (inner loop of our PRSP or PRGSP) and in a given plane of the used covariates 
+            of the \code{sbh} object, both specified by the user.\cr
 
       \code{\link{predict}}
       \bold{Predict Function}\cr
@@ -60,12 +79,12 @@
       \item{END-USER SURVIVAL BUMP HUNTING FUNCTION} \cr
       \code{\link{sbh}} *
       \bold{Cross-Validated Survival Bump Hunting} \cr
-            Main end-user function for fitting a cross-validated Survival Bump Hunting (SBH) model.
-            Returns a cross-validated \code{sbh} object, as generated by our Patient Recursive Survival Peeling or PRSP algorithm,
-            containing cross-validated estimates of end-points statistics of interest. The function relies on an optional internal 
-            variable screening (pre-selection) procedures that is run before the variable usage (selection) procedure is done 
-            at the time of fitting the Survival Bump Hunting (SBH) model itself using our PRSP algorithm. At this point, 
-            the user can choose between:
+            Main end-user function for fitting a Survival Bump Hunting (SBH) model. It returns an object of class \code{sbh}, 
+            as generated by our Patient Recursive Survival Peeling (PRSP) algorithm (or Patient Recursive Group Survival Peeling (PRGSP)), 
+            containing cross-validated estimates of the target region of the input space with end-points statistics
+            of interest. The function relies on an optional internal variable screening (pre-selection) procedure that is run before 
+            the actual variable usage (selection) is done at the time of fitting the Survival Bump Hunting (SBH) model using our 
+            PRSP or PRGSP algorithm. At this point, the user can choose between four possible variable screening (pre-selection) procedures:
             \enumerate{
                 \item{Univariate Patient Recursive Survival Peeling algorithm (default of package 
                     \href{https://CRAN.R-project.org/package=PRIMsrc}{PRIMsrc})}
@@ -97,22 +116,24 @@
             Log-Rank Test (LRT) or Concordance Error Rate (CER). The function plots (as it applies) both profiles 
             of cross-validation criterion as a function of variables screening size (cardinal subset of top-screened 
             variables in the PRSP variable screening procedure), and peeling length (number of peeling steps
-            of the peeling sequence in the inner loop of the PRSP algorithm).\cr
-      \code{\link{plot_boxtraj}}
+            of the peeling sequence in the inner loop of the PRSP or PRGSP algorithm).\cr
+      \code{\link{plot_traj}}
       \bold{Visualization of Peeling Trajectories/Profiles} \cr
             Function for plotting the cross-validated peeling trajectories/profiles of a \code{sbh} object.
             Applies to the user-specified covariates among the pre-selected ones and all other statistical quantities of interest
-            at each iteration of the peeling sequence (inner loop of our PRSP algorithm). \cr
-      \code{\link{plot_boxtrace}}
+            at each iteration of the peeling sequence (inner loop of our PRSP or PRGSP algorithm). \cr
+      \code{\link{plot_trace}}
       \bold{Visualization of Covariates Traces} \cr
             Function for plotting the cross-validated covariates traces of a \code{sbh} object.
             Plot the cross-validated modal trace curves of covariate importance and covariate usage of the user-specified 
-            covariates among the pre-selected ones at each iteration of the peeling sequence (inner loop of our PRSP algorithm). \cr
-      \code{\link{plot_boxkm}}
+            covariates among the pre-selected ones at each iteration of the peeling sequence (inner loop of our PRSP or PRGSP algorithm). \cr
+      \code{\link{plot_km}}
       \bold{Visualization of Survival Distributions} \cr
-            Function for plotting the cross-validated survival distributions of a \code{sbh} object. 
-            Plot the cross-validated Kaplan-Meir estimates of survival distributions for the highest risk (inbox) versus
-            lower-risk (outbox) groups of samples at each iteration of the peeling sequence (inner loop of our PRSP algorithm). \cr
+            Function for plotting the cross-validated survival distributions of a \code{sbh} object. It plots the 
+            cross-validated Kaplan-Meir estimates of survival distributions between the highest risk (inbox) versus
+            lower-risk (outbox) groups of observations (PRSP), or between the two specified fixed groups (PRGSP), 
+            if this option is used. The plot is done for a given peeling step (or number of steps) of the peeling sequence
+            (inner loop of our PRSP or PRGSP) algorithm) of the \code{sbh} object, as specified by the user. \cr
 
       \item{END-USER DATASETS} \cr
       \code{\link{Synthetic.1}},
@@ -166,6 +187,7 @@
         \item "Michael Choe, M.D." \email{mjc206@case.edu}
         \item "Michael LeBlanc, Ph.D." \email{mleblanc@fhcrc.org}
         \item "Alberto Santana, MBA." \email{ahs4@case.edu}
+        \item "J. Sunil Rao, Ph.D." \email{Rao@biostat.med.miami.edu}
     }
     Maintainer: "Jean-Eudes Dazard, Ph.D." \email{jean-eudes.dazard@case.edu}
 }
@@ -174,6 +196,9 @@
     \itemize{
         \item Dazard J-E. and Rao J.S. (2018).
               "\emph{Variable Selection Strategies for High-Dimensional Survival Bump Hunting using Recursive Peeling Methods.}"
+              (in prep).
+        \item Rao J.S., Huilin Y. and Dazard J-E. (2018).
+              "\emph{Disparity Subtyping: Bringing Precision Medicine Closer to Disparity Science.}"
               (in prep).
         \item Diaz-Pachon D.A., Saenz J.P., Dazard J-E. and Rao J.S. (2018).
               "\emph{Mode Hunting through Active Information.}"

@@ -17,8 +17,8 @@
   only complete cases were used. Variables included history of Injection Drug Use ("IDU") 
   at enrollment, African American ethnicity ('Race'), age ('Age'), and baseline CD4 count ('CD4') for a total of 
   \eqn{p=4} clinical covariates. The question in this dataset example was whether it is possible to achieve a 
-  prognostication of patients for AIDS and HAART. See Bacon et al. (2005) and the \href{https://statepi.jhsph.edu/wihs/wordpress/}{WIHS} 
-  website for more details.
+  prognostication of patients for AIDS and HAART. See Bacon et al. (2005) and the 
+  \href{https://statepi.jhsph.edu/wihs/wordpress/}{WIHS} website for more details.
 }
 
 \usage{Real.1}
@@ -37,6 +37,7 @@
         \item "Michael Choe, M.D." \email{mjc206@case.edu}
         \item "Michael LeBlanc, Ph.D." \email{mleblanc@fhcrc.org}
         \item "Alberto Santana, MBA." \email{ahs4@case.edu}
+        \item "J. Sunil Rao, Ph.D." \email{Rao@biostat.med.miami.edu}
     }
     Maintainer: "Jean-Eudes Dazard, Ph.D." \email{jean-eudes.dazard@case.edu}
 }
@@ -45,6 +46,9 @@
     \itemize{
         \item Dazard J-E. and Rao J.S. (2018).
               "\emph{Variable Selection Strategies for High-Dimensional Survival Bump Hunting using Recursive Peeling Methods.}"
+              (in prep).
+        \item Rao J.S., Huilin Y. and Dazard J-E. (2018).
+              "\emph{Disparity Subtyping: Bringing Precision Medicine Closer to Disparity Science.}"
               (in prep).
         \item Diaz-Pachon D.A., Saenz J.P., Dazard J-E. and Rao J.S. (2018).
               "\emph{Mode Hunting through Active Information.}"

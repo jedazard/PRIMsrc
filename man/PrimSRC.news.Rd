@@ -26,6 +26,7 @@
         \item "Michael Choe, M.D." \email{mjc206@case.edu}
         \item "Michael LeBlanc, Ph.D." \email{mleblanc@fhcrc.org}
         \item "Alberto Santana, MBA." \email{ahs4@case.edu}
+        \item "J. Sunil Rao, Ph.D." \email{Rao@biostat.med.miami.edu}
     }
     Maintainer: "Jean-Eudes Dazard, Ph.D." \email{jean-eudes.dazard@case.edu}
 }
@@ -34,6 +35,9 @@
     \itemize{
         \item Dazard J-E. and Rao J.S. (2018).
               "\emph{Variable Selection Strategies for High-Dimensional Survival Bump Hunting using Recursive Peeling Methods.}"
+              (in prep).
+        \item Rao J.S., Huilin Y. and Dazard J-E. (2018).
+              "\emph{Disparity Subtyping: Bringing Precision Medicine Closer to Disparity Science.}"
               (in prep).
         \item Diaz-Pachon D.A., Saenz J.P., Dazard J-E. and Rao J.S. (2018).
               "\emph{Mode Hunting through Active Information.}"
