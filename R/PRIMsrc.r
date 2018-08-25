@@ -113,6 +113,33 @@ sbh <- function(X,
     stop("\nNo censoring variable provided! Exiting ... \n\n")
   }
   
+  # Checking inputs of parameters
+  if (peelcriterion != "grp") {
+    cvcriterion <- match.arg(arg=cvcriterion, choices=c("lhr", "lrt", "cer"), several.ok=FALSE)
+    groups <- NULL
+  } else if (peelcriterion == "grp") {
+    cvcriterion <- match.arg(arg=cvcriterion, choices="cer", several.ok=FALSE)
+    if (is.null(groups)) {
+      stop("Argument `groups` must be specified when used with PRGSP algorithm. Exiting ... \n\n")
+    }
+    if (!is.null(groups) && (length(levels(groups)) != 2)) {
+      stop("Argument `groups` must have exactly two levels when used with PRGSP algorithm. Exiting ... \n\n")
+    }
+  } else {
+    stop("Invalid peeling criterion option. Exiting ... \n\n")
+  }
+  if (vs) {
+    vstype <- match.arg(arg=vstype, choices=c("pcqr", "ppl", "spca", "prsp"), several.ok=FALSE)
+  } else {
+    vstype <- NA
+  }
+  if (cv) {
+    cvtype <- match.arg(arg=cvtype, choices=c("combined", "averaged"), several.ok=FALSE)
+  } else {
+    cvtype <- "combined"
+    K <- 1
+  }
+  
   # Constants
   n <- nrow(X)
   p <- ncol(X)
@@ -125,18 +152,6 @@ sbh <- function(X,
   }
   beta <- max(1/n, beta)                                 # Minimal box support
   Lmax <- ceiling(log(beta) / log(1 - alpha))            # Maximal possible number of peeling steps
-  
-  # Checking inputs of parameters and
-  if (vs) {
-    vstype <- match.arg(arg=vstype, choices=c("pcqr", "ppl", "spca", "prsp"), several.ok=FALSE)
-  } else {
-    vstype <- NA
-  }
-  if (cv) {
-    cvtype <- match.arg(arg=cvtype, choices=c("combined", "averaged"), several.ok=FALSE)
-  } else {
-    cvtype <- "combined"
-  }
   
   # Preparing the data
   if (!(is.matrix(X))) {
@@ -345,6 +360,8 @@ sbh <- function(X,
       CV.lhr.list <- CV.box.obj$cv.lhr
       CV.lrt.list <- CV.box.obj$cv.lrt
       CV.cer.list <- CV.box.obj$cv.cer
+      CV.grp.lrt.list <- CV.box.obj$cv.grp.lrt
+      CV.grp.cer.list <- CV.box.obj$cv.grp.cer
       CV.time.bar.list <- CV.box.obj$cv.time.bar
       CV.prob.bar.list <- CV.box.obj$cv.prob.bar
       CV.max.time.bar.list <- CV.box.obj$cv.max.time.bar
@@ -374,16 +391,11 @@ sbh <- function(X,
         CV.nsteps.1se <- CV.maxsteps
       } else if ((cvtype == "averaged") || (cvtype == "combined")) {
         cat("Generating cross-validated profiles of peeling steps and optimal peeling lengths from all replicates ...\n")
-        CV.lhr.mat <- list2mat(list=CV.lhr.list, fill=NA, coltrunc=CV.maxsteps)
-        CV.lrt.mat <- list2mat(list=CV.lrt.list, fill=NA, coltrunc=CV.maxsteps)
-        CV.cer.mat <- list2mat(list=CV.cer.list, fill=NA, coltrunc=CV.maxsteps)
-        colnames(CV.lhr.mat) <- paste("step", 0:(CV.maxsteps-1), sep="")
-        colnames(CV.lrt.mat) <- paste("step", 0:(CV.maxsteps-1), sep="")
-        colnames(CV.cer.mat) <- paste("step", 0:(CV.maxsteps-1), sep="")
-        if (cvcriterion=="lhr") {
-          CV.stepprofiles <- CV.lhr.mat
-          CV.stepprofiles.mean <- apply(CV.lhr.mat, 2, mean, na.rm=TRUE)
-          CV.stepprofiles.se <- apply(CV.lhr.mat, 2, sd, na.rm=TRUE)
+        if (cvcriterion == "lhr") {
+          CV.stepprofiles <- list2mat(list=CV.lhr.list, fill=NA, coltrunc=CV.maxsteps)
+          colnames(CV.stepprofiles) <- paste("step", 0:(CV.maxsteps-1), sep="")
+          CV.stepprofiles.mean <- apply(CV.stepprofiles, 2, mean, na.rm=TRUE)
+          CV.stepprofiles.se <- apply(CV.stepprofiles, 2, sd, na.rm=TRUE)
           if (all(is.na(CV.stepprofiles.mean)) || is.empty(CV.stepprofiles.mean)) {
             CV.nsteps.opt <- NA
             CV.nsteps.1se <- NA
@@ -396,10 +408,11 @@ sbh <- function(X,
               CV.nsteps.1se <- min(which(w))
             }
           }
-        } else if (cvcriterion=="lrt") {
-          CV.stepprofiles <- CV.lrt.mat
-          CV.stepprofiles.mean <- apply(CV.lrt.mat, 2, mean, na.rm=TRUE)
-          CV.stepprofiles.se <- apply(CV.lrt.mat, 2, sd, na.rm=TRUE)
+        } else if (cvcriterion == "lrt") {
+          CV.stepprofiles <- list2mat(list=CV.lrt.list, fill=NA, coltrunc=CV.maxsteps)
+          colnames(CV.stepprofiles) <- paste("step", 0:(CV.maxsteps-1), sep="")
+          CV.stepprofiles.mean <- apply(CV.stepprofiles, 2, mean, na.rm=TRUE)
+          CV.stepprofiles.se <- apply(CV.stepprofiles, 2, sd, na.rm=TRUE)
           if (all(is.na(CV.stepprofiles.mean)) || is.empty(CV.stepprofiles.mean)) {
             CV.nsteps.opt <- NA
             CV.nsteps.1se <- NA
@@ -412,10 +425,11 @@ sbh <- function(X,
               CV.nsteps.1se <- min(which(w))
             }
           }
-        } else if (cvcriterion=="cer") {
-          CV.stepprofiles <- CV.cer.mat
-          CV.stepprofiles.mean <- apply(CV.cer.mat, 2, mean, na.rm=TRUE)
-          CV.stepprofiles.se <- apply(CV.cer.mat, 2, sd, na.rm=TRUE)
+        } else if (cvcriterion == "cer") {
+          CV.stepprofiles <- list2mat(list=CV.cer.list, fill=NA, coltrunc=CV.maxsteps)
+          colnames(CV.stepprofiles) <- paste("step", 0:(CV.maxsteps-1), sep="")
+          CV.stepprofiles.mean <- apply(CV.stepprofiles, 2, mean, na.rm=TRUE)
+          CV.stepprofiles.se <- apply(CV.stepprofiles, 2, sd, na.rm=TRUE)
           if (all(is.na(CV.stepprofiles.mean)) || is.empty(CV.stepprofiles.mean)) {
             CV.nsteps.opt <- NA
             CV.nsteps.1se <- NA
@@ -426,6 +440,29 @@ sbh <- function(X,
               CV.nsteps.1se <- NA
             } else {
               CV.nsteps.1se <- min(which(w))
+            }
+          }
+          if (peelcriterion == "grp") {
+            if (onese) {
+              CV.maxsteps <- CV.nsteps.1se
+            } else {
+              CV.maxsteps <- CV.nsteps.opt
+            }
+            CV.stepprofiles <- list2mat(list=CV.grp.cer.list, fill=NA, coltrunc=CV.maxsteps)
+            colnames(CV.stepprofiles) <- paste("step", 0:(CV.maxsteps-1), sep="")
+            CV.stepprofiles.mean <- apply(CV.stepprofiles, 2, mean, na.rm=TRUE)
+            CV.stepprofiles.se <- apply(CV.stepprofiles, 2, sd, na.rm=TRUE)
+            if (all(is.na(CV.stepprofiles.mean)) || is.empty(CV.stepprofiles.mean)) {
+              CV.nsteps.opt <- NA
+              CV.nsteps.1se <- NA
+            } else {
+              CV.nsteps.opt <- which.min(CV.stepprofiles.mean)
+              w <- CV.stepprofiles.mean <= CV.stepprofiles.mean[CV.nsteps.opt]+CV.stepprofiles.se[CV.nsteps.opt]
+              if (all(is.na(w)) || is.empty(w)) {
+                CV.nsteps.1se <- NA
+              } else {
+                CV.nsteps.1se <- min(which(w))
+              }
             }
           }
         } else {
@@ -524,12 +561,6 @@ sbh <- function(X,
         CV.support.sd <- round(lapply.mat(X=CV.support.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
         CV.size.mu <- round(CV.boxind.size, digits=0)
         CV.size.sd <- round(lapply.mat(X=CV.size.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-        CV.lhr.mu <- round(lapply.mat(X=CV.lhr.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-        CV.lhr.sd <- round(lapply.mat(X=CV.lhr.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-        CV.lrt.mu <- round(lapply.mat(X=CV.lrt.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-        CV.lrt.sd <- round(lapply.mat(X=CV.lrt.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-        CV.cer.mu <- round(lapply.mat(X=CV.cer.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-        CV.cer.sd <- round(lapply.mat(X=CV.cer.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
         CV.time.bar.mu <- round(lapply.mat(X=CV.time.bar.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
         CV.time.bar.sd <- round(lapply.mat(X=CV.time.bar.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
         CV.prob.bar.mu <- round(lapply.mat(X=CV.prob.bar.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
@@ -538,28 +569,64 @@ sbh <- function(X,
         CV.max.time.bar.sd <- round(lapply.mat(X=CV.max.time.bar.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
         CV.min.prob.bar.mu <- round(lapply.mat(X=CV.min.prob.bar.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
         CV.min.prob.bar.sd <- round(lapply.mat(X=CV.min.prob.bar.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-        CV.stats.mu <- data.frame("Support"=CV.support.mu,
-                                  "Size"=CV.size.mu,
-                                  "LHR"=CV.lhr.mu,
-                                  "LRT"=CV.lrt.mu,
-                                  "CER"=CV.cer.mu,
-                                  "EFT"=CV.time.bar.mu,
-                                  "EFP"=CV.prob.bar.mu,
-                                  "MEFT"=CV.max.time.bar.mu,
-                                  "MEFP"=CV.min.prob.bar.mu)
-        rownames(CV.stats.mu) <- paste("step", 0:(CV.nsteps-1), sep="")
-        colnames(CV.stats.mu) <- c("Support", "Size", "LHR", "LRT", "CER", "EFT", "EFP", "MEFT", "MEFP")
-        CV.stats.sd <- data.frame("Support"=CV.support.sd,
-                                  "Size"=CV.size.sd,
-                                  "LHR"=CV.lhr.sd,
-                                  "LRT"=CV.lrt.sd,
-                                  "CER"=CV.cer.sd,
-                                  "EFT"=CV.time.bar.sd,
-                                  "EFP"=CV.prob.bar.sd,
-                                  "MEFT"=CV.max.time.bar.sd,
-                                  "MEFP"=CV.min.prob.bar.sd)
-        rownames(CV.stats.sd) <- paste("step", 0:(CV.nsteps-1), sep="")
-        colnames(CV.stats.sd) <- c("Support", "Size", "LHR", "LRT", "CER", "EFT", "EFP", "MEFT", "MEFP")
+        
+        if (peelcriterion != "grp") {
+          CV.lhr.mu <- round(lapply.mat(X=CV.lhr.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+          CV.lhr.sd <- round(lapply.mat(X=CV.lhr.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+          CV.lrt.mu <- round(lapply.mat(X=CV.lrt.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+          CV.lrt.sd <- round(lapply.mat(X=CV.lrt.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+          CV.cer.mu <- round(lapply.mat(X=CV.cer.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+          CV.cer.sd <- round(lapply.mat(X=CV.cer.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+          CV.stats.mu <- data.frame("Support"=CV.support.mu,
+                                    "Size"=CV.size.mu,
+                                    "LHR"=CV.lhr.mu,
+                                    "LRT"=CV.lrt.mu,
+                                    "CER"=CV.cer.mu,
+                                    "EFT"=CV.time.bar.mu,
+                                    "EFP"=CV.prob.bar.mu,
+                                    "MEFT"=CV.max.time.bar.mu,
+                                    "MEFP"=CV.min.prob.bar.mu)
+          rownames(CV.stats.mu) <- paste("step", 0:(CV.nsteps-1), sep="")
+          colnames(CV.stats.mu) <- c("Support", "Size", "LHR", "LRT", "CER", "EFT", "EFP", "MEFT", "MEFP")
+          CV.stats.sd <- data.frame("Support"=CV.support.sd,
+                                    "Size"=CV.size.sd,
+                                    "LHR"=CV.lhr.sd,
+                                    "LRT"=CV.lrt.sd,
+                                    "CER"=CV.cer.sd,
+                                    "EFT"=CV.time.bar.sd,
+                                    "EFP"=CV.prob.bar.sd,
+                                    "MEFT"=CV.max.time.bar.sd,
+                                    "MEFP"=CV.min.prob.bar.sd)
+          rownames(CV.stats.sd) <- paste("step", 0:(CV.nsteps-1), sep="")
+          colnames(CV.stats.sd) <- c("Support", "Size", "LHR", "LRT", "CER", "EFT", "EFP", "MEFT", "MEFP")
+        } else if (peelcriterion == "grp") {
+          CV.grp.lrt.mu <- round(lapply.mat(X=CV.grp.lrt.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+          CV.grp.lrt.sd <- round(lapply.mat(X=CV.grp.lrt.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+          CV.grp.cer.mu <- round(lapply.mat(X=CV.grp.cer.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+          CV.grp.cer.sd <- round(lapply.mat(X=CV.grp.cer.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+          CV.stats.mu <- data.frame("Support"=CV.support.mu,
+                                    "Size"=CV.size.mu,
+                                    "LRT"=CV.grp.lrt.mu,
+                                    "CER"=CV.grp.cer.mu,
+                                    "EFT"=CV.time.bar.mu,
+                                    "EFP"=CV.prob.bar.mu,
+                                    "MEFT"=CV.max.time.bar.mu,
+                                    "MEFP"=CV.min.prob.bar.mu)
+          rownames(CV.stats.mu) <- paste("step", 0:(CV.nsteps-1), sep="")
+          colnames(CV.stats.mu) <- c("Support", "Size", "LRT", "CER", "EFT", "EFP", "MEFT", "MEFP")
+          CV.stats.sd <- data.frame("Support"=CV.support.sd,
+                                    "Size"=CV.size.sd,
+                                    "LRT"=CV.grp.lrt.sd,
+                                    "CER"=CV.grp.cer.sd,
+                                    "EFT"=CV.time.bar.sd,
+                                    "EFP"=CV.prob.bar.sd,
+                                    "MEFT"=CV.max.time.bar.sd,
+                                    "MEFP"=CV.min.prob.bar.sd)
+          rownames(CV.stats.sd) <- paste("step", 0:(CV.nsteps-1), sep="")
+          colnames(CV.stats.sd) <- c("Support", "Size", "LRT", "CER", "EFT", "EFP", "MEFT", "MEFP")
+        } else {
+          stop("Invalid peeling criterion. Exiting ...\n\n")
+        }
         CV.stats <- list("mean"=CV.stats.mu, "sd"=CV.stats.sd)
         
         # Computation of p-values at each step
@@ -579,6 +646,7 @@ sbh <- function(X,
                                        ",L=", CV.nsteps,
                                        ",peelcriterion=\"", peelcriterion, "\"",
                                        ",cvcriterion=\"", cvcriterion, "\"", sep=""),
+                           groups=groups,
                            obs.chisq=CV.stats$mean$LRT,
                            parallel.pv=parallel.pv,
                            clus.pv=cluster,
@@ -838,7 +906,7 @@ print.sbh <- function(x, ...) {
   } else {
     
     cat("Either the covariate screening or the Survival Bump Hunting modeling failed for this dataset.\n
-           So, there is nothing to print here.\n")
+         So, there is nothing to print here.\n")
     
   }
   
@@ -856,13 +924,30 @@ print.sbh <- function(x, ...) {
 #===============#
 #                    plot(x,
 #                         main=NULL,
-#                         proj=c(1,2), splom=TRUE, boxes=FALSE,
+#                         proj=c(1,2), 
 #                         steps=1:x$cvfit$cv.nsteps,
-#                         pch=16, cex=0.5, col=, col=2:(length(steps)+1),
-#                         col.box=2:(length(steps)+1), lty.box=rep(2,length(steps)), lwd.box=rep(1,length(steps)),
-#                         add.legend=TRUE,
-#                         device=NULL, file="Scatter Plot", path=getwd(),
-#                         horizontal=FALSE, width=5, height=5, ...)
+#                         pch=16, 
+#                         cex=0.5, 
+#                         col=c(1,2),
+#                         boxes=TRUE,
+#                         col.box=rep(2,length(steps)), 
+#                         lty.box=rep(2,length(steps)), 
+#                         lwd.box=rep(1,length(steps)), 
+#                         add.caption.box=boxes,
+#                         text.caption.box=paste("Step: ", steps, sep=""), 
+#                         pch.group=c(1,1),
+#                         cex.group=c(1,1),
+#                         col.group=c(3,4),
+#                         add.caption.group=ifelse(test=x$cvarg$peelcriterion == "grp", 
+#                                                  yes=TRUE, 
+#                                                  no=FALSE),
+#                         text.caption.group=levels(x$groups),
+#                         device=NULL, 
+#                         file="Scatter Plot", 
+#                         path=getwd(),
+#                         horizontal=FALSE, 
+#                         width=5, 
+#                         height=5, ...)
 #
 #===============#
 # Description   :
@@ -881,16 +966,23 @@ print.sbh <- function(x, ...) {
 plot.sbh <- function(x,
                      main=NULL,
                      proj=c(1,2),
-                     splom=TRUE,
-                     boxes=FALSE,
                      steps=1:x$cvfit$cv.nsteps,
                      pch=16,
                      cex=0.5,
-                     col=2:(length(steps)+1),
-                     col.box=2:(length(steps)+1),
+                     col=c(1,2), 
+                     boxes=TRUE,
+                     col.box=rep(2,length(steps)),
                      lty.box=rep(2,length(steps)),
                      lwd.box=rep(1,length(steps)),
-                     add.legend=TRUE,
+                     add.caption.box=boxes,
+                     text.caption.box=paste("Step: ", steps, sep=""), 
+                     pch.group=c(1,1),
+                     cex.group=c(1,1),
+                     col.group=c(3,4),
+                     add.caption.group=ifelse(test=x$cvarg$peelcriterion == "grp", 
+                                              yes=TRUE, 
+                                              no=FALSE),
+                     text.caption.group=levels(x$groups), 
                      device=NULL,
                      file="Scatter Plot",
                      path=getwd(),
@@ -904,31 +996,31 @@ plot.sbh <- function(x,
   if (x$success) {
     
     if (length(x$cvfit$cv.used) > 0) {
-      
       if (length(x$cvfit$cv.used) == 1) {
-        
-        toplot <- sort(c(setdiff(proj, x$cvfit$cv.used), x$cvfit$cv.used))
-      
+        toadd <- setdiff(proj, x$cvfit$cv.used)
+        toplot <- sort(c(toadd, x$cvfit$cv.used))
       } else {
-      
         if (all(proj %in% x$cvfit$cv.used)) {
+          toadd <- NULL
           toplot <- x$cvfit$cv.used[proj]
         } else {
           stop("Primary argument `proj` must be a subset of the used covariates of 'sbh' object `x`. Exiting ... \n\n")
         }
-      
       }
-    
     } else {
-      stop("Cannot draw the scatter plot: There are no used covariates for the input 'sbh' object. Exiting ... \n\n")
+      stop("Cannot draw the scatter plot: There are no used covariates for the 'sbh' object. Exiting ... \n\n")
     }
     
     scatterplot <- function(object,
                             main,
-                            toplot, splom, boxes,
-                            steps,
-                            add.legend, pch, cex, col,
-                            col.box, lty.box, lwd.box, ...) {
+                            toadd, toplot,
+                            steps, 
+                            pch, cex, col, 
+                            boxes,
+                            col.box, lty.box, lwd.box, 
+                            add.caption.box, text.caption.box, 
+                            pch.group, cex.group, col.group, 
+                            add.caption.group, text.caption.group, ...) {
       
       if (!is.null(main)) {
         par(mfrow=c(1, 1), oma=c(0, 0, 3, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
@@ -936,28 +1028,43 @@ plot.sbh <- function(x,
         par(mfrow=c(1, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
       }
       
+      peelcriterion <- object$cvarg$peelcriterion
       varnames <- colnames(object$X)
       L <- length(steps)
+      y <- object$y
       x <- object$X[,varnames[toplot],drop=FALSE]
       x.names <- colnames(x)
-      plot(x=x, type="p", pch=pch, cex=cex, col=1, main=NULL, xlab=x.names[1], ylab=x.names[2], ...)
-      if (splom) {
-        for (l in 1:L) {
-          i <- steps[l]
-          w <- object$cvfit$cv.boxind[i,]
-          points(x=object$X[w,varnames[toplot],drop=FALSE], type="p", pch=pch, cex=cex, col=col[l], ...)
+      plot(x=x, main=NULL, xlab=x.names[1], ylab=x.names[2], type="n")
+      if (peelcriterion == "grp") {
+        groups <- object$groups
+        groups.lev <- levels(groups)
+        groups.ng <- nlevels(groups)
+        groups.def <- vector(mode="list", length=groups.ng)
+        for (g in 1:groups.ng) {
+          groups.def[[g]] <- which(groups == groups.lev[g])
+        }
+        for (g in 1:groups.ng) {
+          points(x[groups.def[[g]],], type="p", pch=pch.group[g], cex=cex.group[g], col=col.group[g], ...)
         }
       }
+      points(x=x, type="p", pch=pch, cex=cex, col=col[1], ...)
+      w <- object$cvfit$cv.boxind[steps[L],]
+      points(x=x[w,], type="p", pch=pch, cex=cex, col=col[2], ...)
       if (boxes) {
         x.range <- apply(X=x, MARGIN=2, FUN=range)
-        if (length(object$cvfit$cv.used) == length(toplot)) {
+        if (is.null(toadd)) {
           boxcut <- object$cvfit$cv.rules$mean[,varnames[toplot],drop=FALSE]
           varsign <- object$cvfit$cv.sign[varnames[toplot]]
         } else {
           boxcut <- object$cvfit$cv.rules$mean[,varnames[object$cvfit$cv.used],drop=FALSE]
-          boxcut <- cbind(boxcut, x.range[1,setdiff(toplot, object$cvfit$cv.used)])
           varsign <- object$cvfit$cv.sign[varnames[object$cvfit$cv.used]]
-          varsign <- c(varsign,1)
+          if (toadd > object$cvfit$cv.used) {
+            boxcut <- cbind(boxcut, x.range[1,toadd])
+            varsign <- c(varsign, 1)
+          } else {
+            boxcut <- cbind(x.range[1,toadd], boxcut)
+            varsign <- c(1, varsign)
+          }
         }
         vertices <- vector(mode="list", length=L)
         for (l in 1:L) {
@@ -974,23 +1081,32 @@ plot.sbh <- function(x,
         }
         for (l in 1:L) {
           rect(vertices[[l]][1,1], vertices[[l]][1,2], vertices[[l]][2,1], vertices[[l]][2,2],
-               border=col.box[l], col=NA, lty=lty.box[l], lwd=lwd.box[l])
+               border=col.box, col=NA, lty=lty.box, lwd=lwd.box)
         }
+      }
+      legend(x="top", inset=-0.18, legend=c("outbox","inbox"), cex=cex, pch=pch, col=col, xpd=TRUE)
+      if (add.caption.box) {
+        legend(x="top", inset=-0.08, legend=text.caption.box, cex=cex, col=col.box, lty=lty.box, lwd=lwd.box, xpd=TRUE)
+      }
+      if (add.caption.group) {
+        legend(x="right", inset=-0.06, legend=text.caption.group, cex=cex, pch=pch.group, pt.cex=cex.group, col=col.group, xpd=TRUE)
       }
       if (!is.null(main)) {
         mtext(text=main, cex=1, side=3, outer=TRUE)
-      }
-      if (add.legend) {
-        legend("topleft", xpd=TRUE, inset=0.01, legend=paste("Step: ", steps, sep=""), pch=pch, col=col, cex=cex)
       }
     }
     
     if (is.null(device)) {
       scatterplot(object=x,
                   main=main,
-                  toplot=toplot, splom=splom, boxes=boxes, steps=steps,
-                  add.legend=add.legend, pch=pch, cex=cex, col=col,
-                  col.box=col.box, lty.box=lty.box, lwd.box=lwd.box)
+                  toadd=toadd, toplot=toplot, 
+                  steps=steps,
+                  pch=pch, cex=cex, col=col,
+                  boxes=boxes,
+                  col.box=col.box, lty.box=lty.box, lwd.box=lwd.box, 
+                  add.caption.box=add.caption.box, text.caption.box=text.caption.box, 
+                  pch.group=pch.group, cex.group=cex.group, col.group=col.group,
+                  add.caption.group=add.caption.group, text.caption.group=text.caption.group)
     } else if (device == "PS") {
       path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
       file <- paste(file, ".ps", sep="")
@@ -1000,9 +1116,14 @@ plot.sbh <- function(x,
       postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
       scatterplot(object=x,
                   main=main,
-                  toplot=toplot, splom=splom, boxes=boxes, steps=steps,
-                  add.legend=add.legend, pch=pch, cex=cex, col=col,
-                  col.box=col.box, lty.box=lty.box, lwd.box=lwd.box)
+                  toadd=toadd, toplot=toplot, 
+                  steps=steps,
+                  pch=pch, cex=cex, col=col,
+                  boxes=boxes,
+                  col.box=col.box, lty.box=lty.box, lwd.box=lwd.box, 
+                  add.caption.box=add.caption.box, text.caption.box=text.caption.box, 
+                  pch.group=pch.group, cex.group=cex.group, col.group=col.group,
+                  add.caption.group=add.caption.group, text.caption.group=text.caption.group)
       dev.off()
     } else if (device == "PDF") {
       path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
@@ -1013,16 +1134,24 @@ plot.sbh <- function(x,
       pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
       scatterplot(object=x,
                   main=main,
-                  toplot=toplot, splom=splom, boxes=boxes, steps=steps,
-                  add.legend=add.legend, pch=pch, cex=cex, col=col,
-                  col.box=col.box, lty.box=lty.box, lwd.box=lwd.box)
+                  toadd=toadd, toplot=toplot, 
+                  steps=steps,
+                  pch=pch, cex=cex, col=col,
+                  boxes=boxes,
+                  col.box=col.box, lty.box=lty.box, lwd.box=lwd.box, 
+                  add.caption.box=add.caption.box, text.caption.box=text.caption.box, 
+                  pch.group=pch.group, cex.group=cex.group, col.group=col.group,
+                  add.caption.group=add.caption.group, text.caption.group=text.caption.group)
       dev.off()
     } else {
       stop("Currently allowed display devices are \"PS\" (Postscript) or \"PDF\" (Portable Document Format. Exiting ... \n\n) \n")
     }
     
   } else {
-    cat("Cannot draw the scatter plot: Either the covariate screening or the Survival Bump Hunting modeling failed for this dataset. Exiting ... \n")
+    
+    cat("Either the covariate screening or the Survival Bump Hunting modeling failed for this dataset.\n
+         So, there is nothing to plot here.\n")
+    
   }
   
   invisible()
@@ -1108,7 +1237,7 @@ predict.sbh <- function (object,
   } else {
     
     cat("Either the covariate screening or the Survival Bump Hunting modeling failed for this dataset.\n
-           So, there is nothing to predict here.\n")
+         So, there is nothing to predict here.\n")
     
   }
   
@@ -1129,11 +1258,23 @@ predict.sbh <- function (object,
 #===============#
 #                    plot_profile(object,
 #                                 main=NULL,
-#                                 xlim=NULL, ylim=NULL,
-#                                 add.sd=TRUE, add.legend=TRUE, add.profiles=TRUE,
-#                                 pch=20, col=1, lty=1, lwd=0.5, cex=0.5,
-#                                 device=NULL, file="Profile Plots", path=getwd(),
-#                                 horizontal=FALSE, width=8.5, height=5.0, ...) {
+#                                 xlim=NULL, 
+#                                 ylim=NULL,
+#                                 add.sd=TRUE, 
+#                                 add.profiles=TRUE,
+#                                 add.caption=TRUE, 
+#                                 text.caption=c("Mean","Std. Error"),
+#                                 pch=20, 
+#                                 col=1, 
+#                                 lty=1, 
+#                                 lwd=0.5, 
+#                                 cex=0.5,
+#                                 device=NULL, 
+#                                 file="Profile Plots", 
+#                                 path=getwd(),
+#                                 horizontal=FALSE, 
+#                                 width=8.5, 
+#                                 height=5.0, ...) {
 #
 #===============#
 # Description   :
@@ -1154,8 +1295,9 @@ plot_profile <- function(object,
                          xlim=NULL,
                          ylim=NULL,
                          add.sd=TRUE,
-                         add.legend=TRUE,
                          add.profiles=TRUE,
+                         add.caption=TRUE,
+                         text.caption=c("Mean","Std. Error"),
                          pch=20,
                          col=1,
                          lty=1,
@@ -1176,7 +1318,7 @@ plot_profile <- function(object,
     if (object$cv) {
       
       profileplot <- function(object, main, xlim, ylim,
-                              add.sd, add.legend, add.profiles,
+                              add.sd, add.caption, text.caption, add.profiles,
                               pch, col, lty, lwd, cex, ...) {
         
         cvcriterion <- object$cvarg$cvcriterion
@@ -1240,9 +1382,8 @@ plot_profile <- function(object,
                    msize, varprofiles.mean + varprofiles.se,
                    length=0.03, angle=90, code=2, col=col, lwd=lwd)
           }
-          if (add.legend) {
-            legend("top", xpd=TRUE, inset=0, legend=c("Sample Mean", "Std. Error"),
-                   pch=pch, col=col, lty=lty, lwd=lwd, cex=cex, pt.cex=cex/2)
+          if (add.caption) {
+            legend(x="top", xpd=TRUE, inset=0, legend=text.caption, pch=pch, col=col, lty=lty, lwd=lwd, cex=cex, pt.cex=cex/2)
           }
         } else {
           if (!is.null(main)) {
@@ -1296,7 +1437,7 @@ plot_profile <- function(object,
                  0:(Lm-1), stepprofiles.mean + stepprofiles.se,
                  length=0.03, angle=90, code=2, col=col, lwd=lwd)
         }
-        if (add.legend) {
+        if (add.caption) {
           legend("top", xpd=TRUE, inset=0, legend=c("Sample Mean", "Std. Error"),
                  pch=pch, col=col, lty=lty, lwd=lwd, cex=cex, pt.cex=cex/2)
         }
@@ -1308,7 +1449,7 @@ plot_profile <- function(object,
       if (is.null(device)) {
         cat("Device: ",  dev.cur(), "\n")
         profileplot(object=object, main=main, xlim=xlim, ylim=ylim,
-                    add.sd=add.sd, add.legend=add.legend, add.profiles=add.profiles,
+                    add.sd=add.sd, add.caption=add.caption, text.caption=text.caption, add.profiles=add.profiles,
                     pch=pch, col=col, lty=lty, lwd=lwd, cex=cex)
       } else if (device == "PS") {
         path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
@@ -1319,7 +1460,7 @@ plot_profile <- function(object,
         postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
         cat("Device: ",  dev.cur(), "\n")
         profileplot(object=object, main=main, xlim=xlim, ylim=ylim,
-                    add.sd=add.sd, add.legend=add.legend, add.profiles=add.profiles,
+                    add.sd=add.sd, add.caption=add.caption, text.caption=text.caption, add.profiles=add.profiles,
                     pch=pch, col=col, lty=lty, lwd=lwd, cex=cex)
         dev.off()
       } else if (device == "PDF") {
@@ -1331,7 +1472,7 @@ plot_profile <- function(object,
         pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
         cat("Device: ",  dev.cur(), "\n")
         profileplot(object=object, main=main, xlim=xlim, ylim=ylim,
-                    add.sd=add.sd, add.legend=add.legend, add.profiles=add.profiles,
+                    add.sd=add.sd, add.caption=add.caption, text.caption=text.caption, add.profiles=add.profiles,
                     pch=pch, col=col, lty=lty, lwd=lwd, cex=cex)
         dev.off()
       } else {
@@ -1347,7 +1488,7 @@ plot_profile <- function(object,
   } else {
     
     cat("Either the covariate screening or the Survival Bump Hunting modeling failed for this dataset.\n
-           So, there is nothing to plot here.\n")
+         So, there is nothing to plot here.\n")
     
   }
   
@@ -1362,15 +1503,26 @@ plot_profile <- function(object,
 #===============#
 # Usage         :
 #===============#
-#                    plot_boxtraj (object,
-#                                  main=NULL,
-#                                  toplot=object$cvfit$cv.used,
-#                                  col.cov, lty.cov, lwd.cov,
-#                                  col=1, lty=1, lwd=0.5, cex=0.5,
-#                                  add.legend=FALSE, text.legend=NULL,
-#                                  nr=NULL, nc=NULL,
-#                                  device=NULL, file="Trajectory Plots", path=getwd())
-#                                  horizontal=FALSE, width=8.5, height=11, ...)
+#                    plot_traj (object,
+#                               main=NULL,
+#                               toplot=object$cvfit$cv.used,
+#                               col.cov, 
+#                               lty.cov, 
+#                               lwd.cov,
+#                               col=1, 
+#                               lty=1, 
+#                               lwd=0.5, 
+#                               cex=0.5,
+#                               add.caption=FALSE, 
+#                               text.caption=NULL,
+#                               nr=NULL, 
+#                               nc=NULL,
+#                               device=NULL, 
+#                               file="Trajectory Plots", 
+#                               path=getwd())
+#                               horizontal=FALSE, 
+#                               width=8.5, 
+#                               height=11, ...)
 #
 #===============#
 # Description   :
@@ -1386,39 +1538,39 @@ plot_profile <- function(object,
 #
 #===============================================================================================================================#
 
-plot_boxtraj <- function(object,
-                         main=NULL,
-                         toplot=object$cvfit$cv.used,
-                         col.cov,
-                         lty.cov,
-                         lwd.cov,
-                         col=1,
-                         lty=1,
-                         lwd=0.5,
-                         cex=0.5,
-                         add.legend=FALSE,
-                         text.legend=NULL,
-                         nr=NULL,
-                         nc=NULL,
-                         device=NULL,
-                         file="Trajectory Plots",
-                         path=getwd(),
-                         horizontal=FALSE,
-                         width=8.5,
-                         height=11, ...) {
+plot_traj <- function(object,
+                      main=NULL,
+                      toplot=object$cvfit$cv.used,
+                      col.cov,
+                      lty.cov,
+                      lwd.cov,
+                      col=1,
+                      lty=1,
+                      lwd=0.5,
+                      cex=0.5,
+                      add.caption=FALSE,
+                      text.caption=NULL,
+                      nr=NULL,
+                      nc=NULL,
+                      device=NULL,
+                      file="Trajectory Plots",
+                      path=getwd(),
+                      horizontal=FALSE,
+                      width=8.5,
+                      height=11, ...) {
   
   if (!inherits(object, 'sbh'))
     stop("Primary argument must be an object of class 'sbh' \n")
   
   if (object$success) {
     
-    boxtrajplot <- function(object,
-                            main,
-                            toplot,
-                            col.cov, lty.cov, lwd.cov,
-                            col, lty, lwd,
-                            cex, add.legend, text.legend,
-                            nr, nc, ...) {
+    trajplot <- function(object,
+                         main,
+                         toplot,
+                         col.cov, lty.cov, lwd.cov,
+                         col, lty, lwd,
+                         cex, add.caption, text.caption,
+                         nr, nc, ...) {
       p <- length(toplot)
       varnames <- colnames(object$X)
       if (is.null(nc))
@@ -1454,8 +1606,8 @@ plot_boxtraj <- function(object,
              xlab="Box Mass",
              ylab="Covariate Range", ...)
       }
-      if (add.legend)
-        legend("bottomleft", inset=0.01, legend=text.legend, cex=cex)
+      if (add.caption)
+        legend(x="bottomleft", inset=0.01, legend=text.caption, cex=cex)
       par(mfg=c(nr-1, 1))
       plot(object$cvfit$cv.stats$mean$Support,
            object$cvfit$cv.stats$mean$Support,
@@ -1465,8 +1617,8 @@ plot_boxtraj <- function(object,
            ylim=range(0,1),
            xlab="Box Mass",
            ylab=expression(paste("Support (", beta, ")", sep="")), ...)
-      if (add.legend)
-        legend("bottomright", inset=0.01, legend=text.legend, cex=cex)
+      if (add.caption)
+        legend(x="bottomright", inset=0.01, legend=text.caption, cex=cex)
       par(mfg=c(nr-1, 2))
       plot(object$cvfit$cv.stats$mean$Support,
            object$cvfit$cv.stats$mean$MEFT,
@@ -1476,8 +1628,8 @@ plot_boxtraj <- function(object,
            ylim=range(0, object$cvfit$cv.stats$mean$MEFT, na.rm=TRUE),
            xlab="Box Mass",
            ylab="Time", ...)
-      if (add.legend)
-        legend("bottomright", inset=0.01, legend=text.legend, cex=cex)
+      if (add.caption)
+        legend(x="bottomright", inset=0.01, legend=text.caption, cex=cex)
       par(mfg=c(nr-1, 3))
       plot(object$cvfit$cv.stats$mean$Support,
            object$cvfit$cv.stats$mean$MEFP,
@@ -1487,8 +1639,8 @@ plot_boxtraj <- function(object,
            ylim=range(0,1),
            xlab="Box Mass",
            ylab="Probability", ...)
-      if (add.legend)
-        legend("bottomright", inset=0.01, legend=text.legend, cex=cex)
+      if (add.caption)
+        legend(x="bottomright", inset=0.01, legend=text.caption, cex=cex)
       par(mfg=c(nr, 1))
       plot(object$cvfit$cv.stats$mean$Support,
            object$cvfit$cv.stats$mean$LHR,
@@ -1498,8 +1650,8 @@ plot_boxtraj <- function(object,
            ylim=range(0, object$cvfit$cv.stats$mean$LHR, na.rm=TRUE),
            xlab="Box Mass",
            ylab=expression(paste("Log-Hazard Ratio (", lambda,")", sep="")), ...)
-      if (add.legend)
-        legend("top", inset=0.01, legend=text.legend, cex=cex)
+      if (add.caption)
+        legend(x="top", inset=0.01, legend=text.caption, cex=cex)
       par(mfg=c(nr, 2))
       plot(object$cvfit$cv.stats$mean$Support,
            object$cvfit$cv.stats$mean$LRT,
@@ -1509,8 +1661,8 @@ plot_boxtraj <- function(object,
            ylim=range(0, object$cvfit$cv.stats$mean$LRT, na.rm=TRUE),
            xlab="Box Mass",
            ylab=expression(paste("Log-rank test (", chi^2 ,")", sep="")), ...)
-      if (add.legend)
-        legend("top", inset=0.01, legend=text.legend, cex=cex)
+      if (add.caption)
+        legend(x="top", inset=0.01, legend=text.caption, cex=cex)
       par(mfg=c(nr, 3))
       plot(object$cvfit$cv.stats$mean$Support,
            object$cvfit$cv.stats$mean$CER,
@@ -1520,8 +1672,8 @@ plot_boxtraj <- function(object,
            ylim=range(0,1),
            xlab="Box Mass",
            ylab=expression(paste("1-C (", theta,")", sep="")), ...)
-      if (add.legend)
-        legend("top", inset=0.01, legend=text.legend, cex=cex)
+      if (add.caption)
+        legend(x="top", inset=0.01, legend=text.caption, cex=cex)
       if (!is.null(main)) {
         mtext(text=main, cex=1, side=3, outer=TRUE)
       }
@@ -1529,13 +1681,13 @@ plot_boxtraj <- function(object,
     
     if (is.null(device)) {
       cat("Device: ",  dev.cur(), "\n")
-      boxtrajplot(object=object,
-                  main=main,
-                  toplot=toplot,
-                  col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
-                  col=col, lty=lty, lwd=lwd,
-                  cex=cex, add.legend=add.legend, text.legend=text.legend,
-                  nr=nr, nc=nc)
+      trajplot(object=object,
+               main=main,
+               toplot=toplot,
+               col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
+               col=col, lty=lty, lwd=lwd,
+               cex=cex, add.caption=add.caption, text.caption=text.caption,
+               nr=nr, nc=nc)
     } else if (device == "PS") {
       path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
       file <- paste(file, ".ps", sep="")
@@ -1544,13 +1696,13 @@ plot_boxtraj <- function(object,
       cat("Directory: ", path, "\n")
       postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
       cat("Device: ",  dev.cur(), "\n")
-      boxtrajplot(object=object,
-                  main=main,
-                  toplot=toplot,
-                  col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
-                  col=col, lty=lty, lwd=lwd,
-                  cex=cex, add.legend=add.legend, text.legend=text.legend,
-                  nr=nr, nc=nc)
+      trajplot(object=object,
+               main=main,
+               toplot=toplot,
+               col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
+               col=col, lty=lty, lwd=lwd,
+               cex=cex, add.caption=add.caption, text.caption=text.caption,
+               nr=nr, nc=nc)
       dev.off()
     } else if (device == "PDF") {
       path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
@@ -1560,13 +1712,13 @@ plot_boxtraj <- function(object,
       cat("Directory: ", path, "\n")
       pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
       cat("Device: ",  dev.cur(), "\n")
-      boxtrajplot(object=object,
-                  main=main,
-                  toplot=toplot,
-                  col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
-                  col=col, lty=lty, lwd=lwd,
-                  cex=cex, add.legend=add.legend, text.legend=text.legend,
-                  nr=nr, nc=nc)
+      trajplot(object=object,
+               main=main,
+               toplot=toplot,
+               col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
+               col=col, lty=lty, lwd=lwd,
+               cex=cex, add.caption=add.caption, text.caption=text.caption,
+               nr=nr, nc=nc)
       dev.off()
     } else {
       cat("Currently allowed display devices are \"PS\" (Postscript) or \"PDF\" (Portable Document Format). Exiting ... \n\n")
@@ -1575,7 +1727,7 @@ plot_boxtraj <- function(object,
   } else {
     
     cat("Either the covariate screening or the Survival Bump Hunting modeling failed for this dataset.\n
-           So, there is nothing to plot here.\n")
+         So, there is nothing to plot here.\n")
     
   }
   
@@ -1590,16 +1742,28 @@ plot_boxtraj <- function(object,
 #===============#
 # Usage         :
 #===============#
-#                    plot_boxtrace (object,
-#                                   main=NULL,
-#                                   xlab="Box Mass", ylab="Covariate Range (centered)",
-#                                   toplot=object$cvfit$cv.used,
-#                                   center=TRUE, scale=FALSE,
-#                                   col.cov, lty.cov, lwd.cov,
-#                                   col=1, lty=1, lwd=0.5, cex=0.5,
-#                                   add.legend=FALSE, text.legend=NULL,
-#                                   device=NULL, file="Covariate Trace Plots", path=getwd(),
-#                                   horizontal=FALSE, width=8.5, height=8.5, ...)
+#                    plot_trace (object,
+#                                main=NULL,
+#                                xlab="Box Mass", 
+#                                ylab="Covariate Range (centered)",
+#                                toplot=object$cvfit$cv.used,
+#                                center=TRUE, 
+#                                scale=FALSE,
+#                                col.cov, 
+#                                lty.cov, 
+#                                lwd.cov,
+#                                col=1, 
+#                                lty=1, 
+#                                lwd=0.5, 
+#                                cex=0.5,
+#                                add.caption=FALSE, 
+#                                text.caption=NULL,
+#                                device=NULL, 
+#                                file="Covariate Trace Plots", 
+#                                path=getwd(),
+#                                horizontal=FALSE, 
+#                                width=8.5, 
+#                                height=8.5, ...)
 #
 #===============#
 # Description   :
@@ -1615,41 +1779,41 @@ plot_boxtraj <- function(object,
 #
 #===============================================================================================================================#
 
-plot_boxtrace <- function(object,
-                          main=NULL,
-                          xlab="Box Mass",
-                          ylab="Covariate Range (centered)",
-                          toplot=object$cvfit$cv.used,
-                          center=TRUE,
-                          scale=FALSE,
-                          col.cov,
-                          lty.cov,
-                          lwd.cov,
-                          col=1,
-                          lty=1,
-                          lwd=0.5,
-                          cex=0.5,
-                          add.legend=FALSE,
-                          text.legend=NULL,
-                          device=NULL,
-                          file="Covariate Trace Plots",
-                          path=getwd(),
-                          horizontal=FALSE,
-                          width=8.5,
-                          height=8.5, ...) {
+plot_trace <- function(object,
+                       main=NULL,
+                       xlab="Box Mass",
+                       ylab="Covariate Range (centered)",
+                       toplot=object$cvfit$cv.used,
+                       center=TRUE,
+                       scale=FALSE,
+                       col.cov,
+                       lty.cov,
+                       lwd.cov,
+                       col=1,
+                       lty=1,
+                       lwd=0.5,
+                       cex=0.5,
+                       add.caption=FALSE,
+                       text.caption=NULL,
+                       device=NULL,
+                       file="Covariate Trace Plots",
+                       path=getwd(),
+                       horizontal=FALSE,
+                       width=8.5,
+                       height=8.5, ...) {
   
   if (!inherits(object, 'sbh'))
     stop("Primary argument must be an object of class 'sbh' \n")
   
   if (object$success) {
     
-    boxtraceplot <- function(object,
-                             main, xlab, ylab,
-                             toplot,
-                             center, scale,
-                             col.cov, lty.cov, lwd.cov,
-                             col, lty, lwd,
-                             cex, add.legend, text.legend, ...) {
+    traceplot <- function(object,
+                          main, xlab, ylab,
+                          toplot,
+                          center, scale,
+                          col.cov, lty.cov, lwd.cov,
+                          col, lty, lwd,
+                          cex, add.caption, text.caption, ...) {
       p <- length(toplot)
       varnames <- colnames(object$X)
       maxlength <- max(sapply(X=varnames, FUN=function(x){nchar(x, type="chars", allowNA=TRUE)}))
@@ -1682,11 +1846,11 @@ plot_boxtrace <- function(object,
               y=boxcut.scaled[,j],
               type='l', col=col.cov[j], lty=lty.cov[j], lwd=lwd.cov[j], ...)
       }
-      legend("topleft", inset=0.01, legend=varnames[toplot], col=col.cov, lty=lty.cov, lwd=lwd.cov, cex=cex)
+      legend(x="topleft", inset=0.01, legend=varnames[toplot], col=col.cov, lty=lty.cov, lwd=lwd.cov, cex=cex)
       if (center)
         abline(h=0, lty=2, col=1, lwd=0.3, xpd=FALSE)
-      if (add.legend)
-        legend("bottom", inset=0.01, legend=text.legend, cex=cex)
+      if (add.caption)
+        legend(x="bottom", inset=0.01, legend=text.caption, cex=cex)
       mtext(text=xlab, cex=cex, side=1, line=1, outer=FALSE)
       mtext(text=ylab, cex=cex, side=2, line=2, outer=FALSE)
       
@@ -1703,8 +1867,8 @@ plot_boxtrace <- function(object,
            ylab="", ...)
       par(mgp=c(1.5, 0, 0))
       axis(side=2, at=1:p, labels=ticknames, tick=FALSE, las=1, line=NA, cex.axis=cex, outer=FALSE)
-      if (add.legend)
-        legend("bottom", inset=0.01, legend=text.legend, cex=cex)
+      if (add.caption)
+        legend(x="bottom", inset=0.01, legend=text.caption, cex=cex)
       mtext(text=xlab, cex=cex, side=1, line=1, outer=FALSE)
       mtext(text="Covariates Used", cex=cex, side=2, line=1+maxlength/2, outer=FALSE)
       if (!is.null(main)) {
@@ -1714,13 +1878,13 @@ plot_boxtrace <- function(object,
     
     if (is.null(device)) {
       cat("Device: ",  dev.cur(), "\n")
-      boxtraceplot(object=object,
-                   main=main, xlab=xlab, ylab=ylab,
-                   toplot=toplot,
-                   center=center, scale=scale,
-                   col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
-                   col=col, lty=lty, lwd=lwd,
-                   cex=cex, add.legend=add.legend, text.legend=text.legend)
+      traceplot(object=object,
+                main=main, xlab=xlab, ylab=ylab,
+                toplot=toplot,
+                center=center, scale=scale,
+                col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
+                col=col, lty=lty, lwd=lwd,
+                cex=cex, add.caption=add.caption, text.caption=text.caption)
     } else if (device == "PS") {
       path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
       file <- paste(file, ".ps", sep="")
@@ -1729,13 +1893,13 @@ plot_boxtrace <- function(object,
       cat("Directory: ", path, "\n")
       postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
       cat("Device: ",  dev.cur(), "\n")
-      boxtraceplot(object=object,
-                   main=main, xlab=xlab, ylab=ylab,
-                   toplot=toplot,
-                   center=center, scale=scale,
-                   col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
-                   col=col, lty=lty, lwd=lwd,
-                   cex=cex, add.legend=add.legend, text.legend=text.legend)
+      traceplot(object=object,
+                main=main, xlab=xlab, ylab=ylab,
+                toplot=toplot,
+                center=center, scale=scale,
+                col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
+                col=col, lty=lty, lwd=lwd,
+                cex=cex, add.caption=add.caption, text.caption=text.caption)
       dev.off()
     } else if (device == "PDF") {
       path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
@@ -1745,13 +1909,13 @@ plot_boxtrace <- function(object,
       cat("Directory: ", path, "\n")
       pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
       cat("Device: ",  dev.cur(), "\n")
-      boxtraceplot(object=object,
-                   main=main, xlab=xlab, ylab=ylab,
-                   toplot=toplot,
-                   center=center, scale=scale,
-                   col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
-                   col=col, lty=lty, lwd=lwd,
-                   cex=cex, add.legend=add.legend, text.legend=text.legend)
+      traceplot(object=object,
+                main=main, xlab=xlab, ylab=ylab,
+                toplot=toplot,
+                center=center, scale=scale,
+                col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
+                col=col, lty=lty, lwd=lwd,
+                cex=cex, add.caption=add.caption, text.caption=text.caption)
       dev.off()
     } else {
       cat("Currently allowed display devices are \"PS\" (Postscript) or \"PDF\" (Portable Document Format). Exiting ... \n\n")
@@ -1760,7 +1924,7 @@ plot_boxtrace <- function(object,
   } else {
     
     cat("Either the covariate screening or the Survival Bump Hunting modeling failed for this dataset.\n
-           So, there is nothing to plot here.\n")
+         So, there is nothing to plot here.\n")
     
   }
   
@@ -1776,15 +1940,31 @@ plot_boxtrace <- function(object,
 #===============#
 # Usage         :
 #===============#
-#                    plot_boxkm (object,
-#                                main=NULL,
-#                                xlab="Time", ylab="Probability",
-#                                precision=1e-3, mark=3,
-#                                col=2, lty=1, lwd=0.5, cex=0.5,
-#                                steps=1:object$cvfit$cv.nsteps,
-#                                nr=3, nc=4,
-#                                device=NULL, file="Survival Plots", path=getwd(),
-#                                horizontal=TRUE, width=11, height=8.5, ...)
+#                    plot_km (object,
+#                             main=NULL,
+#                             xlab="Time", 
+#                             ylab="Probability",
+#                             precision=1e-3, 
+#                             mark=3,
+#                             col=ifelse(test=object$cvarg$peelcriterion != "grp", 
+#                                        yes=c(1,2), 
+#                                        no=c(3,4)), 
+#                             lty=1, 
+#                             lwd=0.5, 
+#                             cex=0.5,
+#                             steps=1:object$cvfit$cv.nsteps,
+#                             add.caption=TRUE,
+#                             text.caption=ifelse(test=object$cvarg$peelcriterion != "grp", 
+#                                                 yes=c("outbox","inbox"), 
+#                                                 no=levels(object$groups)), 
+#                             nr=3, 
+#                             nc=4,
+#                             device=NULL, 
+#                             file="Survival Plots", 
+#                             path=getwd(),
+#                             horizontal=TRUE, 
+#                             width=11, 
+#                             height=8.5, ...)
 #
 #===============#
 # Description   :
@@ -1800,46 +1980,70 @@ plot_boxtrace <- function(object,
 #
 #===============================================================================================================================#
 
-plot_boxkm <- function(object,
-                       main=NULL,
-                       xlab="Time",
-                       ylab="Probability",
-                       precision=1e-3,
-                       mark=3,
-                       col=2,
-                       lty=1,
-                       lwd=0.5,
-                       cex=0.5,
-                       steps=1:object$cvfit$cv.nsteps,
-                       nr=3,
-                       nc=4,
-                       device=NULL,
-                       file="Survival Plots",
-                       path=getwd(),
-                       horizontal=TRUE,
-                       width=11,
-                       height=8.5, ...) {
+plot_km <- function(object,
+                    main=NULL,
+                    xlab="Time",
+                    ylab="Probability",
+                    precision=1e-3,
+                    mark=3,
+                    col=ifelse(test=object$cvarg$peelcriterion != "grp", 
+                               yes=c(1,2), 
+                               no=c(3,4)), 
+                    lty=1,
+                    lwd=0.5,
+                    cex=0.5,
+                    steps=1:object$cvfit$cv.nsteps,
+                    add.caption=TRUE,
+                    text.caption=ifelse(test=object$cvarg$peelcriterion != "grp", 
+                                        yes=c("outbox","inbox"), 
+                                        no=levels(object$groups)), 
+                    nr=3,
+                    nc=4,
+                    device=NULL,
+                    file="Survival Plots",
+                    path=getwd(),
+                    horizontal=TRUE,
+                    width=11,
+                    height=8.5, ...) {
   
   if (!inherits(object, 'sbh'))
     stop("Primary argument must be an object of class 'sbh' \n")
   
   if (object$success) {
     
-    boxkmplot <- function(object,
-                          main, xlab, ylab,
-                          precision, mark,
-                          col, lty, lwd, cex,
-                          steps, nr, nc, ...) {
+    kmplot <- function(object,
+                       main, xlab, ylab,
+                       precision, mark,
+                       col, lty, lwd, cex,
+                       steps, 
+                       add.caption, text.caption, 
+                       nr, nc, ...) {
+      
       if (!is.null(main)) {
         par(mfrow=c(nr, nc), oma=c(0, 0, 3, 0), mar=c(2.5, 2.5, 1.5, 1.5), mgp=c(1.5, 0.5, 0))
       } else {
         par(mfrow=c(nr, nc), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 0.0, 1.5), mgp=c(1.5, 0.5, 0))
       }
       
+      peelcriterion <- object$cvarg$peelcriterion
       y <- object$y
       delta <- object$delta
+      if (peelcriterion == "grp") {
+        groups <- object$groups
+        groups.lev <- levels(groups)
+        groups.ng <- nlevels(groups)
+        groups.def <- vector(mode="list", length=groups.ng)
+        for (g in 1:groups.ng) {
+          groups.def[[g]] <- which(groups == groups.lev[g])
+        }
+        if (median(y[groups.def[[1]]]) < median(y[groups.def[[2]]])) {
+          groups.lev <- rev(groups.lev)
+          tmp <- groups.def[[1]] 
+          groups.def[[1]] <- groups.def[[2]]
+          groups.def[[2]] <- tmp
+        }
+      }
       L <- length(steps)
-      
       for (l in 1:L) {
         i <- steps[l]
         boxind <- object$cvfit$cv.boxind[i,]
@@ -1849,45 +2053,57 @@ plot_boxkm <- function(object,
         } else {
           boxind <- 2 - 1*boxind
         }
-        surv <- survival::survfit(survival::Surv(time=y, event=delta) ~ 1 + boxind)
-        if (i == 1) {
-          plot(surv, main="", conf.int=TRUE, mark.time=FALSE, mark=NA, lty=2, lwd=lwd, col=col, cex=cex, xlab=xlab, ylab=ylab, ...)
+        if (peelcriterion != "grp") {
+          surv <- survival::survfit(survival::Surv(time=y, event=delta) ~ 1 + boxind)
+          plot(surv, main="", conf.int=TRUE, mark.time=FALSE, mark=NA, lty=c(2,2), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=cex, xlab=xlab, ylab=ylab, ...)
           par(new=TRUE)
-          plot(surv, main="", conf.int=FALSE, mark.time=TRUE, mark=mark, lty=lty, lwd=lwd, col=col, cex=cex, xlab=xlab, ylab=ylab, ...)
+          plot(surv, main="", conf.int=FALSE, mark.time=TRUE, mark=mark, lty=c(lty,lty), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=cex, xlab=xlab, ylab=ylab, ...)
+          if (add.caption) {
+            legend(x="topright", inset=0.01, legend=rev(text.caption), lty=c(lty,lty), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=0.9*cex)
+          }
+        } else if (peelcriterion == "grp") {
+          groups <- object$groups
+          grp1 <- 1*(groups == groups.lev[1])
+          wb <- which(boxind == 1)
+          surv <- survival::survfit(survival::Surv(time=y[wb], event=delta[wb]) ~ 1 + grp1[wb])
+          plot(surv, main="", conf.int=TRUE, mark.time=FALSE, mark=NA, lty=c(2,2), lwd=c(lwd,lwd), col=c(col[1],col[2]), cex=cex, xlab=xlab, ylab=ylab, ...)
+          par(new=TRUE)
+          plot(surv, main="", conf.int=FALSE, mark.time=TRUE, mark=mark, lty=c(lty,lty), lwd=c(lwd,lwd), col=c(col[1],col[2]), cex=cex, xlab=xlab, ylab=ylab, ...)
+          if (add.caption) {
+            legend(x="topright", inset=0.01, legend=text.caption, lty=c(lty,lty), lwd=c(lwd,lwd), col=c(col[1],col[2]), cex=0.9*cex)
+          }
         } else {
-          plot(surv, main="", conf.int=TRUE, mark.time=FALSE, mark=NA, lty=c(2,2), lwd=c(lwd,lwd), col=c(col,1), cex=cex, xlab=xlab, ylab=ylab, ...)
-          par(new=TRUE)
-          plot(surv, main="", conf.int=FALSE, mark.time=TRUE, mark=mark, lty=c(lty,lty), lwd=c(lwd,lwd), col=c(col,1), cex=cex, xlab=xlab, ylab=ylab, ...)
+          stop("Invalid peeling criterion. Exiting ...\n\n")
         }
-        legend("topright", inset=0.01, legend=c("inbox","outbox"), lty=c(lty,lty), lwd=c(lwd,lwd), col=c(col,1), cex=0.9*cex)
         if (object$pv) {
           if (object$cvfit$cv.pval$pval[i] <= precision) {
-            legend("bottom", inset=0.11, col="black", cex=0.9*cex, bty="n",
+            legend(x="bottom", inset=0.11, col="black", cex=0.9*cex, bty="n",
                    legend=bquote(italic(p) <= .(precision)))
           } else {
-            legend("bottom", inset=0.11, col="black", cex=0.9*cex, bty="n",
+            legend(x="bottom", inset=0.11, col="black", cex=0.9*cex, bty="n",
                    legend=bquote(italic(p) == .(format(x=object$cvfit$cv.pval$pval[i], scientific=FALSE, digits=4, nsmall=4))))
           }
         }
-        legend("bottom", inset=0.01, col="black", cex=0.9*cex, bty="n",
+        legend(x="bottom", inset=0.01, col="black", cex=0.9*cex, bty="n",
                legend=substitute(group("", list(paste(italic(LHR) == x, sep="")), ""), list(x=format(x=object$cvfit$cv.stats$mean$LHR[i], digits=3, nsmall=3))))
-        legend("bottom", inset=0.06, col="black", cex=0.9*cex, bty="n",
+        legend(x="bottom", inset=0.06, col="black", cex=0.9*cex, bty="n",
                legend=substitute(group("", list(paste(italic(LRT) == x, sep="")), ""), list(x=format(x=object$cvfit$cv.stats$mean$LRT[i], digits=3, nsmall=3))))
-        legend("bottom", inset=0.16, legend=paste("Step ", i-1, sep=""), col=1, cex=0.9*cex, bty="n")
-      }
-      if (!is.null(main)) {
-        mtext(text=main, cex=1, side=3, outer=TRUE)
+        legend(x="bottom", inset=0.16, legend=paste("Step ", i-1, sep=""), col="black", cex=0.9*cex, bty="n")
+        if (!is.null(main)) {
+          mtext(text=main, cex=1, side=3, outer=TRUE)
+        }
       }
     }
     
     if (is.null(device)) {
       cat("Device: ",  dev.cur(), "\n")
-      boxkmplot(object=object,
-                main=main, xlab=xlab, ylab=ylab,
-                precision=precision, mark=mark,
-                col=col, lty=lty, lwd=lwd, cex=cex,
-                steps=steps,
-                nr=nr, nc=nc)
+      kmplot(object=object,
+             main=main, xlab=xlab, ylab=ylab,
+             precision=precision, mark=mark,
+             col=col, lty=lty, lwd=lwd, cex=cex,
+             steps=steps, 
+             add.caption=add.caption, text.caption=text.caption,
+             nr=nr, nc=nc)
     } else if (device == "PS") {
       path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
       file <- paste(file, ".ps", sep="")
@@ -1896,12 +2112,13 @@ plot_boxkm <- function(object,
       cat("Directory: ", path, "\n")
       postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
       cat("Device: ",  dev.cur(), "\n")
-      boxkmplot(object=object,
-                main=main, xlab=xlab, ylab=ylab,
-                precision=precision, mark=mark,
-                col=col, lty=lty, lwd=lwd, cex=cex,
-                steps=steps,
-                nr=nr, nc=nc)
+      kmplot(object=object,
+             main=main, xlab=xlab, ylab=ylab,
+             precision=precision, mark=mark,
+             col=col, lty=lty, lwd=lwd, cex=cex,
+             steps=steps, 
+             add.caption=add.caption, text.caption=text.caption,
+             nr=nr, nc=nc)
       dev.off()
     } else if (device == "PDF") {
       path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
@@ -1911,12 +2128,13 @@ plot_boxkm <- function(object,
       cat("Directory: ", path, "\n")
       pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
       cat("Device: ",  dev.cur(), "\n")
-      boxkmplot(object=object,
-                main=main, xlab=xlab, ylab=ylab,
-                precision=precision, mark=mark,
-                col=col, lty=lty, lwd=lwd, cex=cex,
-                steps=steps,
-                nr=nr, nc=nc)
+      kmplot(object=object,
+             main=main, xlab=xlab, ylab=ylab,
+             precision=precision, mark=mark,
+             col=col, lty=lty, lwd=lwd, cex=cex,
+             steps=steps, 
+             add.caption=add.caption, text.caption=text.caption,
+             nr=nr, nc=nc)
       dev.off()
     } else {
       cat("Currently allowed display devices are \"PS\" (Postscript) or \"PDF\" (Portable Document Format). Exiting ... \n\n")
@@ -1925,7 +2143,7 @@ plot_boxkm <- function(object,
   } else {
     
     cat("Either the covariate screening or the Survival Bump Hunting modeling failed for this dataset.\n
-           So, there is nothing to plot here.\n")
+         So, there is nothing to plot here.\n")
     
   }
   
