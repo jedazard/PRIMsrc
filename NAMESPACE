@@ -15,9 +15,9 @@ import("stats")
 export("PRIMsrc.news", 
        "sbh",
        "plot_profile",
-       "plot_boxtraj",
-       "plot_boxtrace",
-       "plot_boxkm")
+       "plot_traj",
+       "plot_trace",
+       "plot_km")
 
 S3method("summary", "sbh")
 S3method("predict", "sbh")
