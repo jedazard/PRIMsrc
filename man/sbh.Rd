@@ -205,8 +205,10 @@
         if \code{peelcriterion} is in \{"lhr", "lrt", "chs"\}, \code{groups} is automatically set to \code{NULL}.
     }
     \item{groups}{
-        \code{numeric} vector of group membership. To be specified if algorithm Patient Recursive Group Survival Peeling (PRGSP)
-        is to be used, i.e. with option \code{peelcriterion = "grp"}. Only two groups are allowed at this point.
+        \code{character} or \code{numeric} \code{vector}, or \code{factor} of group membership indicator variable of length 
+        the data sample size with as many different values or \code{levels} as the number of data sample groups. 
+        To be specified if algorithm Patient Recursive Group Survival Peeling (PRGSP) is to be used, i.e. with option 
+        \code{peelcriterion = "grp"}. Only two groups are allowed at this point.
         Defaults to \code{NULL}, i.e. when regular PRSP is to be used (\code{peelcriterion} in \{"lhr", "lrt", "chs"\}).
     }
     \item{pv}{
@@ -342,7 +344,7 @@
     In case of large (\eqn{p > n}) or very large (\eqn{p >> n}) datasets, it is also highly recommended to use the 
     parallelization option. 
   
-    The function \code{sbh} relies on the R package \pkg{parallel} to create a parallel backend within an R session, enabling access to a 
+    The function \code{sbh} relies on the R package \pkg{parallel} to create a parallel backend within an R session. This enables access to a 
     cluster of compute cores and/or nodes on a local and/or remote machine(s) and scaling-up with the number of CPU cores available and 
     efficient parallel execution. To run a procedure in parallel (with parallel RNG), argument \code{parallel} is to be set to \code{TRUE} 
     and argument \code{conf} is to be specified (i.e. non \code{NULL}). Argument \code{conf} uses the options described in function 
@@ -642,8 +644,10 @@ plot_km(object = synt1,
        stop("'parallel' must be attached first \n")
     }
     #===================================================
-    # Example #1 - Quad core PC 
-    # Running WINDOWS with SOCKET communication
+    # Ex. #1 - Multicore PC
+    # Running WINDOWS
+    # SOCKET communication cluster
+    # Shared memory parallelization
     #===================================================
     cpus <- parallel::detectCores(logical = TRUE)
     conf <- list("spec" = rep("localhost", cpus),
@@ -652,10 +656,11 @@ plot_km(object = synt1,
                  "verbose" = TRUE,
                  "outfile" = "")
     #===================================================
-    # Example #2 - Master node + 3 Worker nodes cluster
-    # Running LINUX with SOCKET communication
-    # All nodes equipped with identical setups of 
-    # multicores (8 core CPUs per machine for a total of 32)
+    # Ex. #2 - Master node + 3 Worker nodes cluster
+    # All nodes equipped with identical setups of multicores 
+    # (8 core CPUs per machine for a total of 32)
+    # SOCKET communication cluster
+    # Distributed memory parallelization
     #===================================================
     masterhost <- Sys.getenv("HOSTNAME")
     slavehosts <- c("compute-0-0", "compute-0-1", "compute-0-2")
@@ -668,17 +673,19 @@ plot_km(object = synt1,
                  "verbose" = TRUE,
                  "outfile" = "")
     #===================================================
-    # Example #3 - Multinode of multicore per node cluster
-    # Running LINUX with SLURM scheduler and MPI communication
-    # Below, variable 'cpus' is the total number 
-    # of requested core CPUs, which is specified from  
-    # within a SLURM script.
-    #===================================================
+    # Ex. #3 - Enterprise Multinode Cluster w/ multicore/node  
+    # Running LINUX with SLURM scheduler
+    # MPI communication cluster
+    # Distributed memory parallelisation
+    #==================================================
     if (require("Rmpi")) {
         print("'Rmpi' is attached correctly \n")
     } else {
         stop("'Rmpi' must be attached first \n")
     }
+    # Below, variable 'cpus' is the total number of requested 
+    # taks (threads/CPUs), which is specified from within a 
+    # SLURM script.
     cpus <- as.numeric(Sys.getenv("SLURM_NTASKS"))
     conf <- list("spec" = cpus,
                  "type" = "MPI",
