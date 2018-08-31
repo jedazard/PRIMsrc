@@ -18,7 +18,7 @@ Assumptions are that the multivariate input variables can be discrete or continu
 multivariate datasets, including the paradigm where the number of covariates (_p_) exceeds or dominates that of samples (_n_): _p_ > _n_ or 
 _p_ >> _n_.    
 
-Please note that the current version (0.8.0) is a development release that only implements the case of a survival outcome. At this point, this version 
+Please note that the current version (0.8.1) is a development release that only implements the case of a survival outcome. At this point, this version 
 of `PRIMsrc` is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our Patient 
 Recursive Survival Peeling (PRSP) algorithm (Dazard et al., 2014, 2015, 2016, 2018). New features will be added as soon as available. 
 
@@ -64,8 +64,8 @@ between master and worker processes: 'Socket' or  'Message-Passing Interface' ('
 ============
 ### Branches
 
-This branch (master) is the  default one, that hosts the current development release (version 0.8.0) of the  "Survival Bump Hunting" (SBH)
-(or "Group Survival Bump Hunting" (GSBH)) procedure. Note that `PRIMsrc` is still a non-production release and that version 0.8.0 implements 
+This branch (master) is the  default one, that hosts the current development release (version 0.8.1) of the  "Survival Bump Hunting" (SBH)
+(or "Group Survival Bump Hunting" (GSBH)) procedure. Note that `PRIMsrc` is still a non-production release and that version 0.8.1 implements 
 significant user-visible changes. Check details of new features, changes, and bug fixes in the "Usage" section below.
 
 The second branch (unified) will host the future complete version of the code (version 1.0.0), including undirected peeling search derived 
@@ -98,7 +98,7 @@ CRAN downloads in the last week:
 ================
 ### Requirements
 
-PRIMsrc (>= 0.8.0) requires R-3.0.2 (2013-09-25). It was built and tested under R version 3.5.1 (2018-07-02) and Travis CI. 
+PRIMsrc (>= 0.8.1) requires R-3.0.2 (2013-09-25). It was built and tested under R version 3.5.1 (2018-07-02) and Travis CI. 
 
 Installation has been tested on Windows, Linux, OSX and Solaris platforms. 
 
@@ -112,14 +112,14 @@ See CRAN checks:
 ================
 ### Installation
 
-* To install the stable version (0.8.0) of `PRIMsrc` from the [CRAN](https://CRAN.R-project.org/package=PRIMsrc) repository, 
-simply download and install the current version (0.8.0) from the CRAN repository:
+* To install the stable version (0.8.1) of `PRIMsrc` from the [CRAN](https://CRAN.R-project.org/package=PRIMsrc) repository, 
+simply download and install the current version (0.8.1) from the CRAN repository:
 
 ```{r}
 install.packages("PRIMsrc")
 ```
 
-* Alternatively, you can install the most up-to-date development version (>= 0.8.0) of `PRIMsrc` from the [GitHub](https://github.com/jedazard/PRIMsrc) repository, 
+* Alternatively, you can install the most up-to-date development version (>= 0.8.1) of `PRIMsrc` from the [GitHub](https://github.com/jedazard/PRIMsrc) repository, 
 simply run the following using devtools:
 
 ```{r}
