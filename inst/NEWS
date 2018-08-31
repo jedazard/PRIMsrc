@@ -218,19 +218,32 @@ Date   : 2018-08-25
 o RELEASE 0.8.0
 BUG FIXES
 - Removed extraneous condition for stopping rule in internal function `prsp()`.
-- The scatterplot can now be drawn if the number of used covariates of the 'sbh' object is only one. 
-  In this case, the scatterplot will be drawn with one of the two specified dimensions.
+- The scatterplot can now be drawn if the number of used covariates of the 'sbh' object 
+  is only one. In this case, the scatterplot will be drawn with one of the two specified 
+  dimensions.
 - Minor typos corrections and URLs updates.
 SIGNIFICANT USER-VISIBLE CHANGES
 - Added new peeling criterion `grp` that stands for "group" to carry out a modified version of 
-  Survival Bump Hunting (SBH), called Group Survival Bump Hunting (GSBH) using our PRGSP algorithm,
-  derived from our original Patient Recursive Survival Peeling (PRSP).
+  Survival Bump Hunting (SBH), called Group Survival Bump Hunting (GSBH) using our 
+  PRGSP algorithm, derived from our original Patient Recursive Survival Peeling (PRSP).
 - Modifications of options in plot functions accordingly.
 - Renamed plot functions `plot_boxtraj()`, `plot_boxtrace()`, and `plot_boxkm()` to 
   `plot_traj()`, `plot_trace()`, and `plot_km()` respectively.
 PACKAGE INSTALLATION
 - Updates in manual and documentation files (Rd files).
-- Updates in documentation files (DESCRIPTION, NEWS CITATION, and README).
+- Updates in documentation files (DESCRIPTION, NEWS, CITATION, and README).
 - Built and tested under R version 3.5.1 (2018-07-02) and release update to GitHub.
 ---------------------------------------------------------------------------------
+Date   : 2018-08-31
+o RELEASE 0.8.1
+BUG FIXES
+- The program was mis-behaving if the group membership indicator variable (`group`) was 
+  different from a factor. Argument `group` now correctly handles the case of a numeric 
+  or character vector as well as a factor.
+PACKAGE INSTALLATION
+- Minor updates in manual and documentation files (Rd files).
+- Minor updates in documentation files (DESCRIPTION, NEWS, and README).
+- Built and tested under R version 3.5.1 (2018-07-02) and release update to GitHub.
+---------------------------------------------------------------------------------
+
 
