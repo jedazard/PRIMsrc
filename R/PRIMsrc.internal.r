@@ -4398,8 +4398,7 @@ cv.folds <- function (y, n, K=5, seed=NULL) {
     
     y <- as.numeric(y)
     n <- length(y)
-    yf <- as.factor(y)
-    levels(yf) <- unique(as.character(yf))
+    yf <- factor(x=y, levels=unique(as.character(y)))
     ylev <- levels(yf)
     ynlev <- nlevels(yf)
 

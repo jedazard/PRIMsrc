@@ -122,8 +122,7 @@ sbh <- function(X,
     if (is.null(groups)) {
       stop("Argument `groups` must be specified when used with PRGSP algorithm. Exiting ... \n\n")
     }
-    groups <- as.factor(groups)
-    levels(groups) <- unique(as.character(groups))
+    groups <- factor(x=groups, levels=unique(as.character(groups)))
     if (!is.null(groups) && (length(levels(groups)) != 2)) {
       stop("Argument `groups` must have exactly two levels when used with PRGSP algorithm. Exiting ... \n\n")
     }
@@ -1038,8 +1037,7 @@ plot.sbh <- function(x,
       x.names <- colnames(x)
       plot(x=x, main=NULL, xlab=x.names[1], ylab=x.names[2], type="n")
       if (peelcriterion == "grp") {
-        groups <- object$groups
-        levels(groups) <- unique(as.character(groups))
+        groups <- factor(x=object$groups, levels=unique(as.character(object$groups)))
         groups.lev <- levels(groups)
         groups.ng <- nlevels(groups)
         groups.def <- vector(mode="list", length=groups.ng)
@@ -2032,8 +2030,7 @@ plot_km <- function(object,
       y <- object$y
       delta <- object$delta
       if (peelcriterion == "grp") {
-        groups <- object$groups
-        levels(groups) <- unique(as.character(groups))
+        groups <- factor(x=object$groups, levels=unique(as.character(object$groups)))
         groups.lev <- levels(groups)
         groups.ng <- nlevels(groups)
         groups.def <- vector(mode="list", length=groups.ng)
