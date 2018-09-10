@@ -153,9 +153,13 @@
 }
 
 \details{
-  The two dimensions (\code{proj}) of the projection plane, in which the scatter plot is to be plotted, must be 
-  a subset of the used covariates of the \code{sbh} object. If the number of used covariates in the \code{sbh} object
-  is zero, the scatterplot will not be drawn. If the number of used covariates is one, 
+  Produces a proportional scatter plot where distances between points are represented accurately on screen 
+  (graphical parameter \code{asp}=1).The window is set up so that one data unit in the x direction is equal 
+  in length to one data unit in the y direction.
+  
+  The two dimensions (\code{proj}) of the projection plane, in which the scatter plot is to be plotted, 
+  must be a subset of the used covariates of the \code{sbh} object. If the number of used covariates in the 
+  \code{sbh} object is zero, the scatterplot will not be drawn. If the number of used covariates is one, 
   the scatterplot will be drawn using one of the two specified dimensions of argument \code{proj}.
   
   The scatterplot is drawn on a graphical device with geometrically equal scales on 
