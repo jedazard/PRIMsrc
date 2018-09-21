@@ -161,8 +161,8 @@ o RELEASE 0.7.2
 BUG FIXES
 - Corrected return value of the 1-SE optimal value in cross-validated variable screening subroutines 
   in case the cross-validation could fail.
-- Corrected return values of screened variables (with directions of directed peeling) in case the cross-validation 
-  could fail.
+- Corrected return values of screened variables (with directions of directed peeling) in case the 
+  cross-validation could fail.
 PACKAGE INSTALLATION
 - Corrections and updates in manual and documentation files (Rd files).
 - Updates in documentation files (DESCRIPTION, NEWS and README).
@@ -172,12 +172,12 @@ Date   : 2017-08-07
 o RELEASE 0.7.3
 SIGNIFICANT USER-VISIBLE CHANGES
 - Changed default values and behavior of parameters 'S' and 'L' in the PRSP variable screening procedure 
-  and PRSP algorithm itself, that are used for the cross-validation of the optimal model size (cardinal of 
-  subset of top-screened variables) and the optimal number of peeling steps (optimal peeling sequence length). 
-  See manual.
+  and PRSP algorithm itself, that are used for the cross-validation of the optimal model size (cardinal 
+  of subset of top-screened variables) and the optimal number of peeling steps (optimal peeling sequence 
+  length). See manual.
 BUG FIXES
-- Updated S3-generic `plot()` function. The scatterplot is now drawn only if the number of used covariates 
-  of the 'sbh' object is greater than two.
+- Updated S3-generic `plot()` function. The scatterplot is now plotted only if exactly two dimensions are 
+  specified, i.e. two of the `used` (selected) covariates of the 'sbh' object are specified.
 PACKAGE INSTALLATION
 - Corrections and clarifications in manual and documentation files (Rd files).
 - Updates in documentation files (DESCRIPTION, NEWS and README).
@@ -188,9 +188,9 @@ o RELEASE 0.7.4
 SIGNIFICANT USER-VISIBLE CHANGES
 - Simplified user experience by removing the PRSP parameter `minn` that was redundant with `beta`.
 - Simplified user experience by removing the PRSP parameter `L` used in the PRSP variable screening 
-  procedure and for fitting the Survival Bump Hunting (SBH) model itself that was redundant with the automatic 
-  cross-validation option. The optimal number of peeling steps (optimal peeling sequence length) is 
-  now determined systematically by cross-validation. See manual.
+  procedure and for fitting the Survival Bump Hunting (SBH) model itself that was redundant with the 
+  automatic cross-validation option. The optimal number of peeling steps (optimal peeling sequence 
+  length) is now determined systematically by cross-validation. See manual.
 - Changed name and default value of parameter 'S' in the PRSP variable screening procedure to 'msize' 
   and NULL, respectively. See manual.
 UTILITIES
@@ -218,14 +218,15 @@ Date   : 2018-08-25
 o RELEASE 0.8.0
 BUG FIXES
 - Removed extraneous condition for stopping rule in internal function `prsp()`.
-- The scatterplot can now be drawn if the number of used covariates of the 'sbh' object 
-  is only one. In this case, the scatterplot will be drawn with one of the two specified 
-  dimensions.
+- S3-generic `plot()` function can now be plotted if only one dimension is specified, i.e. only
+  one of the `used` (selected) covariates of the 'sbh' object is specified. In this case, 
+  the scatterplot will be plotted using the `used` (selected) covariate and an arbitrary 
+  dimension, both specified by the user.
 - Minor typos corrections and URLs updates.
 SIGNIFICANT USER-VISIBLE CHANGES
-- Added new peeling criterion `grp` that stands for "group" to carry out a modified version of 
-  Survival Bump Hunting (SBH), called Group Survival Bump Hunting (GSBH) using our 
-  PRGSP algorithm, derived from our original Patient Recursive Survival Peeling (PRSP).
+- Added new peeling criterion `grp` that stands for "group" to carry out a modified 
+  version of Survival Bump Hunting (SBH), called Group Survival Bump Hunting (GSBH) 
+  using our PRGSP algorithm, derived from our original Patient Recursive Survival Peeling (PRSP).
 - Modifications of options in plot functions accordingly.
 - Renamed plot functions `plot_boxtraj()`, `plot_boxtrace()`, and `plot_boxkm()` to 
   `plot_traj()`, `plot_trace()`, and `plot_km()` respectively.
@@ -240,6 +241,30 @@ BUG FIXES
 - The program was mis-behaving if the group membership indicator variable (`group`) was 
   different from a factor. Argument `group` now correctly handles the case of a numeric 
   or character vector as well as a factor.
+PACKAGE INSTALLATION
+- Minor updates in manual and documentation files (Rd files).
+- Minor updates in documentation files (DESCRIPTION, NEWS, and README).
+- Built and tested under R version 3.5.1 (2018-07-02) and release update to GitHub.
+---------------------------------------------------------------------------------
+Date   : 2018-09-21
+o RELEASE 0.8.2
+BUG FIXES
+- Fixed errors of group membership indicator variable (`group`) in S3-generic `plot()` 
+  and `plot_km()` functions.
+- The main function `sbh()` now handles the exception of no steps in the peeling sequence
+  of the PRGSP or PRSP algorithm.
+- Updated S3-generic `plot()` function. The scatterplot now correctly plots all possible 
+  values of argument `proj` of specified dimensions.
+SIGNIFICANT USER-VISIBLE CHANGES
+- Changed default value of metaparameter `beta` to 0.10 (instead of 0.05).
+- Changed default value of argument `proj` of S3-generic `plot()` function to the first two 
+  `used` (selected) covariates of the 'sbh' object (instead of arbitrary c(1,2) dimensions).
+- Added argument `asp` to S3-generic `plot()` function.
+UTILITIES
+- The S3-generic `predict()` function now allows the `newdata` to be of greater dimensionality than
+  the input data `X`. It also returns additional values.
+- User can now use any of the three cross-validation criterion when runing a Group Survival 
+  Bump Hunting (GSBH) using our PRGSP algorithm.
 PACKAGE INSTALLATION
 - Minor updates in manual and documentation files (Rd files).
 - Minor updates in documentation files (DESCRIPTION, NEWS, and README).
