@@ -2364,6 +2364,7 @@ cv.box <- function(X,
                             "cv.lhr"=vector(mode="list", length=B),
                             "cv.lrt"=vector(mode="list", length=B),
                             "cv.cer"=vector(mode="list", length=B),
+                            "cv.grp.lhr"=vector(mode="list", length=B),
                             "cv.grp.lrt"=vector(mode="list", length=B),
                             "cv.grp.cer"=vector(mode="list", length=B),
                             "cv.time.bar"=vector(mode="list", length=B),
@@ -2382,6 +2383,7 @@ cv.box <- function(X,
       CV.type.box.obj$cv.lhr[[b]] <- obj.cl[[b]]$cv.lhr
       CV.type.box.obj$cv.lrt[[b]] <- obj.cl[[b]]$cv.lrt
       CV.type.box.obj$cv.cer[[b]] <- obj.cl[[b]]$cv.cer
+      CV.type.box.obj$cv.grp.lhr[[b]] <- obj.cl[[b]]$cv.grp.lhr
       CV.type.box.obj$cv.grp.lrt[[b]] <- obj.cl[[b]]$cv.grp.lrt
       CV.type.box.obj$cv.grp.cer[[b]] <- obj.cl[[b]]$cv.grp.cer
       CV.type.box.obj$cv.time.bar[[b]] <- obj.cl[[b]]$cv.time.bar
@@ -2401,6 +2403,7 @@ cv.box <- function(X,
               "cv.lhr"=CV.type.box.obj$cv.lhr,
               "cv.lrt"=CV.type.box.obj$cv.lrt,
               "cv.cer"=CV.type.box.obj$cv.cer,
+              "cv.grp.lhr"=CV.type.box.obj$cv.grp.lhr,
               "cv.grp.lrt"=CV.type.box.obj$cv.grp.lrt,
               "cv.grp.cer"=CV.type.box.obj$cv.grp.cer,
               "cv.time.bar"=CV.type.box.obj$cv.time.bar,
@@ -2481,6 +2484,7 @@ cv.type.box <- function(X,
     CV.lhr <- vector(mode="list", length=B)
     CV.lrt <- vector(mode="list", length=B)
     CV.cer <- vector(mode="list", length=B)
+    CV.grp.lhr <- vector(mode="list", length=B)
     CV.grp.lrt <- vector(mode="list", length=B)
     CV.grp.cer <- vector(mode="list", length=B)
     CV.trace <- vector(mode="list", length=B)
@@ -2538,6 +2542,7 @@ cv.type.box <- function(X,
       CV.lhr[[b]] <- CVBOX$cvfit$cv.stats$cv.lhr
       CV.lrt[[b]] <- CVBOX$cvfit$cv.stats$cv.lrt
       CV.cer[[b]] <- CVBOX$cvfit$cv.stats$cv.cer
+      CV.grp.lhr[[b]] <- CVBOX$cvfit$cv.stats$cv.grp.lhr
       CV.grp.lrt[[b]] <- CVBOX$cvfit$cv.stats$cv.grp.lrt
       CV.grp.cer[[b]] <- CVBOX$cvfit$cv.stats$cv.grp.cer
       CV.time.bar[[b]] <- CVBOX$cvfit$cv.stats$cv.time.bar
@@ -2592,6 +2597,7 @@ cv.type.box <- function(X,
     CV.lhr <- CVBOX$cvfit$cv.stats$cv.lhr
     CV.lrt <- CVBOX$cvfit$cv.stats$cv.lrt
     CV.cer <- CVBOX$cvfit$cv.stats$cv.cer
+    CV.grp.lhr <- CVBOX$cvfit$cv.stats$cv.grp.lhr
     CV.grp.lrt <- CVBOX$cvfit$cv.stats$cv.grp.lrt
     CV.grp.cer <- CVBOX$cvfit$cv.stats$cv.grp.cer
     CV.time.bar <- CVBOX$cvfit$cv.stats$cv.time.bar
@@ -2610,6 +2616,7 @@ cv.type.box <- function(X,
               "cv.lhr"=CV.lhr,
               "cv.lrt"=CV.lrt,
               "cv.cer"=CV.cer,
+              "cv.grp.lhr"=CV.grp.lhr,
               "cv.grp.lrt"=CV.grp.lrt,
               "cv.grp.cer"=CV.grp.cer,
               "cv.time.bar"=CV.time.bar,
@@ -3168,6 +3175,8 @@ cv.ave.box <- function(X,
   names(CV.lrt) <- paste("step", 0:(CV.Lm-1), sep="")
   CV.cer <- rep(x=NA, times=CV.Lm)
   names(CV.cer) <- paste("step", 0:(CV.Lm-1), sep="")
+  CV.grp.lhr <- rep(x=NA, times=CV.Lm)
+  names(CV.grp.lhr) <- paste("step", 0:(CV.Lm-1), sep="")
   CV.grp.lrt <- rep(x=NA, times=CV.Lm)
   names(CV.grp.lrt) <- paste("step", 0:(CV.Lm-1), sep="")
   CV.grp.cer <- rep(x=NA, times=CV.Lm)
@@ -3185,6 +3194,7 @@ cv.ave.box <- function(X,
     sumlrt <- rep(x=NA, times=K)
     sumcer <- rep(x=NA, times=K)
     sumgrplrt <- rep(x=NA, times=K)
+    sumgrplrt <- rep(x=NA, times=K)
     sumgrpcer <- rep(x=NA, times=K)
     sumtime <- rep(x=NA, times=K)
     sumprob <- rep(x=NA, times=K)
@@ -3196,17 +3206,19 @@ cv.ave.box <- function(X,
         sumlhr[k] <- boxstat.list[[k]][[l]][[1]]
         sumlrt[k] <- boxstat.list[[k]][[l]][[2]]
         sumcer[k] <- boxstat.list[[k]][[l]][[3]]
-        sumgrplrt[k] <- boxstat.list[[k]][[l]][[4]]
-        sumgrpcer[k] <- boxstat.list[[k]][[l]][[5]]
-        sumtime[k] <- boxstat.list[[k]][[l]][[6]]
-        sumprob[k] <- boxstat.list[[k]][[l]][[7]]
-        summaxtime[k] <- boxstat.list[[k]][[l]][[8]]
-        summinprob[k] <- boxstat.list[[k]][[l]][[9]]
+        sumgrplhr[k] <- boxstat.list[[k]][[l]][[4]]
+        sumgrplrt[k] <- boxstat.list[[k]][[l]][[5]]
+        sumgrpcer[k] <- boxstat.list[[k]][[l]][[6]]
+        sumtime[k] <- boxstat.list[[k]][[l]][[7]]
+        sumprob[k] <- boxstat.list[[k]][[l]][[8]]
+        summaxtime[k] <- boxstat.list[[k]][[l]][[9]]
+        summinprob[k] <- boxstat.list[[k]][[l]][[10]]
       }
     }
     CV.lhr[l] <- mean(sumlhr, na.rm=TRUE)
     CV.lrt[l] <- mean(sumlrt, na.rm=TRUE)
     CV.cer[l] <- mean(sumcer, na.rm=TRUE)
+    CV.grp.lhr[l] <- mean(sumgrplhr, na.rm=TRUE)
     CV.grp.lrt[l] <- mean(sumgrplrt, na.rm=TRUE)
     CV.grp.cer[l] <- mean(sumgrpcer, na.rm=TRUE)
     CV.time.bar[l] <- mean(sumtime, na.rm=TRUE)
@@ -3218,41 +3230,109 @@ cv.ave.box <- function(X,
 
   # Formating the results depending on successful cross-validated PRSP algorithm
   if (cvcriterion == "lhr") {
-    if (all(is.na(CV.lhr)) || all(is.nan(CV.lhr))) {
-      success <- FALSE
-      CV.maxsteps <- NA
-      CV.support <- rep(x=NA, times=CV.Lm)
-      CV.size <- rep(x=NA, times=CV.Lm)
-      CV.lhr <- rep(x=NA, times=CV.Lm)
-      CV.time.bar <- rep(x=NA, times=CV.Lm)
-      CV.prob.bar <- rep(x=NA, times=CV.Lm)
-      CV.max.time.bar <- rep(x=NA, times=CV.Lm)
-      CV.min.prob.bar <- rep(x=NA, times=CV.Lm)
-      CV.boxcut <- matrix(data=NA, nrow=CV.Lm, ncol=p)
-      CV.boxind <- matrix(NA, nrow=CV.Lm, ncol=n)
-      CV.trace <- rep(x=NA, times=CV.Lm)
-      CV.rules<- as.data.frame(matrix(data=NA, nrow=CV.Lm, ncol=p))
+    if (peelcriterion != "grp") {
+      if (all(is.na(CV.lhr)) || all(is.nan(CV.lhr))) {
+        success <- FALSE
+        CV.maxsteps <- NA
+        CV.support <- rep(x=NA, times=CV.Lm)
+        CV.size <- rep(x=NA, times=CV.Lm)
+        CV.lhr <- rep(x=NA, times=CV.Lm)
+        CV.lrt <- rep(x=NA, times=CV.Lm)
+        CV.cer <- rep(x=NA, times=CV.Lm)
+        CV.grp.lhr <- rep(x=NA, times=CV.Lm)
+        CV.grp.lrt <- rep(x=NA, times=CV.Lm)
+        CV.grp.cer <- rep(x=NA, times=CV.Lm)
+        CV.time.bar <- rep(x=NA, times=CV.Lm)
+        CV.prob.bar <- rep(x=NA, times=CV.Lm)
+        CV.max.time.bar <- rep(x=NA, times=CV.Lm)
+        CV.min.prob.bar <- rep(x=NA, times=CV.Lm)
+        CV.boxcut <- matrix(data=NA, nrow=CV.Lm, ncol=p)
+        CV.boxind <- matrix(NA, nrow=CV.Lm, ncol=n)
+        CV.trace <- rep(x=NA, times=CV.Lm)
+        CV.rules<- as.data.frame(matrix(data=NA, nrow=CV.Lm, ncol=p))
+      } else {
+        # Cross-validated optimal length from all folds by maximization of the LHR (between inbox and outbox test samples)
+        success <- TRUE
+      }
+    } else if (peelcriterion == "grp") {
+      if (all(is.na(CV.lhr)) || all(is.nan(CV.lhr)) || all(is.na(CV.grp.lhr)) || all(is.nan(CV.grp.lhr))) {
+        success <- FALSE
+        CV.maxsteps <- NA
+        CV.support <- rep(x=NA, times=CV.Lm)
+        CV.size <- rep(x=NA, times=CV.Lm)
+        CV.lhr <- rep(x=NA, times=CV.Lm)
+        CV.lrt <- rep(x=NA, times=CV.Lm)
+        CV.cer <- rep(x=NA, times=CV.Lm)
+        CV.grp.lhr <- rep(x=NA, times=CV.Lm)
+        CV.grp.lrt <- rep(x=NA, times=CV.Lm)
+        CV.grp.cer <- rep(x=NA, times=CV.Lm)
+        CV.time.bar <- rep(x=NA, times=CV.Lm)
+        CV.prob.bar <- rep(x=NA, times=CV.Lm)
+        CV.max.time.bar <- rep(x=NA, times=CV.Lm)
+        CV.min.prob.bar <- rep(x=NA, times=CV.Lm)
+        CV.boxcut <- matrix(data=NA, nrow=CV.Lm, ncol=p)
+        CV.boxind <- matrix(NA, nrow=CV.Lm, ncol=n)
+        CV.trace <- rep(x=NA, times=CV.Lm)
+        CV.rules<- as.data.frame(matrix(data=NA, nrow=CV.Lm, ncol=p))
+      } else {
+        # Cross-validated optimal length from all folds by minimization of the CER (between predicted and observed inbox test samples survival times)
+        success <- TRUE
+      }
     } else {
-      # Cross-validated optimal length from all folds by maximization of the LHR (between inbox and outbox test samples)
+      # Cross-validated optimal length from all folds by minimization of the CER (between predicted and observed inbox test samples survival times)
       success <- TRUE
     }
   } else if (cvcriterion == "lrt") {
-    if (all(is.na(CV.lrt)) || all(is.nan(CV.lrt))) {
-      success <- FALSE
-      CV.maxsteps <- NA
-      CV.support <- rep(x=NA, times=CV.Lm)
-      CV.size <- rep(x=NA, times=CV.Lm)
-      CV.lrt <- rep(x=NA, times=CV.Lm)
-      CV.time.bar <- rep(x=NA, times=CV.Lm)
-      CV.prob.bar <- rep(x=NA, times=CV.Lm)
-      CV.max.time.bar <- rep(x=NA, times=CV.Lm)
-      CV.min.prob.bar <- rep(x=NA, times=CV.Lm)
-      CV.boxcut <- matrix(data=NA, nrow=CV.Lm, ncol=p)
-      CV.boxind <- matrix(NA, nrow=CV.Lm, ncol=n)
-      CV.trace <- rep(x=NA, times=CV.Lm)
-      CV.rules<- as.data.frame(matrix(data=NA, nrow=CV.Lm, ncol=p))
+    if (peelcriterion != "grp") {
+      if (all(is.na(CV.lrt)) || all(is.nan(CV.lrt))) {
+        success <- FALSE
+        CV.maxsteps <- NA
+        CV.support <- rep(x=NA, times=CV.Lm)
+        CV.size <- rep(x=NA, times=CV.Lm)
+        CV.lhr <- rep(x=NA, times=CV.Lm)
+        CV.lrt <- rep(x=NA, times=CV.Lm)
+        CV.cer <- rep(x=NA, times=CV.Lm)
+        CV.grp.lhr <- rep(x=NA, times=CV.Lm)
+        CV.grp.lrt <- rep(x=NA, times=CV.Lm)
+        CV.grp.cer <- rep(x=NA, times=CV.Lm)
+        CV.time.bar <- rep(x=NA, times=CV.Lm)
+        CV.prob.bar <- rep(x=NA, times=CV.Lm)
+        CV.max.time.bar <- rep(x=NA, times=CV.Lm)
+        CV.min.prob.bar <- rep(x=NA, times=CV.Lm)
+        CV.boxcut <- matrix(data=NA, nrow=CV.Lm, ncol=p)
+        CV.boxind <- matrix(NA, nrow=CV.Lm, ncol=n)
+        CV.trace <- rep(x=NA, times=CV.Lm)
+        CV.rules<- as.data.frame(matrix(data=NA, nrow=CV.Lm, ncol=p))
+      } else {
+        # Cross-validated optimal length from all folds by maximization of the LRT (between inbox and outbox test samples)
+        success <- TRUE
+      }
+    } else if (peelcriterion == "grp") {
+      if (all(is.na(CV.lrt)) || all(is.nan(CV.lrt)) || all(is.na(CV.grp.lrt)) || all(is.nan(CV.grp.lrt))) {
+        success <- FALSE
+        CV.maxsteps <- NA
+        CV.support <- rep(x=NA, times=CV.Lm)
+        CV.size <- rep(x=NA, times=CV.Lm)
+        CV.lhr <- rep(x=NA, times=CV.Lm)
+        CV.lrt <- rep(x=NA, times=CV.Lm)
+        CV.cer <- rep(x=NA, times=CV.Lm)
+        CV.grp.lhr <- rep(x=NA, times=CV.Lm)
+        CV.grp.lrt <- rep(x=NA, times=CV.Lm)
+        CV.grp.cer <- rep(x=NA, times=CV.Lm)
+        CV.time.bar <- rep(x=NA, times=CV.Lm)
+        CV.prob.bar <- rep(x=NA, times=CV.Lm)
+        CV.max.time.bar <- rep(x=NA, times=CV.Lm)
+        CV.min.prob.bar <- rep(x=NA, times=CV.Lm)
+        CV.boxcut <- matrix(data=NA, nrow=CV.Lm, ncol=p)
+        CV.boxind <- matrix(NA, nrow=CV.Lm, ncol=n)
+        CV.trace <- rep(x=NA, times=CV.Lm)
+        CV.rules<- as.data.frame(matrix(data=NA, nrow=CV.Lm, ncol=p))
+      } else {
+        # Cross-validated optimal length from all folds by minimization of the CER (between predicted and observed inbox test samples survival times)
+        success <- TRUE
+      }
     } else {
-      # Cross-validated optimal length from all folds by maximization of the LRT (between inbox and outbox test samples)
+      # Cross-validated optimal length from all folds by minimization of the CER (between predicted and observed inbox test samples survival times)
       success <- TRUE
     }
   } else if (cvcriterion == "cer") {
@@ -3262,7 +3342,12 @@ cv.ave.box <- function(X,
         CV.maxsteps <- NA
         CV.support <- rep(x=NA, times=CV.Lm)
         CV.size <- rep(x=NA, times=CV.Lm)
+        CV.lhr <- rep(x=NA, times=CV.Lm)
+        CV.lrt <- rep(x=NA, times=CV.Lm)
         CV.cer <- rep(x=NA, times=CV.Lm)
+        CV.grp.lhr <- rep(x=NA, times=CV.Lm)
+        CV.grp.lrt <- rep(x=NA, times=CV.Lm)
+        CV.grp.cer <- rep(x=NA, times=CV.Lm)
         CV.time.bar <- rep(x=NA, times=CV.Lm)
         CV.prob.bar <- rep(x=NA, times=CV.Lm)
         CV.max.time.bar <- rep(x=NA, times=CV.Lm)
@@ -3276,12 +3361,15 @@ cv.ave.box <- function(X,
         success <- TRUE
       }
     } else if (peelcriterion == "grp") {
-      if (all(is.na(CV.cer)) || all(is.nan(CV.cer)) || all(is.na(CV.grp.lrt)) || all(is.nan(CV.grp.lrt)) || all(is.na(CV.grp.cer)) || all(is.nan(CV.grp.cer))) {
+      if (all(is.na(CV.cer)) || all(is.nan(CV.cer)) || all(is.na(CV.grp.cer)) || all(is.nan(CV.grp.cer))) {
         success <- FALSE
         CV.maxsteps <- NA
         CV.support <- rep(x=NA, times=CV.Lm)
         CV.size <- rep(x=NA, times=CV.Lm)
+        CV.lhr <- rep(x=NA, times=CV.Lm)
+        CV.lrt <- rep(x=NA, times=CV.Lm)
         CV.cer <- rep(x=NA, times=CV.Lm)
+        CV.grp.lhr <- rep(x=NA, times=CV.Lm)
         CV.grp.lrt <- rep(x=NA, times=CV.Lm)
         CV.grp.cer <- rep(x=NA, times=CV.Lm)
         CV.time.bar <- rep(x=NA, times=CV.Lm)
@@ -3302,13 +3390,14 @@ cv.ave.box <- function(X,
   } else {
     stop("Invalid CV criterion option. Exiting ... \n\n")
   }
-  
+
   # Box statistics for each step
   CV.stats <-  data.frame("cv.support"=CV.support,
                           "cv.size"=CV.size,
                           "cv.lhr"=CV.lhr,
                           "cv.lrt"=CV.lrt,
                           "cv.cer"=CV.cer,
+                          "cv.grp.lhr"=CV.grp.lhr,
                           "cv.grp.lrt"=CV.grp.lrt,
                           "cv.grp.cer"=CV.grp.cer,
                           "cv.time.bar"=CV.time.bar,
@@ -3519,6 +3608,8 @@ cv.comb.box <- function(X,
   names(CV.lrt) <- paste("step", 0:(CV.Lm-1), sep="")
   CV.cer <- rep(x=NA, times=CV.Lm)
   names(CV.cer) <- paste("step", 0:(CV.Lm-1), sep="")
+  CV.grp.lhr <- rep(x=NA, times=CV.Lm)
+  names(CV.grp.lhr) <- paste("step", 0:(CV.Lm-1), sep="")
   CV.grp.lrt <- rep(x=NA, times=CV.Lm)
   names(CV.grp.lrt) <- paste("step", 0:(CV.Lm-1), sep="")
   CV.grp.cer <- rep(x=NA, times=CV.Lm)
@@ -3548,6 +3639,9 @@ cv.comb.box <- function(X,
         CV.lhr[l] <- 0
         CV.lrt[l] <- 0
         CV.cer[l] <- 1
+        CV.grp.lhr[l] <- NA
+        CV.grp.lrt[l] <- NA
+        CV.grp.cer[l] <- NA
       } else if ((sum(boxind, na.rm=TRUE) != length(boxind[!is.na(boxind)])) && (sum(boxind, na.rm=TRUE) != 0)) {
         surv.fit <- survival::survfit(survival::Surv(CV.times[boxind], CV.status[boxind]) ~ 1, na.action=na.exclude)
         timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
@@ -3558,12 +3652,18 @@ cv.comb.box <- function(X,
         CV.lrt[l] <- survival::survdiff(surv.formula, na.action=na.exclude, rho=0)$chisq
         predobj <- predict(object=coxobj, type="lp", reference="sample", na.action=na.exclude)
         CV.cer[l] <- Hmisc::rcorr.cens(x=predobj, S=survival::Surv(CV.times, CV.status))['C Index']
+        CV.grp.lhr[l] <- NA
+        CV.grp.lrt[l] <- NA
+        CV.grp.cer[l] <- NA
       } else {
         timemat[l, ] <- NA
         probmat[l, ] <- NA
         CV.lhr[l] <- NA
         CV.lrt[l] <- NA
         CV.cer[l] <- NA
+        CV.grp.lhr[l] <- NA
+        CV.grp.lrt[l] <- NA
+        CV.grp.cer[l] <- NA
         ind.rem <- c(ind.rem, l)
       }
     } else if (peelcriterion == "grp") {
@@ -3571,30 +3671,39 @@ cv.comb.box <- function(X,
         surv.fit <- survival::survfit(survival::Surv(CV.times, CV.status) ~ 1 + grpind1, na.action=na.exclude)
         timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
         probmat[l, (1:length(surv.fit$surv))] <- surv.fit$surv
+        CV.lhr[l] <- 0
+        CV.lrt[l] <- 0
         CV.cer[l] <- 1
         surv.formula <- (survival::Surv(CV.times, CV.status) ~ 1 + grpind1)
-        CV.grp.lrt[l] <- survival::survdiff(surv.formula, na.action=na.exclude, rho=0)$chisq 
         coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1, na.action=na.exclude)
+        CV.grp.lhr[l] <- coxobj$coef 
+        CV.grp.lrt[l] <- survival::survdiff(surv.formula, na.action=na.exclude, rho=0)$chisq 
         predobj <- predict(object=coxobj, type="lp", reference="sample", na.action=na.exclude)
         CV.grp.cer[l] <- Hmisc::rcorr.cens(x=predobj, S=survival::Surv(CV.times, CV.status))['C Index']
       } else  if ((sum(grpind1[wb]) != length(grpind1[wb])) && (sum(grpind1[wb]) != 0)) {
         if ((sum(boxind, na.rm=TRUE) != length(boxind[!is.na(boxind)])) && (sum(boxind, na.rm=TRUE) != 0)) {
-          surv.formula <- (survival::Surv(CV.times, CV.status) ~ 1 + boxind1)
-          coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1, na.action=na.exclude)
-          predobj <- predict(object=coxobj, type="lp", reference="sample", na.action=na.exclude)
-          CV.cer[l] <- Hmisc::rcorr.cens(x=predobj, S=survival::Surv(CV.times, CV.status))['C Index']
           surv.fit <- survival::survfit(survival::Surv(CV.times[wb], CV.status[wb]) ~ 1 + grpind1[wb], na.action=na.exclude)
           timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
           probmat[l, (1:length(surv.fit$surv))] <- surv.fit$surv
-          surv.formula <- (survival::Surv(CV.times[wb], CV.status[wb]) ~ 1 + grpind1[wb])
-          CV.grp.lrt[l] <- survival::survdiff(surv.formula, na.action=na.exclude, rho=0)$chisq 
+          surv.formula <- (survival::Surv(CV.times, CV.status) ~ 1 + boxind1)
           coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1, na.action=na.exclude)
+          CV.lhr[l] <- coxobj$coef
+          CV.lrt[l] <- survival::survdiff(surv.formula, na.action=na.exclude, rho=0)$chisq
+          predobj <- predict(object=coxobj, type="lp", reference="sample", na.action=na.exclude)
+          CV.cer[l] <- Hmisc::rcorr.cens(x=predobj, S=survival::Surv(CV.times, CV.status))['C Index']
+          surv.formula <- (survival::Surv(CV.times[wb], CV.status[wb]) ~ 1 + grpind1[wb])
+          coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1, na.action=na.exclude)
+          CV.grp.lhr[l] <- coxobj$coef 
+          CV.grp.lrt[l] <- survival::survdiff(surv.formula, na.action=na.exclude, rho=0)$chisq 
           predobj <- predict(object=coxobj, type="lp", reference="sample", na.action=na.exclude)
           CV.grp.cer[l] <- Hmisc::rcorr.cens(x=predobj, S=survival::Surv(CV.times[wb], CV.status[wb]))['C Index']
         } else {
           timemat[l, ] <- NA
           probmat[l, ] <- NA
+          CV.lhr[l] <- NA
+          CV.lrt[l] <- NA
           CV.cer[l] <- NA
+          CV.grp.lhr[l] <- NA
           CV.grp.lrt[l] <- NA
           CV.grp.cer[l] <- NA
           ind.rem <- c(ind.rem, l)
@@ -3602,7 +3711,10 @@ cv.comb.box <- function(X,
       } else {
         timemat[l, ] <- NA
         probmat[l, ] <- NA
+        CV.lhr[l] <- NA
+        CV.lrt[l] <- NA
         CV.cer[l] <- NA
+        CV.grp.lhr[l] <- NA 
         CV.grp.lrt[l] <- NA
         CV.grp.cer[l] <- NA
         ind.rem <- c(ind.rem, l)
@@ -3640,41 +3752,109 @@ cv.comb.box <- function(X,
   
   # Formating the results depending on successful cross-validated PRSP algorithm
   if (cvcriterion == "lhr") {
-    if (all(is.na(CV.lhr)) || all(is.nan(CV.lhr))) {
-      success <- FALSE
-      CV.maxsteps <- NA
-      CV.support <- rep(x=NA, times=CV.Lm)
-      CV.size <- rep(x=NA, times=CV.Lm)
-      CV.lhr <- rep(x=NA, times=CV.Lm)
-      CV.time.bar <- rep(x=NA, times=CV.Lm)
-      CV.prob.bar <- rep(x=NA, times=CV.Lm)
-      CV.max.time.bar <- rep(x=NA, times=CV.Lm)
-      CV.min.prob.bar <- rep(x=NA, times=CV.Lm)
-      CV.boxcut <- matrix(data=NA, nrow=CV.Lm, ncol=p)
-      CV.boxind <- matrix(NA, nrow=CV.Lm, ncol=n)
-      CV.trace <- rep(x=NA, times=CV.Lm)
-      CV.rules<- as.data.frame(matrix(data=NA, nrow=CV.Lm, ncol=p))
+    if (peelcriterion != "grp") {
+      if (all(is.na(CV.lhr)) || all(is.nan(CV.lhr))) {
+        success <- FALSE
+        CV.maxsteps <- NA
+        CV.support <- rep(x=NA, times=CV.Lm)
+        CV.size <- rep(x=NA, times=CV.Lm)
+        CV.lhr <- rep(x=NA, times=CV.Lm)
+        CV.lrt <- rep(x=NA, times=CV.Lm)
+        CV.cer <- rep(x=NA, times=CV.Lm)
+        CV.grp.lhr <- rep(x=NA, times=CV.Lm)
+        CV.grp.lrt <- rep(x=NA, times=CV.Lm)
+        CV.grp.cer <- rep(x=NA, times=CV.Lm)
+        CV.time.bar <- rep(x=NA, times=CV.Lm)
+        CV.prob.bar <- rep(x=NA, times=CV.Lm)
+        CV.max.time.bar <- rep(x=NA, times=CV.Lm)
+        CV.min.prob.bar <- rep(x=NA, times=CV.Lm)
+        CV.boxcut <- matrix(data=NA, nrow=CV.Lm, ncol=p)
+        CV.boxind <- matrix(NA, nrow=CV.Lm, ncol=n)
+        CV.trace <- rep(x=NA, times=CV.Lm)
+        CV.rules<- as.data.frame(matrix(data=NA, nrow=CV.Lm, ncol=p))
+      } else {
+        # Cross-validated optimal length from all folds by maximization of the LHR (between inbox and outbox test samples)
+        success <- TRUE
+      }
+    } else if (peelcriterion == "grp") {
+      if (all(is.na(CV.lhr)) || all(is.nan(CV.lhr)) || all(is.na(CV.grp.lhr)) || all(is.nan(CV.grp.lhr))) {
+        success <- FALSE
+        CV.maxsteps <- NA
+        CV.support <- rep(x=NA, times=CV.Lm)
+        CV.size <- rep(x=NA, times=CV.Lm)
+        CV.lhr <- rep(x=NA, times=CV.Lm)
+        CV.lrt <- rep(x=NA, times=CV.Lm)
+        CV.cer <- rep(x=NA, times=CV.Lm)
+        CV.grp.lhr <- rep(x=NA, times=CV.Lm)
+        CV.grp.lrt <- rep(x=NA, times=CV.Lm)
+        CV.grp.cer <- rep(x=NA, times=CV.Lm)
+        CV.time.bar <- rep(x=NA, times=CV.Lm)
+        CV.prob.bar <- rep(x=NA, times=CV.Lm)
+        CV.max.time.bar <- rep(x=NA, times=CV.Lm)
+        CV.min.prob.bar <- rep(x=NA, times=CV.Lm)
+        CV.boxcut <- matrix(data=NA, nrow=CV.Lm, ncol=p)
+        CV.boxind <- matrix(NA, nrow=CV.Lm, ncol=n)
+        CV.trace <- rep(x=NA, times=CV.Lm)
+        CV.rules<- as.data.frame(matrix(data=NA, nrow=CV.Lm, ncol=p))
+      } else {
+        # Cross-validated optimal length from all folds by minimization of the CER (between predicted and observed inbox test samples survival times)
+        success <- TRUE
+      }
     } else {
-      # Cross-validated optimal length from all folds by maximization of the LHR (between inbox and outbox test samples)
+      # Cross-validated optimal length from all folds by minimization of the CER (between predicted and observed inbox test samples survival times)
       success <- TRUE
     }
   } else if (cvcriterion == "lrt") {
-    if (all(is.na(CV.lrt)) || all(is.nan(CV.lrt))) {
-      success <- FALSE
-      CV.maxsteps <- NA
-      CV.support <- rep(x=NA, times=CV.Lm)
-      CV.size <- rep(x=NA, times=CV.Lm)
-      CV.lrt <- rep(x=NA, times=CV.Lm)
-      CV.time.bar <- rep(x=NA, times=CV.Lm)
-      CV.prob.bar <- rep(x=NA, times=CV.Lm)
-      CV.max.time.bar <- rep(x=NA, times=CV.Lm)
-      CV.min.prob.bar <- rep(x=NA, times=CV.Lm)
-      CV.boxcut <- matrix(data=NA, nrow=CV.Lm, ncol=p)
-      CV.boxind <- matrix(NA, nrow=CV.Lm, ncol=n)
-      CV.trace <- rep(x=NA, times=CV.Lm)
-      CV.rules<- as.data.frame(matrix(data=NA, nrow=CV.Lm, ncol=p))
+    if (peelcriterion != "grp") {
+      if (all(is.na(CV.lrt)) || all(is.nan(CV.lrt))) {
+        success <- FALSE
+        CV.maxsteps <- NA
+        CV.support <- rep(x=NA, times=CV.Lm)
+        CV.size <- rep(x=NA, times=CV.Lm)
+        CV.lhr <- rep(x=NA, times=CV.Lm)
+        CV.lrt <- rep(x=NA, times=CV.Lm)
+        CV.cer <- rep(x=NA, times=CV.Lm)
+        CV.grp.lhr <- rep(x=NA, times=CV.Lm)
+        CV.grp.lrt <- rep(x=NA, times=CV.Lm)
+        CV.grp.cer <- rep(x=NA, times=CV.Lm)
+        CV.time.bar <- rep(x=NA, times=CV.Lm)
+        CV.prob.bar <- rep(x=NA, times=CV.Lm)
+        CV.max.time.bar <- rep(x=NA, times=CV.Lm)
+        CV.min.prob.bar <- rep(x=NA, times=CV.Lm)
+        CV.boxcut <- matrix(data=NA, nrow=CV.Lm, ncol=p)
+        CV.boxind <- matrix(NA, nrow=CV.Lm, ncol=n)
+        CV.trace <- rep(x=NA, times=CV.Lm)
+        CV.rules<- as.data.frame(matrix(data=NA, nrow=CV.Lm, ncol=p))
+      } else {
+        # Cross-validated optimal length from all folds by maximization of the LRT (between inbox and outbox test samples)
+        success <- TRUE
+      }
+    } else if (peelcriterion == "grp") {
+      if (all(is.na(CV.lrt)) || all(is.nan(CV.lrt)) || all(is.na(CV.grp.lrt)) || all(is.nan(CV.grp.lrt))) {
+        success <- FALSE
+        CV.maxsteps <- NA
+        CV.support <- rep(x=NA, times=CV.Lm)
+        CV.size <- rep(x=NA, times=CV.Lm)
+        CV.lhr <- rep(x=NA, times=CV.Lm)
+        CV.lrt <- rep(x=NA, times=CV.Lm)
+        CV.cer <- rep(x=NA, times=CV.Lm)
+        CV.grp.lhr <- rep(x=NA, times=CV.Lm)
+        CV.grp.lrt <- rep(x=NA, times=CV.Lm)
+        CV.grp.cer <- rep(x=NA, times=CV.Lm)
+        CV.time.bar <- rep(x=NA, times=CV.Lm)
+        CV.prob.bar <- rep(x=NA, times=CV.Lm)
+        CV.max.time.bar <- rep(x=NA, times=CV.Lm)
+        CV.min.prob.bar <- rep(x=NA, times=CV.Lm)
+        CV.boxcut <- matrix(data=NA, nrow=CV.Lm, ncol=p)
+        CV.boxind <- matrix(NA, nrow=CV.Lm, ncol=n)
+        CV.trace <- rep(x=NA, times=CV.Lm)
+        CV.rules<- as.data.frame(matrix(data=NA, nrow=CV.Lm, ncol=p))
+      } else {
+        # Cross-validated optimal length from all folds by minimization of the CER (between predicted and observed inbox test samples survival times)
+        success <- TRUE
+      }
     } else {
-      # Cross-validated optimal length from all folds by maximization of the LRT (between inbox and outbox test samples)
+      # Cross-validated optimal length from all folds by minimization of the CER (between predicted and observed inbox test samples survival times)
       success <- TRUE
     }
   } else if (cvcriterion == "cer") {
@@ -3684,7 +3864,12 @@ cv.comb.box <- function(X,
         CV.maxsteps <- NA
         CV.support <- rep(x=NA, times=CV.Lm)
         CV.size <- rep(x=NA, times=CV.Lm)
+        CV.lhr <- rep(x=NA, times=CV.Lm)
+        CV.lrt <- rep(x=NA, times=CV.Lm)
         CV.cer <- rep(x=NA, times=CV.Lm)
+        CV.grp.lhr <- rep(x=NA, times=CV.Lm)
+        CV.grp.lrt <- rep(x=NA, times=CV.Lm)
+        CV.grp.cer <- rep(x=NA, times=CV.Lm)
         CV.time.bar <- rep(x=NA, times=CV.Lm)
         CV.prob.bar <- rep(x=NA, times=CV.Lm)
         CV.max.time.bar <- rep(x=NA, times=CV.Lm)
@@ -3698,12 +3883,15 @@ cv.comb.box <- function(X,
         success <- TRUE
       }
     } else if (peelcriterion == "grp") {
-      if (all(is.na(CV.cer)) || all(is.nan(CV.cer)) || all(is.na(CV.grp.lrt)) || all(is.nan(CV.grp.lrt)) || all(is.na(CV.grp.cer)) || all(is.nan(CV.grp.cer))) {
+      if (all(is.na(CV.cer)) || all(is.nan(CV.cer)) || all(is.na(CV.grp.cer)) || all(is.nan(CV.grp.cer))) {
         success <- FALSE
         CV.maxsteps <- NA
         CV.support <- rep(x=NA, times=CV.Lm)
         CV.size <- rep(x=NA, times=CV.Lm)
+        CV.lhr <- rep(x=NA, times=CV.Lm)
+        CV.lrt <- rep(x=NA, times=CV.Lm)
         CV.cer <- rep(x=NA, times=CV.Lm)
+        CV.grp.lhr <- rep(x=NA, times=CV.Lm)
         CV.grp.lrt <- rep(x=NA, times=CV.Lm)
         CV.grp.cer <- rep(x=NA, times=CV.Lm)
         CV.time.bar <- rep(x=NA, times=CV.Lm)
@@ -3731,6 +3919,7 @@ cv.comb.box <- function(X,
                           "cv.lhr"=CV.lhr,
                           "cv.lrt"=CV.lrt,
                           "cv.cer"=CV.cer,
+                          "cv.grp.lhr"=CV.grp.lhr,
                           "cv.grp.lrt"=CV.grp.lrt,
                           "cv.grp.cer"=CV.grp.cer,
                           "cv.time.bar"=CV.time.bar,
@@ -3842,6 +4031,7 @@ cv.ave.peel <- function(traindata,
         lhr <- 0
         lrt <- 0
         cer <- 1
+        grplhr <- NA 
         grplrt <- NA
         grpcer <- NA
       } else if ((sum(boxind, na.rm=TRUE) != length(boxind[!is.na(boxind)])) && (sum(boxind, na.rm=TRUE) != 0)) {
@@ -3854,6 +4044,7 @@ cv.ave.peel <- function(traindata,
         lrt <- survival::survdiff(surv.formula, na.action=na.exclude, rho=0)$chisq
         predobj <- predict(object=coxobj, type="lp", reference="sample", na.action=na.exclude)
         cer <- Hmisc::rcorr.cens(x=predobj, S=Surv(testtime, teststatus))['C Index']
+        grplhr <- NA 
         grplrt <- NA
         grpcer <- NA
       } else {
@@ -3862,6 +4053,7 @@ cv.ave.peel <- function(traindata,
         lhr <- NA
         lrt <- NA
         cer <- NA
+        grplhr <- NA 
         grplrt <- NA 
         grpcer <- NA
         ind.rem <- c(ind.rem, l)
@@ -3871,28 +4063,30 @@ cv.ave.peel <- function(traindata,
         surv.fit <- survival::survfit(survival::Surv(testtime, teststatus) ~ 1 + grpind1, na.action=na.exclude)
         timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
         probmat[l, (1:length(surv.fit$surv))] <- surv.fit$surv
-        lhr <- NA
-        lrt <- NA
+        lhr <- 0
+        lrt <- 0
         cer <- 1
         surv.formula <- (survival::Surv(testtime, teststatus) ~ 1 + grpind1)
-        grplrt <- survival::survdiff(surv.formula, na.action=na.exclude, rho=0)$chisq 
         coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1, na.action=na.exclude)
+        grplhr <- coxobj$coef
+        grplrt <- survival::survdiff(surv.formula, na.action=na.exclude, rho=0)$chisq 
         predobj <- predict(object=coxobj, type="lp", reference="sample", na.action=na.exclude)
         grpcer <- Hmisc::rcorr.cens(x=predobj, S=survival::Surv(testtime, teststatus))['C Index']
       } else  if ((sum(grpind1[wb]) != length(grpind1[wb])) && (sum(grpind1[wb]) != 0)) {
         if ((sum(boxind, na.rm=TRUE) != length(boxind[!is.na(boxind)])) && (sum(boxind, na.rm=TRUE) != 0)) {
-          lhr <- NA
-          lrt <- NA
-          surv.formula <- (survival::Surv(testtime, teststatus) ~ 1 + boxind1)
-          coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1, na.action=na.exclude)
-          predobj <- predict(object=coxobj, type="lp", reference="sample", na.action=na.exclude)
-          cer <- Hmisc::rcorr.cens(x=predobj, S=survival::Surv(testtime, teststatus))['C Index']
           surv.fit <- survival::survfit(survival::Surv(testtime[wb], teststatus[wb]) ~ 1 + grpind1[wb], na.action=na.exclude)
           timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
           probmat[l, (1:length(surv.fit$surv))] <- surv.fit$surv
-          surv.formula <- (survival::Surv(testtime[wb], teststatus[wb]) ~ 1 + grpind1[wb])
-          grplrt <- survival::survdiff(surv.formula, na.action=na.exclude, rho=0)$chisq 
+          surv.formula <- (survival::Surv(testtime, teststatus) ~ 1 + boxind1)
           coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1, na.action=na.exclude)
+          lhr <- coxobj$coef
+          lrt <- survival::survdiff(surv.formula, na.action=na.exclude, rho=0)$chisq
+          predobj <- predict(object=coxobj, type="lp", reference="sample", na.action=na.exclude)
+          cer <- Hmisc::rcorr.cens(x=predobj, S=survival::Surv(testtime, teststatus))['C Index']
+          surv.formula <- (survival::Surv(testtime[wb], teststatus[wb]) ~ 1 + grpind1[wb])
+          coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1, na.action=na.exclude)
+          grplhr <- coxobj$coef
+          grplrt <- survival::survdiff(surv.formula, na.action=na.exclude, rho=0)$chisq 
           predobj <- predict(object=coxobj, type="lp", reference="sample", na.action=na.exclude)
           grpcer <- Hmisc::rcorr.cens(x=predobj, S=survival::Surv(testtime[wb], teststatus[wb]))['C Index']
         } else {
@@ -3901,6 +4095,7 @@ cv.ave.peel <- function(traindata,
           lhr <- NA
           lrt <- NA
           cer <- NA
+          grplhr <- NA 
           grplrt <- NA
           grpcer <- NA
           ind.rem <- c(ind.rem, l)
@@ -3911,6 +4106,7 @@ cv.ave.peel <- function(traindata,
         lhr <- NA
         lrt <- NA
         cer <- NA
+        grplhr <- NA 
         grplrt <- NA 
         grpcer <- NA
         ind.rem <- c(ind.rem, l)
@@ -3918,7 +4114,7 @@ cv.ave.peel <- function(traindata,
     } else {
       stop("Invalid peeling criterion. Exiting ...\n\n")
     }
-    boxstat[[l]] <- c(lhr, lrt, cer, grplrt, grpcer)
+    boxstat[[l]] <- c(lhr, lrt, cer, grplhr, grplrt, grpcer)
     names(boxstat[[l]]) <- NULL
   }
   if (length(ind.rem) != maxsteps) {
@@ -4130,7 +4326,7 @@ prsp <- function(traindata,
             vmd[j] <- (lhrlj[l,j] - lhrlj[l-1,j]) / (boxmass - mean(boxes1j))
           }
         }
-        # Rate of increase of LRT between in and out bump
+      # Rate of increase of LRT between in and out bump
       } else if (peelcriterion == "lrt") {
         if ((sum(boxes1j, na.rm=TRUE) != length(boxes1j[!is.na(boxes1j)])) && 
             (sum(boxes1j, na.rm=TRUE) != 0)) {
@@ -4144,7 +4340,7 @@ prsp <- function(traindata,
             vmd[j] <- (lrtlj[l,j] - lrtlj[l-1,j]) / (boxmass - mean(boxes1j))
           }
         }
-        # Rate of increase of CHS between in and out bump
+      # Rate of increase of CHS between in and out bump
       } else if (peelcriterion == "chs") {
         if ((sum(boxes1j, na.rm=TRUE) != length(boxes1j[!is.na(boxes1j)])) && 
             (sum(boxes1j, na.rm=TRUE) != 0)) {
@@ -4158,8 +4354,8 @@ prsp <- function(traindata,
             vmd[j] <- (chslj[l,j] - chslj[l-1,j]) / (boxmass - mean(boxes1j))
           }
         }
+      # Rate of increase of LRT between in and out bump of one of the two groups
       } else if (peelcriterion == "grp") {
-        # Rate of increase of LRT between in and out bump of one of the two groups
         grp1 <- 1 * (traingroups == levels(traingroups)[1])
         w <- which(grp1 == 1)
         if ((sum(boxes1j[w], na.rm=TRUE) != length(boxes1j[w][!is.na(boxes1j[w])])) &&
@@ -4762,7 +4958,7 @@ is.empty <- function(x) {
 #===============#
 # Usage         :
 #===============#
-#                    is.wholenumber
+#                    is.wholenumber()
 #
 #===============#
 # Description   :
@@ -4780,6 +4976,45 @@ is.empty <- function(x) {
 
 is.wholenumber <- function(x, tol=.Machine$double.eps^0.5) {
   (abs(x - round(x)) < tol)
+}
+#===============================================================================================================================#
+
+
+
+
+#===============================================================================================================================#
+#===============#
+# Usage         :
+#===============#
+#                    zeroslope()
+#
+#===============#
+# Description   :
+#===============#
+#
+#===============#
+# Arguments     :
+#===============#
+#
+#===============#
+# Values        :
+#===============#
+#
+#===============================================================================================================================#
+
+zeroslope <- function(y, x, lag=1, span=0.10, degree=2, family="gaussian", minimum=TRUE) {
+  y <- y[order(x)]  # reorder the data in ascending values of x
+  x <- x[order(x)]  # do the same for x
+  loe <- loess(y ~ as.numeric(x), span=span, degree=degree, family=family)$fitted
+  d <- diff(x=loe, lag=lag)/diff(x=x, lag=lag)
+  d.sign <- diff(x=sign(d), lag=lag)
+  zs <- which(d.sign != 0) + lag
+  if (minimum) {
+    w <- which.min(loe[zs])
+  } else {
+    w <- which.max(loe[zs])
+  }
+  return(zs[w])
 }
 #===============================================================================================================================#
 
