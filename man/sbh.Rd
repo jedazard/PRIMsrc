@@ -29,7 +29,7 @@
       cv = TRUE, 
       cvtype = "combined", 
       cvarg = "alpha=0.01,
-               beta=0.05,
+               beta=0.10,
                peelcriterion=\"lrt\",
                cvcriterion=\"cer\"",
       groups = NULL,
@@ -98,14 +98,14 @@
             \item{\code{alpha}} = \code{numeric} data quantile in (0,1) to peel off at each step of the peeling 
                 sequence of the PRSP algorithm. Suggests 0.01.
             \item{\code{beta}} = \code{numeric} scalar of minimum box support at the end of the peeling sequence. 
-                Suggests 0.05.
+                Suggests 0.10.
             \item{\code{msize}} = positive \code{integer} or \code{NULL} to control the model size, i.e the number of 
                 screened variables used for fitting the Survival Bump Hunting model. Use a single non-\code{NULL} value
                 as the maximum model size (cardinal of subset of top-screened variables) within the allowable range 
                 [1,\code{floor}(\eqn{p})]. Alternatively, use \code{msize=NULL} to allow the optimal model size to be 
                 determined by cross-validation. See below for details. Suggests \code{NULL}.
-            \item{\code{peelcriterion}} in \{"lhr", "lrt", "chs", "grp"\} peeling criterion Log-Hazard Ratio (LHR), 
-                Log-Rank Test (LRT), or Cumulative Hazard Summary (CHS), of Group (GRP), respectively, that is used 
+            \item{\code{peelcriterion}} in \{"lhr", "lrt", "chs", "grp"\} stands for the peeling criterion Log-Hazard Ratio (LHR), 
+                Log-Rank Test (LRT), Cumulative Hazard Summary (CHS), or Group (GRP), respectively, that is used 
                 in the PRSP algorithm (LHR, LRT, CHS) or the PRGSP algorithm (GRP). 
                 Suggests "lrt".
             \item{\code{cvcriterion}} in \{"lhr", "lrt", "cer"\} stands for the cross-validation criterion Log-Hazard Ratio (LHR),
@@ -184,15 +184,15 @@
     \item{cvarg}{
         \code{character} \code{vector} describing the parameters used in the PRSP algorithm for fitting the 
         Survival Bump Hunting model. Defaults to: \cr 
-        \code{cvarg="alpha=0.01,beta=0.05,peelcriterion=\"lrt\",cvcriterion=\"cer\""}. 
+        \code{cvarg="alpha=0.01,beta=0.10,peelcriterion=\"lrt\",cvcriterion=\"cer\""}. 
         Note that \code{cvarg} comes as a character string between double quotes, with comas separated values, and 
         without white spaces.
         \itemize{ 
             \item{\code{alpha}} = \code{numeric} data quantile in (0,1) to peel off at each step of the peeling
                 sequence of the PRSP algorithm. Defaults to 0.01.
             \item{\code{beta}} = \code{numeric} scalar of minimum box support at the end of the peeling sequence. 
-                Defaults to 0.05.
-            \item{\code{peelcriterion}} in \{"lhr", "lrt", "chs", "grp"\} stands for the peeling criterion: Log-Hazard Ratio (LHR), 
+                Defaults to 0.10.
+            \item{\code{peelcriterion}} in \{"lhr", "lrt", "chs", "grp"\} stands for the peeling criterion Log-Hazard Ratio (LHR), 
                 Log-Rank Test (LRT), Cumulative Hazard Summary (CHS), or Group (GRP), respectively, 
                 that is used in the PRSP or PRGSP algorithm. 
                 Defaults to "lrt".
@@ -201,7 +201,6 @@
                 the optimal number of peeling steps (i.e. optimal peeling sequence length) in the PRSP algorithm. 
                 Defaults to "cer". Ignored if \code{cv} is \code{FALSE}.
         } 
-        If \code{peelcriterion = "grp"}, \code{cvcriterion} is automatically set to "cer", and 
         if \code{peelcriterion} is in \{"lhr", "lrt", "chs"\}, \code{groups} is automatically set to \code{NULL}.
     }
     \item{groups}{
@@ -209,7 +208,7 @@
         the data sample size with as many different values or \code{levels} as the number of data sample groups. 
         To be specified if algorithm Patient Recursive Group Survival Peeling (PRGSP) is to be used, i.e. with option 
         \code{peelcriterion = "grp"}. Only two groups are allowed at this point.
-        Defaults to \code{NULL}, i.e. when regular PRSP is to be used (\code{peelcriterion} in \{"lhr", "lrt", "chs"\}).
+        Defaults to \code{NULL}, i.e. when regular PRSP is to be used.
     }
     \item{pv}{
         \code{logical} scalar. Flag for computation of log-rank \eqn{p}-values. 
@@ -289,7 +288,7 @@
     itself using our PRSP algorithm on previously screened variables by collecting those variables that have the maximum occurrence 
     frequency in each peeling step over cross-validation folds and replicates.
     
-    The argument \code{groups} is to be specified if our Patient Recursive Group Survival Peeling (PRGSP) algorithm is used. 
+    The argument \code{groups} is to be specified if the Patient Recursive Group Survival Peeling (PRGSP) algorithm is used. 
     The PRGSP algorithm is a derivation of our original Patient Recursive Survival Peeling (PRSP) algorithm (Dazard et al. 2016) 
     to search for (or find an extreme of) outcome difference within existing (fixed) groups of observations. See Rao et al. (2018) 
     for details and an application in Disparity Subtyping.
@@ -563,7 +562,7 @@ synt1 <- sbh(X = Synthetic.1[ , -c(1,2), drop=FALSE],
              cv = TRUE,
              cvtype = "combined",
              cvarg = "alpha=0.10,
-                      beta=0.05,
+                      beta=0.10,
                       peelcriterion=\"lrt\",
                       cvcriterion=\"lrt\"",
              groups = NULL,
@@ -593,7 +592,7 @@ synt1.pred <- predict(object = synt1,
 
 plot(x = synt1,
      main = paste("Scatter plot for model #1", sep=""),
-     proj = c(1,2),
+     proj = synt1$cvfit$cv.used[c(1,2)],
      steps = synt1$cvfit$cv.nsteps,
      pch = 16, cex = 0.5, col = c(1,2),
      boxes = TRUE,
@@ -717,7 +716,7 @@ plot_km(object = synt1,
                  cv = TRUE,
                  cvtype = "combined",
                  cvarg = "alpha=0.01,
-                          beta=0.05,
+                          beta=0.10,
                           peelcriterion=\"lrt\",
                           cvcriterion=\"lrt\"",
                  groups = NULL,
@@ -752,7 +751,7 @@ plot_km(object = synt1,
                  vs = TRUE,
                  vstype = "prsp",
                  vsarg = "alpha=0.01,
-                          beta=0.05,
+                          beta=0.10,
                           msize=NULL,
                           peelcriterion=\"lrt\",
                           cvcriterion=\"cer\"",
@@ -760,7 +759,7 @@ plot_km(object = synt1,
                  cv = TRUE,
                  cvtype = "combined",
                  cvarg = "alpha=0.01,
-                          beta=0.05,
+                          beta=0.10,
                           peelcriterion=\"lrt\",
                           cvcriterion=\"cer\"",
                  groups = NULL,

@@ -18,12 +18,13 @@
 \usage{
   \method{plot}{sbh}(x,
      main = NULL,
-     proj = c(1,2), 
+     proj = x$cvfit$cv.used[c(1,2)], 
      steps = 1:x$cvfit$cv.nsteps,
      pch = 16, 
      cex = 0.5, 
      col = c(1,2), 
      boxes = TRUE,
+     asp = NA,
      col.box = rep(2,length(steps)), 
      lty.box = rep(2,length(steps)), 
      lwd.box = rep(1,length(steps)),
@@ -55,7 +56,7 @@
   \item{proj}{
     \code{Integer} \code{vector} of length two, specifying the two dimensions of 
     the projection plane in which the scatter plot is to be plotted. 
-    Defaults to first two dimensions: \{1,2\}.
+    Defaults to first two dimensions of used covariates of \code{sbh} object \code{x}.
   }
   \item{steps}{
     \code{Integer} \code{vector}. Vector of peeling steps at which to plot the 
@@ -77,6 +78,10 @@
   \item{boxes}{
     \code{Logical} scalar. Shall the encapsulating box(es) be plotted as well? 
     Default to \code{TRUE}.
+  }
+  \item{asp}{
+    \code{Numeric} scalar giving the \eqn{y}/\eqn{x} aspect ratio.
+    Default to \code{asp=NA} i.e. a regular plot. See details.
   }
   \item{col.box}{
     \code{Integer} \code{vector} of line color of box vertices for each step. 
@@ -153,17 +158,16 @@
 }
 
 \details{
-  Produces a proportional scatter plot where distances between points are represented accurately on screen 
-  (graphical parameter \code{asp}=1).The window is set up so that one data unit in the x direction is equal 
-  in length to one data unit in the y direction.
+  Use graphical parameter \code{asp=1} for a plotting a proportional scatter plot on the graphical device 
+  with geometrically equal scales on the \eqn{x} and \eqn{y} axes. In that case, it produces a proportional 
+  scatter plot where distances between points are represented accurately on screen. The window is set up 
+  so that one data unit in the \eqn{x} direction is equal in length to one data unit in the \eqn{y} direction.
   
   The two dimensions (\code{proj}) of the projection plane, in which the scatter plot is to be plotted, 
-  must be a subset of the used covariates of the \code{sbh} object. If the number of used covariates in the 
-  \code{sbh} object is zero, the scatterplot will not be drawn. If the number of used covariates is one, 
-  the scatterplot will be drawn using one of the two specified dimensions of argument \code{proj}.
-  
-  The scatterplot is drawn on a graphical device with geometrically equal scales on 
-  the \eqn{x} and \eqn{y} axes.
+  must be a subset (in the large sense) of the used (selected) covariates of \code{sbh} object \code{x}. 
+  If the number of used covariates in the \code{sbh} object is zero, the scatterplot will not be plotted. 
+  If the number of specified used covariates is one, the scatterplot will be plotted using the specified 
+  covariate and an arbitrary dimension, both specified by the user.
 }
 
 \value{
