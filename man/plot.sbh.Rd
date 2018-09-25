@@ -18,7 +18,7 @@
 \usage{
   \method{plot}{sbh}(x,
      main = NULL,
-     proj = x$cvfit$cv.used[c(1,2)], 
+     proj = c(1,2), 
      steps = 1:x$cvfit$cv.nsteps,
      pch = 16, 
      cex = 0.5, 
@@ -56,7 +56,7 @@
   \item{proj}{
     \code{Integer} \code{vector} of length two, specifying the two dimensions of 
     the projection plane in which the scatter plot is to be plotted. 
-    Defaults to first two dimensions of used covariates of \code{sbh} object \code{x}.
+    Defaults to first two dimensions \code{c(1,2)}.
   }
   \item{steps}{
     \code{Integer} \code{vector}. Vector of peeling steps at which to plot the 
@@ -163,10 +163,10 @@
   scatter plot where distances between points are represented accurately on screen. The window is set up 
   so that one data unit in the \eqn{x} direction is equal in length to one data unit in the \eqn{y} direction.
   
-  The two dimensions (\code{proj}) of the projection plane, in which the scatter plot is to be plotted, 
+  The two dimensions (\code{proj}) of the projection plane in which the scatter plot is to be plotted, 
   must be a subset (in the large sense) of the used (selected) covariates of \code{sbh} object \code{x}. 
   If the number of used covariates in the \code{sbh} object is zero, the scatterplot will not be plotted. 
-  If the number of specified used covariates is one, the scatterplot will be plotted using the specified 
+  If the number of used covariates is one, the scatterplot will be plotted using the specified 
   covariate and an arbitrary dimension, both specified by the user.
 }
 
