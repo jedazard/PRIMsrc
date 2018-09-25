@@ -1060,7 +1060,7 @@ print.sbh <- function(x, ...) {
 #===============#
 #                    plot(x,
 #                         main=NULL,
-#                         proj=x$cvfit$cv.used[c(1,2)], 
+#                         proj=c(1,2), 
 #                         steps=1:x$cvfit$cv.nsteps,
 #                         pch=16, 
 #                         cex=0.5, 
@@ -1102,7 +1102,7 @@ print.sbh <- function(x, ...) {
 
 plot.sbh <- function(x,
                      main=NULL,
-                     proj=x$cvfit$cv.used[c(1,2)],
+                     proj=c(1,2),
                      steps=1:x$cvfit$cv.nsteps,
                      pch=16,
                      cex=0.5,
@@ -1139,7 +1139,7 @@ plot.sbh <- function(x,
     } else {
       if (all(proj %in% x$cvfit$cv.used)) {
         toadd <- NULL
-        toplot <- proj
+        toplot <- x$cvfit$cv.used[proj]
       } else {
         stop("Argument `proj` '", proj, "' must be a subset of the used covariates of 'sbh' object '", x, "'. Exiting ... \n\n")
       }
