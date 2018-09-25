@@ -328,15 +328,19 @@
     In case replicated cross-validations are performed, a "summary report" of the outputs is done over the \code{B} replicates as follows:
     \itemize{
         \item Even thought the PRSP algorithm uses only one covariate at a time at each peeling step, the reported matrix of 
-              "Replicated CV" box decision rules may show more than one covariate being used in a given step, because these decision rules 
-              are averaged over the \code{B} replicates (see equation #21 in Dazard et al. 2016).
-        \item However, the reported "Replicated CV" trace values are computed (at each peeling step) as a \emph{single} modal trace value of 
-              covariate usage over the \code{B} replicates. This is also reflected in the reported "Replicated CV" importance and usage plots 
-              of covariate traces.
-        \item The reported "Replicated CV" box membership indicators are computed (at each peeling step) as the point-wise majority vote over 
-              the \code{B} replicates (right-hand side of equation #22 in Dazard et al. 2016).
-        \item The reported "Replicated CV" box support vector and corresponding box sample size are computed (at each peeling step) based on 
-              the above "Replicated CV" box membership indicators (i.e. \emph{not} as equation #23 in Dazard et al. 2016).
+              "Replicated CV" box decision rules may show more than one covariate being used in a given step depending on the replication. 
+              In the end, the reported "Replicated CV" trace values are computed (at each peeling step) as a \emph{single} modal trace value 
+              of covariate usage over the \code{B} replicates. This is also reflected in the "Replicated CV" importance and usage plots of 
+              covariate traces.
+        \item Similarly, the reported "Replicated CV" box membership indicators are computed (at each peeling step) as the point-wise modal
+              membership value, that is majority vote, over the \code{B} replicates (right-hand side of equation #22 in Dazard et al. 2016). 
+              The reported "Replicated CV" box support and corresponding box sample size are computed (at each peeling step) based on the 
+              above "Replicated CV" box membership indicators (i.e. \emph{not} as equation #23 in Dazard et al. 2016).
+        \item All other reported "Replicated CV" box estimates are computed (at each peeling step) as average statistics over the \code{B} 
+              replicates (i.e. as equation #21 in Dazard et al. 2016), that is, \emph{not} as a single box estimate computed from the 
+              "Replicated CV" box membership indicators. This includes the decision rules, the p-values, and all other box statistics. 
+              This may result in some apparent discordance if these estimates are re-computed directly from the reported "Replicated CV" 
+              box membership indicators.
     }
     
     If the computation of log-rank \eqn{p}-values is desired, then running with the parallelization option is strongly advised. 
