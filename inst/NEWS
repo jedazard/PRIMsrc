@@ -138,6 +138,8 @@ DEPRECATED AND DEFUNCT
   and `cvcriterion` options.
 - Parallel cluster or communication mechanism now only allows type 'Socket' or 
   'Message-Passing Interface' ('MPI'). "PRIMsrc" no longer supports 'Parallel Virtual Machine' ('PVM').
+KNOWN BUGS
+- None at this time.
 PACKAGE INSTALLATION
 - Corrections and updates in manual and documentation files (Rd files).
 - Updates in documentation files (DESCRIPTION, NEWS, CITATION and README).
@@ -223,13 +225,16 @@ BUG FIXES
   the scatterplot will be plotted using the `used` (selected) covariate and an arbitrary 
   dimension, both specified by the user.
 - Minor typos corrections and URLs updates.
-SIGNIFICANT USER-VISIBLE CHANGES
+NEW FEATURES
 - Added new peeling criterion `grp` that stands for "group" to carry out a modified 
   version of Survival Bump Hunting (SBH), called Group Survival Bump Hunting (GSBH) 
   using our PRGSP algorithm, derived from our original Patient Recursive Survival Peeling (PRSP).
+SIGNIFICANT USER-VISIBLE CHANGES
 - Modifications of options in plot functions accordingly.
 - Renamed plot functions `plot_boxtraj()`, `plot_boxtrace()`, and `plot_boxkm()` to 
   `plot_traj()`, `plot_trace()`, and `plot_km()` respectively.
+KNOWN BUGS
+- None at this time.
 PACKAGE INSTALLATION
 - Updates in manual and documentation files (Rd files).
 - Updates in documentation files (DESCRIPTION, NEWS, CITATION, and README).
@@ -246,7 +251,7 @@ PACKAGE INSTALLATION
 - Minor updates in documentation files (DESCRIPTION, NEWS, and README).
 - Built and tested under R version 3.5.1 (2018-07-02) and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2018-09-21
+Date   : 2018-09-25
 o RELEASE 0.8.2
 BUG FIXES
 - Fixed errors of group membership indicator variable (`group`) in S3-generic `plot()` 
@@ -255,6 +260,8 @@ BUG FIXES
   of the PRGSP or PRSP algorithm.
 - Updated S3-generic `plot()` function. The scatterplot now correctly plots all possible 
   values of argument `proj` of specified dimensions.
+- The peeling profiles are now returned, and can be plotted, even when the option `cv` in main 
+  function `sbh()` for optional cross-validation is tuned off.
 SIGNIFICANT USER-VISIBLE CHANGES
 - Changed default value of metaparameter `beta` to 0.10 (instead of 0.05).
 - Changed default value of argument `proj` of S3-generic `plot()` function to the first two 
@@ -265,7 +272,14 @@ UTILITIES
   the input data `X`. It also returns additional values.
 - User can now use any of the three cross-validation criterion when runing a Group Survival 
   Bump Hunting (GSBH) using our PRGSP algorithm.
+- The cross-validation criterion now uses the log-rank test p-values to put an upper bound
+  on the number of peeling steps and prevent risks of over-fitting. The optimal peeling length 
+  is now the maximum step that maximizes or minimizes the usual cross-validation criterions 
+  LHR, LRT, or CER, respectively, AND for which the log-rank test p-value is significant at the 
+  0.05 level. 
 PACKAGE INSTALLATION
+- Clarification about a possible apparent disconcordance in the way box estimates are reported. 
+  See details section in manual of main function `sbh()`.
 - Minor updates in manual and documentation files (Rd files).
 - Minor updates in documentation files (DESCRIPTION, NEWS, and README).
 - Built and tested under R version 3.5.1 (2018-07-02) and release update to GitHub.
