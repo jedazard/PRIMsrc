@@ -264,8 +264,6 @@ BUG FIXES
   function `sbh()` for optional cross-validation is tuned off.
 SIGNIFICANT USER-VISIBLE CHANGES
 - Changed default value of metaparameter `beta` to 0.10 (instead of 0.05).
-- Changed default value of argument `proj` of S3-generic `plot()` function to the first two 
-  `used` (selected) covariates of the 'sbh' object (instead of arbitrary c(1,2) dimensions).
 - Added argument `asp` to S3-generic `plot()` function.
 UTILITIES
 - The S3-generic `predict()` function now allows the `newdata` to be of greater dimensionality than
