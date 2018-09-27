@@ -2074,6 +2074,7 @@ plot_trace <- function(object,
 #                             main=NULL,
 #                             xlab="Time", 
 #                             ylab="Probability",
+#                             ci=TRUE,
 #                             precision=1e-3, 
 #                             mark=3,
 #                             col=ifelse(test=object$cvarg$peelcriterion != "grp", 
@@ -2114,6 +2115,7 @@ plot_km <- function(object,
                     main=NULL,
                     xlab="Time",
                     ylab="Probability",
+                    ci=TRUE,	
                     precision=1e-3,
                     mark=3,
                     col=ifelse(test=object$cvarg$peelcriterion != "grp", 
@@ -2170,8 +2172,10 @@ plot_km <- function(object,
             boxind <- 2 - 1*boxind
           }
           surv <- survival::survfit(survival::Surv(time=y, event=delta) ~ 1 + boxind)
-          plot(surv, main="", conf.int=TRUE, mark.time=FALSE, mark=NA, lty=c(2,2), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=cex, xlab=xlab, ylab=ylab, ...)
-          par(new=TRUE)
+          if (ci) {
+            plot(surv, main="", conf.int=TRUE, mark.time=FALSE, mark=NA, lty=c(2,2), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=cex, xlab=xlab, ylab=ylab, ...)
+            par(new=TRUE)
+          }
           plot(surv, main="", conf.int=FALSE, mark.time=TRUE, mark=mark, lty=c(lty,lty), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=cex, xlab=xlab, ylab=ylab, ...)
           if (add.caption) {
             legend(x="topright", inset=0.01, legend=rev(text.caption), lty=c(lty,lty), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=0.9*cex)
@@ -2181,8 +2185,10 @@ plot_km <- function(object,
           grp1 <- 1*(groups == levels(groups)[1])
           wb <- which(boxind == 1)
           surv <- survival::survfit(survival::Surv(time=y[wb], event=delta[wb]) ~ 1 + grp1[wb])
-          plot(surv, main="", conf.int=TRUE, mark.time=FALSE, mark=NA, lty=c(2,2), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=cex, xlab=xlab, ylab=ylab, ...)
-          par(new=TRUE)
+          if (ci) {
+            plot(surv, main="", conf.int=TRUE, mark.time=FALSE, mark=NA, lty=c(2,2), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=cex, xlab=xlab, ylab=ylab, ...)
+            par(new=TRUE)
+          }
           plot(surv, main="", conf.int=FALSE, mark.time=TRUE, mark=mark, lty=c(lty,lty), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=cex, xlab=xlab, ylab=ylab, ...)
           if (add.caption) {
             legend(x="topright", inset=0.01, legend=rev(text.caption), lty=c(lty,lty), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=0.9*cex)

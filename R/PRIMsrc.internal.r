@@ -4958,7 +4958,7 @@ is.empty <- function(x) {
 #===============#
 # Usage         :
 #===============#
-#                    is.wholenumber()
+#                    is.wholenumber(x, tol=.Machine$double.eps^0.5)
 #
 #===============#
 # Description   :
@@ -4986,7 +4986,7 @@ is.wholenumber <- function(x, tol=.Machine$double.eps^0.5) {
 #===============#
 # Usage         :
 #===============#
-#                    zeroslope()
+#                    zeroslope(y, x, lag=1, span=0.10, degree=2, family="gaussian", minimum=TRUE)
 #
 #===============#
 # Description   :
