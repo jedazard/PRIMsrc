@@ -17,6 +17,7 @@
           main = NULL,
           xlab = "Time",
           ylab = "Probability",
+          ci = TRUE,
           precision = 1e-3,
           mark = 3,
           col = ifelse(test = object$cvarg$peelcriterion != "grp", 
@@ -55,6 +56,10 @@
   \item{ylab}{
     \code{Character} \code{vector}. Y-axis label. 
     Defaults to "Probability".
+  }
+  \item{ci}{
+    \code{Logical} scalar. Shall the 95\% confidence interval be plotted? 
+    Defaults to \code{TRUE}.
   }
   \item{precision}{
     Precision of log-rank \eqn{p}-values of separation between two survival curves.
