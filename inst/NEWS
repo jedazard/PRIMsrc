@@ -251,7 +251,7 @@ PACKAGE INSTALLATION
 - Minor updates in documentation files (DESCRIPTION, NEWS, and README).
 - Built and tested under R version 3.5.1 (2018-07-02) and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2018-09-25
+Date   : 2018-09-27
 o RELEASE 0.8.2
 BUG FIXES
 - Fixed errors of group membership indicator variable (`group`) in S3-generic `plot()` 
@@ -264,7 +264,8 @@ BUG FIXES
   function `sbh()` for optional cross-validation is tuned off.
 SIGNIFICANT USER-VISIBLE CHANGES
 - Changed default value of metaparameter `beta` to 0.10 (instead of 0.05).
-- Added argument `asp` to S3-generic `plot()` function.
+- Added argument `asp` to S3-generic `plot()` function for proportional display option.
+- Added argument `ci` to `plot_km()` function for confidence interval display option.
 UTILITIES
 - The S3-generic `predict()` function now allows the `newdata` to be of greater dimensionality than
   the input data `X`. It also returns additional values.
