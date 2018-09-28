@@ -251,12 +251,12 @@ PACKAGE INSTALLATION
 - Minor updates in documentation files (DESCRIPTION, NEWS, and README).
 - Built and tested under R version 3.5.1 (2018-07-02) and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2018-09-27
+Date   : 2018-09-28
 o RELEASE 0.8.2
 BUG FIXES
 - Fixed errors of group membership indicator variable (`group`) in S3-generic `plot()` 
   and `plot_km()` functions.
-- The main function `sbh()` now handles the exception of no steps in the peeling sequence
+- The main function `sbh()` now handles a rare exception of no steps in the peeling sequence
   of the PRGSP or PRSP algorithm.
 - Updated S3-generic `plot()` function. The scatterplot now correctly plots all possible 
   values of argument `proj` of specified dimensions.
