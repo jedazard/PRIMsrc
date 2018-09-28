@@ -120,11 +120,11 @@ sbh <- function(X,
   } else if (peelcriterion == "grp") {
     cvcriterion <- match.arg(arg=cvcriterion, choices=c("lhr", "lrt", "cer"), several.ok=FALSE)
     if (is.null(groups)) {
-      stop("\nArgument `groups` '", groups, "' must be specified when used with PRGSP algorithm. Exiting ... \n\n")
+      stop("\nArgument `groups` must be specified when used with PRGSP algorithm. Exiting ... \n\n")
     }
     groups <- as.factor(groups)
     if (!is.null(groups) && (length(levels(groups)) != 2)) {
-      stop("\nArgument `groups` '", groups, "' must have exactly two levels when used with PRGSP algorithm. Exiting ... \n\n")
+      stop("\nArgument `groups` must have exactly two levels when used with PRGSP algorithm. Exiting ... \n\n")
     }
   } else {
     stop("Invalid peeling criterion option. Exiting ... \n\n")
@@ -921,8 +921,8 @@ PRIMsrc.news <- function(...) {
 summary.sbh <- function(object, ...) {
   
   if (!inherits(object, 'sbh'))
-    stop("Argument `object` '", object, "' must be an object of class 'sbh'. Exiting ... \n\n")
-  
+    stop("Argument `object` must be an object of class 'sbh'. Exiting ... \n\n")
+
   cat("\nS3-class object: '", attr(x=object, "class"), "' \n\n")
   if (!object$cv) {
     if (object$B > 1) {
@@ -988,7 +988,7 @@ summary.sbh <- function(object, ...) {
 print.sbh <- function(x, ...) {
   
   if (!inherits(x, 'sbh'))
-    stop("Argument `x` '", x, "' must be an object of class 'sbh'. Exiting ... \n\n")
+    stop("Argument `x` must be an object of class 'sbh'. Exiting ... \n\n")
   
   if (x$success) {
     
@@ -1129,19 +1129,30 @@ plot.sbh <- function(x,
                      height=5, ...) {
   
   if (!inherits(x, 'sbh'))
-    stop("Argument `x` '", x, "' must be an object of class 'sbh'. Exiting ... \n\n")
+    stop("Argument `x` must be an object of class 'sbh'. Exiting ... \n\n")
   
   if (x$success) {
     
-    if (length(x$cvfit$cv.used) == 1) {
-      toadd <- setdiff(proj, x$cvfit$cv.used)
-      toplot <- sort(c(toadd, x$cvfit$cv.used))
+    if (length(proj) <= 1) {
+      stop("Argument `proj` must be a vector of length 2. Exiting ... \n\n")
     } else {
-      if (all(proj %in% x$cvfit$cv.used)) {
-        toadd <- NULL
-        toplot <- x$cvfit$cv.used[proj]
+      if (all(proj %in% (1:ncol(x$X)))) {
+        if (length(x$cvfit$cv.used) == 1) {
+          toadd <- setdiff(proj, x$cvfit$cv.used)
+          toplot <- c(toadd, x$cvfit$cv.used, decreasing = FALSE)
+          names(toplot) <- c(as.character(toadd), names(x$cvfit$cv.used))
+          toplot <- sort(toplot, decreasing = FALSE)
+          cat("Warning: Added dimension ", toadd, " to the used covariates of 'sbh' object `x`. \n", sep="")
+        } else {
+          if (all(proj %in% x$cvfit$cv.used)) {
+            toadd <- NULL
+            toplot <- x$cvfit$cv.used[proj]
+          } else {
+            stop("Argument `proj` must be a equal or a subset of the used covariates of 'sbh' object `x`. Exiting ... \n\n")
+          }
+        }
       } else {
-        stop("Argument `proj` '", proj, "' must be a subset of the used covariates of 'sbh' object '", x, "'. Exiting ... \n\n")
+        stop("Argument `proj` must be a equal or a subset of the covariates of 'sbh' object `x`. Exiting ... \n\n")
       }
     }
     
@@ -1163,10 +1174,9 @@ plot.sbh <- function(x,
       }
       
       peelcriterion <- object$cvarg$peelcriterion
-      varnames <- colnames(object$X)
       L <- length(steps)
       y <- object$y
-      x <- object$X[,varnames[toplot],drop=FALSE]
+      x <- object$X[,toplot,drop=FALSE]
       x.names <- colnames(x)
       plot(x=x, main=NULL, xlab=x.names[1], ylab=x.names[2], type="n", axes=FALSE, asp=asp, frame.plot=FALSE)
       axis(side=1, at=pretty(range(x[,1])), col=1, col.axis=1, cex.axis=1, line=0)
@@ -1189,11 +1199,11 @@ plot.sbh <- function(x,
       if (boxes) {
         x.range <- apply(X=x, MARGIN=2, FUN=range, na.rm=TRUE)
         if (is.null(toadd)) {
-          boxcut <- object$cvfit$cv.rules$mean[,varnames[toplot],drop=FALSE]
-          varsign <- object$cvfit$cv.sign[varnames[toplot]]
+          boxcut <- object$cvfit$cv.rules$mean[,toplot,drop=FALSE]
+          varsign <- object$cvfit$cv.sign[toplot]
         } else {
-          boxcut <- object$cvfit$cv.rules$mean[,varnames[object$cvfit$cv.used],drop=FALSE]
-          varsign <- object$cvfit$cv.sign[varnames[object$cvfit$cv.used]]
+          boxcut <- object$cvfit$cv.rules$mean[,object$cvfit$cv.used,drop=FALSE]
+          varsign <- object$cvfit$cv.sign[object$cvfit$cv.used]
           if (toadd > object$cvfit$cv.used) {
             boxcut <- cbind(boxcut, x.range[1,toadd])
             varsign <- c(varsign, 1)
@@ -1329,7 +1339,7 @@ predict.sbh <- function (object,
   if (object$success) {
     
     if (!inherits(object, 'sbh'))
-      stop("Argument `object` '", object, "' must be an object of class 'sbh'. Exiting ... \n\n")
+      stop("Argument `object` must be an object of class 'sbh'. Exiting ... \n\n")
     
     used <- object$cvfit$cv.used
     if (all(used %in% (1:ncol(newdata)))) {
@@ -1340,7 +1350,7 @@ predict.sbh <- function (object,
       x.names <- colnames(x)
       x.range <- apply(X=x, MARGIN=2, FUN=range)
     } else {
-      stop("The used covariates of 'sbh' `object` '", object, "' must be equal or a subset of the the covariates of `newdata`. Exiting ... \n\n")
+      stop("The used covariates of 'sbh' `object` must be equal or a subset of the `newdata` covariates. Exiting ... \n\n")
     }
     
     varnames <- colnames(object$X)
@@ -1449,8 +1459,8 @@ plot_profile <- function(object,
                          height=5.0, ...) {
   
   if (!inherits(object, 'sbh'))
-    stop("Argument `object` '", object, "' must be an object of class 'sbh'. Exiting ... \n\n")
-  
+    stop("Argument `object` must be an object of class 'sbh'. Exiting ... \n\n")
+
   if (object$success) {
     
     profileplot <- function(object, main, xlim, ylim,
@@ -1690,8 +1700,8 @@ plot_traj <- function(object,
                       height=11, ...) {
   
   if (!inherits(object, 'sbh'))
-    stop("Argument `object` '", object, "' must be an object of class 'sbh'. Exiting ... \n\n")
-  
+    stop("Argument `object` must be an object of class 'sbh'. Exiting ... \n\n")
+
   if (object$success) {
     
     trajplot <- function(object,
@@ -1933,8 +1943,8 @@ plot_trace <- function(object,
                        height=8.5, ...) {
   
   if (!inherits(object, 'sbh'))
-    stop("Argument `object` '", object, "' must be an object of class 'sbh'. Exiting ... \n\n")
-  
+    stop("Argument `object` must be an object of class 'sbh'. Exiting ... \n\n")
+
   if (object$success) {
     
     traceplot <- function(object,
@@ -2139,8 +2149,8 @@ plot_km <- function(object,
                     height=8.5, ...) {
   
   if (!inherits(object, 'sbh'))
-    stop("Argument `object` '", object, "' must be an object of class 'sbh'. Exiting ... \n\n")
-  
+    stop("Argument `object` must be an object of class 'sbh'. Exiting ... \n\n")
+
   if (object$success) {
     
     kmplot <- function(object,
