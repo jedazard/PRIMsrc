@@ -55,7 +55,7 @@
   }
   \item{proj}{
     \code{Integer} \code{vector} of length two, specifying the two dimensions of 
-    the projection plane in which the scatter plot is to be plotted. 
+    the projection plane in which the scatter plot is to be plotted. See details.
     Defaults to first two dimensions \code{c(1,2)}.
   }
   \item{steps}{

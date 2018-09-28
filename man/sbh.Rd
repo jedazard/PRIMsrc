@@ -596,7 +596,7 @@ synt1.pred <- predict(object = synt1,
 
 plot(x = synt1,
      main = paste("Scatter plot for model #1", sep=""),
-     proj = synt1$cvfit$cv.used[c(1,2)],
+     proj = c(1,2),
      steps = synt1$cvfit$cv.nsteps,
      pch = 16, cex = 0.5, col = c(1,2),
      boxes = TRUE,
