@@ -19,6 +19,7 @@
 #                             vs,
 #                             vstype,
 #                             vsarg,
+#                             vscons,
 #                             cv,
 #                             onese,
 #                             parallel.vs,
@@ -50,6 +51,7 @@ cv.presel <- function(X,
                       vs,
                       vstype,
                       vsarg,
+                      vscons,
                       cv,
                       onese,
                       parallel.vs,
@@ -59,9 +61,11 @@ cv.presel <- function(X,
                       verbose,
                       seed) {
   
-  # Parsing and evaluating all 'vsarg' parameters
-  eval(parse(text = unlist(strsplit(x = vsarg, split = ","))))
   
+
+  # Parsing and evaluating 'vsarg' parameters
+  eval(parse(text = unlist(strsplit(x = vsarg, split = ","))))
+
   # Treatment of variable screening
   if (vs) {
     
@@ -83,6 +87,7 @@ cv.presel <- function(X,
                                            K=K,
                                            vsarg=vsarg,
                                            vstype=vstype,
+                                           vscons=vscons,
                                            cv=cv,
                                            onese=onese,
                                            parallel.vs=parallel.vs,
@@ -99,6 +104,7 @@ cv.presel <- function(X,
                              K=K,
                              vsarg=vsarg,
                              vstype=vstype,
+                             vscons=vscons,
                              cv=cv,
                              onese=onese,
                              parallel.vs=parallel.vs,
@@ -125,14 +131,13 @@ cv.presel <- function(X,
     boxstat.profile.list <- CV.type.presel.obj$boxstat.mean
     success <-  any(CV.type.presel.obj$success)
     
-    # Parsing 'vsarg' to retrieve 'cvcriterion', 'M', 'msize, and 'vscons'
+    # Parsing 'vsarg' to retrieve 'cvcriterion', 'M', and 'msize'
     if (vstype == "prsp") {
       cvcriterion <- vsarg$cvcriterion
     }
     msize <- vsarg$msize
     M <- length(msize)
-    vscons <- vsarg$vscons
-    
+
     # Get the fitted model
     if (!success) {
       # Failed to select any covariates
@@ -399,6 +404,7 @@ cv.type.presel <- function(X,
                            K,
                            vsarg,
                            vstype,
+                           vscons,
                            cv,
                            onese,
                            parallel.vs,
@@ -424,6 +430,7 @@ cv.type.presel <- function(X,
                          delta=delta,
                          K=K,
                          vsarg=vsarg,
+                         vscons=vscons,
                          cv=cv,
                          onese=onese,
                          parallel=parallel.vs,
@@ -437,6 +444,7 @@ cv.type.presel <- function(X,
                          delta=delta,
                          K=K,
                          vsarg=vsarg,
+                         vscons=vscons,
                          cv=cv,
                          onese=onese,
                          parallel=parallel.vs,
@@ -450,6 +458,7 @@ cv.type.presel <- function(X,
                         delta=delta,
                         K=K,
                         vsarg=vsarg,
+                        vscons=vscons,
                         cv=cv,
                         onese=onese,
                         parallel=parallel.vs,
@@ -463,6 +472,7 @@ cv.type.presel <- function(X,
                          delta=delta,
                          K=K,
                          vsarg=vsarg,
+                         vscons=vscons,
                          cv=cv,
                          parallel=parallel.vs,
                          clus=clus.vs,
@@ -486,6 +496,7 @@ cv.type.presel <- function(X,
                        delta=delta,
                        K=K,
                        vsarg=vsarg,
+                       vscons=vscons,
                        cv=cv,
                        onese=onese,
                        parallel=parallel.vs,
@@ -499,6 +510,7 @@ cv.type.presel <- function(X,
                        delta=delta,
                        K=K,
                        vsarg=vsarg,
+                       vscons=vscons,
                        cv=cv,
                        onese=onese,
                        parallel=parallel.vs,
@@ -512,6 +524,7 @@ cv.type.presel <- function(X,
                       delta=delta,
                       K=K,
                       vsarg=vsarg,
+                      vscons=vscons,
                       cv=cv,
                       onese=onese,
                       parallel=parallel.vs,
@@ -525,6 +538,7 @@ cv.type.presel <- function(X,
                        delta=delta,
                        K=K,
                        vsarg=vsarg,
+                       vscons=vscons,
                        cv=cv,
                        parallel=parallel.vs,
                        clus=clus.vs,
@@ -562,6 +576,7 @@ cv.prsp <- function(X,
                     delta,
                     K,
                     vsarg,
+                    vscons,
                     cv,
                     onese,
                     parallel,
@@ -578,7 +593,6 @@ cv.prsp <- function(X,
   msize <- NULL
   peelcriterion <- NULL
   cvcriterion <- NULL
-  vscons <- NULL
   eval(parse( text=unlist(strsplit(x=vsarg, split=",")) ))
   
   if (is.null(msize)) {
@@ -847,7 +861,6 @@ cv.prsp <- function(X,
                 "beta"=beta,
                 "peelcriterion"=peelcriterion,
                 "cvcriterion"=cvcriterion,
-                "vscons"=vscons,
                 "msize"=msize)
   
   return(list("vsarg"=vsarg,
@@ -1146,6 +1159,7 @@ cv.pcqr <- function(X,
                     delta,
                     K,
                     vsarg,
+                    vscons,
                     cv,
                     onese,
                     parallel,
@@ -1158,7 +1172,6 @@ cv.pcqr <- function(X,
   alpha <- NULL
   nalpha <- NULL
   nlambda <- NULL
-  vscons <- NULL
   eval(parse( text=unlist(strsplit(x=vsarg, split=",")) ))
   
   M <- 2
@@ -1225,7 +1238,9 @@ cv.pcqr <- function(X,
     }
     cv.errmu <- list2mat(list=cv.errmu, coltrunc="max", fill=NA)
     cv.errse <- list2mat(list=cv.errse, coltrunc="max", fill=NA)
-    index.min <- as.numeric(which(x=(cv.errmu == as.numeric(cv.errmu)[which.min(cv.errmu)]), arr.ind=TRUE, useNames=FALSE))
+    cv.errmu.index <- as.matrix(which(x=(cv.errmu == as.numeric(cv.errmu)[which.min(cv.errmu)]), arr.ind=TRUE, useNames=FALSE))
+    w <- which.min(cv.errmu.index[, 1, drop=TRUE])
+    index.min <- as.numeric(cv.errmu.index[w,,drop=TRUE])
     ww <- as.matrix(which(x=cv.errmu < cv.errmu[index.min[1],index.min[2]] + cv.errse[index.min[1],index.min[2]], arr.ind=TRUE, useNames=TRUE))
     index.1se <- c(min(ww[,1]), min(ww[ww[,1]==min(ww[,1]),2]))
     if (is.empty(index.min) || is.empty(index.1se)) {
@@ -1380,7 +1395,6 @@ cv.pcqr <- function(X,
                 "alpha"=alpha,
                 "nalpha"=nalpha,
                 "nlambda"=nlambda,
-                "vscons"=vscons,
                 "msize"=msize)
   
   return(list("vsarg"=vsarg,
@@ -1829,6 +1843,7 @@ cv.ppl <- function(X,
                    delta,
                    K,
                    vsarg,
+                   vscons,
                    cv,
                    onese,
                    parallel,
@@ -1840,7 +1855,6 @@ cv.ppl <- function(X,
   alpha <- NULL
   nalpha <- NULL
   nlambda <- NULL
-  vscons <- NULL
   eval(parse( text=unlist(strsplit(x=vsarg, split=",")) ))
   
   M <- 2
@@ -1895,7 +1909,9 @@ cv.ppl <- function(X,
     }
     cv.errmu <- list2mat(list=cv.errmu, coltrunc="max", fill=NA)
     cv.errse <- list2mat(list=cv.errse, coltrunc="max", fill=NA)
-    index.min <- as.numeric(which(x=(cv.errmu == as.numeric(cv.errmu)[which.min(cv.errmu)]), arr.ind=TRUE, useNames=FALSE))
+    cv.errmu.index <- as.matrix(which(x=(cv.errmu == as.numeric(cv.errmu)[which.min(cv.errmu)]), arr.ind=TRUE, useNames=FALSE))
+    w <- which.min(cv.errmu.index[, 1, drop=TRUE])
+    index.min <- as.numeric(cv.errmu.index[w,,drop=TRUE])
     ww <- as.matrix(which(x=cv.errmu < cv.errmu[index.min[1],index.min[2]] + cv.errse[index.min[1],index.min[2]], arr.ind=TRUE, useNames=TRUE))
     index.1se <- c(min(ww[,1]), min(ww[ww[,1]==min(ww[,1]),2]))
     if (is.empty(index.min) || is.empty(index.1se)) {
@@ -2024,7 +2040,6 @@ cv.ppl <- function(X,
   vsarg <- list("alpha"=alpha,
                 "nalpha"=nalpha,
                 "nlambda"=nlambda,
-                "vscons"=vscons,
                 "msize"=msize)
   
   return(list("vsarg"=vsarg,
@@ -2052,6 +2067,7 @@ cv.spca <- function(X,
                     delta,
                     K,
                     vsarg,
+                    vscons,
                     cv,
                     parallel,
                     clus,
@@ -2062,7 +2078,6 @@ cv.spca <- function(X,
   n.thres <- NULL
   n.pcs <- NULL
   n.var <- NULL
-  vscons <- NULL
   eval(parse( text=unlist(strsplit(x=vsarg, split=",")) ))
   
   M <- 1
@@ -2243,7 +2258,6 @@ cv.spca <- function(X,
   vsarg <- list("n.thres"=n.thres,
                 "n.pcs"=n.pcs,
                 "n.var"=n.var,
-                "vscons"=vscons,
                 "msize"=msize)
   
   return(list("vsarg"=vsarg,
