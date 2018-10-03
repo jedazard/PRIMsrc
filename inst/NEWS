@@ -47,7 +47,8 @@ o RELEASE 0.6.0
 - The value of `object$cvfit$cv.trace` of the `PRSP` object that is returned 
   by the main function `sbh()` now only contains the vector of the modal trace values 
   of covariate usage at each step.
-- Updated S3-generic `print()` function as well as `plot_boxtraj()` and `plot_boxtrace()` accordingly.  
+- Updated S3-generic `print()` function as well as `plot_boxtraj()` and `plot_boxtrace()` 
+  accordingly.  
 - Minor updates and corrections in the documentation file and manual.
 - Built and tested under R-devel (2015-09-14 r69384) and release update to GitHub.
 ---------------------------------------------------------------------------------
@@ -59,8 +60,8 @@ o RELEASE 0.6.2
   user-specified significant decimals.
 - Added examples for all S3-generic functions.
 - Corrected output of decision rules in S3-generic `print` function in case `vs=TRUE`. 
-- Renamed results `varsign`, `selected` and `used` to `CV.sign`, `CV.selected` and `CV.used` and
-  moved them to `cvfit` field of return `PRSP` object.
+- Renamed results `varsign`, `selected` and `used` as `CV.sign`, `CV.selected` and 
+  `CV.used`, respectively. Moved them to `cvfit` field of return `PRSP` object.
 - Minor improvement in output plot axes names of `plot_boxtrace()` function.  
 - Updates of corresponding modifications in the documentation file and manual.
 - Built and tested under R-devel (2015-09-14 r69384) and release update to GitHub.
@@ -109,10 +110,11 @@ SIGNIFICANT USER-VISIBLE CHANGES
 - Changed format and values of argument `conf` for setting up the parallel backend in case a parallel 
   cluster of computers is desired. 
 NEW FEATURES
-- Implemented four variable screening (pre-selection) procedures before variable usage (selection) procedure is done. 
-  User can now choose between: 
+- Implemented four variable screening (pre-selection) procedures before variable usage (selection) 
+  procedure is done. User can now choose between: 
   1. PRSP: Univariate Patient Recursive Survival Peeling (PRSP) algorithm
-  2. PCQR: Penalized Censored Quantile Regression by Semismooth Newton Coordinate Descent algorithm adapted from package "hqreg"
+  2. PCQR: Penalized Censored Quantile Regression by Semismooth Newton Coordinate Descent algorithm 
+     adapted from package "hqreg"
   3. PPL: Penalized Partial Likelihood adapted from package "glmnet" (default)
   4. SPCA: Supervised Principal Component Analysis adapted from package "superpc"
 - New `sbh()` output values in `object$cvprofiles` of the 'sbh' object (in matrix format) to plot 
@@ -121,8 +123,8 @@ NEW FEATURES
 BUG FIXES
 - Improved treatment of no variable pre-selection.
 - Removed extraneous codes in main function `sbh()`.
-- Corrected rare error in the determination of cross-validated parameter tuning in `cv.ppl()` and `cv.pcqr()` 
-  for variable selection procedures 2 and 3 above, respectively.
+- Corrected rare exception in the determination of cross-validated tuning parameter in `cv.ppl()` 
+  and `cv.pcqr()` for variable selection procedures 2 and 3 above, respectively.
 - Corrected discrepancy in a given step between `object$cvfit$cv.boxind` and `object$cvfit$cv.stats`. 
 - Corrected internal function `cv.folds()` to handle degenerate cases of cross-validation and the case 
   when an outcome `y` is not provided (in which case a regular random splitting is performed that is not 
@@ -251,21 +253,25 @@ PACKAGE INSTALLATION
 - Minor updates in documentation files (DESCRIPTION, NEWS, and README).
 - Built and tested under R version 3.5.1 (2018-07-02) and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2018-09-28
+Date   : 2018-10-03
 o RELEASE 0.8.2
 BUG FIXES
-- Fixed errors of group membership indicator variable (`group`) in S3-generic `plot()` 
-  and `plot_km()` functions.
+- Fixed errors (release >= 0.8.0) of group membership indicator variable (`group`) in 
+  S3-generic `plot()` and `plot_km()` functions.
 - The main function `sbh()` now handles a rare exception of no steps in the peeling sequence
   of the PRGSP or PRSP algorithm.
+- Corrected rare exception (release >= 0.7.0) in the determination of cross-validated tuning parameter 
+  in `cv.ppl()` and `cv.pcqr()` for variable selection procedures 2 and 3 described above, respectively.
 - Updated S3-generic `plot()` function. The scatterplot now correctly plots all possible 
-  values of argument `proj` of specified dimensions.
+  values of argument `proj` of the specified dimensions.
 - The peeling profiles are now returned, and can be plotted, even when the option `cv` in main 
   function `sbh()` for optional cross-validation is tuned off.
 SIGNIFICANT USER-VISIBLE CHANGES
 - Changed default value of metaparameter `beta` to 0.10 (instead of 0.05).
 - Added argument `asp` to S3-generic `plot()` function for proportional display option.
 - Added argument `ci` to `plot_km()` function for confidence interval display option.
+- Moved user option `vscons` for variable screening (pre-selection) conservativeness from 
+  parameter `vsarg` to main function `sbh()` .
 UTILITIES
 - The S3-generic `predict()` function now allows the `newdata` to be of greater dimensionality than
   the input data `X`. It also returns additional values.
