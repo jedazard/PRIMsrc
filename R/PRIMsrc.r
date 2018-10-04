@@ -1142,8 +1142,7 @@ plot.sbh <- function(x,
       if (all(proj %in% (1:ncol(x$X)))) {
         if (length(x$cvfit$cv.used) == 1) {
           toadd <- setdiff(proj, x$cvfit$cv.used)
-          toplot <- c(toadd, x$cvfit$cv.used, decreasing = FALSE)
-          names(toplot) <- c(as.character(toadd), names(x$cvfit$cv.used))
+          toplot <- c(toadd, x$cvfit$cv.used)
           toplot <- sort(toplot, decreasing = FALSE)
           cat("Warning: Added dimension ", toadd, " to the used covariates of 'sbh' object `x`. \n", sep="")
         } else {
@@ -1175,7 +1174,6 @@ plot.sbh <- function(x,
       } else {
         par(mfrow=c(1, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
       }
-      
       peelcriterion <- object$cvarg$peelcriterion
       L <- length(steps)
       y <- object$y
@@ -1205,8 +1203,8 @@ plot.sbh <- function(x,
           boxcut <- object$cvfit$cv.rules$mean[,toplot,drop=FALSE]
           varsign <- object$cvfit$cv.sign[toplot]
         } else {
-          boxcut <- object$cvfit$cv.rules$mean[,object$cvfit$cv.used,drop=FALSE]
-          varsign <- object$cvfit$cv.sign[object$cvfit$cv.used]
+          boxcut <- object$cvfit$cv.rules$mean[,1,drop=FALSE]
+          varsign <- object$cvfit$cv.sign[1]
           if (toadd > object$cvfit$cv.used) {
             boxcut <- cbind(boxcut, x.range[1,toadd])
             varsign <- c(varsign, 1)
