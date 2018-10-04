@@ -253,7 +253,7 @@ PACKAGE INSTALLATION
 - Minor updates in documentation files (DESCRIPTION, NEWS, and README).
 - Built and tested under R version 3.5.1 (2018-07-02) and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2018-10-03
+Date   : 2018-10-04
 o RELEASE 0.8.2
 BUG FIXES
 - Fixed errors (release >= 0.8.0) of group membership indicator variable (`group`) in 
