@@ -639,7 +639,7 @@ plot_km(object = synt1,
     # Examples of parallel backend parametrization 
     #===================================================
     if (require("parallel")) {
-       print("'parallel' is attached correctly \n")
+       cat("'parallel' is attached correctly \n")
     } else {
        stop("'parallel' must be attached first \n")
     }
@@ -676,10 +676,10 @@ plot_km(object = synt1,
     # Ex. #3 - Enterprise Multinode Cluster w/ multicore/node  
     # Running LINUX with SLURM scheduler
     # MPI communication cluster
-    # Distributed memory parallelisation
+    # Distributed memory parallelization
     #==================================================
     if (require("Rmpi")) {
-        print("'Rmpi' is attached correctly \n")
+        cat("'Rmpi' is attached correctly \n")
     } else {
         stop("'Rmpi' must be attached first \n")
     }
@@ -731,8 +731,7 @@ plot_km(object = synt1,
                  parallel.pv = TRUE,
                  conf = conf,
                  verbose = TRUE,
-                 seed = 123)
-                 
+                 seed = 123)      
     #===================================================
     # Simulated dataset #4 (n=100, p=1000)
     # Peeling criterion = LRT
