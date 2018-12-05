@@ -181,8 +181,8 @@ Funding/Provision/Help:
 ### References
 
    + Dazard J-E. and Rao J.S. 
-      *Variable Selection Strategies for High-Dimensional Survival Bump Hunting using Recursive Peeling Methods*. 
-      [2018 (in prep)].
+      *Variable Selection Strategies for Recursive Peeling-Based Survival Bump Hunting Models*. 
+      [2019 (in prep)].
       
    + Diaz D.A., Saenz J.P., Dazard J-E. and Rao J.S. 
      *Mode Hunting through Active Information*. 
