@@ -34,7 +34,7 @@
     In the case of a time-to event, possibly censored (Survival) outcome, "Survival Bump Hunting" (SBH) is done by our Patient Recursive 
     Survival Peeling (PRSP) algorithm (see Dazard et al. (2014, 2015, 2016, 2018) for details). Alternatively, "Group Survival Bump Hunting" (GSBH)
     is done by using specifc peeling and cross-validation criterion in a derivation of PRSP, which we call Patient Recursive Group Survival Peeling 
-    (PRGSP) (see Rao et al. (2018) for details and an application in Survival Disparity Subtyping). 
+    (PRGSP) (see Dazard and Rao (2018) for details and Rao et al. (2018) for an application in Survival Disparity Subtyping). 
     
     The package relies on an optional variable screening (pre-selection) procedure that is run before the PRSP algorithm 
     and final variable usage (selection) procedure is done. This is done by four possible cross-validated variable screening 
@@ -195,12 +195,12 @@
 
 \references{
     \itemize{
-        \item Dazard J-E. and Rao J.S. (2018).
-              "\emph{Variable Selection Strategies for High-Dimensional Survival Bump Hunting using Recursive Peeling Methods.}"
+        \item Dazard J-E. and Rao J.S. (2019).
+              "\emph{Variable Selection Strategies for Recursive Peeling-Based Survival Bump Hunting Models.}"
               (in prep).
-        \item Rao J.S., Huilin Y. and Dazard J-E. (2018).
+        \item Rao J.S., Huilin Y. and Dazard J-E. (2019).
               "\emph{Disparity Subtyping: Bringing Precision Medicine Closer to Disparity Science.}"
-              (in prep).
+              (submitted).
         \item Diaz-Pachon D.A., Saenz J.P., Dazard J-E. and Rao J.S. (2018).
               "\emph{Mode Hunting through Active Information.}"
               (in press).

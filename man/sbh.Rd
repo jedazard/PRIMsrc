@@ -285,8 +285,8 @@
         
     The argument \code{groups} is to be specified if the Patient Recursive Group Survival Peeling (PRGSP) algorithm is used. 
     The PRGSP algorithm is a derivation of our original Patient Recursive Survival Peeling (PRSP) algorithm (Dazard et al. 2016) 
-    to search for (or find an extreme of) outcome difference within existing (fixed) groups of observations. See Rao et al. (2018) 
-    for details and an application in Disparity Subtyping.
+    to search for (or find an extreme of) outcome difference within existing (fixed) groups of observations. See Dazard and Rao (2018) 
+    for details and Rao et al. (2018) for an application in Survival Disparity Subtyping.
     
     In the PRSP variable screening procedure (\code{vsarg} of "prsp"), setting option \code{msize} to a single non-\code{NULL} value 
     within the allowable range [1,\code{floor}(\eqn{p})] will override the cross-validation setting within the variable screening
@@ -459,12 +459,12 @@
 
 \references{
     \itemize{
-        \item Dazard J-E. and Rao J.S. (2018).
-              "\emph{Variable Selection Strategies for High-Dimensional Survival Bump Hunting using Recursive Peeling Methods.}"
+        \item Dazard J-E. and Rao J.S. (2019).
+              "\emph{Variable Selection Strategies for Recursive Peeling-Based Survival Bump Hunting Models.}"
               (in prep).
-        \item Rao J.S., Huilin Y. and Dazard J-E. (2018).
+        \item Rao J.S., Huilin Y. and Dazard J-E. (2019).
               "\emph{Disparity Subtyping: Bringing Precision Medicine Closer to Disparity Science.}"
-              (in prep).
+              (submitted).
         \item Diaz-Pachon D.A., Saenz J.P., Dazard J-E. and Rao J.S. (2018).
               "\emph{Mode Hunting through Active Information.}"
               (in press).

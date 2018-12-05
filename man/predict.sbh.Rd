@@ -70,12 +70,12 @@
 
 \references{
     \itemize{
-        \item Dazard J-E. and Rao J.S. (2018).
-              "\emph{Variable Selection Strategies for High-Dimensional Survival Bump Hunting using Recursive Peeling Methods.}"
+        \item Dazard J-E. and Rao J.S. (2019).
+              "\emph{Variable Selection Strategies for Recursive Peeling-Based Survival Bump Hunting Models.}"
               (in prep).
-        \item Rao J.S., Huilin Y. and Dazard J-E. (2018).
+        \item Rao J.S., Huilin Y. and Dazard J-E. (2019).
               "\emph{Disparity Subtyping: Bringing Precision Medicine Closer to Disparity Science.}"
-              (in prep).
+              (submitted).
         \item Diaz-Pachon D.A., Saenz J.P., Dazard J-E. and Rao J.S. (2018).
               "\emph{Mode Hunting through Active Information.}"
               (in press).
