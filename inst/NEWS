@@ -230,7 +230,8 @@ BUG FIXES
 NEW FEATURES
 - Added new peeling criterion `grp` that stands for "group" to carry out a modified 
   version of Survival Bump Hunting (SBH), called Group Survival Bump Hunting (GSBH) 
-  using our PRGSP algorithm, derived from our original Patient Recursive Survival Peeling (PRSP).
+  using our Patient Recursive Group Survival Peeling (PRGSP) algorithm, derived from our 
+  original Patient Recursive Survival Peeling (PRSP).
 SIGNIFICANT USER-VISIBLE CHANGES
 - Modifications of options in plot functions accordingly.
 - Renamed plot functions `plot_boxtraj()`, `plot_boxtrace()`, and `plot_boxkm()` to 
@@ -288,6 +289,18 @@ PACKAGE INSTALLATION
 - Minor updates in manual and documentation files (Rd files).
 - Minor updates in documentation files (DESCRIPTION, NEWS, and README).
 - Built and tested under R version 3.5.1 (2018-07-02) and release update to GitHub.
+---------------------------------------------------------------------------------
+Date   : 2019-03-07
+o RELEASE 0.8.3
+BUG FIXES
+- Execution was halted in versions >= 0.8.0 when `cvtype` was set to "averaged".
+- Minor display correction in S3-generic `plot()` function.
+UTILITIES
+- Improved management of the cross-validation criterion.
+PACKAGE INSTALLATION
+- Minor updates in manual and documentation files (Rd files).
+- Minor updates in documentation files (DESCRIPTION, NEWS, and README).
+- Built and tested under R version 3.5.2 (2018-12-20) and release update to GitHub.
 ---------------------------------------------------------------------------------
 
 
