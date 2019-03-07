@@ -68,7 +68,7 @@ This branch (master) is the  default one, that hosts the current development rel
 (or "Group Survival Bump Hunting" (GSBH)) procedure. Note that `PRIMsrc` is still a non-production release and that version 0.8.3 implements 
 significant user-visible changes. Check details of new features, changes, and bug fixes in the "Usage" section below.
 
-The second branch (unified) will host the future complete version of the code (version 1.0.0), including undirected peeling search derived 
+The future branch (unified) will host the complete version of the code (version 1.0.0), including undirected peeling search derived 
 from the  Patient Rule Induction Method (PRIM), and unified treatment of bump hunting for every type of common outcome: Survival, Regression, 
 and Classification (SRC).
 
