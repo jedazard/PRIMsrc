@@ -84,7 +84,7 @@
         Defaults to \code{TRUE}.
     }
     \item{vstype}{
-        \code{character} \code{vector} in \{"prsp", "pcqr", "ppl", "spca"\} of one of the four possible variable screening 
+        \code{character} \code{vector} in \{"ppl", "pcqr", "spca", "prsp"\} of one of the four possible variable screening 
         (pre-selection) procedure. See details below. Defaults to "ppl". Ignored if \code{vs} is \code{FALSE}.    
     }
     \item{vsarg}{
@@ -179,16 +179,16 @@
                 sequence of the PRSP algorithm. Defaults to 0.01.
             \item{\code{beta}} = \code{numeric} scalar of minimum box support at the end of the peeling sequence. 
                 Defaults to 0.10.
-            \item{\code{peelcriterion}} in \{"lhr", "lrt", "chs", "grp"\} stands for the peeling criterion 
+            \item{\code{peelcriterion}} in \{"lrt", "lhr", "chs", "grp"\} stands for the peeling criterion 
                 Log-Hazard Ratio (LHR), Log-Rank Test (LRT), Cumulative Hazard Summary (CHS), or Group (GRP), respectively, 
                 that is used in the PRSP or PRGSP algorithm. 
                 Defaults to "lrt".
-            \item{\code{cvcriterion}} in \{"lhr", "lrt", "cer"\} stands for the cross-validation criterion 
+            \item{\code{cvcriterion}} in \{"lrt", "lhr", "cer"\} stands for the cross-validation criterion 
                 Log-Hazard Ratio (LHR), Log-Rank Test (LRT), or Concordance Error Rate (CER), respectively, 
                 that is used for tuning/optimizing the optimal number of peeling steps (i.e. optimal peeling sequence length) 
                 in the PRSP algorithm. Defaults to "cer". Ignored if \code{cv} is \code{FALSE}.
         } 
-        if \code{peelcriterion} is in \{"lhr", "lrt", "chs"\}, \code{groups} is automatically set to \code{NULL}.
+        if \code{peelcriterion} is in \{"lrt", "lhr", "chs"\}, \code{groups} is automatically set to \code{NULL}.
     }
     \item{groups}{
         \code{character} or \code{numeric} \code{vector}, or \code{factor} of group membership indicator variable of length 
