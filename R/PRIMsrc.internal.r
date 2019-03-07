@@ -60,8 +60,6 @@ cv.presel <- function(X,
                       clus.rep,
                       verbose,
                       seed) {
-  
-  
 
   # Parsing and evaluating 'vsarg' parameters
   eval(parse(text = unlist(strsplit(x = vsarg, split = ","))))
@@ -502,7 +500,7 @@ cv.type.presel <- function(X,
                        parallel=parallel.vs,
                        clus=clus.vs,
                        verbose=verbose,
-                       seed=NULL)
+                       seed=seed)
       boxstat.mean <- CVSEL$boxstat.mean
     } else if (vstype == "pcqr") {
       CVSEL <- cv.pcqr(X=X,
@@ -516,7 +514,7 @@ cv.type.presel <- function(X,
                        parallel=parallel.vs,
                        clus=clus.vs,
                        verbose=verbose,
-                       seed=NULL)
+                       seed=seed)
       boxstat.mean <- NULL
     } else if (vstype == "ppl") {
       CVSEL <- cv.ppl(X=X,
@@ -530,7 +528,7 @@ cv.type.presel <- function(X,
                       parallel=parallel.vs,
                       clus=clus.vs,
                       verbose=verbose,
-                      seed=NULL)
+                      seed=seed)
       boxstat.mean <- NULL
     } else if (vstype == "spca") {
       CVSEL <- cv.spca(X=X,
@@ -543,7 +541,7 @@ cv.type.presel <- function(X,
                        parallel=parallel.vs,
                        clus=clus.vs,
                        verbose=verbose,
-                       seed=NULL)
+                       seed=seed)
       boxstat.mean <- NULL
     } else {
       stop("Invalid variable screening type option. Exiting ... \n\n")
@@ -2087,6 +2085,7 @@ cv.spca <- function(X,
     n.var <- pmin(ncol(X), n.var) - 1
     cat("Warning: Parameter `n.var` was greater than the dimensionality and was reset to ", ncol(X) - 1, ".\n\n", sep="")
   }
+  
   if (ncol(X) <= n.pcs) {
     n.pcs <- pmin(ncol(X), n.pcs) - 1
     cat("Warning: Parameter `n.pcs` was greater than the dimensionality and was reset to ", ncol(X) - 1, ".\n\n", sep="")
@@ -2582,7 +2581,7 @@ cv.type.box <- function(X,
                           varsign=varsign,
                           initcutpts=initcutpts,
                           verbose=verbose,
-                          seed=NULL)
+                          seed=seed)
     } else if (cvtype == "combined") {
       CVBOX <- cv.comb.box(X=X,
                            y=y,
@@ -2597,7 +2596,7 @@ cv.type.box <- function(X,
                            varsign=varsign,
                            initcutpts=initcutpts,
                            verbose=verbose,
-                           seed=NULL)
+                           seed=seed)
     } else {
       stop("Invalid CV type option. Exiting ... \n\n")
     }
@@ -2946,7 +2945,7 @@ cv.null <- function(X,
                                   probval=NULL,
                                   timeval=NULL,
                                   verbose=verbose,
-                                  seed=NULL)},
+                                  seed=seed)},
                       error=function(w){NULL})
       if (is.list(obj)) {
         if (peelcriterion != "grp") {
@@ -2974,7 +2973,7 @@ cv.null <- function(X,
                                    probval=NULL,
                                    timeval=NULL,
                                    verbose=verbose,
-                                   seed=NULL)},
+                                   seed=seed)},
                       error=function(w){NULL})
       if (is.list(obj)) {
         if (peelcriterion != "grp") {
@@ -3090,12 +3089,12 @@ cv.ave.box <- function(X,
       teststatus <- delta[folds$perm[(folds$which == k)]]
       testgroups <- groups[folds$perm[(folds$which == k)]]
     }
+    # Store the test set results from each fold
     peelobj <- cv.ave.peel(traindata=traindata, trainstatus=trainstatus, traintime=traintime,
                            testdata=testdata, teststatus=teststatus, testtime=testtime,
                            probval=probval, timeval=timeval,
                            varsign=varsign, initcutpts=initcutpts, arg=arg, 
                            traingroups=traingroups, testgroups=testgroups)
-    # Store the test set results from each fold
     maxsteps[k] <- peelobj$maxsteps
     boxstat.list[[k]] <- peelobj$boxstat
     boxcut.list[[k]] <- peelobj$boxcut
@@ -3207,7 +3206,7 @@ cv.ave.box <- function(X,
     sumlhr <- rep(x=NA, times=K)
     sumlrt <- rep(x=NA, times=K)
     sumcer <- rep(x=NA, times=K)
-    sumgrplrt <- rep(x=NA, times=K)
+    sumgrplhr <- rep(x=NA, times=K)
     sumgrplrt <- rep(x=NA, times=K)
     sumgrpcer <- rep(x=NA, times=K)
     sumtime <- rep(x=NA, times=K)
@@ -3535,11 +3534,11 @@ cv.comb.box <- function(X,
     # Store the test set data from each fold (Note: the order of observations of times and status from each fold is kept in the list)
     times.list[[k]] <- testtime
     status.list[[k]] <- teststatus
+    # Store the test set results from each fold
     peelobj <- cv.comb.peel(traindata=traindata, trainstatus=trainstatus, traintime=traintime,
                             testdata=testdata, teststatus=teststatus, testtime=testtime,
                             varsign=varsign, initcutpts=initcutpts, 
                             arg=arg, traingroups=traingroups, testgroups=testgroups)
-    # Store the test set results from each fold
     maxsteps[k] <- peelobj$maxsteps
     boxind.list[[k]] <- peelobj$boxind
     boxcut.list[[k]] <- peelobj$boxcut
@@ -4394,8 +4393,7 @@ prsp <- function(traindata,
     if ((!is.empty(vmd[(!is.nan(vmd)) & (!is.infinite(vmd)) & (!is.na(vmd))]))) {
       varj <- which(vmd == max(vmd[(!is.nan(vmd)) & (!is.infinite(vmd)) & (!is.na(vmd))]))
       if (length(varj) > 1) {
-        #varj <- sample(x=varj, size=1)
-        varj <- varj[1]
+        varj <- varj[1] #or varj <- sample(x=varj, size=1)
       }
     } else {
       varj <- sample(x=1:p, size=1)
@@ -5016,7 +5014,7 @@ is.wholenumber <- function(x, tol=.Machine$double.eps^0.5) {
 #
 #===============================================================================================================================#
 
-zeroslope <- function(y, x, lag=1, span=0.10, degree=2, family="gaussian", minimum=TRUE) {
+zeroslope <- function(y, x, lag, span, degree, family, minimum) {
   y <- y[order(x)]  # reorder the data in ascending values of x
   x <- x[order(x)]  # do the same for x
   loe <- loess(y ~ as.numeric(x), span=span, degree=degree, family=family)$fitted

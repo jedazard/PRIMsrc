@@ -115,10 +115,10 @@ sbh <- function(X,
   
   # Checking inputs of parameters
   if (peelcriterion != "grp") {
-    cvcriterion <- match.arg(arg=cvcriterion, choices=c("lhr", "lrt", "cer"), several.ok=FALSE)
+    cvcriterion <- match.arg(arg=cvcriterion, choices=c("lrt", "lhr", "cer"), several.ok=FALSE)
     groups <- NULL
   } else if (peelcriterion == "grp") {
-    cvcriterion <- match.arg(arg=cvcriterion, choices=c("lhr", "lrt", "cer"), several.ok=FALSE)
+    cvcriterion <- match.arg(arg=cvcriterion, choices=c("lrt", "lhr", "cer"), several.ok=FALSE)
     if (is.null(groups)) {
       stop("\nArgument `groups` must be specified when used with PRGSP algorithm. Exiting ... \n\n")
     }
@@ -130,7 +130,7 @@ sbh <- function(X,
     stop("Invalid peeling criterion option. Exiting ... \n\n")
   }
   if (vs) {
-    vstype <- match.arg(arg=vstype, choices=c("pcqr", "ppl", "spca", "prsp"), several.ok=FALSE)
+    vstype <- match.arg(arg=vstype, choices=c("ppl", "pcqr", "spca", "prsp"), several.ok=FALSE)
   } else {
     vstype <- NA
   }
@@ -416,7 +416,7 @@ sbh <- function(X,
       # Maximum peeling length from all replicates
       CV.maxsteps <- ceiling(mean(CV.maxsteps))
       
-      # Box membership indicator vector of all observations at each step over the replicates
+      # Box membership indicator vector of all observations at each step using the modal value or majority vote value over the replicates
       CV.boxind <- lapply.array(X=CV.boxind.list,
                                 rowtrunc=CV.maxsteps,
                                 MARGIN=c(1,2),
@@ -427,19 +427,20 @@ sbh <- function(X,
       
       # Adjusted maximum peeling length, thresholded by minimal box support, from all replicates
       CV.maxsteps <- max(which(apply(CV.boxind, 1, function(x) {length(which(x))/n >= max(1/n, beta)})))
+      cat("Adjusted maximum peeling length:", CV.maxsteps, "\n")
       
-      # Adjusted box membership indicator of all observations at each step
-      cat("Generating box memberships ...\n")
+      # Box membership indicator vector of all observations at each step, adjusted to the maximum peeling length
+      cat("Generating box memberships adjusted to the maximum peeling length ...\n")
       CV.boxind <- CV.boxind[1:CV.maxsteps,,drop=FALSE]
-
-      # Get the box sample size and support based on `CV.boxind`
+      
+      # Get the box sample size and support based on box membership
       CV.boxind.size <- round(apply(CV.boxind, 1, sum), digits=0)
       names(CV.boxind.size) <- paste("step", 0:(CV.maxsteps-1), sep="")
       CV.boxind.support <- round(CV.boxind.size/n, digits=decimals)
       names(CV.boxind.support) <- paste("step", 0:(CV.maxsteps-1), sep="")
-
-      # Adjusted cross-validated profiles of peeling steps and optimal peeling lengths from all replicates
-      cat("Generating cross-validated profiles of peeling steps and optimal peeling lengths from all replicates ...\n")
+      
+      # Profiles of cross-validation criterion and cross-validated peeling length from all replicates
+      cat("Generating profiles of cross-validation criterion and cross-validated peeling length from all replicates ...\n")
       if (cvcriterion == "lhr") {
         if (peelcriterion != "grp") {
           CV.stepprofiles <- list2mat(list=CV.lhr.list, fill=NA, coltrunc=CV.maxsteps)
@@ -451,30 +452,24 @@ sbh <- function(X,
           stop("Invalid peeling criterion. Exiting ...\n\n")
         }
         colnames(CV.stepprofiles) <- paste("step", 0:(CV.maxsteps-1), sep="")
+        colnames(CV.lrtprofiles) <- paste("step", 0:(CV.maxsteps-1), sep="")
         CV.stepprofiles.mean <- apply(CV.stepprofiles, 2, mean, na.rm=TRUE)
         CV.stepprofiles.se <- apply(CV.stepprofiles, 2, sd, na.rm=TRUE)
-        colnames(CV.lrtprofiles) <- paste("step", 0:(CV.maxsteps-1), sep="")
         CV.lrtprofiles.mean <- apply(CV.lrtprofiles, 2, mean, na.rm=TRUE)
-        if (all(is.na(CV.stepprofiles.mean)) || is.empty(CV.stepprofiles.mean)) {
+        CV.stepprofiles.pval <- 1 - pchisq(q=CV.lrtprofiles.mean, df=1)
+        if (all(is.na(CV.stepprofiles.mean)) || is.nan(CV.stepprofiles.mean) || is.empty(CV.stepprofiles.mean) ||
+            all(is.na(CV.stepprofiles.pval)) || is.nan(CV.stepprofiles.pval) || is.empty(CV.stepprofiles.pval)) {
           CV.nsteps.opt <- NA
           CV.nsteps.1se <- NA
         } else {
-          CV.stepprofiles.pval <- 1 - pchisq(q=CV.lrtprofiles.mean, df=1)
-          w.local <- zeroslope(y=CV.stepprofiles.mean, x=1:CV.maxsteps, lag=2, span=0.25, minimum=FALSE)
-          w.signi <- which(CV.stepprofiles.pval <= 0.05)
-          if (is.na(w.local) || is.nan(w.local) || is.empty(w.local) ||
-              is.na(w.signi) || is.nan(w.signi) || is.empty(w.signi)) {
-            CV.nsteps.opt <- NA
+          w.signi <- max(which(CV.stepprofiles.pval == min(CV.stepprofiles.pval, na.rm = TRUE)))
+          w.local <- zeroslope(y=CV.stepprofiles.mean, x=1:CV.maxsteps, lag=2, span=0.10, degree=2, family="gaussian", minimum=FALSE)
+          CV.nsteps.opt <- min(w.local, w.signi, na.rm=TRUE)
+          w <- (CV.stepprofiles.mean >= CV.stepprofiles.mean[CV.nsteps.opt]-CV.stepprofiles.se[CV.nsteps.opt])
+          if (all(is.na(w)) || is.empty(w)) {
             CV.nsteps.1se <- NA
           } else {
-            w.signi <- max(w.signi)
-            CV.nsteps.opt <- min(w.local, w.signi)
-             w <- (CV.stepprofiles.mean >= CV.stepprofiles.mean[CV.nsteps.opt]-CV.stepprofiles.se[CV.nsteps.opt])
-            if (all(is.na(w)) || is.empty(w)) {
-              CV.nsteps.1se <- NA
-            } else {
-              CV.nsteps.1se <- min(which(w))
-            }
+            CV.nsteps.1se <- min(which(w))
           }
         }
       } else if (cvcriterion == "lrt") {
@@ -488,30 +483,24 @@ sbh <- function(X,
           stop("Invalid peeling criterion. Exiting ...\n\n")
         }
         colnames(CV.stepprofiles) <- paste("step", 0:(CV.maxsteps-1), sep="")
+        colnames(CV.lrtprofiles) <- paste("step", 0:(CV.maxsteps-1), sep="")
         CV.stepprofiles.mean <- apply(CV.stepprofiles, 2, mean, na.rm=TRUE)
         CV.stepprofiles.se <- apply(CV.stepprofiles, 2, sd, na.rm=TRUE)
-        colnames(CV.lrtprofiles) <- paste("step", 0:(CV.maxsteps-1), sep="")
         CV.lrtprofiles.mean <- apply(CV.lrtprofiles, 2, mean, na.rm=TRUE)
-        if (all(is.na(CV.stepprofiles.mean)) || is.empty(CV.stepprofiles.mean)) {
+        CV.stepprofiles.pval <- 1 - pchisq(q=CV.lrtprofiles.mean, df=1)
+        if (all(is.na(CV.stepprofiles.mean)) || is.nan(CV.stepprofiles.mean) || is.empty(CV.stepprofiles.mean) ||
+            all(is.na(CV.stepprofiles.pval)) || is.nan(CV.stepprofiles.pval) || is.empty(CV.stepprofiles.pval)) {
           CV.nsteps.opt <- NA
           CV.nsteps.1se <- NA
         } else {
-          CV.stepprofiles.pval <- 1 - pchisq(q=CV.lrtprofiles.mean, df=1)
-          w.local <- zeroslope(y=CV.stepprofiles.mean, x=1:CV.maxsteps, lag=2, span=0.25, minimum=FALSE)
-          w.signi <- which(CV.stepprofiles.pval <= 0.05)
-          if (is.na(w.local) || is.nan(w.local) || is.empty(w.local) ||
-              is.na(w.signi) || is.nan(w.signi) || is.empty(w.signi)) {
-            CV.nsteps.opt <- NA
+          w.signi <- max(which(CV.stepprofiles.pval == min(CV.stepprofiles.pval, na.rm = TRUE)))
+          w.local <- zeroslope(y=CV.stepprofiles.mean, x=1:CV.maxsteps, lag=2, span=0.10, degree=2, family="gaussian", minimum=FALSE)
+          CV.nsteps.opt <- min(w.local, w.signi, na.rm=TRUE)
+          w <- (CV.stepprofiles.mean >= CV.stepprofiles.mean[CV.nsteps.opt]-CV.stepprofiles.se[CV.nsteps.opt])
+          if (all(is.na(w)) || is.empty(w)) {
             CV.nsteps.1se <- NA
           } else {
-            w.signi <- max(w.signi)
-            CV.nsteps.opt <- min(w.local, w.signi)
-            w <- (CV.stepprofiles.mean >= CV.stepprofiles.mean[CV.nsteps.opt]-CV.stepprofiles.se[CV.nsteps.opt])
-            if (all(is.na(w)) || is.empty(w)) {
-              CV.nsteps.1se <- NA
-            } else {
-              CV.nsteps.1se <- min(which(w))
-            }
+            CV.nsteps.1se <- min(which(w))
           }
         }
       } else if (cvcriterion == "cer") {
@@ -525,34 +514,28 @@ sbh <- function(X,
           stop("Invalid peeling criterion. Exiting ...\n\n")
         }
         colnames(CV.stepprofiles) <- paste("step", 0:(CV.maxsteps-1), sep="")
+        colnames(CV.lrtprofiles) <- paste("step", 0:(CV.maxsteps-1), sep="")
         CV.stepprofiles.mean <- apply(CV.stepprofiles, 2, mean, na.rm=TRUE)
         CV.stepprofiles.se <- apply(CV.stepprofiles, 2, sd, na.rm=TRUE)
-        colnames(CV.lrtprofiles) <- paste("step", 0:(CV.maxsteps-1), sep="")
         CV.lrtprofiles.mean <- apply(CV.lrtprofiles, 2, mean, na.rm=TRUE)
-        if (all(is.na(CV.stepprofiles.mean)) || is.empty(CV.stepprofiles.mean)) {
+        CV.stepprofiles.pval <- 1 - pchisq(q=CV.lrtprofiles.mean, df=1)
+        if (all(is.na(CV.stepprofiles.mean)) || is.nan(CV.stepprofiles.mean) || is.empty(CV.stepprofiles.mean) ||
+            all(is.na(CV.stepprofiles.pval)) || is.nan(CV.stepprofiles.pval) || is.empty(CV.stepprofiles.pval)) {
           CV.nsteps.opt <- NA
           CV.nsteps.1se <- NA
         } else {
-          CV.stepprofiles.pval <- 1 - pchisq(q=CV.lrtprofiles.mean, df=1)
-          w.local <- zeroslope(y=CV.stepprofiles.mean, x=1:CV.maxsteps, lag=2, span=0.25, minimum=TRUE)
-          w.signi <- which(CV.stepprofiles.pval <= 0.05)
-          if (is.na(w.local) || is.nan(w.local) || is.empty(w.local) ||
-              is.na(w.signi) || is.nan(w.signi) || is.empty(w.signi)) {
-            CV.nsteps.opt <- NA
+          w.signi <- max(which(CV.stepprofiles.pval == min(CV.stepprofiles.pval, na.rm = TRUE)))
+          w.local <- zeroslope(y=CV.stepprofiles.mean, x=1:CV.maxsteps, lag=2, span=0.10, degree=2, family="gaussian", minimum=TRUE)
+          CV.nsteps.opt <- min(w.local, w.signi, na.rm=TRUE)
+          w <- (CV.stepprofiles.mean <= CV.stepprofiles.mean[CV.nsteps.opt]+CV.stepprofiles.se[CV.nsteps.opt])
+          if (all(is.na(w)) || is.empty(w)) {
             CV.nsteps.1se <- NA
           } else {
-            w.signi <- max(w.signi)
-            CV.nsteps.opt <- min(w.local, w.signi)
-            w <- (CV.stepprofiles.mean >= CV.stepprofiles.mean[CV.nsteps.opt]+CV.stepprofiles.se[CV.nsteps.opt])
-            if (all(is.na(w)) || is.empty(w)) {
-              CV.nsteps.1se <- NA
-            } else {
-              CV.nsteps.1se <- min(which(w))
-            }
+            CV.nsteps.1se <- min(which(w))
           }
         }
       } else {
-        stop("Invalid CV criterion option. Exiting ... \n\n")
+        stop("Invalid cross-validation criterion option. Exiting ... \n\n")
       }
       
       if (onese) {
@@ -565,7 +548,7 @@ sbh <- function(X,
         
         success <- FALSE
         cat("Could not find any bump variables in this dataset. Exiting ... \n\n", sep="")
-
+        
         # List of CV fitted values
         CV.fit <- list("cv.maxsteps"=CV.maxsteps,
                        "cv.nsteps"=CV.nsteps,
@@ -582,8 +565,10 @@ sbh <- function(X,
         
       } else {
         
-        # Adjusted box membership indicator of all observations at each step using the modal or majority vote value over the replicates
-        cat("Generating box memberships ...\n")
+        cat("Cross-validated peeling length:", CV.nsteps, "\n")
+        
+        # Box membership indicator vector of all observations at each step, adjusted to the cross-validated peeling length
+        cat("Generating box memberships adjusted to the cross-validated peeling length ...\n")
         CV.boxind <- CV.boxind[1:CV.nsteps,,drop=FALSE]
         
         # Get the box sample size and support based on `CV.boxind`
@@ -751,7 +736,7 @@ sbh <- function(X,
                                         "MEFT"=CV.max.time.bar.mu,
                                         "MEFP"=CV.min.prob.bar.mu)
               rownames(CV.stats.mu) <- paste("step", 0:(CV.nsteps-1), sep="")
-              colnames(CV.stats.mu) <- c("Support", "Size", "LHR", "LRT", "CER", "EFT", "EFP", "MEFT", "MEFP")
+              colnames(CV.stats.mu) <- c("Support", "Size", "GLHR", "GLRT", "GCER", "EFT", "EFP", "MEFT", "MEFP")
               CV.stats.sd <- data.frame("Support"=CV.support.sd,
                                         "Size"=CV.size.sd,
                                         "LHR"=CV.grp.lhr.sd,
@@ -762,7 +747,7 @@ sbh <- function(X,
                                         "MEFT"=CV.max.time.bar.sd,
                                         "MEFP"=CV.min.prob.bar.sd)
               rownames(CV.stats.sd) <- paste("step", 0:(CV.nsteps-1), sep="")
-              colnames(CV.stats.sd) <- c("Support", "Size", "LHR", "LRT", "CER", "EFT", "EFP", "MEFT", "MEFP")
+              colnames(CV.stats.sd) <- c("Support", "Size", "GLHR", "GLRT", "GCER", "EFT", "EFP", "MEFT", "MEFP")
             } else {
               stop("Invalid peeling criterion. Exiting ...\n\n")
             }
@@ -925,7 +910,7 @@ summary.sbh <- function(object, ...) {
   
   if (!inherits(object, 'sbh'))
     stop("Argument `object` must be an object of class 'sbh'. Exiting ... \n\n")
-
+  
   cat("\nS3-class object: '", attr(x=object, "class"), "' \n\n")
   if (!object$cv) {
     if (object$B > 1) {
@@ -1181,7 +1166,7 @@ plot.sbh <- function(x,
       x.names <- colnames(x)
       plot(x=x, main=NULL, xlab=x.names[1], ylab=x.names[2], type="n", axes=FALSE, asp=asp, frame.plot=FALSE)
       axis(side=1, at=pretty(range(x[,1])), col=1, col.axis=1, cex.axis=1, line=0)
-      axis(side=2, at=pretty(range(x[,2])), col=1, col.axis=1, cex.axis=1, line=-3)
+      axis(side=2, at=pretty(range(x[,2])), col=1, col.axis=1, cex.axis=1, line=0)
       if (peelcriterion == "grp") {
         groups <- as.factor(x=object$groups)
         groups.lev <- levels(groups)
@@ -1461,7 +1446,7 @@ plot_profile <- function(object,
   
   if (!inherits(object, 'sbh'))
     stop("Argument `object` must be an object of class 'sbh'. Exiting ... \n\n")
-
+  
   if (object$success) {
     
     profileplot <- function(object, main, xlim, ylim,
@@ -1702,7 +1687,7 @@ plot_traj <- function(object,
   
   if (!inherits(object, 'sbh'))
     stop("Argument `object` must be an object of class 'sbh'. Exiting ... \n\n")
-
+  
   if (object$success) {
     
     trajplot <- function(object,
@@ -1945,7 +1930,7 @@ plot_trace <- function(object,
   
   if (!inherits(object, 'sbh'))
     stop("Argument `object` must be an object of class 'sbh'. Exiting ... \n\n")
-
+  
   if (object$success) {
     
     traceplot <- function(object,
@@ -2151,7 +2136,7 @@ plot_km <- function(object,
   
   if (!inherits(object, 'sbh'))
     stop("Argument `object` must be an object of class 'sbh'. Exiting ... \n\n")
-
+  
   if (object$success) {
     
     kmplot <- function(object,
