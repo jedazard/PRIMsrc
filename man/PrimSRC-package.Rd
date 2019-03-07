@@ -22,7 +22,7 @@
 
     Please note that the current version is a development release that only implements the case of a survival outcome. At this point, this version of 
     `PRIMsrc` is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our Patient Recursive 
-    Survival Peeling (PRSP) algorithm (Dazard et al., 2014, 2015, 2016, 2018). New features will be added as soon as available.
+    Survival Peeling (PRSP) algorithm (Dazard et al., 2014, 2015, 2016, 2019). New features will be added as soon as available.
 }
 
 \details{
@@ -32,7 +32,7 @@
     extreme as possible. We refer to the later goal as "Group Bump Hunting" (GBH).
     
     In the case of a time-to event, possibly censored (Survival) outcome, "Survival Bump Hunting" (SBH) is done by our Patient Recursive 
-    Survival Peeling (PRSP) algorithm (see Dazard et al. (2014, 2015, 2016, 2018) for details). Alternatively, "Group Survival Bump Hunting" (GSBH)
+    Survival Peeling (PRSP) algorithm (see Dazard et al. (2014, 2015, 2016, 2019) for details). Alternatively, "Group Survival Bump Hunting" (GSBH)
     is done by using specifc peeling and cross-validation criterion in a derivation of PRSP, which we call Patient Recursive Group Survival Peeling 
     (PRGSP) (see Dazard and Rao (2018) for details and Rao et al. (2018) for an application in Survival Disparity Subtyping). 
     
