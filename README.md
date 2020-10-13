@@ -98,15 +98,15 @@ CRAN downloads in the last week:
 ================
 ### Requirements
 
-PRIMsrc (>= 0.8.3) requires R-3.0.2 (2013-09-25). It was built and tested under R version 3.5.2 (2018-12-20) and Travis CI. 
+PRIMsrc (>= 0.8.3) requires R-3.5.0 (2018-04-23). It was built and tested under R version 4.0.3 (2020-10-10) and Travis CI. 
 
 Installation has been tested on Windows, Linux, OSX and Solaris platforms. 
 
 See Travis CI build result:
-[![Build Status](https://travis-ci.org/jedazard/PRIMsrc.png?branch=master)](https://travis-ci.org/jedazard/PRIMsrc)
+[![Build Status](https://travis-ci.com/jedazard/PRIMsrc.svg)](https://travis-ci.com/jedazard/PRIMsrc)
 
 See CRAN checks:
-[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/PRIMsrc)](https://cran.r-project.org/web/checks/check_results_PRIMsrc.html).
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/PRIMsrc)](https://cran.r-project.org/web/checks/check_results_PRIMsrc.html)
 
 
 ================
