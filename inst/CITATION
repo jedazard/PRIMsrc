@@ -5,16 +5,29 @@ year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
 vers <- paste("R package version", meta$Version)
 
 citEntry(entry       = "Article",
-         title       = "Variable Selection Strategies for High-Dimensional Survival Bump Hunting using Recursive Peeling Methods",
+         title       = "Variable Selection Strategies for High-Dimensional Recursive Peeling-Based Survival Bump Hunting Models",
          author      = personList(person(family="Dazard", given="J-E."),
                                   person(family="Rao", given="J.S.")), 	
          journal     = "in prep",
-         year        = "2018",
+         year        = "2021",
          volume      = "",
          number      = "",
          pages       = "",
-         textVersion = "Dazard J-E. and Rao J.S. (2018).
+         textVersion = "Dazard J-E. and Rao J.S. (2021).
                         Variable Selection Strategies for High-Dimensional Survival Bump Hunting using Recursive Peeling Methods, 
+                        (in prep).")
+
+citEntry(entry       = "Article",
+         title       = "Group Bump Hunting by Recursive Peeling-Based Methods: Application to Survival/Risk Predictive Models",
+         author      = personList(person(family="Dazard", given="J-E."),
+                                  person(family="Rao", given="J.S.")), 	
+         journal     = "in prep",
+         year        = "2021",
+         volume      = "",
+         number      = "",
+         pages       = "",
+         textVersion = "Dazard J-E. and Rao J.S. (2021).
+                        Group Bump Hunting by Recursive Peeling-Based Methods: Application to Survival/Risk Predictive Models, 
                         (in prep).")
 
 citEntry(entry       = "Article",
@@ -24,60 +37,27 @@ citEntry(entry       = "Article",
                                   person(family="Pawitan", given="Y."),
                                   person(family="Rao", given="J.S.")), 	
          journal     = "in prep",
-         year        = "2018",
+         year        = "2021",
          volume      = "",
          number      = "",
          pages       = "",
-         textVersion = "Dazard J-E., Choe M., Pawitan Y., and Rao J.S. (2018).
+         textVersion = "Dazard J-E., Choe M., Pawitan Y., and Rao J.S. (2021).
                         Identification and Characterization of Informative Prognostic Subgroups by Survival Bump Hunting, 
                         (in prep).")
 
 citEntry(entry       = "Article",
          title       = "Disparity Subtyping: Bringing Precision Medicine Closer to Disparity Science",
          author      = personList(person(family="Rao", given="J.S."),
-                                  person(family="Saenz", given="J.P."),
+                                  person(family="Huilin ", given="Y."),
                                   person(family="Dazard", given="J-E.")), 	
          journal     = "in prep",
-         year        = "2018",
+         year        = "2021",
          volume      = "",
          number      = "",
          pages       = "",
-         textVersion = "Rao J.S., Huilin Y., and Dazard J-E. (2018).
+         textVersion = "Rao J.S., Huilin Y., and Dazard J-E. (2021).
                         Disparity Subtyping: Bringing Precision Medicine Closer to Disparity Science, 
                         (in prep).")
-
-citEntry(entry       = "Article",
-         title       = "Mode Hunting through Active Information",
-         author      = personList(person(family="Diaz-Pachon", given="D.A."),
-                                  person(family="Saenz", given="J.P."),
-                                  person(family="Dazard", given="J-E."),
-                                  person(family="Rao", given="J.S.")), 	
-         journal     = "Applied Stochastic Models in Business and Industry",
-         year        = "2018",
-         volume      = "",
-         number      = "",
-         pages       = "",
-         textVersion = "Diaz D.A., Saenz J.P., Dazard J-E., and Rao J.S. (2018).
-                        Mode Hunting through Active Information, 
-                        Applied Stochastic Models in Business and Industry (in press).")
-
-citEntry(entry       = "InBook",
-         title       = "Unsupervised Bump Hunting Using Principal Components",
-         author      = personList(person(family="Diaz-Pachon", given="D.A."),
-                                  person(family="Dazard", given="J-E."),
-                                  person(family="Rao", given="J.S.")), 	
-         editor      = "Ahmed, S. Ejaz",
-         bookTilte   = "Big and Complex Data Analysis: Methodologies and Applications",
-         chapter     = "Contributions to Statistics",
-         publisher   = "Springer International Publishing",
-         address     = "Cham, Switzerland",
-         year        = "2017",
-         pages       = "325-345",
-         textVersion = "Diaz-Pachon D.A., Dazard J-E., and Rao J.S. (2017).
-                        Unsupervised Bump Hunting Using Principal Components.
-                        In: Ahmed SE, editor. Big and Complex Data Analysis: Methodologies and Applications. 
-				   Contributions to Statistics, vol. Edited Refereed Volume. 
-				   Springer International Publishing, Cham Switzerland, p. 325-345")
 
 citEntry(entry       = "Article",
          title       = "Semismooth Newton Coordinate Descent Algorithm for Elastic-Net Penalized Huber Loss Regression and Quantile Regression",
@@ -140,16 +120,3 @@ citEntry(entry       = "Proceedings",
                         Cross-Validation of Survival Bump Hunting by Recursive Peeling Methods.
                         In JSM Proceedings, Survival Methods for Risk Estimation/Prediction Section. Boston, MA, USA.
                         American Statistical Association-IMS, p. 3366-3380.")
-
-citEntry(entry       = "Article",
-         title       = "Local Sparse Bump Hunting",
-         author      = personList(person(family="Dazard", given="J-E."),
-                                  person(family="Rao", given="J.S.")), 	
-         journal     = "J. Comput. Graph. Stat.",
-         year        = "2010",
-         volume      = "19",
-         number      = "4",
-         pages       = "900-929",
-         textVersion = "Dazard J-E. and Rao J.S. (2010).
-                        Local Sparse Bump Hunting.
-                        J. Comput. Graph. Stat. 2010;19(4):900-29.")

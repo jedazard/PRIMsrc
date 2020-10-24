@@ -290,17 +290,33 @@ PACKAGE INSTALLATION
 - Minor updates in documentation files (DESCRIPTION, NEWS, and README).
 - Built and tested under R version 3.5.1 (2018-07-02) and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2019-03-07
+Date   : 2020-10-23
 o RELEASE 0.8.3
+SIGNIFICANT USER-VISIBLE CHANGES
+- New submission to CRAN after package was archived by CRAN on 2020-08-26 due to reverse dependency 
+  of "superpc", that was archived on the same day. This was due to the fact that "superpc" CRAN check 
+  issues had not been corrected in time by its authors (at the time).
+- Corrected and updated Import and Depends field values of DESCRIPTION file.
+- Removed deprecated Lazyload and LazyData field values of DESCRIPTION file.
 BUG FIXES
+- Conditional tests and internal function `is.empty()` no longer coerce a Boolean vector
+  (logical of length > 1) to its first entry only (now passes R >= 3.6.0 CRAN check). 
+- Robustification against NA values
 - Execution was halted in versions >= 0.8.0 when `cvtype` was set to "averaged".
-- Minor display correction in S3-generic `plot()` function.
+- Added error handling in rare cases of absence of events in internal `survival::coxph()` function.
+- Internal calls to `tryCath` are now properly argumented with a valid function signature 
+  (formal parameter not missing any more).
+- Corrected handling and return of p-values in the case of peeling criterion `grp`.  
+- Corrected handling of argument `proj` in S3-generic `plot()` function, and changed default values.
+- Correction of minor axis display in S3-generic `plot()` function.
+- Corrected field '\usage{data(...)}' in Rd manual files.
 UTILITIES
 - Improved management of the cross-validation criterion.
 PACKAGE INSTALLATION
-- Minor updates in manual and documentation files (Rd files).
+- Minor updates in manual files (Rd).
 - Minor updates in documentation files (DESCRIPTION, NEWS, and README).
-- Built and tested under R version 3.5.2 (2018-12-20) and release update to GitHub.
+- Built and tested under R version 4.0.3 (2020-10-10).
+- Migrated update to GitHub and tested by Travis CI.
 ---------------------------------------------------------------------------------
 
 
