@@ -11,15 +11,15 @@
   and cross-validated encapsulating box of a \code{sbh} object for the highest risk (inbox) versus
   lower-risk (outbox) groups (PRSP), and between the two specified fixed groups (PRGSP), 
   if this option is used. The scatter plot is done for a given peeling step (or number of steps) 
-  of the peeling sequence (inner loop of our PRSP or PRGSP) and in a given plane of the used covariates 
-  of the \code{sbh} object, both specified by the user.
+  of the peeling sequence (inner loop of our PRSP or PRGSP), and in a given projection plane of 
+  the used covariates of the \code{sbh} object, both specified by the user.
 }
 
 \usage{
   \method{plot}{sbh}(x,
      main = NULL,
-     proj = c(1,2), 
-     steps = 1:x$cvfit$cv.nsteps,
+     proj = x$cvfit$cv.used[c(1,2)], 
+     steps = x$cvfit$cv.nsteps,
      pch = 16, 
      cex = 0.5, 
      col = c(1,2), 
@@ -54,14 +54,14 @@
     Defaults to \code{NULL}.
   }
   \item{proj}{
-    \code{Integer} \code{vector} of length two, specifying the two dimensions of 
-    the projection plane in which the scatter plot is to be plotted. See details.
-    Defaults to first two dimensions \code{c(1,2)}.
+    \code{Integer} \code{vector} of length two, specifying the two used (selected) 
+    covariates in which the scatter plot is to be plotted. See details.
+    Defaults to first two used (selected) covariates.
   }
   \item{steps}{
     \code{Integer} \code{vector}. Vector of peeling steps at which to plot the 
     inbox samples and box vertices. 
-    Defaults to all the peeling steps of \code{sbh} object \code{x}.
+    Defaults to the last peeling step of \code{sbh} object \code{x}.
   }
   \item{pch}{
     \code{Integer} scalar specifying the symbol for the outbox and inbox 
@@ -187,37 +187,32 @@
 
 \references{
     \itemize{
-        \item Dazard J-E. and Rao J.S. (2019).
-              "\emph{Variable Selection Strategies for Recursive Peeling-Based Survival Bump Hunting Models.}"
+        \item Dazard J-E. and Rao J.S. (2021a).
+              "\emph{Variable Selection Strategies for High-Dimensional Recursive Peeling-Based Survival Bump Hunting Models.}"
               (in prep).
-        \item Rao J.S., Huilin Y. and Dazard J-E. (2019).
+        \item Dazard J-E. and Rao J.S. (2021b).
+              "\emph{Group Bump Hunting by Recursive Peeling-Based Methods: Application to Survival/Risk Predictive Models.}"
+              (in prep).
+        \item Dazard J-E., Choe M., Pawitan Y., and Rao J.S. (2021c).
+              "\emph{Identification and Characterization of Informative Prognostic Subgroups by Survival Bump Hunting.}"
+              (in prep).
+        \item Rao J.S., Huilin Y., and Dazard J-E. (2021d).
               "\emph{Disparity Subtyping: Bringing Precision Medicine Closer to Disparity Science.}"
-              (submitted).
-        \item Diaz-Pachon D.A., Saenz J.P., Dazard J-E. and Rao J.S. (2018).
-              "\emph{Mode Hunting through Active Information.}"
-              (in press).
-        \item Diaz-Pachon D.A., Dazard J-E. and Rao J.S. (2017).
-              "\emph{Unsupervised Bump Hunting Using Principal Components.}"           
-              In: Ahmed SE, editor. Big and Complex Data Analysis: Methodologies and Applications. 
-              Contributions to Statistics, vol. Edited Refereed Volume. 
-              Springer International Publishing, Cham Switzerland, p. 325-345.
+              (in prep).
         \item Yi C. and Huang J. (2017).
               "\emph{Semismooth Newton Coordinate Descent Algorithm for Elastic-Net Penalized Huber Loss Regression and Quantile Regression}."
               J. Comp Graph. Statistics, 26(3):547-557.
-        \item Dazard J-E., Choe M., LeBlanc M. and Rao J.S. (2016).
+        \item Dazard J-E., Choe M., LeBlanc M., and Rao J.S. (2016).
               "\emph{Cross-validation and Peeling Strategies for Survival Bump Hunting using Recursive Peeling Methods.}"
               Statistical Analysis and Data Mining, 9(1):12-42.
-        \item Dazard J-E., Choe M., LeBlanc M. and Rao J.S. (2015).
+        \item Dazard J-E., Choe M., LeBlanc M., and Rao J.S. (2015).
               "\emph{R package PRIMsrc: Bump Hunting by Patient Rule Induction Method for Survival, Regression and Classification.}"
               In JSM Proceedings, Statistical Programmers and Analysts Section. Seattle, WA, USA.
               American Statistical Association IMS - JSM, p. 650-664.
-        \item Dazard J-E., Choe M., LeBlanc M. and Rao J.S. (2014).
+        \item Dazard J-E., Choe M., LeBlanc M., and Rao J.S. (2014).
               "\emph{Cross-Validation of Survival Bump Hunting by Recursive Peeling Methods.}"
               In JSM Proceedings, Survival Methods for Risk Estimation/Prediction Section. Boston, MA, USA.
               American Statistical Association IMS - JSM, p. 3366-3380.
-        \item Dazard J-E. and J.S. Rao (2010).
-              "\emph{Local Sparse Bump Hunting.}"
-              J. Comp Graph. Statistics, 19(4):900-92.
     }
 }
 

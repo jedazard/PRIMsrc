@@ -11,18 +11,20 @@
     usually unknown, assumes smaller or larger values than its average over the entire space. In general, the region \eqn{R} could be any smooth shape 
     (e.g. a convex hull) possibly disjoint.
     
-    \pkg{PRIMsrc} implements a unified treatment of "Bump Hunting" (BH) by Patient Rule Induction Method (PRIM) with 
-    Survival, Regression and Classification outcomes (SRC). To estimate the region, PRIM generates decision rules delineating hyperdimensional boxes 
-    (hyperrectangles) of the input space, not necessarily contiguous, where the outcome is smaller or larger than its average over the entire space.
+    \pkg{PRIMsrc} implements a unified treatment of "Bump Hunting" (BH) by algorithms derived from the Patient Rule Induction Method (PRIM) 
+    (Friedman and Fisher, 1999) for Survival, Regression and Classification outcomes (SRC). To estimate the region, PRIM generates decision rules 
+    delineating hyperdimensional boxes (hyperrectangles) of the input space, not necessarily contiguous, where the outcome is smaller or larger than 
+    its average over the entire space.
     
     Assumptions are that the multivariate input variables can be discrete or continuous, and the univariate outcome variable can be discrete 
     (Classification), continuous (Regression), or a time-to-event, possibly censored (Survival). It is intended to handle low and high-dimensional 
     multivariate datasets, including the paradigm where the number of covariates \eqn{p} exceeds or dominates that of samples 
     (\eqn{p > n} or \eqn{p \gg n}).
 
-    Please note that the current version is a development release that only implements the case of a survival outcome. At this point, this version of 
+    Please note that the current version is a development release, that only implements the case of a survival outcome. At this point, this version of 
     `PRIMsrc` is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our Patient Recursive 
-    Survival Peeling (PRSP) algorithm (Dazard et al., 2014, 2015, 2016, 2019). New features will be added as soon as available.
+    Survival Peeling (PRSP) algorithm (Dazard and Rao (2014, 2015, 2016, 2021a)), or our Patient Recursive Group Survival Peeling (PRGSP) algorithm
+    (Dazard and Rao (2021b)). New features will be added as soon as available.
 }
 
 \details{
@@ -32,14 +34,16 @@
     extreme as possible. We refer to the later goal as "Group Bump Hunting" (GBH).
     
     In the case of a time-to event, possibly censored (Survival) outcome, "Survival Bump Hunting" (SBH) is done by our Patient Recursive 
-    Survival Peeling (PRSP) algorithm (see Dazard et al. (2014, 2015, 2016, 2019) for details). Alternatively, "Group Survival Bump Hunting" (GSBH)
-    is done by using specifc peeling and cross-validation criterion in a derivation of PRSP, which we call Patient Recursive Group Survival Peeling 
-    (PRGSP) (see Dazard and Rao (2018) for details and Rao et al. (2018) for an application in Survival Disparity Subtyping). 
+    Survival Peeling (PRSP) algorithm. See Dazard and Rao (2014, 2015, 2016, 2021a) for details, as well as Dazard et al. (2021c) for an application in 
+    Patient Survival Subtyping. Alternatively, "Group Survival Bump Hunting" (GSBH) is done by using specifc peeling and cross-validation criterion by 
+    derivation of PRSP, which we call Patient Recursive Group Survival Peeling (PRGSP). See Dazard and Rao (2021b) for details, as well as Rao et al. (2021d) 
+    for an application in Survival Disparity Subtyping.  
     
     The package relies on an optional variable screening (pre-selection) procedure that is run before the PRSP algorithm 
     and final variable usage (selection) procedure is done. This is done by four possible cross-validated variable screening 
-    (pre-selection) procedures offered to the user from the main end-user survival Bump Hunting function \code{\link{sbh}} 
-    (see below and Dazard et al. (2018) for details). 
+    (pre-selection) procedures offered to the user from the main end-user survival Bump Hunting function \code{\link{sbh}}. 
+    See Dazard and Rao (2021a) as well as Yi and Huang (2017) for details, and Dazard et al. (2021c) for an application in 
+    Patient Survival Subtyping.
     
     The following describes the end-user functions that are needed to run a complete procedure. The other internal subroutines 
     are not documented in the manual and are not to be called by the end-user at any time. For computational efficiency, 
@@ -195,37 +199,38 @@
 
 \references{
     \itemize{
-        \item Dazard J-E. and Rao J.S. (2019).
-              "\emph{Variable Selection Strategies for Recursive Peeling-Based Survival Bump Hunting Models.}"
+        \item Dazard J-E. and Rao J.S. (2021a).
+              "\emph{Variable Selection Strategies for High-Dimensional Recursive Peeling-Based Survival Bump Hunting Models.}"
               (in prep).
-        \item Rao J.S., Huilin Y. and Dazard J-E. (2019).
+        \item Dazard J-E. and Rao J.S. (2021b).
+              "\emph{Group Bump Hunting by Recursive Peeling-Based Methods: Application to Survival/Risk Predictive Models.}"
+              (in prep).
+        \item Dazard J-E., Choe M., Pawitan Y., and Rao J.S. (2021c).
+              "\emph{Identification and Characterization of Informative Prognostic Subgroups by Survival Bump Hunting.}"
+              (in prep).
+        \item Rao J.S., Huilin Y., and Dazard J-E. (2021d).
               "\emph{Disparity Subtyping: Bringing Precision Medicine Closer to Disparity Science.}"
-              (submitted).
-        \item Diaz-Pachon D.A., Saenz J.P., Dazard J-E. and Rao J.S. (2018).
-              "\emph{Mode Hunting through Active Information.}"
-              (in press).
-        \item Diaz-Pachon D.A., Dazard J-E. and Rao J.S. (2017).
-              "\emph{Unsupervised Bump Hunting Using Principal Components.}"           
-              In: Ahmed SE, editor. Big and Complex Data Analysis: Methodologies and Applications. 
-              Contributions to Statistics, vol. Edited Refereed Volume. 
-              Springer International Publishing, Cham Switzerland, p. 325-345.
+              (in prep).
         \item Yi C. and Huang J. (2017).
               "\emph{Semismooth Newton Coordinate Descent Algorithm for Elastic-Net Penalized Huber Loss Regression and Quantile Regression}."
               J. Comp Graph. Statistics, 26(3):547-557.
-        \item Dazard J-E., Choe M., LeBlanc M. and Rao J.S. (2016).
+        \item Dazard J-E., Choe M., LeBlanc M., and Rao J.S. (2016).
               "\emph{Cross-validation and Peeling Strategies for Survival Bump Hunting using Recursive Peeling Methods.}"
               Statistical Analysis and Data Mining, 9(1):12-42.
-        \item Dazard J-E., Choe M., LeBlanc M. and Rao J.S. (2015).
+        \item Dazard J-E., Choe M., LeBlanc M., and Rao J.S. (2015).
               "\emph{R package PRIMsrc: Bump Hunting by Patient Rule Induction Method for Survival, Regression and Classification.}"
               In JSM Proceedings, Statistical Programmers and Analysts Section. Seattle, WA, USA.
               American Statistical Association IMS - JSM, p. 650-664.
-        \item Dazard J-E., Choe M., LeBlanc M. and Rao J.S. (2014).
+        \item Dazard J-E., Choe M., LeBlanc M., and Rao J.S. (2014).
               "\emph{Cross-Validation of Survival Bump Hunting by Recursive Peeling Methods.}"
               In JSM Proceedings, Survival Methods for Risk Estimation/Prediction Section. Boston, MA, USA.
               American Statistical Association IMS - JSM, p. 3366-3380.
-        \item Dazard J-E. and J.S. Rao (2010).
-              "\emph{Local Sparse Bump Hunting.}"
-              J. Comp Graph. Statistics, 19(4):900-92.
+        \item Bacon M.C., von Wyl V., Alden C. et al. (2005).
+              "\emph{The Women's Interagency HIV Study: an observational cohort brings clinical sciences to the bench.}" 
+              Clin. Diagn. Lab. Immunol., 12(9):1013-1019.
+        \item Lazar V. et al. (2013).
+               "\emph{Integrated molecular portrait of non-small cell lung cancers.}"
+              BMC Medical Genomics 6:53-65.
     }
 }
 

@@ -118,7 +118,7 @@
             \item{\code{tau}} = \code{numeric} quantile in [0, 0.5] used in the censored quantile regression model. 
                 It is the tuning parameter of the censored quantile loss. It represents the conditional 
                 censored quantile of the survival response to be estimated. It includes the absolute loss 
-                when \code{tau}=0.5. Suggests 0.5.
+                when \code{tau} = 0.5. Suggests 0.5.
             \item{\code{alpha}} = \code{numeric} elasticnet mixing parameter in [0, 1] that controls the relative 
                 contribution from the lasso and the ridge penalty. The penalty is defined as
                 (1-\code{alpha})/2||\code{beta}||_2^2+\code{alpha}||\code{beta}||_1. 
@@ -148,11 +148,11 @@
             \item{\code{n.thres}} = number of thresholds to consider in the grid search. 
                 It cannot be less than \eqn{n} (sample size). Suggests 20.
             \item{\code{n.pcs}} = number of cross-validation principal components to use in \{1,2,3\}. 
-                It cannot be less than \eqn{n} (sample size) and more than \eqn{p} (dimensionality), 
-                and will be reset to \code{n.pcs} = \eqn{p} - 1 otherwise. Suggests 3.
+                It cannot be less than \eqn{n} (sample size) and greater than \eqn{p} (dimensionality of covariates); 
+                otherwise, it will be reset to \code{n.pcs} = \eqn{p} - 1. Suggests 3.
             \item{\code{n.var}} = minimum number of variables to include in determining range for threshold. 
-                If cannot be more than \eqn{p} (dimensionality), and will be reset to \code{n.var} = \eqn{p} - 1 
-                otherwise. Suggests 5.
+                If cannot be greater than \eqn{p} (dimensionality of covariates); otherwise, it will be reset to 
+                \code{n.var} = \eqn{p} - 1. Suggests 5.
         }
     }
     \item{vscons}{
@@ -250,8 +250,10 @@
 \details{
     The main function \code{sbh} relies on an optional variable screening (pre-selection) procedure that is run 
     before the actual variable usage (selection) is done at the time of fitting the Survival Bump Hunting (SBH)  
-    or Group Survival Bump Hunting (GSBH) model using our PRSP or PRGSP algorithm, respectively. At this point, 
-    the user can choose between four possible variable screening (pre-selection) procedures:
+    or Group Survival Bump Hunting (GSBH) model using our PRSP or PRGSP algorithm, respectively. The user can choose 
+    between four possible variable screening (pre-selection) procedures. See Dazard and Rao (2014, 2015, 2016, 2021a) 
+    as well as Yi and Huang (2017) for details, and as Dazard et al. (2021c) for an application 
+    in Patient Survival Subtyping:
     \itemize{
         \item Patient Recursive Survival Peeling (PRSP) (by univariate screening of our algorithm)
         \item Penalized Censored Quantile Regression (PCQR) (by Semismooth Newton Coordinate Descent fiting 
@@ -284,9 +286,9 @@
     distribution for the null distribution).
         
     The argument \code{groups} is to be specified if the Patient Recursive Group Survival Peeling (PRGSP) algorithm is used. 
-    The PRGSP algorithm is a derivation of our original Patient Recursive Survival Peeling (PRSP) algorithm (Dazard et al. 2016) 
-    to search for (or find an extreme of) outcome difference within existing (fixed) groups of observations. See Dazard and Rao (2018) 
-    for details and Rao et al. (2018) for an application in Survival Disparity Subtyping.
+    The PRGSP algorithm is a derivation of our original Patient Recursive Survival Peeling (PRSP) algorithm to search for 
+    (or find an extreme of) outcome difference within existing (fixed) groups of observations. See Dazard and Rao (2021b) 
+    for details, as well as Rao et al. (2021d) for an application in Survival Disparity Subtyping.
     
     In the PRSP variable screening procedure (\code{vsarg} of "prsp"), setting option \code{msize} to a single non-\code{NULL} value 
     within the allowable range [1,\code{floor}(\eqn{p})] will override the cross-validation setting within the variable screening
@@ -459,37 +461,32 @@
 
 \references{
     \itemize{
-        \item Dazard J-E. and Rao J.S. (2019).
-              "\emph{Variable Selection Strategies for Recursive Peeling-Based Survival Bump Hunting Models.}"
+        \item Dazard J-E. and Rao J.S. (2021a).
+              "\emph{Variable Selection Strategies for High-Dimensional Recursive Peeling-Based Survival Bump Hunting Models.}"
               (in prep).
-        \item Rao J.S., Huilin Y. and Dazard J-E. (2019).
+        \item Dazard J-E. and Rao J.S. (2021b).
+              "\emph{Group Bump Hunting by Recursive Peeling-Based Methods: Application to Survival/Risk Predictive Models.}"
+              (in prep).
+        \item Dazard J-E., Choe M., Pawitan Y., and Rao J.S. (2021c).
+              "\emph{Identification and Characterization of Informative Prognostic Subgroups by Survival Bump Hunting.}"
+              (in prep).
+        \item Rao J.S., Huilin Y., and Dazard J-E. (2021d).
               "\emph{Disparity Subtyping: Bringing Precision Medicine Closer to Disparity Science.}"
-              (submitted).
-        \item Diaz-Pachon D.A., Saenz J.P., Dazard J-E. and Rao J.S. (2018).
-              "\emph{Mode Hunting through Active Information.}"
-              (in press).
-        \item Diaz-Pachon D.A., Dazard J-E. and Rao J.S. (2017).
-              "\emph{Unsupervised Bump Hunting Using Principal Components.}"           
-              In: Ahmed SE, editor. Big and Complex Data Analysis: Methodologies and Applications. 
-              Contributions to Statistics, vol. Edited Refereed Volume. 
-              Springer International Publishing, Cham Switzerland, p. 325-345.
+              (in prep).
         \item Yi C. and Huang J. (2017).
               "\emph{Semismooth Newton Coordinate Descent Algorithm for Elastic-Net Penalized Huber Loss Regression and Quantile Regression}."
               J. Comp Graph. Statistics, 26(3):547-557.
-        \item Dazard J-E., Choe M., LeBlanc M. and Rao J.S. (2016).
+        \item Dazard J-E., Choe M., LeBlanc M., and Rao J.S. (2016).
               "\emph{Cross-validation and Peeling Strategies for Survival Bump Hunting using Recursive Peeling Methods.}"
               Statistical Analysis and Data Mining, 9(1):12-42.
-        \item Dazard J-E., Choe M., LeBlanc M. and Rao J.S. (2015).
+        \item Dazard J-E., Choe M., LeBlanc M., and Rao J.S. (2015).
               "\emph{R package PRIMsrc: Bump Hunting by Patient Rule Induction Method for Survival, Regression and Classification.}"
               In JSM Proceedings, Statistical Programmers and Analysts Section. Seattle, WA, USA.
               American Statistical Association IMS - JSM, p. 650-664.
-        \item Dazard J-E., Choe M., LeBlanc M. and Rao J.S. (2014).
+        \item Dazard J-E., Choe M., LeBlanc M., and Rao J.S. (2014).
               "\emph{Cross-Validation of Survival Bump Hunting by Recursive Peeling Methods.}"
               In JSM Proceedings, Survival Methods for Risk Estimation/Prediction Section. Boston, MA, USA.
               American Statistical Association IMS - JSM, p. 3366-3380.
-        \item Dazard J-E. and J.S. Rao (2010).
-              "\emph{Local Sparse Bump Hunting.}"
-              J. Comp Graph. Statistics, 19(4):900-92.
     }
 }
 
@@ -553,6 +550,7 @@ library("PRIMsrc")
 # Without computation of log-rank \eqn{p}-values
 # Without parallelization
 #===================================================
+data("Synthetic.1", package="PRIMsrc")
 synt1 <- sbh(X = Synthetic.1[ , -c(1,2), drop=FALSE],
              y = Synthetic.1[ ,1, drop=TRUE],
              delta = Synthetic.1[ ,2, drop=TRUE],
@@ -561,7 +559,7 @@ synt1 <- sbh(X = Synthetic.1[ , -c(1,2), drop=FALSE],
              vs = FALSE,
              cv = TRUE,
              cvtype = "combined",
-             cvarg = "alpha=0.10,
+             cvarg = "alpha=0.05,
                       beta=0.10,
                       peelcriterion=\"lrt\",
                       cvcriterion=\"lrt\"",
@@ -575,7 +573,7 @@ synt1 <- sbh(X = Synthetic.1[ , -c(1,2), drop=FALSE],
              parallel.rep = FALSE,
              parallel.pv = FALSE,
              conf = NULL,
-             verbose = FALSE,
+             verbose = TRUE,
              seed = 123)
 
 summary(object = synt1)
@@ -592,7 +590,7 @@ synt1.pred <- predict(object = synt1,
 
 plot(x = synt1,
      main = paste("Scatter plot for model #1", sep=""),
-     proj = c(1,2),
+     proj = synt1$cvfit$cv.used[c(1,2)],
      steps = synt1$cvfit$cv.nsteps,
      pch = 16, cex = 0.5, col = c(1,2),
      boxes = TRUE,
@@ -677,15 +675,15 @@ plot_km(object = synt1,
     # Running LINUX with SLURM scheduler
     # MPI communication cluster
     # Distributed memory parallelization
-    #==================================================
-    if (require("Rmpi")) {
-        cat("'Rmpi' is attached correctly \n")
-    } else {
-        stop("'Rmpi' must be attached first \n")
-    }
     # Below, variable 'cpus' is the total number of requested 
     # taks (threads/CPUs), which is specified from within a 
     # SLURM script.
+    #==================================================
+    if (require("Rmpi")) {
+        print("Rmpi is loaded correctly \n")
+    } else {
+        stop("Rmpi must be installed first to use MPI\n")
+    }
     cpus <- as.numeric(Sys.getenv("SLURM_NTASKS"))
     conf <- list("spec" = cpus,
                  "type" = "MPI",
@@ -702,6 +700,7 @@ plot_km(object = synt1,
     # With computation of log-rank \eqn{p}-values
     # With parallelization
     #===================================================                         
+    data("Synthetic.1", package="PRIMsrc")
     synt1 <- sbh(X = Synthetic.1[ , -c(1,2), drop=FALSE],
                  y = Synthetic.1[ ,1, drop=TRUE],
                  delta = Synthetic.1[ ,2, drop=TRUE],
@@ -742,6 +741,7 @@ plot_km(object = synt1,
     # With computation of log-rank \eqn{p}-values
     # With parallelization
     #===================================================                         
+    data("Synthetic.4", package="PRIMsrc")
     synt4 <- sbh(X = Synthetic.4[ , -c(1,2), drop=FALSE],
                  y = Synthetic.4[ ,1, drop=TRUE],
                  delta = Synthetic.4[ ,2, drop=TRUE],
