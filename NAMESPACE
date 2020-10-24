@@ -12,17 +12,17 @@ import("graphics")
 import("grDevices") 
 import("stats")
 
+S3method("summary", "sbh")
+S3method("predict", "sbh")
+S3method("print", "sbh")
+S3method("plot", "sbh")
+
 export("PRIMsrc.news", 
        "sbh",
        "plot_profile",
        "plot_traj",
        "plot_trace",
        "plot_km")
-
-S3method("summary", "sbh")
-S3method("predict", "sbh")
-S3method("print", "sbh")
-S3method("plot", "sbh")
 
 export("summary", 
        "predict",
