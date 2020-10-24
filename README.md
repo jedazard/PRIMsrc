@@ -9,18 +9,20 @@ Bump Hunting by Patient Rule Induction Method for Survival, Regression, and Clas
 usually unknown, assumes smaller or larger values than its average over the entire space. In general, the region _R_ could be any smooth shape 
 (e.g. a convex hull) possibly disjoint.
     
-`PRIMsrc` implements a unified treatment of "Bump Hunting" (BH) by Patient Rule Induction Method (PRIM) with Survival, Regression and Classification 
-outcomes (SRC). To estimate the region, PRIM generates decision rules delineating hyperdimensional boxes (hyperrectangles) of the input space, 
-not necessarily contiguous, where the outcome is smaller or larger than its average over the entire space.
+`PRIMsrc` implements a unified treatment of "Bump Hunting" (BH) by algorithms derived from the Patient Rule Induction Method (PRIM) 
+(Friedman and Fisher, 1999) for Survival, Regression and Classification outcomes (SRC). To estimate the region, PRIM generates decision rules 
+delineating hyperdimensional boxes (hyperrectangles) of the input space, not necessarily contiguous, where the outcome is smaller or larger 
+than its average over the entire space.
 
 Assumptions are that the multivariate input variables can be discrete or continuous, and the univariate outcome variable can be discrete 
 (Classification), continuous (Regression), or a time-to-event, possibly censored (Survival). It is intended to handle low and high-dimensional 
 multivariate datasets, including the paradigm where the number of covariates (_p_) exceeds or dominates that of samples (_n_): _p_ > _n_ or 
 _p_ >> _n_.    
 
-Please note that the current version (0.8.3) is a development release that only implements the case of a survival outcome. At this point, this version 
-of `PRIMsrc` is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our Patient 
-Recursive Survival Peeling (PRSP) algorithm (Dazard et al., 2014, 2015, 2016, 2018). New features will be added as soon as available. 
+Please note that the current version (0.8.3) is a development release, that only implements the case of a survival outcome. At this point, this 
+version of `PRIMsrc` is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our 
+Patient Recursive Survival Peeling (PRSP) algorithm (Dazard and Rao (2014, 2015, 2016, 2021a)), or our Patient Recursive Group Survival Peeling 
+(PRGSP) algorithm (Dazard and Rao (2021b)). New features will be added as soon as available. 
 
 
 ===============
@@ -32,14 +34,14 @@ of the input space where the outcome _difference_ between existing (fixed) group
 later goal as "Group Bump Hunting" (GBH).
 
 In the case of a time-to event, possibly censored (Survival) outcome, "Survival Bump Hunting" (SBH) is done by our Patient Recursive 
-Survival Peeling (PRSP) algorithm (see Dazard et al. (2014, 2015, 2016, 2018) for details). Alternatively, "Group Survival Bump Hunting" (GSBH)
-is done by using specifc peeling and cross-validation criterion in a derivation of PRSP, which we call Patient Recursive Group Survival Peeling 
-(PRGSP) (see Rao et al. (2018) for details and an application in Survival Disparity Subtyping). 
+Survival Peeling (PRSP) algorithm. See Dazard and Rao (2014, 2015, 2016, 2021a) for details, as well as Dazard et al. (2021c)
+for an application in Patient Survival Subtyping. Alternatively, "Group Survival Bump Hunting" (GSBH) is done by using specifc peeling and 
+cross-validation criterion by derivation of PRSP, which we call Patient Recursive Group Survival Peeling (PRGSP). See Dazard and Rao (2021b) 
+for details, as well as Rao et al. (2021d) for an application in Survival Disparity Subtyping. 
 
 The package relies on an optional variable screening (pre-selection) procedure that is run before the PRSP algorithm and final variable usage 
 (selection) procedure is done. This is done by four possible cross-validated variable screening (pre-selection) procedures offered to the user 
-from the main end-user survival Bump Hunting function `sbh()` (see Dazard et al. (2018) for details). 
-At this point, the user can choose between:
+from the main end-user survival Bump Hunting function `sbh()`. At this point, the user can choose between:
 
    + Univariate Patient Recursive Survival Peeling algorithm (default of package `PRIMsrc`)
    + Penalized Censored Quantile Regression (by Semismooth Newton Coordinate Descent algorithm adapted from package `hqreg`)
@@ -51,7 +53,7 @@ and model complexity (#peeling steps), respectively, to fit the Survival Bump Hu
 tasks within a single main end-user survival Bump Hunting function `sbh()`. The returned S3-class `sbh` object contains cross-validated 
 estimates of all the decision-rules of used covariates and all other statistical quantities of interest at each iteration of the peeling 
 sequence (inner loop of the PRSP algorithm). This enables the graphical display of results of profiling curves for model selection/tuning, 
-peeling trajectories, covariate traces and survival distributions (Dazard et al., 2014, 2015, 2016, 2018). 
+peeling trajectories, covariate traces and survival distributions.
 
 The package `PRIMsrc` offers a number of options for the number of replications of the fitting procedure to be perfomed: _B_; 
 the type of _K_-fold cross-validation desired: (replicated)-averaged or-combined; as well as the peeling and cross-validation critera 
@@ -78,8 +80,7 @@ and Classification (SRC).
 
 PRIMsrc is open source / free software, licensed under the GNU General Public License version 3 (GPLv3), 
 sponsored by the [Free Software Foundation](https://www.fsf.org/). To view a copy of this license, visit 
-[GNU Free Documentation License](http://www.gnu.org/licenses/gpl-3.0.html).
-
+[GNU Free Documentation License](https://www.gnu.org/licenses/gpl-3.0.html).
 
 =============
 ### Downloads
@@ -112,15 +113,14 @@ See CRAN checks:
 ================
 ### Installation
 
-* To install the stable version (0.8.3) of `PRIMsrc` from the [CRAN](https://CRAN.R-project.org/package=PRIMsrc) repository, 
-simply download and install the current version (0.8.3) from the CRAN repository:
+* To install the stable version of `PRIMsrc`, simply download and install the current version (0.8.2) from the [CRAN](https://CRAN.R-project.org/package=PRIMsrc) 
+repository:
 
 ```{r}
 install.packages("PRIMsrc")
 ```
 
-* Alternatively, you can install the most up-to-date development version (>= 0.8.3) of `PRIMsrc` from the [GitHub](https://github.com/jedazard/PRIMsrc) repository, 
-simply run the following using devtools:
+* Alternatively, you can install the most up-to-date development version (>= 0.8.3) of `PRIMsrc` from the [GitHub](https://github.com/jedazard/PRIMsrc) repository:
 
 ```{r}
 install.packages("devtools")
@@ -163,14 +163,14 @@ etc...
 ### Acknowledgments
 
 Authors: 
-   + Jean-Eudes Dazard, Ph.D. [(jean-eudes.dazard@case.edu)](jean-eudes.dazard@case.edu)
-   + Michael Choe, M.D. [(mjc206@case.edu)](mjc206@case.edu)
-   + Michael LeBlanc, Ph.D. [(mleblanc@fhcrc.org)](mleblanc@fhcrc.org)
-   + J. Sunil Rao, Ph.D. [JRao@biostat.med.miami.edu](JRao@biostat.med.miami.edu)
-   + Alberto Santana, MBA. [(ahs4@case.edu)](ahs4@case.edu)
+   + Jean-Eudes Dazard, Ph.D. <jean-eudes.dazard@case.edu>
+   + Michael Choe, M.D. <mjc206@case.edu>
+   + Michael LeBlanc, Ph.D. <mleblanc@fhcrc.org>
+   + J. Sunil Rao, Ph.D. <JRao@biostat.med.miami.edu>
+   + Alberto Santana, MBA. <ahs4@case.edu>
 
 Maintainers: 
-   + Jean-Eudes Dazard, Ph.D. [(jean-eudes.dazard@case.edu)](jean-eudes.dazard@case.edu)
+   + Jean-Eudes Dazard, Ph.D.<jean-eudes.dazard@case.edu>
 
 Funding/Provision/Help:   
    + This work made use of the High Performance Computing Resource in the Core Facility for Advanced Research Computing at Case Western Reserve University. 
@@ -181,14 +181,26 @@ Funding/Provision/Help:
 ### References
 
    + Dazard J-E. and Rao J.S. 
-      *Variable Selection Strategies for Recursive Peeling-Based Survival Bump Hunting Models*. 
-      [2019 (in prep)].
+      *Variable Selection Strategies for High-Dimensional Recursive Peeling-Based Survival Bump Hunting Models*. 
+      [2021a (in prep)].
       
-   + Diaz D.A., Saenz J.P., Dazard J-E. and Rao J.S. 
-     *Mode Hunting through Active Information*. 
-     [Applied Stochastic Models in Business and Industry (2018)](https://onlinelibrary.wiley.com/journal/10.1002/%28ISSN%291526-4025), in press.
+   + Dazard J-E. and Rao J.S. 
+      *Group Bump Hunting by Recursive Peeling-Based Methods: Application to Survival/Risk Predictive Models*. 
+      [2021b (in prep)].
+      
+   + Dazard J-E., Choe M., Pawitan Y., and Rao J.S. 
+      *Identification and Characterization of Informative Prognostic Subgroups by Survival Bump Hunting*. 
+      [2021c (in prep)].
+      
+   + Rao J.S., Huilin Y., and Dazard J-E. 
+      *Disparity Subtyping: Bringing Precision Medicine Closer to Disparity Science*. 
+      [2021d (in prep)].
+      
+   + Diaz-Pachon D.A., Saenz J.P., Rao J.S., and Dazard J-E. 
+     *Mode Hunting Through Active Information*. 
+     [Applied Stochastic Models in Business and Industry (2019)](https://onlinelibrary.wiley.com/doi/abs/10.1002/asmb.2430), 35(2):376-393.
 
-   + Diaz D.A., Dazard J-E. and Rao J.S. 
+   + Diaz-Pachon D.A., Dazard J-E., and Rao J.S. 
      *Unsupervised Bump Hunting Using Principal Components*. 
      In: Ahmed SE, editor. Big and Complex Data Analysis: Methodologies and Applications. 
      Contributions to Statistics, vol. Edited Refereed Volume. 
@@ -196,25 +208,34 @@ Funding/Provision/Help:
       
    + Yi C. and Huang J.
       *Semismooth Newton Coordinate Descent Algorithm for Elastic-Net Penalized Huber Loss Regression and Quantile Regression*. 
-      [J. Comp Graph. Statistics (2017)](https://amstat.tandfonline.com/doi/full/10.1080/10618600.2016.1256816#.W2ybVOhKiHs), 26(3):547-557. 
+      [J. Comp. Graph. Statistics (2017)](https://amstat.tandfonline.com/doi/full/10.1080/10618600.2016.1256816#.W2ybVOhKiHs), 26(3):547-557. 
 
-   + Dazard J-E., Choe M., LeBlanc M. and Rao J.S. 
+   + Dazard J-E., Choe M., LeBlanc M., and Rao J.S. 
       *Cross-validation and Peeling Strategies for Survival Bump Hunting using Recursive Peeling Methods*. 
       [Statistical Analysis and Data Mining (2016)](https://onlinelibrary.wiley.com/doi/10.1002/sam.11301/full), 9(1):12-42. 
       (The American Statistical Association Data Science Journal)
 
-   + Dazard J-E., Choe M., LeBlanc M. and Rao J.S. 
+   + Dazard J-E., Choe M., LeBlanc M., and Rao J.S. 
       *R package PRIMsrc: Bump Hunting by Patient Rule Induction Method for Survival, Regression and Classification*. 
       In JSM Proceedings, Statistical Programmers and Analysts Section. Seattle, WA, USA. 
       American Statistical Association IMS - JSM, p. 650-664.
       [JSM (2015)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4718587/).
 
-   + Dazard J-E., Choe M., LeBlanc M. and Rao J.S.
+   + Dazard J-E., Choe M., LeBlanc M., and Rao J.S.
       *Cross-Validation of Survival Bump Hunting by Recursive Peeling Methods*. 
       In JSM Proceedings, Survival Methods for Risk Estimation/Prediction Section. Boston, MA, USA. 
       American Statistical Association IMS - JSM, p. 3366-3380. 
       [JSM (2014)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4795911/).
       
-   + Dazard J-E. and J.S. Rao.
+   + Diaz-Pachon D.A., Rao J.S., and Dazard J-E. 
+      *On the Explanatory Power of Principal Components*. 
+      [arXiv, (2014)](https://arxiv.org/abs/1404.4917).
+      
+   + Dazard J-E. and Rao J.S.
       *Local Sparse Bump Hunting*. 
-      [J. Comp Graph. Statistics (2010)](https://amstat.tandfonline.com/doi/abs/10.1198/jcgs.2010.09029), 19(4):900-92.
+      [J. Comp. Graph. Statistics (2010)](https://amstat.tandfonline.com/doi/abs/10.1198/jcgs.2010.09029), 19(4):900-92.
+   
+   + Friedman J. and Fisher N.
+      *Bump Hunting in High-Dimensional Data*. 
+      [Stat. Comp. (1999)](https://link.springer.com/article/10.1023/A:1008894516817), 9:123-143.
+
