@@ -216,7 +216,7 @@ sbh <- function(X,
   }
   cat("\n")
   
-  # Setting the cluster up
+  # Parallel backend registration
   if ((parallel.rep) || (parallel.vs) || (parallel.pv)) {
     if (conf$type == "SOCKET") {
       cluster <- parallel::makeCluster(spec=conf$spec,
@@ -414,7 +414,7 @@ sbh <- function(X,
       CV.min.prob.bar.list <- CV.box.obj$cv.min.prob.bar
       
       # Maximum peeling length from all replicates
-      CV.maxsteps <- ceiling(mean(CV.maxsteps))
+      CV.maxsteps <- ceiling(mean(CV.maxsteps, na.rm=TRUE))
       
       # Box membership indicator vector of all observations at each step using the modal value or majority vote value over the replicates
       CV.boxind <- lapply.array(X=CV.boxind.list,
@@ -426,7 +426,7 @@ sbh <- function(X,
       dimnames(CV.boxind) <- list(paste("step", 0:(CV.maxsteps-1), sep=""), rownames(X.sel))
       
       # Adjusted maximum peeling length, thresholded by minimal box support, from all replicates
-      CV.maxsteps <- max(which(apply(CV.boxind, 1, function(x) {length(which(x))/n >= max(1/n, beta)})))
+      CV.maxsteps <- max(which(apply(CV.boxind, 1, function(x) {length(which(x))/n >= max(1/n, beta)})), na.rm=TRUE)
       cat("Adjusted maximum peeling length:", CV.maxsteps, "\n")
       
       # Box membership indicator vector of all observations at each step, adjusted to the maximum peeling length
@@ -434,7 +434,7 @@ sbh <- function(X,
       CV.boxind <- CV.boxind[1:CV.maxsteps,,drop=FALSE]
       
       # Get the box sample size and support based on box membership
-      CV.boxind.size <- round(apply(CV.boxind, 1, sum), digits=0)
+      CV.boxind.size <- round(apply(CV.boxind, 1, sum, na.rm=TRUE), digits=0)
       names(CV.boxind.size) <- paste("step", 0:(CV.maxsteps-1), sep="")
       CV.boxind.support <- round(CV.boxind.size/n, digits=decimals)
       names(CV.boxind.support) <- paste("step", 0:(CV.maxsteps-1), sep="")
@@ -457,8 +457,8 @@ sbh <- function(X,
         CV.stepprofiles.se <- apply(CV.stepprofiles, 2, sd, na.rm=TRUE)
         CV.lrtprofiles.mean <- apply(CV.lrtprofiles, 2, mean, na.rm=TRUE)
         CV.stepprofiles.pval <- 1 - pchisq(q=CV.lrtprofiles.mean, df=1)
-        if (all(is.na(CV.stepprofiles.mean)) || is.nan(CV.stepprofiles.mean) || is.empty(CV.stepprofiles.mean) ||
-            all(is.na(CV.stepprofiles.pval)) || is.nan(CV.stepprofiles.pval) || is.empty(CV.stepprofiles.pval)) {
+        if (all(is.na(CV.stepprofiles.mean)) || any(is.nan(CV.stepprofiles.mean)) || is.empty(CV.stepprofiles.mean) ||
+            all(is.na(CV.stepprofiles.pval)) || any(is.nan(CV.stepprofiles.pval)) || is.empty(CV.stepprofiles.pval)) {
           CV.nsteps.opt <- NA
           CV.nsteps.1se <- NA
         } else {
@@ -488,8 +488,8 @@ sbh <- function(X,
         CV.stepprofiles.se <- apply(CV.stepprofiles, 2, sd, na.rm=TRUE)
         CV.lrtprofiles.mean <- apply(CV.lrtprofiles, 2, mean, na.rm=TRUE)
         CV.stepprofiles.pval <- 1 - pchisq(q=CV.lrtprofiles.mean, df=1)
-        if (all(is.na(CV.stepprofiles.mean)) || is.nan(CV.stepprofiles.mean) || is.empty(CV.stepprofiles.mean) ||
-            all(is.na(CV.stepprofiles.pval)) || is.nan(CV.stepprofiles.pval) || is.empty(CV.stepprofiles.pval)) {
+        if (all(is.na(CV.stepprofiles.mean)) || any(is.nan(CV.stepprofiles.mean)) || is.empty(CV.stepprofiles.mean) ||
+            all(is.na(CV.stepprofiles.pval)) || any(is.nan(CV.stepprofiles.pval)) || is.empty(CV.stepprofiles.pval)) {
           CV.nsteps.opt <- NA
           CV.nsteps.1se <- NA
         } else {
@@ -519,8 +519,8 @@ sbh <- function(X,
         CV.stepprofiles.se <- apply(CV.stepprofiles, 2, sd, na.rm=TRUE)
         CV.lrtprofiles.mean <- apply(CV.lrtprofiles, 2, mean, na.rm=TRUE)
         CV.stepprofiles.pval <- 1 - pchisq(q=CV.lrtprofiles.mean, df=1)
-        if (all(is.na(CV.stepprofiles.mean)) || is.nan(CV.stepprofiles.mean) || is.empty(CV.stepprofiles.mean) ||
-            all(is.na(CV.stepprofiles.pval)) || is.nan(CV.stepprofiles.pval) || is.empty(CV.stepprofiles.pval)) {
+        if (all(is.na(CV.stepprofiles.mean)) || any(is.nan(CV.stepprofiles.mean)) || is.empty(CV.stepprofiles.mean) ||
+            all(is.na(CV.stepprofiles.pval)) || any(is.nan(CV.stepprofiles.pval)) || is.empty(CV.stepprofiles.pval)) {
           CV.nsteps.opt <- NA
           CV.nsteps.1se <- NA
         } else {
@@ -754,6 +754,13 @@ sbh <- function(X,
             CV.stats <- list("mean"=CV.stats.mu, "sd"=CV.stats.sd)
             
             # Computation of p-values at each step
+            if (peelcriterion != "grp") {
+              obs.chisq <- CV.stats$mean$LRT
+            } else if (peelcriterion == "grp") {
+              obs.chisq <- CV.stats$mean$GLRT
+            } else {
+              stop("Invalid peeling criterion. Exiting ...\n\n")
+            }
             CV.pval <- cv.pval(X=X.sel,
                                y=y,
                                delta=delta,
@@ -771,11 +778,23 @@ sbh <- function(X,
                                            ",peelcriterion=\"", peelcriterion, "\"",
                                            ",cvcriterion=\"", cvcriterion, "\"", sep=""),
                                groups=groups,
-                               obs.chisq=CV.stats$mean$LRT,
+                               obs.chisq=obs.chisq,
                                parallel.pv=parallel.pv,
                                clus.pv=cluster,
                                verbose=verbose,
                                seed=seed)
+            
+            # Return object 'CV.profiles'
+            CV.profiles <- list("cv.varprofiles"=CV.varprofiles,
+                                "cv.varprofiles.mean"=CV.varprofiles.mean,
+                                "cv.varprofiles.se"=CV.varprofiles.se,
+                                "cv.varset.opt"=CV.varset.opt,
+                                "cv.varset.1se"=CV.varset.1se,
+                                "cv.stepprofiles"=CV.stepprofiles,
+                                "cv.stepprofiles.mean"=CV.stepprofiles.mean,
+                                "cv.stepprofiles.se"=CV.stepprofiles.se,
+                                "cv.nsteps.opt"=CV.nsteps.opt,
+                                "cv.nsteps.1se"=CV.nsteps.1se)
             
             # List of CV fitted values
             CV.fit <- list("cv.maxsteps"=CV.maxsteps,
@@ -793,17 +812,6 @@ sbh <- function(X,
           }
         }
       }
-      # List of CV profiles
-      CV.profiles <- list("cv.varprofiles"=CV.varprofiles,
-                          "cv.varprofiles.mean"=CV.varprofiles.mean,
-                          "cv.varprofiles.se"=CV.varprofiles.se,
-                          "cv.varset.opt"=CV.varset.opt,
-                          "cv.varset.1se"=CV.varset.1se,
-                          "cv.stepprofiles"=CV.stepprofiles,
-                          "cv.stepprofiles.mean"=CV.stepprofiles.mean,
-                          "cv.stepprofiles.se"=CV.stepprofiles.se,
-                          "cv.nsteps.opt"=CV.nsteps.opt,
-                          "cv.nsteps.1se"=CV.nsteps.1se)
     }
   }
   
@@ -1048,8 +1056,8 @@ print.sbh <- function(x, ...) {
 #===============#
 #                    plot(x,
 #                         main=NULL,
-#                         proj=c(1,2), 
-#                         steps=1:x$cvfit$cv.nsteps,
+#                         proj=x$cvfit$cv.used[c(1,2)], 
+#                         steps=x$cvfit$cv.nsteps,
 #                         pch=16, 
 #                         cex=0.5, 
 #                         col=c(1,2),
@@ -1090,8 +1098,8 @@ print.sbh <- function(x, ...) {
 
 plot.sbh <- function(x,
                      main=NULL,
-                     proj=c(1,2),
-                     steps=1:x$cvfit$cv.nsteps,
+                     proj=x$cvfit$cv.used[c(1,2)],
+                     steps=x$cvfit$cv.nsteps,
                      pch=16,
                      cex=0.5,
                      col=c(1,2), 
@@ -1133,7 +1141,7 @@ plot.sbh <- function(x,
         } else {
           if (all(proj %in% x$cvfit$cv.used)) {
             toadd <- NULL
-            toplot <- x$cvfit$cv.used[proj]
+            toplot <- proj
           } else {
             stop("Argument `proj` must be a equal or a subset of the used covariates of 'sbh' object `x`. Exiting ... \n\n")
           }
@@ -1185,8 +1193,8 @@ plot.sbh <- function(x,
       if (boxes) {
         x.range <- apply(X=x, MARGIN=2, FUN=range, na.rm=TRUE)
         if (is.null(toadd)) {
-          boxcut <- object$cvfit$cv.rules$mean[,toplot,drop=FALSE]
-          varsign <- object$cvfit$cv.sign[toplot]
+          boxcut <- object$cvfit$cv.rules$mean[,x.names,drop=FALSE]
+          varsign <- object$cvfit$cv.sign[x.names]
         } else {
           boxcut <- object$cvfit$cv.rules$mean[,1,drop=FALSE]
           varsign <- object$cvfit$cv.sign[1]
@@ -1464,7 +1472,7 @@ plot_profile <- function(object,
         stop("Invalid CV criterion. Exiting ... \n\n")
       }
       
-      if (object$vs && object$vstype == "prsp" && ncol(object$cvprofiles$cv.varprofiles) > 1) {
+      if ((object$vs && object$vstype == "prsp") && (ncol(object$cvprofiles$cv.varprofiles) > 1)) {
         if (!is.null(main)) {
           par(mfrow=c(2, 1), oma=c(0, 0, 3, 0), mar=c(4.0, 3.0, 4.0, 3.0), mgp=c(1.5, 0.5, 0))
         } else {
