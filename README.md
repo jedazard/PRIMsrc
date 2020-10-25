@@ -195,20 +195,6 @@ Funding/Provision/Help:
       *Disparity Subtyping: Bringing Precision Medicine Closer to Disparity Science*. 
       [2021d (in prep)].
       
-   + Diaz-Pachon D.A., Saenz J.P., Rao J.S., and Dazard J-E. 
-     *Mode Hunting Through Active Information*. 
-     [Applied Stochastic Models in Business and Industry (2019)](https://onlinelibrary.wiley.com/doi/abs/10.1002/asmb.2430), 35(2):376-393.
-
-   + Diaz-Pachon D.A., Dazard J-E., and Rao J.S. 
-     *Unsupervised Bump Hunting Using Principal Components*. 
-     In: Ahmed SE, editor. Big and Complex Data Analysis: Methodologies and Applications. 
-     Contributions to Statistics, vol. Edited Refereed Volume. 
-     [Springer International Publishing, Cham Switzerland (2017)](https://link.springer.com/chapter/10.1007/978-3-319-41573-4_16), 325-345.
-      
-   + Yi C. and Huang J.
-      *Semismooth Newton Coordinate Descent Algorithm for Elastic-Net Penalized Huber Loss Regression and Quantile Regression*. 
-      [J. Comp. Graph. Statistics (2017)](https://amstat.tandfonline.com/doi/full/10.1080/10618600.2016.1256816#.W2ybVOhKiHs), 26(3):547-557. 
-
    + Dazard J-E., Choe M., LeBlanc M., and Rao J.S. 
       *Cross-validation and Peeling Strategies for Survival Bump Hunting using Recursive Peeling Methods*. 
       [Statistical Analysis and Data Mining (2016)](https://onlinelibrary.wiley.com/doi/10.1002/sam.11301/full), 9(1):12-42. 
@@ -226,6 +212,16 @@ Funding/Provision/Help:
       American Statistical Association IMS - JSM, p. 3366-3380. 
       [JSM (2014)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4795911/).
       
+   + Diaz-Pachon D.A., Saenz J.P., Rao J.S., and Dazard J-E. 
+     *Mode Hunting Through Active Information*. 
+     [Applied Stochastic Models in Business and Industry (2019)](https://onlinelibrary.wiley.com/doi/abs/10.1002/asmb.2430), 35(2):376-393.
+
+   + Diaz-Pachon D.A., Dazard J-E., and Rao J.S. 
+     *Unsupervised Bump Hunting Using Principal Components*. 
+     In: Ahmed SE, editor. Big and Complex Data Analysis: Methodologies and Applications. 
+     Contributions to Statistics, vol. Edited Refereed Volume. 
+     [Springer International Publishing, Cham Switzerland (2017)](https://link.springer.com/chapter/10.1007/978-3-319-41573-4_16), 325-345.
+      
    + Diaz-Pachon D.A., Rao J.S., and Dazard J-E. 
       *On the Explanatory Power of Principal Components*. 
       [arXiv, (2014)](https://arxiv.org/abs/1404.4917).
@@ -237,4 +233,9 @@ Funding/Provision/Help:
    + Friedman J. and Fisher N.
       *Bump Hunting in High-Dimensional Data*. 
       [Stat. Comp. (1999)](https://link.springer.com/article/10.1023/A:1008894516817), 9:123-143.
+
+   + Yi C. and Huang J.
+      *Semismooth Newton Coordinate Descent Algorithm for Elastic-Net Penalized Huber Loss Regression and Quantile Regression*. 
+      [J. Comp. Graph. Statistics (2017)](https://amstat.tandfonline.com/doi/full/10.1080/10618600.2016.1256816#.W2ybVOhKiHs), 26(3):547-557. 
+
 
