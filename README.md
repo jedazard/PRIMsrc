@@ -19,25 +19,24 @@ Assumptions are that the multivariate input variables can be discrete or continu
 multivariate datasets, including the paradigm where the number of covariates (_p_) exceeds or dominates that of samples (_n_): _p_ > _n_ or 
 _p_ >> _n_.    
 
-Please note that the current version (0.8.3) is a development release, that only implements the case of a survival outcome. At this point, this 
-version of `PRIMsrc` is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) loop of our 
-Patient Recursive Survival Peeling (PRSP) algorithm (Dazard and Rao (2014, 2015, 2016, 2021a)), or our Patient Recursive Group Survival Peeling 
-(PRGSP) algorithm (Dazard and Rao (2021b)). New features will be added as soon as available. 
+Please note that the current version is a development release, that only implements the case of a survival outcome. At this point, 
+this version of `PRIMsrc` is also restricted to a directed peeling search of the first box covered by the recursive coverage (outer) 
+loop of our PRSP or PRGSP algorithm (see details below). New features will be added as soon as available. 
 
 
 ===============
 ### Details
 
 In a direct application, "Bump Hunting" (BH) can identify subgroups of observations for which their outcome is as extreme as possible. 
-Similarly to this traditional goal of subgroup finding, `PRIMsrc` also implements the alternative goal of mapping out a region (possibly disjointed) 
+Similarly to this traditional goal of subgroup finding, `PRIMsrc` also implements the goal of mapping out a region (possibly disjointed) 
 of the input space where the outcome _difference_ between existing (fixed) groups of observations is as extreme as possible. We refer to the 
 later goal as "Group Bump Hunting" (GBH).
 
-In the case of a time-to event, possibly censored (Survival) outcome, "Survival Bump Hunting" (SBH) is done by our Patient Recursive 
-Survival Peeling (PRSP) algorithm. See Dazard and Rao (2014, 2015, 2016, 2021a) for details, as well as Dazard et al. (2021c)
-for an application in Patient Survival Subtyping. Alternatively, "Group Survival Bump Hunting" (GSBH) is done by using specifc peeling and 
-cross-validation criterion by derivation of PRSP, which we call Patient Recursive Group Survival Peeling (PRGSP). See Dazard and Rao (2021b) 
-for details, as well as Rao et al. (2021d) for an application in Survival Disparity Subtyping. 
+In the case of a time-to event outcome, possibly censored (as in survival or risk analysis), "Survival Bump Hunting" (SBH) is done by our 
+Patient Recursive Survival Peeling (PRSP) algorithm. See Dazard and Rao (2014, 2015, 2016, 2021a) for details, as well as Dazard et al. (2021c)
+for an application in Patient Survival Subtyping. Alternatively, "Group Survival Bump Hunting" (GSBH) is done by using a derivation of PRSP with 
+specifc peeling and cross-validation criterion, called Patient Recursive Group Survival Peeling (PRGSP). See Dazard and Rao (2021b) for details, 
+as well as Rao et al. (2021d) for an application in Survival Disparity Subtyping.
 
 The package relies on an optional variable screening (pre-selection) procedure that is run before the PRSP algorithm and final variable usage 
 (selection) procedure is done. This is done by four possible cross-validated variable screening (pre-selection) procedures offered to the user 
