@@ -36,7 +36,7 @@ In the case of a time-to event outcome, possibly censored (as in survival or ris
 Patient Recursive Survival Peeling (PRSP) algorithm. See Dazard and Rao (2014, 2015, 2016, 2021a) for details, as well as Dazard et al. (2021c)
 for an application in Patient Survival Subtyping. Alternatively, "Group Survival Bump Hunting" (GSBH) is done by using a derivation of PRSP with 
 specifc peeling and cross-validation criterion, called Patient Recursive Group Survival Peeling (PRGSP). See Dazard and Rao (2021b) for details, 
-as well as Rao et al. (2021d) for an application in Survival Disparity Subtyping.
+as well as Rao et al. (2021d) for an application in Survival Disparity Subtyping. 
 
 The package relies on an optional variable screening (pre-selection) procedure that is run before the PRSP algorithm and final variable usage 
 (selection) procedure is done. This is done by four possible cross-validated variable screening (pre-selection) procedures offered to the user 
@@ -65,8 +65,8 @@ between master and worker processes: 'Socket' or  'Message-Passing Interface' ('
 ============
 ### Branches
 
-This branch (master) is the  default one, that hosts the current development release (version 0.8.3) of the  "Survival Bump Hunting" (SBH)
-(or "Group Survival Bump Hunting" (GSBH)) procedure. Note that `PRIMsrc` is still a non-production release and that version 0.8.3 implements 
+This branch (master) is the  default one, that hosts the current development release (version 0.9.0) of the  "Survival Bump Hunting" (SBH)
+(or "Group Survival Bump Hunting" (GSBH)) procedure. Note that `PRIMsrc` is still a non-production release and that version 0.9.0 implements 
 significant user-visible changes. Check details of new features, changes, and bug fixes in the "Usage" section below.
 
 The future branch (unified) will host the complete version of the code (version 1.0.0), including undirected peeling search derived 
@@ -98,7 +98,7 @@ CRAN downloads in the last week:
 ================
 ### Requirements
 
-PRIMsrc (>= 0.8.3) requires R-3.5.0 (2018-04-23). It was built and tested under R version 4.0.3 (2020-10-10) and Travis CI. 
+PRIMsrc (>= 0.9.0) requires R-3.5.0 (2018-04-23). It was built and tested under R version 4.0.3 (2020-10-10) and Travis CI. 
 
 Installation has been tested on Windows, Linux, OSX and Solaris platforms. 
 
@@ -119,7 +119,7 @@ repository:
 install.packages("PRIMsrc")
 ```
 
-* Alternatively, you can install the most up-to-date development version (>= 0.8.3) of `PRIMsrc` from the [GitHub](https://github.com/jedazard/PRIMsrc) repository:
+* Alternatively, you can install the most up-to-date development version (>= 0.9.0) of `PRIMsrc` from the [GitHub](https://github.com/jedazard/PRIMsrc) repository:
 
 ```{r}
 install.packages("devtools")
@@ -237,5 +237,4 @@ Funding/Provision/Help:
    + Yi C. and Huang J.
       *Semismooth Newton Coordinate Descent Algorithm for Elastic-Net Penalized Huber Loss Regression and Quantile Regression*. 
       [J. Comp. Graph. Statistics (2017)](https://amstat.tandfonline.com/doi/full/10.1080/10618600.2016.1256816#.W2ybVOhKiHs), 26(3):547-557. 
-
 
