@@ -90,11 +90,7 @@ cv.presel <- function(X,
       stop("Invalid variable screening type option. Exiting ... \n\n")
     }
     eval(parse(text = unlist(strsplit(x = vsarg, split = ","))))
-    
-    if ((vscons < 1/K) || (vscons > 1)) {
-      stop("\nVariable screening conservativeness must be a real number in [1/K, 1]. Exiting ... \n\n")
-    }
-    
+        
     replic <- 1:B
     if (!parallel.rep) {
       if (!is.null(seed)) {

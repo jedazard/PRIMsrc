@@ -21,7 +21,6 @@
 #                       vsarg="alpha=1,
 #                              nalpha=1,
 #                              nlambda=100",
-#                       vscons=0.5,
 #                       cv=TRUE,
 #                       cvtype="combined",
 #                       cvarg="alpha=0.01,
@@ -30,10 +29,14 @@
 #                              cvcriterion=\"cer\"",
 #                       groups=NULL,
 #                       pv=FALSE,
-#                       decimals=2,
-#                       onese=FALSE,
-#                       probval=NULL,
-#                       timeval=NULL,
+#                       control=sbh.control(vscons = 0.5, 
+#                                           decimals = 2, 
+#                                           onese = FALSE, 
+#                                           probval = NULL, 
+#                                           timeval = NULL, 
+#                                           lag = 2, 
+#                                           span = 0.10, 
+#                                           degree = 2),
 #                       parallel.vs=FALSE,
 #                       parallel.rep=FALSE,
 #                       parallel.pv=FALSE,
@@ -66,7 +69,6 @@ sbh <- function(X,
                 vsarg="alpha=1,
                nalpha=1,
                nlambda=100",
-                vscons=0.5,
                 cv=TRUE,
                 cvtype="combined",
                 cvarg="alpha=0.01,
@@ -75,25 +77,39 @@ sbh <- function(X,
                cvcriterion=\"cer\"",
                 groups=NULL,
                 pv=FALSE,
-                decimals=2,
-                onese=FALSE,
-                probval=NULL,
-                timeval=NULL,
+                control=sbh.control(vscons = 0.5, 
+                                    decimals = 2, 
+                                    onese = FALSE, 
+                                    probval = NULL, 
+                                    timeval = NULL, 
+                                    lag = 2, 
+                                    span = 0.10, 
+                                    degree = 2),
                 parallel.vs=FALSE,
                 parallel.rep=FALSE,
                 parallel.pv=FALSE,
                 conf=NULL,
                 verbose=TRUE,
                 seed=NULL) {
-  
-  # Parsing and evaluating algorithm parameters of SBH
+
+  # Parsing and evaluating SBH parameters
   alpha <- NULL
   beta <- NULL
   peelcriterion <- NULL
   cvcriterion <- NULL
   eval(parse( text=unlist(strsplit(x=cvarg, split=",")) ))
   
-  # Checking inputs of data
+  # Evaluating ancillary SBH parameters
+  vscons=control$vscons
+  decimals=control$decimals
+  onese=control$onese
+  probval=control$probval
+  timeval=control$timeval
+  lag=control$lag
+  span=control$span
+  degree=control$degree
+  
+  # Checking Inputs of Parameters
   if ((!is.wholenumber(B)) || (B <= 0)) {
     stop("\nArgument 'B' must be a positive integer. Exiting ... \n\n")
   }
@@ -103,17 +119,6 @@ sbh <- function(X,
   if ((!is.wholenumber(A)) || (A <= 0)) {
     stop("\nArgument 'A' must be a positive integer. Exiting ... \n\n")
   }
-  if (missing(X)) {
-    stop("\nNo explanatory variables provided! Exiting ... \n\n")
-  }
-  if (missing(y)) {
-    stop("\nNo outcome variable provided! Exiting ... \n\n")
-  }
-  if (missing(delta)) {
-    stop("\nNo censoring variable provided! Exiting ... \n\n")
-  }
-  
-  # Checking inputs of parameters
   if (peelcriterion != "grp") {
     cvcriterion <- match.arg(arg=cvcriterion, choices=c("lrt", "lhr", "cer"), several.ok=FALSE)
     groups <- NULL
@@ -131,6 +136,9 @@ sbh <- function(X,
   }
   if (vs) {
     vstype <- match.arg(arg=vstype, choices=c("ppl", "pcqr", "spca", "prsp"), several.ok=FALSE)
+    if ((vscons < 1/K) || (vscons > 1)) {
+      stop("\nVariable screening conservativeness must be a real number in [1/K, 1]. Exiting ... \n\n")
+    }
   } else {
     vstype <- NA
   }
@@ -141,8 +149,25 @@ sbh <- function(X,
     K <- 1
     vscons <- 1
   }
+  if (!is.null(probval)) {
+    stopifnot (length(probval) == 1L, !is.na(probval), probval >= 0, probval <= 1) 
+  } 
+  if (!is.null(timeval)) {
+    stopifnot (length(timeval) == 1L, !is.na(timeval), timeval >= 0) 
+  }
+
+  # Checking Inputs of Data
+  if (missing(X)) {
+    stop("\nNo explanatory variables provided! Exiting ... \n\n")
+  }
+  if (missing(y)) {
+    stop("\nNo outcome variable provided! Exiting ... \n\n")
+  }
+  if (missing(delta)) {
+    stop("\nNo censoring variable provided! Exiting ... \n\n")
+  }
   
-  # Constants
+  # Constants & Metaparameters
   n <- nrow(X)
   p <- ncol(X)
   if (alpha < 1/n) {
@@ -858,7 +883,68 @@ sbh <- function(X,
 
 
 #===============================================================================================================================#
-# 2. END-USER FUNCTION FOR NEWS
+# 2. END-USER FUNCTION FOR CONTROLLING SBH SECONDARY PARAMETERS
+#===============================================================================================================================#
+
+#===============================================================================================================================#
+#===============#
+#Usage         :
+#===============#
+#                   sbh.control(vscons = 0.5, 
+#                               decimals = 2, 
+#                               onese = FALSE, 
+#                               probval = NULL, 
+#                               timeval = NULL, 
+#                               lag = 2, 
+#                               span = 0.10, 
+#                               degree = 2)
+#
+#===============#
+# Description   :
+#===============#
+#
+#===============#
+# Arguments     :
+#===============#
+#
+#===============#
+# Values        :
+#===============#
+#
+#===============================================================================================================================#
+
+sbh.control <- function(vscons = 0.5, 
+                        decimals = 2, 
+                        onese = FALSE, 
+                        probval = NULL, 
+                        timeval = NULL, 
+                        lag = 2, 
+                        span = 0.10, 
+                        degree = 2) {
+                        
+    stopifnot (length(decimals) == 1L, !is.na(decimals), as.integer(decimals) >= 1L, 
+               length(onese) == 1L, !is.na(onese), is.logical(onese), 
+               length(lag) == 1L, !is.na(lag), as.integer(lag) >= 1,
+               length(span) == 1L, !is.na(span), span >= 0, span <= 1, 
+               length(degree) == 1L, !is.na(degree), as.integer(degree) >= 1)
+    
+    list("vscons"=vscons, 
+         "decimals"=decimals, 
+         "onese"=onese, 
+         "probval"=probval, 
+         "timeval"=timeval, 
+         "lag"=lag, 
+         "span"=span,
+         "degree"=degree)
+         
+}
+#===============================================================================================================================#
+
+
+
+
+#===============================================================================================================================#
+# 3. END-USER FUNCTION FOR NEWS
 #===============================================================================================================================#
 
 #===============================================================================================================================#
@@ -882,8 +968,10 @@ sbh <- function(X,
 #===============================================================================================================================#
 
 PRIMsrc.news <- function(...) {
+
   newsfile <- file.path(system.file(package="PRIMsrc"), "NEWS")
   file.show(newsfile)
+  
 }
 #===============================================================================================================================#
 
@@ -891,7 +979,7 @@ PRIMsrc.news <- function(...) {
 
 
 #===============================================================================================================================#
-# 3. END-USER S3-GENERIC FUNCTIONS FOR SUMMARY, PRINT, PLOT AND PREDICTION
+# 4. END-USER S3-GENERIC FUNCTIONS FOR SUMMARY, PRINT, PLOT AND PREDICTION
 #===============================================================================================================================#
 
 #===============================================================================================================================#
@@ -1391,7 +1479,7 @@ predict.sbh <- function (object,
 
 
 #===============================================================================================================================#
-# 4. END-USER PLOTTING FUNCTIONS FOR MODEL VALIDATION AND VISUALIZATION OF RESULTS
+# 5. END-USER PLOTTING FUNCTIONS FOR MODEL VALIDATION AND VISUALIZATION OF RESULTS
 #===============================================================================================================================#
 
 #===============================================================================================================================#
