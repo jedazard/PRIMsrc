@@ -25,7 +25,6 @@
       vsarg = "alpha=1,
                nalpha=1,
                nlambda=100",
-      vscons = 0.5,
       cv = TRUE, 
       cvtype = "combined", 
       cvarg = "alpha=0.01,
@@ -34,10 +33,14 @@
                cvcriterion=\"cer\"",
       groups = NULL,
       pv = FALSE,
-      decimals = 2, 
-      onese = FALSE,
-      probval = NULL, 
-      timeval = NULL, 
+      control = sbh.control(vscons = 0.5, 
+                            decimals = 2, 
+                            onese = FALSE, 
+                            probval = NULL, 
+                            timeval = NULL, 
+                            lag = 2, 
+                            span = 0.10, 
+                            degree = 2), 
       parallel.vs = FALSE,
       parallel.rep = FALSE,
       parallel.pv = FALSE,
@@ -65,15 +68,7 @@
     }
     \item{K}{
         Postitive \code{integer} of the number of cross-validation folds (partitions) into which the total number 
-        of observations (\eqn{n}) should be randomly split. \code{K} must be bigger than 2 for a regular \code{K}-fold 
-        cross-validation procedure to work and should be greater than 3 for a regular procedure to make sense; 
-        \code{K} \eqn{\in} \{5,...,10\} is recommended; defaults to \code{K}=5. Setting \code{K} also specifies the type 
-        of cross-validation to be done:
-        \itemize{
-            \item{\code{K}} = 1 carries no cross-validation out, or set-value when \code{cv} = \code{FALSE} (see below).
-            \item{\code{K}} \eqn{\in} \{2,...,\eqn{n-1}\} carries out \code{K}-fold cross-validation.
-            \item{\code{K}} = \eqn{n} carries out leave-one-out cross-validation.
-        }
+        of observations (\eqn{n}) should be randomly split. See details.
     } 
     \item{A}{
         Positive \code{integer} of the number of permutations for the computation of log-rank permutation \eqn{p}-values. 
@@ -155,10 +150,6 @@
                 \code{n.var} = \eqn{p} - 1. Suggests 5.
         }
     }
-    \item{vscons}{
-        \code{numeric} scalar in [1/\code{K}, 1], specifying the conservativeness of the variable screening (pre-selection) 
-        procedure, where 1/\code{K} is the least conservative and 1 is the most. Suggests 0.5 
-    }
     \item{cv}{
         \code{logical} scalar. Flag for optional cross-validation (CV) of variable screening (pre-selection) 
         parameters and Survival Bump Hunting fitting by PRSP algorithm. See below for details. 
@@ -201,22 +192,10 @@
         \code{logical} scalar. Flag for computation of log-rank \eqn{p}-values. 
         Defaults to \code{FALSE}.
     }
-    \item{decimals}{
-        Positive \code{integer} of the number of user-specified significant decimals to output results.
-        Defaults to 2.
-    }
-    \item{onese}{
-        \code{logical} scalar. Flag for using the 1-standard error rule instead of extremum value of the cross-validation criterion 
-        when tuning/optimizing model parameters. Defaults to \code{FALSE}.
-    }
-    \item{probval}{
-        \code{numeric} scalar of the survival probability at which we want to get the endpoint box survival time. 
-        Defaults to \code{NULL} (i.e. maximal survival probability value).
-    }
-    \item{timeval}{
-        \code{numeric} scalar of the survival time at which we want to get the endpoint box survival probability.
-        Defaults to \code{NULL} (i.e. maximal survival time value).
-    }
+    \item{control}{
+        Optional function to set ancillary parameters for fitting the Survival Bump Hunting (SBH) model. 
+        See \code{\link{sbh.control}} for details.
+    }   
     \item{parallel.vs}{
         \code{logical}. Is parallelization to be performed for variable screening? 
         Defaults to \code{FALSE}, because it is not implemented yet.
@@ -266,18 +245,16 @@
     missing values. In case of high-dimensional data (\eqn{p >> n}), the recommendation is to use PPL or SPCA because of computational 
     efficiency. Variable screening (pre-selection) is done by computing occurrence frequencies of top-ranking variables over the 
     cross-validation folds and replicates. The conservativeness of the procedure is controled by the argument \code{vscons}.
-    
-    Example of \code{vscons} values for pre-selection are as follows:
+        
+    The argument \code{K} must be bigger than 2 for a regular \code{K}-fold cross-validation procedure to work, and should be no less than 3 
+    for a regular procedure to make sense; \code{K} \eqn{\in} \{5,...,10\} is recommended; defaults to \code{K}=5. Setting \code{K} also 
+    specifies the type of cross-validation to be done:
     \itemize{
-        \item{`1.0` represents a presence in all the folds (unanimity vote)}
-        \item{`0.5` represents a presence in at least half of the folds (majority vote)}
-        \item{`1/\code{K}` represents a presence in at least one of the folds (minority vote)}
+        \item{\code{K}} = 1 carries no cross-validation out, or set-value when \code{cv} = \code{FALSE} (see below).
+        \item{\code{K}} \eqn{\in} \{2,...,\eqn{n-1}\} carries out \code{K}-fold cross-validation.
+        \item{\code{K}} = \eqn{n} carries out leave-one-out cross-validation.
     }
-    Although any value in the interval [1/\code{K},1] is accepted, we recommand using the interval [1/\code{K}, 1/2] to avoid 
-    excessive conservativeness. Final variable usage (selection) is done at the time of fitting the Survival Bump Hunting (SBH) model 
-    itself using our PRSP algorithm on previously screened variables by collecting those variables that have the maximum occurrence 
-    frequency in each peeling step over cross-validation folds and replicates.
-    
+        
     If cross-validation is done (\code{cv = TRUE}, the optimal number of peeling steps (optimal peeling sequence length), 
     and the optimal model size (cardinal of subset of top-screened variables) will be determined by cross-validation. 
     If \code{cv = FALSE}, no cross-validation at all will be performed, and the values of \code{K} and \code{vscons} will both
@@ -496,7 +473,17 @@
 }
 
 \note{
-    Unique end-user function for fitting the Survival Bump Hunting model.
+    Main end-user function for fitting the Survival Bump Hunting model.
+}
+
+\seealso{
+    \itemize{
+        \item \code{\link{sbh.control}}
+        \item \code{makeCluster} (R package \pkg{parallel})
+        \item \code{glmnet}, \code{cv.glmnet} (R package \pkg{glmnet})
+        \item \code{hqreg}, \code{cv.hqreg} (R package \pkg{hqreg})
+        \item \code{superpc.cv} (R package \pkg{superpc})
+    }
 }
 
 \keyword{Exploratory Survival/Risk Analysis}
@@ -505,15 +492,6 @@
 \keyword{Cross-Validation}
 \keyword{Bump Hunting}
 \keyword{Rule-Induction Method}
-
-\seealso{
-    \itemize{
-        \item \code{makeCluster} (R package \pkg{parallel})
-        \item \code{glmnet}, \code{cv.glmnet} (R package \pkg{glmnet})
-        \item \code{hqreg}, \code{cv.hqreg} (R package \pkg{hqreg})
-        \item \code{superpc.cv} (R package \pkg{superpc})
-    }
-}
 
 \examples{
 #===================================================
@@ -565,10 +543,7 @@ synt1 <- sbh(X = Synthetic.1[ , -c(1,2), drop=FALSE],
                       cvcriterion=\"lrt\"",
              groups = NULL,
              pv = FALSE,
-             decimals = 2,
-             onese = FALSE,
-             probval = 0.5,
-             timeval = NULL,
+             control = sbh.control(probval = 0.5), 
              parallel.vs = FALSE,
              parallel.rep = FALSE,
              parallel.pv = FALSE,
@@ -712,7 +687,6 @@ plot_km(object = synt1,
                  vsarg = "alpha=1,
                           nalpha=1,
                           nlambda=100",
-                 vscons = 0.5,
                  cv = TRUE,
                  cvtype = "combined",
                  cvarg = "alpha=0.01,
@@ -721,10 +695,8 @@ plot_km(object = synt1,
                           cvcriterion=\"lrt\"",
                  groups = NULL,
                  pv = TRUE,
-                 decimals = 2,
-                 onese = FALSE,
-                 probval = 0.5,
-                 timeval = NULL,
+                 control = sbh.control(probval = 0.5, 
+                                       vscons = 0.5), 
                  parallel.vs = FALSE,
                  parallel.rep = TRUE,
                  parallel.pv = TRUE,
@@ -755,7 +727,6 @@ plot_km(object = synt1,
                           msize=NULL,
                           peelcriterion=\"lrt\",
                           cvcriterion=\"cer\"",
-                 vscons = 0.5,
                  cv = TRUE,
                  cvtype = "combined",
                  cvarg = "alpha=0.01,
@@ -764,10 +735,8 @@ plot_km(object = synt1,
                           cvcriterion=\"cer\"",
                  groups = NULL,
                  pv = TRUE,
-                 decimals = 2,
-                 onese = FALSE,
-                 probval = 0.5,
-                 timeval = NULL,
+                 control = sbh.control(probval = 0.5, 
+                                       vscons = 0.5), 
                  parallel.vs = FALSE,
                  parallel.rep = TRUE,
                  parallel.pv = TRUE,

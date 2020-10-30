@@ -50,35 +50,6 @@
     This is indicated by an asterisk (* = optionally involving cluster usage). The R features are categorized as follows:
 
     \enumerate{
-
-      \item{END-USER FUNCTION FOR PACKAGE NEWS} \cr
-      \code{\link{PRIMsrc.news}}
-      \bold{Display the \pkg{PRIMsrc} Package News}\cr
-            Function to display the log file \code{NEWS} of updates of the \pkg{PRIMsrc} package.\cr
-            
-      \item{END-USER S3-METHOD FUNCTIONS FOR SUMMARY, DISPLAY, PLOT AND PREDICTION} \cr
-      \code{\link{summary}}
-      \bold{Summary Function}\cr
-            S3-method summary function to summarize the main parameters used to generate the \code{sbh} object.\cr
-            
-      \code{\link{print}}
-      \bold{Print Function}\cr
-            S3-method print function to display the cross-validated estimated values of the \code{sbh} object.\cr
-
-      \code{\link{plot}}
-      \bold{2D Visualization of Data Scatter and Encapsulating Box} \cr           
-            S3-method plot function for two-dimensional visualization of scatter of data points 
-            and cross-validated encapsulating box of a \code{sbh} object for the highest risk (inbox) versus
-            lower-risk (outbox) groups (PRSP), and between the two specified fixed groups (PRGSP), 
-            if this option is used. The scatter plot is done for a given peeling step (or number of steps) 
-            of the peeling sequence (inner loop of our PRSP or PRGSP) and in a given plane of the used covariates 
-            of the \code{sbh} object, both specified by the user.\cr
-
-      \code{\link{predict}}
-      \bold{Predict Function}\cr
-            S3-method predict function to predict the box membership and box vertices 
-            on an independent set.\cr
-  
       \item{END-USER SURVIVAL BUMP HUNTING FUNCTION} \cr
       \code{\link{sbh}} *
       \bold{Cross-Validated Survival Bump Hunting} \cr
@@ -112,10 +83,43 @@
             and/or nodes on a local and/or remote machine(s) with either. \pkg{PRIMsrc} supports two types of communication mechanisms 
             between master and worker processes: 'Socket' or  'Message-Passing Interface' ('MPI').\cr
 
+      \item{END-USER FUNCTION FOR CONTROLLING ANCILLARY MODEL PARAMETERS} \cr
+      \code{\link{sbh.control}}
+      \bold{Parameters Control Function}\cr
+            End-user function to set ancillary parameters of main end-user function \code{sbh} for fitting a Survival Bump Hunting (SBH) model.\cr
+
+      \item{END-USER FUNCTION FOR PACKAGE NEWS} \cr
+      \code{\link{PRIMsrc.news}}
+      \bold{Display the \pkg{PRIMsrc} Package News}\cr
+            End-user function to display the log file \code{NEWS} of updates of the \pkg{PRIMsrc} package.\cr
+            
+      \item{END-USER S3-METHOD FUNCTIONS FOR SUMMARY, DISPLAY, PLOT AND PREDICTION} \cr
+      \code{\link{summary}}
+      \bold{Summary Function}\cr
+            End-user S3-method summary function to summarize the main parameters used to generate the \code{sbh} object.\cr
+            
+      \code{\link{print}}
+      \bold{Print Function}\cr
+            End-user S3-method print function to display the cross-validated estimated values of the \code{sbh} object.\cr
+
+      \code{\link{plot}}
+      \bold{2D Visualization of Data Scatter and Encapsulating Box} \cr           
+            End-user S3-method plot function for two-dimensional visualization of scatter of data points 
+            and cross-validated encapsulating box of a \code{sbh} object for the highest risk (inbox) versus
+            lower-risk (outbox) groups (PRSP), and between the two specified fixed groups (PRGSP), 
+            if this option is used. The scatter plot is done for a given peeling step (or number of steps) 
+            of the peeling sequence (inner loop of our PRSP or PRGSP) and in a given plane of the used covariates 
+            of the \code{sbh} object, both specified by the user.\cr
+
+      \code{\link{predict}}
+      \bold{Predict Function}\cr
+            End-user S3-method predict function to predict the box membership and box vertices 
+            on an independent set.\cr
+
       \item{END-USER PLOTTING FUNCTIONS FOR MODEL VALIDATION AND VISUALIZATION OF RESULTS} \cr
       \code{\link{plot_profile}}
       \bold{Visualization for Model Selection/Validation} \cr
-            Function for plotting the cross-validated model selection/tuning profiles of a \code{sbh} object. 
+            End-user function for plotting the cross-validated model selection/tuning profiles of a \code{sbh} object. 
             It uses the user's choice of cross-validation criterion statistics among the Log Hazard Ratio (LHR), 
             Log-Rank Test (LRT) or Concordance Error Rate (CER). The function plots (as it applies) both profiles 
             of cross-validation criterion as a function of variables screening size (cardinal subset of top-screened 
@@ -123,17 +127,17 @@
             of the peeling sequence in the inner loop of the PRSP or PRGSP algorithm).\cr
       \code{\link{plot_traj}}
       \bold{Visualization of Peeling Trajectories/Profiles} \cr
-            Function for plotting the cross-validated peeling trajectories/profiles of a \code{sbh} object.
+            End-user function for plotting the cross-validated peeling trajectories/profiles of a \code{sbh} object.
             Applies to the user-specified covariates among the pre-selected ones and all other statistical quantities of interest
             at each iteration of the peeling sequence (inner loop of our PRSP or PRGSP algorithm). \cr
       \code{\link{plot_trace}}
       \bold{Visualization of Covariates Traces} \cr
-            Function for plotting the cross-validated covariates traces of a \code{sbh} object.
+            End-user function for plotting the cross-validated covariates traces of a \code{sbh} object.
             Plot the cross-validated modal trace curves of covariate importance and covariate usage of the user-specified 
             covariates among the pre-selected ones at each iteration of the peeling sequence (inner loop of our PRSP or PRGSP algorithm). \cr
       \code{\link{plot_km}}
       \bold{Visualization of Survival Distributions} \cr
-            Function for plotting the cross-validated survival distributions of a \code{sbh} object. It plots the 
+            End-user function for plotting the cross-validated survival distributions of a \code{sbh} object. It plots the 
             cross-validated Kaplan-Meir estimates of survival distributions between the highest risk (inbox) versus
             lower-risk (outbox) groups of observations (PRSP), or between the two specified fixed groups (PRGSP), 
             if this option is used. The plot is done for a given peeling step (or number of steps) of the peeling sequence
@@ -182,7 +186,7 @@
             This dataset represents a situation where the number of covariates dominates the number of complete observations, 
             or \eqn{p >> n} case. See dataset documentation for more details.\cr
     }
-    Known Bugs/Problems : None at this time.
+    Known Bugs/Problems : None reported at this time.
 }
 
 \author{
