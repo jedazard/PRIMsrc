@@ -100,14 +100,14 @@ sbh <- function(X,
   eval(parse( text=unlist(strsplit(x=cvarg, split=",")) ))
   
   # Evaluating ancillary SBH parameters
-  vscons=control$vscons
-  decimals=control$decimals
-  onese=control$onese
-  probval=control$probval
-  timeval=control$timeval
-  lag=control$lag
-  span=control$span
-  degree=control$degree
+  vscons <- control$vscons
+  decimals <- control$decimals
+  onese <- control$onese
+  probval <- control$probval
+  timeval <- control$timeval
+  lag <- control$lag
+  span <- control$span
+  degree <- control$degree
   
   # Checking Inputs of Parameters
   if ((!is.wholenumber(B)) || (B <= 0)) {
@@ -488,7 +488,7 @@ sbh <- function(X,
           CV.nsteps.1se <- NA
         } else {
           w.signi <- max(which(CV.stepprofiles.pval == min(CV.stepprofiles.pval, na.rm = TRUE)))
-          w.local <- zeroslope(y=CV.stepprofiles.mean, x=1:CV.maxsteps, lag=2, span=0.10, degree=2, family="gaussian", minimum=FALSE)
+          w.local <- zeroslope(y=CV.stepprofiles.mean, x=1:CV.maxsteps, lag=lag, span=span, degree=degree, family="gaussian", minimum=FALSE)
           CV.nsteps.opt <- min(w.local, w.signi, na.rm=TRUE)
           w <- (CV.stepprofiles.mean >= CV.stepprofiles.mean[CV.nsteps.opt]-CV.stepprofiles.se[CV.nsteps.opt])
           if (all(is.na(w)) || is.empty(w)) {
@@ -519,7 +519,7 @@ sbh <- function(X,
           CV.nsteps.1se <- NA
         } else {
           w.signi <- max(which(CV.stepprofiles.pval == min(CV.stepprofiles.pval, na.rm = TRUE)))
-          w.local <- zeroslope(y=CV.stepprofiles.mean, x=1:CV.maxsteps, lag=2, span=0.10, degree=2, family="gaussian", minimum=FALSE)
+          w.local <- zeroslope(y=CV.stepprofiles.mean, x=1:CV.maxsteps, lag=lag, span=span, degree=degree, family="gaussian", minimum=FALSE)
           CV.nsteps.opt <- min(w.local, w.signi, na.rm=TRUE)
           w <- (CV.stepprofiles.mean >= CV.stepprofiles.mean[CV.nsteps.opt]-CV.stepprofiles.se[CV.nsteps.opt])
           if (all(is.na(w)) || is.empty(w)) {
@@ -550,7 +550,7 @@ sbh <- function(X,
           CV.nsteps.1se <- NA
         } else {
           w.signi <- max(which(CV.stepprofiles.pval == min(CV.stepprofiles.pval, na.rm = TRUE)))
-          w.local <- zeroslope(y=CV.stepprofiles.mean, x=1:CV.maxsteps, lag=2, span=0.10, degree=2, family="gaussian", minimum=TRUE)
+          w.local <- zeroslope(y=CV.stepprofiles.mean, x=1:CV.maxsteps, lag=lag, span=span, degree=degree, family="gaussian", minimum=TRUE)
           CV.nsteps.opt <- min(w.local, w.signi, na.rm=TRUE)
           w <- (CV.stepprofiles.mean <= CV.stepprofiles.mean[CV.nsteps.opt]+CV.stepprofiles.se[CV.nsteps.opt])
           if (all(is.na(w)) || is.empty(w)) {
