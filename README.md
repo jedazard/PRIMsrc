@@ -1,5 +1,5 @@
 # PRIMsrc
-Bump Hunting by Patient Rule Induction Method for Survival, Regression, and Classification of high-dimensional data.
+Bump Hunting by Patient Rule Induction Method for Survival, Regression and Classification in a multivariate setting and in high-dimensional data.
 
 
 ===============
