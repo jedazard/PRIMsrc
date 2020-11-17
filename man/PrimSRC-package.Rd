@@ -4,7 +4,7 @@
 
 \docType{package}
 
-\title{Bump Hunting by Patient Rule Induction Method in Survival, Regression, and Classification settings}
+\title{Bump Hunting by Patient Rule Induction Method for Survival, Regression and Classification in a multivariate setting and in high-dimensional data}
 
 \description{
     "Bump Hunting" (BH) refers to the procedure of mapping out a local region of the multi-dimensional input space where a target function of interest, 
