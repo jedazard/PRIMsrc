@@ -5,7 +5,7 @@ Bump Hunting by Patient Rule Induction Method for Survival, Regression, and Clas
 ===============
 ### Description
 
-"Bump Hunting" (BH) refers to the procedure of mapping out a local region of the multi-dimensional input space where a target function of interest, 
+"Bump Hunting" (BH) refers to the task of mapping out a local region of the multi-dimensional input space where a target function of interest, 
 usually unknown, assumes smaller or larger values than its average over the entire space. In general, the region _R_ could be any smooth shape 
 (e.g. a convex hull) possibly disjoint.
     
@@ -65,7 +65,7 @@ between master and worker processes: 'Socket' or  'Message-Passing Interface' ('
 ============
 ### Branches
 
-This branch (master) is the  default one, that hosts the current development release (version 0.8.3) of the  "Survival Bump Hunting" (SBH)
+This branch (master) is the  default one, that hosts the current development release (version 0.9.0) of the  "Survival Bump Hunting" (SBH)
 (or "Group Survival Bump Hunting" (GSBH)) procedure. Note that `PRIMsrc` is still a non-production release and that version 0.8.3 implements 
 significant user-visible changes. Check details of new features, changes, and bug fixes in the "Usage" section below.
 
@@ -98,7 +98,7 @@ CRAN downloads in the last week:
 ================
 ### Requirements
 
-PRIMsrc (>= 0.8.3) requires R-3.5.0 (2018-04-23). It was built and tested under R version 4.0.3 (2020-10-10) and Travis CI. 
+PRIMsrc (>= 0.9.0) requires R-3.5.0 (2018-04-23). It was built and tested under R version 4.0.3 (2020-10-10) and Travis CI. 
 
 Installation has been tested on Windows, Linux, OSX and Solaris platforms. 
 
@@ -119,7 +119,7 @@ repository:
 install.packages("PRIMsrc")
 ```
 
-* Alternatively, you can install the most up-to-date development version (>= 0.8.3) of `PRIMsrc` from the [GitHub](https://github.com/jedazard/PRIMsrc) repository:
+* Alternatively, you can install the most up-to-date development version (>= 0.9.0) of `PRIMsrc` from the [GitHub](https://github.com/jedazard/PRIMsrc) repository:
 
 ```{r}
 install.packages("devtools")
