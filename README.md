@@ -5,7 +5,7 @@ Bump Hunting by Patient Rule Induction Method for Survival, Regression and Class
 ===============
 ### Description
 
-"Bump Hunting" (BH) refers to the procedure of mapping out a local region of the multi-dimensional input space where a target function of interest, 
+"Bump Hunting" (BH) refers to the task of mapping out a local region of the multi-dimensional input space where a target function of interest, 
 usually unknown, assumes smaller or larger values than its average over the entire space. In general, the region _R_ could be any smooth shape 
 (e.g. a convex hull) possibly disjoint.
     
