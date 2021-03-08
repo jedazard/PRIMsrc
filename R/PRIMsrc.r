@@ -1336,12 +1336,12 @@ plot.sbh <- function(x,
                   pch.group=pch.group, cex.group=cex.group, col.group=col.group,
                   add.caption.group=add.caption.group, text.caption.group=text.caption.group)
     } else if (device == "PS") {
-      path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
+      path <- normalizePath(path=path, winslash="\\", mustWork=FALSE)
       file <- paste(file, ".ps", sep="")
       cat("\nOUTPUT: \n")
       cat("Filename : ", file, "\n")
       cat("Directory: ", path, "\n")
-      postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
+      postscript(file=file.path(path, file, fsep=.Platform$file.sep), width=width, height=height, onefile=TRUE, horizontal=horizontal)
       scatterplot(object=x,
                   main=main,
                   toadd=toadd, toplot=toplot, 
@@ -1354,12 +1354,12 @@ plot.sbh <- function(x,
                   add.caption.group=add.caption.group, text.caption.group=text.caption.group)
       dev.off()
     } else if (device == "PDF") {
-      path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
+      path <- normalizePath(path=path, winslash="\\", mustWork=FALSE)
       file <- paste(file, ".pdf", sep="")
       cat("\nOUTPUT: \n")
       cat("Filename : ", file, "\n")
       cat("Directory: ", path, "\n")
-      pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
+      pdf(file=file.path(path, file, fsep=.Platform$file.sep), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
       scatterplot(object=x,
                   main=main,
                   toadd=toadd, toplot=toplot, 
@@ -1589,7 +1589,7 @@ plot_profile <- function(object,
         if (add.profiles) {
           matplot(t(varprofiles), type="l", axes=FALSE,
                   xlab="", ylab="", main="",
-                  ylim=ylimv, pch=pch, lty=1, lwd=lwd/4, cex=cex/4, ...)
+                  xlim=xlimv, ylim=ylimv, pch=pch, lty=1, lwd=lwd/4, cex=cex/4, ...)
           par(new=TRUE)
         }
         plot(x=msize, y=varprofiles.mean, type="b", axes=FALSE,
@@ -1644,7 +1644,7 @@ plot_profile <- function(object,
       if (add.profiles) {
         matplot(t(stepprofiles), type="l", axes=FALSE,
                 xlab="", ylab="", main="",
-                ylim=ylims, pch=pch, lty=1, lwd=lwd/4, cex=cex/4, ...)
+                xlim=xlims, ylim=ylims, pch=pch, lty=1, lwd=lwd/4, cex=cex/4, ...)
         par(new=TRUE)
       }
       plot(0:(Lm-1), stepprofiles.mean, type="b", axes=FALSE,
@@ -1680,24 +1680,24 @@ plot_profile <- function(object,
                   add.sd=add.sd, add.caption=add.caption, text.caption=text.caption, add.profiles=add.profiles,
                   pch=pch, col=col, lty=lty, lwd=lwd, cex=cex)
     } else if (device == "PS") {
-      path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
+      path <- normalizePath(path=path, winslash="\\", mustWork=FALSE)
       file <- paste(file, ".ps", sep="")
       cat("\nOUTPUT: \n")
       cat("Filename : ", file, "\n")
       cat("Directory: ", path, "\n")
-      postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
+      postscript(file=file.path(path, file, fsep=.Platform$file.sep), width=width, height=height, onefile=TRUE, horizontal=horizontal)
       cat("Device: ",  dev.cur(), "\n")
       profileplot(object=object, main=main, xlim=xlim, ylim=ylim,
                   add.sd=add.sd, add.caption=add.caption, text.caption=text.caption, add.profiles=add.profiles,
                   pch=pch, col=col, lty=lty, lwd=lwd, cex=cex)
       dev.off()
     } else if (device == "PDF") {
-      path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
+      path <- normalizePath(path=path, winslash="\\", mustWork=FALSE)
       file <- paste(file, ".pdf", sep="")
       cat("\nOUTPUT: \n")
       cat("Filename : ", file, "\n")
       cat("Directory: ", path, "\n")
-      pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
+      pdf(file=file.path(path, file, fsep=.Platform$file.sep), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
       cat("Device: ",  dev.cur(), "\n")
       profileplot(object=object, main=main, xlim=xlim, ylim=ylim,
                   add.sd=add.sd, add.caption=add.caption, text.caption=text.caption, add.profiles=add.profiles,
@@ -1911,12 +1911,12 @@ plot_traj <- function(object,
                cex=cex, add.caption=add.caption, text.caption=text.caption,
                nr=nr, nc=nc)
     } else if (device == "PS") {
-      path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
+      path <- normalizePath(path=path, winslash="\\", mustWork=FALSE)
       file <- paste(file, ".ps", sep="")
       cat("\nOUTPUT: \n")
       cat("Filename : ", file, "\n")
       cat("Directory: ", path, "\n")
-      postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
+      postscript(file=file.path(path, file, fsep=.Platform$file.sep), width=width, height=height, onefile=TRUE, horizontal=horizontal)
       cat("Device: ",  dev.cur(), "\n")
       trajplot(object=object,
                main=main,
@@ -1927,12 +1927,12 @@ plot_traj <- function(object,
                nr=nr, nc=nc)
       dev.off()
     } else if (device == "PDF") {
-      path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
+      path <- normalizePath(path=path, winslash="\\", mustWork=FALSE)
       file <- paste(file, ".pdf", sep="")
       cat("\nOUTPUT: \n")
       cat("Filename : ", file, "\n")
       cat("Directory: ", path, "\n")
-      pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
+      pdf(file=file.path(path, file, fsep=.Platform$file.sep), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
       cat("Device: ",  dev.cur(), "\n")
       trajplot(object=object,
                main=main,
@@ -2108,12 +2108,12 @@ plot_trace <- function(object,
                 col=col, lty=lty, lwd=lwd,
                 cex=cex, add.caption=add.caption, text.caption=text.caption)
     } else if (device == "PS") {
-      path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
+      path <- normalizePath(path=path, winslash="\\", mustWork=FALSE)
       file <- paste(file, ".ps", sep="")
       cat("\nOUTPUT: \n")
       cat("Filename : ", file, "\n")
       cat("Directory: ", path, "\n")
-      postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
+      postscript(file=file.path(path, file, fsep=.Platform$file.sep), width=width, height=height, onefile=TRUE, horizontal=horizontal)
       cat("Device: ",  dev.cur(), "\n")
       traceplot(object=object,
                 main=main, xlab=xlab, ylab=ylab,
@@ -2124,12 +2124,12 @@ plot_trace <- function(object,
                 cex=cex, add.caption=add.caption, text.caption=text.caption)
       dev.off()
     } else if (device == "PDF") {
-      path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
+      path <- normalizePath(path=path, winslash="\\", mustWork=FALSE)
       file <- paste(file, ".pdf", sep="")
       cat("\nOUTPUT: \n")
       cat("Filename : ", file, "\n")
       cat("Directory: ", path, "\n")
-      pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
+      pdf(file=file.path(path, file, fsep=.Platform$file.sep), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
       cat("Device: ",  dev.cur(), "\n")
       traceplot(object=object,
                 main=main, xlab=xlab, ylab=ylab,
@@ -2318,12 +2318,12 @@ plot_km <- function(object,
              add.caption=add.caption, text.caption=text.caption,
              nr=nr, nc=nc)
     } else if (device == "PS") {
-      path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
+      path <- normalizePath(path=path, winslash="\\", mustWork=FALSE)
       file <- paste(file, ".ps", sep="")
       cat("\nOUTPUT: \n")
       cat("Filename : ", file, "\n")
       cat("Directory: ", path, "\n")
-      postscript(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, horizontal=horizontal)
+      postscript(file=file.path(path, file, fsep=.Platform$file.sep), width=width, height=height, onefile=TRUE, horizontal=horizontal)
       cat("Device: ",  dev.cur(), "\n")
       kmplot(object=object,
              main=main, xlab=xlab, ylab=ylab,
@@ -2334,12 +2334,12 @@ plot_km <- function(object,
              nr=nr, nc=nc)
       dev.off()
     } else if (device == "PDF") {
-      path <- normalizePath(path=paste(path, "/", sep=""), winslash="\\", mustWork=FALSE)
+      path <- normalizePath(path=path, winslash="\\", mustWork=FALSE)
       file <- paste(file, ".pdf", sep="")
       cat("\nOUTPUT: \n")
       cat("Filename : ", file, "\n")
       cat("Directory: ", path, "\n")
-      pdf(file=paste(path, file, sep=""), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
+      pdf(file=file.path(path, file, fsep=.Platform$file.sep), width=width, height=height, onefile=TRUE, paper=ifelse(test=horizontal, yes="USr", no="US"))
       cat("Device: ",  dev.cur(), "\n")
       kmplot(object=object,
              main=main, xlab=xlab, ylab=ylab,
