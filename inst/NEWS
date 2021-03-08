@@ -290,7 +290,7 @@ PACKAGE INSTALLATION
 - Minor updates in documentation files (DESCRIPTION, NEWS, and README).
 - Built and tested under R version 3.5.1 (2018-07-02) and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2020-11-17
+Date   : 2021-03-08
 o RELEASE 0.9.0
 SIGNIFICANT USER-VISIBLE CHANGES
 - New submission to CRAN after package was archived by CRAN on 2020-08-26 due to reverse dependency 
@@ -311,7 +311,7 @@ BUG FIXES
   (formal parameter not missing any more).
 - Corrected handling and return of p-values in the case of peeling criterion `grp`.  
 - Corrected handling of argument `proj` in S3-generic `plot()` function, and changed default values.
-- Correction of minor axis display in S3-generic `plot()` function.
+- Correction of minor issues in plotting functions.
 - Corrected field '\usage{data(...)}' in Rd manual files.
 UTILITIES
 - Improved management of the cross-validation criterion.
