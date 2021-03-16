@@ -20,17 +20,13 @@
           ci = TRUE,
           precision = 1e-3,
           mark = 3,
-          col = ifelse(test = object$cvarg$peelcriterion != "grp", 
-                       yes = c(1,2), 
-                       no = c(3,4)), 
+          col = c(1,2),
           lty = 1,
           lwd = 0.5,
           cex = 0.5,
           steps = 1:object$cvfit$cv.nsteps,
           add.caption = TRUE,
-          text.caption = ifelse(test = object$cvarg$peelcriterion != "grp", 
-                                yes = c("outbox","inbox"), 
-                                no = levels(object$groups)), 
+          text.caption = c("outbox","inbox"), 
           nr = 3, 
           nc = 4,
           device = NULL, 
@@ -71,8 +67,7 @@
   }
   \item{col}{
     \code{Integer} scalar specifying the color of the inbox and outbox curves 
-    (Defaults to \code{c(1,2)}), or of the two groups (Defaults to \code{c(3,4)}), 
-    depending on \code{object$cvarg$peelcriterion}.
+    (Defaults to \code{c(1,2)}).
   }
   \item{lty}{
     \code{Integer} scalar. Line type for the survival curve. 
@@ -97,8 +92,7 @@
   }
   \item{text.caption}{
     \code{Character} \code{vector} of caption content. 
-    Defaults to \{"outbox","inbox"\}, or \code{levels(object$groups)}, 
-    depending on \code{object$cvarg$peelcriterion}.
+    Defaults to \{"outbox","inbox"\}.
   }
   \item{nr}{
     \code{Integer} scalar of the number of rows in the plot. 
