@@ -3688,7 +3688,7 @@ cv.comb.box <- function(X,
     boxind1 <- 1*boxind
     wb <- which(boxind1 == 1)
     if (peelcriterion != "grp") {
-      if (l == 1) {
+      if ((sum(boxind1, na.rm=TRUE) == length(boxind1)) || (sum(boxind1, na.rm=TRUE) == 0)) {
         surv.formula <- (survival::Surv(CV.times, CV.status) ~ 1 + boxind1)
         surv.fit <- survival::survfit(surv.formula, na.action=na.exclude)
         timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
@@ -3724,7 +3724,7 @@ cv.comb.box <- function(X,
         ind.rem <- c(ind.rem, l)
       }
     } else if (peelcriterion == "grp") {
-      if (l == 1) {
+      if ((sum(boxind1[wg], na.rm=TRUE) == length(boxind1[wg])) || (sum(boxind1[wg], na.rm=TRUE) == 0)) {  
         surv.formula <- (survival::Surv(CV.times, CV.status) ~ 1 + boxind1)
         surv.fit <- survival::survfit(surv.formula, na.action=na.exclude)
         timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
@@ -4065,7 +4065,7 @@ cv.ave.peel <- function(traindata,
     boxind1 <- 1*boxind
     wb <- which(boxind1 == 1)
     if (peelcriterion != "grp") {
-      if (l == 1) {
+      if ((sum(boxind1, na.rm=TRUE) == length(boxind1)) || (sum(boxind1, na.rm=TRUE) == 0)) {
         surv.formula <- (survival::Surv(testtime, teststatus) ~ 1 + boxind1)
         surv.fit <- survival::survfit(surv.formula, na.action=na.exclude)
         timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
@@ -4101,7 +4101,7 @@ cv.ave.peel <- function(traindata,
         ind.rem <- c(ind.rem, l)
       }
     } else if (peelcriterion == "grp") {
-      if (l == 1) {
+      if ((sum(boxind1, na.rm=TRUE) == length(boxind1)) || (sum(boxind1, na.rm=TRUE) == 0)) {
         surv.formula <- (survival::Surv(testtime, teststatus) ~ 1 + boxind1)
         surv.fit <- survival::survfit(surv.formula, na.action=na.exclude)
         timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
