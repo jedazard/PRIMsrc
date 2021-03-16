@@ -455,7 +455,6 @@ sbh <- function(X,
       cat("Adjusted maximum peeling length:", CV.maxsteps, "\n")
       
       # Box membership indicator vector of all observations at each step, adjusted to the maximum peeling length
-      cat("Generating box memberships adjusted to the maximum peeling length ...\n")
       CV.boxind <- CV.boxind[1:CV.maxsteps,,drop=FALSE]
       
       # Get the box sample size and support based on box membership
@@ -465,31 +464,22 @@ sbh <- function(X,
       names(CV.boxind.support) <- paste("step", 0:(CV.maxsteps-1), sep="")
       
       # Profiles of cross-validation criterion and cross-validated peeling length from all replicates
-      cat("Generating profiles of cross-validation criterion and cross-validated peeling length from all replicates ...\n")
       if (cvcriterion == "lhr") {
         if (peelcriterion != "grp") {
           CV.stepprofiles <- list2mat(list=CV.lhr.list, fill=NA, coltrunc=CV.maxsteps)
-          CV.lrtprofiles <- list2mat(list=CV.lrt.list, fill=NA, coltrunc=CV.maxsteps)
         } else if (peelcriterion == "grp") {
           CV.stepprofiles <- list2mat(list=CV.grp.lhr.list, fill=NA, coltrunc=CV.maxsteps)
-          CV.lrtprofiles <- list2mat(list=CV.grp.lrt.list, fill=NA, coltrunc=CV.maxsteps)
         } else {
           stop("Invalid peeling criterion. Exiting ...\n\n")
         }
         colnames(CV.stepprofiles) <- paste("step", 0:(CV.maxsteps-1), sep="")
-        colnames(CV.lrtprofiles) <- paste("step", 0:(CV.maxsteps-1), sep="")
         CV.stepprofiles.mean <- apply(CV.stepprofiles, 2, mean, na.rm=TRUE)
         CV.stepprofiles.se <- apply(CV.stepprofiles, 2, sd, na.rm=TRUE)
-        CV.lrtprofiles.mean <- apply(CV.lrtprofiles, 2, mean, na.rm=TRUE)
-        CV.stepprofiles.pval <- 1 - pchisq(q=CV.lrtprofiles.mean, df=1)
-        if (all(is.na(CV.stepprofiles.mean)) || any(is.nan(CV.stepprofiles.mean)) || is.empty(CV.stepprofiles.mean) ||
-            all(is.na(CV.stepprofiles.pval)) || any(is.nan(CV.stepprofiles.pval)) || is.empty(CV.stepprofiles.pval)) {
+        if (all(is.na(CV.stepprofiles.mean)) || all(is.nan(CV.stepprofiles.mean)) || is.empty(CV.stepprofiles.mean)) {
           CV.nsteps.opt <- NA
           CV.nsteps.1se <- NA
         } else {
-          w.signi <- max(which(CV.stepprofiles.pval == min(CV.stepprofiles.pval, na.rm = TRUE)))
-          w.local <- zeroslope(y=CV.stepprofiles.mean, x=1:CV.maxsteps, lag=lag, span=span, degree=degree, family="gaussian", minimum=FALSE)
-          CV.nsteps.opt <- min(w.local, w.signi, na.rm=TRUE)
+          CV.nsteps.opt <-zeroslope(y=CV.stepprofiles.mean, x=1:CV.maxsteps, lag=lag, span=span, degree=degree, family="gaussian", minimum=FALSE)
           w <- (CV.stepprofiles.mean >= CV.stepprofiles.mean[CV.nsteps.opt]-CV.stepprofiles.se[CV.nsteps.opt])
           if (all(is.na(w)) || is.empty(w)) {
             CV.nsteps.1se <- NA
@@ -500,27 +490,19 @@ sbh <- function(X,
       } else if (cvcriterion == "lrt") {
         if (peelcriterion != "grp") {
           CV.stepprofiles <- list2mat(list=CV.lrt.list, fill=NA, coltrunc=CV.maxsteps)
-          CV.lrtprofiles <- list2mat(list=CV.lrt.list, fill=NA, coltrunc=CV.maxsteps)
         } else if (peelcriterion == "grp") {
           CV.stepprofiles <- list2mat(list=CV.grp.lrt.list, fill=NA, coltrunc=CV.maxsteps)
-          CV.lrtprofiles <- list2mat(list=CV.grp.lrt.list, fill=NA, coltrunc=CV.maxsteps)
         } else {
           stop("Invalid peeling criterion. Exiting ...\n\n")
         }
         colnames(CV.stepprofiles) <- paste("step", 0:(CV.maxsteps-1), sep="")
-        colnames(CV.lrtprofiles) <- paste("step", 0:(CV.maxsteps-1), sep="")
         CV.stepprofiles.mean <- apply(CV.stepprofiles, 2, mean, na.rm=TRUE)
         CV.stepprofiles.se <- apply(CV.stepprofiles, 2, sd, na.rm=TRUE)
-        CV.lrtprofiles.mean <- apply(CV.lrtprofiles, 2, mean, na.rm=TRUE)
-        CV.stepprofiles.pval <- 1 - pchisq(q=CV.lrtprofiles.mean, df=1)
-        if (all(is.na(CV.stepprofiles.mean)) || any(is.nan(CV.stepprofiles.mean)) || is.empty(CV.stepprofiles.mean) ||
-            all(is.na(CV.stepprofiles.pval)) || any(is.nan(CV.stepprofiles.pval)) || is.empty(CV.stepprofiles.pval)) {
+        if (all(is.na(CV.stepprofiles.mean)) || all(is.nan(CV.stepprofiles.mean)) || is.empty(CV.stepprofiles.mean)) {
           CV.nsteps.opt <- NA
           CV.nsteps.1se <- NA
         } else {
-          w.signi <- max(which(CV.stepprofiles.pval == min(CV.stepprofiles.pval, na.rm = TRUE)))
-          w.local <- zeroslope(y=CV.stepprofiles.mean, x=1:CV.maxsteps, lag=lag, span=span, degree=degree, family="gaussian", minimum=FALSE)
-          CV.nsteps.opt <- min(w.local, w.signi, na.rm=TRUE)
+          CV.nsteps.opt <- zeroslope(y=CV.stepprofiles.mean, x=1:CV.maxsteps, lag=lag, span=span, degree=degree, family="gaussian", minimum=FALSE)
           w <- (CV.stepprofiles.mean >= CV.stepprofiles.mean[CV.nsteps.opt]-CV.stepprofiles.se[CV.nsteps.opt])
           if (all(is.na(w)) || is.empty(w)) {
             CV.nsteps.1se <- NA
@@ -531,27 +513,19 @@ sbh <- function(X,
       } else if (cvcriterion == "cer") {
         if (peelcriterion != "grp") {
           CV.stepprofiles <- list2mat(list=CV.cer.list, fill=NA, coltrunc=CV.maxsteps)
-          CV.lrtprofiles <- list2mat(list=CV.lrt.list, fill=NA, coltrunc=CV.maxsteps)
         } else if (peelcriterion == "grp") {
           CV.stepprofiles <- list2mat(list=CV.grp.cer.list, fill=NA, coltrunc=CV.maxsteps)
-          CV.lrtprofiles <- list2mat(list=CV.grp.lrt.list, fill=NA, coltrunc=CV.maxsteps)
         } else {
           stop("Invalid peeling criterion. Exiting ...\n\n")
         }
         colnames(CV.stepprofiles) <- paste("step", 0:(CV.maxsteps-1), sep="")
-        colnames(CV.lrtprofiles) <- paste("step", 0:(CV.maxsteps-1), sep="")
         CV.stepprofiles.mean <- apply(CV.stepprofiles, 2, mean, na.rm=TRUE)
         CV.stepprofiles.se <- apply(CV.stepprofiles, 2, sd, na.rm=TRUE)
-        CV.lrtprofiles.mean <- apply(CV.lrtprofiles, 2, mean, na.rm=TRUE)
-        CV.stepprofiles.pval <- 1 - pchisq(q=CV.lrtprofiles.mean, df=1)
-        if (all(is.na(CV.stepprofiles.mean)) || any(is.nan(CV.stepprofiles.mean)) || is.empty(CV.stepprofiles.mean) ||
-            all(is.na(CV.stepprofiles.pval)) || any(is.nan(CV.stepprofiles.pval)) || is.empty(CV.stepprofiles.pval)) {
+        if (all(is.na(CV.stepprofiles.mean)) || all(is.nan(CV.stepprofiles.mean)) || is.empty(CV.stepprofiles.mean)) {
           CV.nsteps.opt <- NA
           CV.nsteps.1se <- NA
         } else {
-          w.signi <- max(which(CV.stepprofiles.pval == min(CV.stepprofiles.pval, na.rm = TRUE)))
-          w.local <- zeroslope(y=CV.stepprofiles.mean, x=1:CV.maxsteps, lag=lag, span=span, degree=degree, family="gaussian", minimum=TRUE)
-          CV.nsteps.opt <- min(w.local, w.signi, na.rm=TRUE)
+          CV.nsteps.opt <- zeroslope(y=CV.stepprofiles.mean, x=1:CV.maxsteps, lag=lag, span=span, degree=degree, family="gaussian", minimum=TRUE)
           w <- (CV.stepprofiles.mean <= CV.stepprofiles.mean[CV.nsteps.opt]+CV.stepprofiles.se[CV.nsteps.opt])
           if (all(is.na(w)) || is.empty(w)) {
             CV.nsteps.1se <- NA
@@ -574,6 +548,18 @@ sbh <- function(X,
         success <- FALSE
         cat("Could not find any bump variables in this dataset. Exiting ... \n\n", sep="")
         
+        # List of CV profiles
+        CV.profiles <- list("cv.varprofiles"=CV.varprofiles,
+                            "cv.varprofiles.mean"=CV.varprofiles.mean,
+                            "cv.varprofiles.se"=CV.varprofiles.se,
+                            "cv.varset.opt"=CV.varset.opt,
+                            "cv.varset.1se"=CV.varset.1se,
+                            "cv.stepprofiles"=NA,
+                            "cv.stepprofiles.mean"=NA,
+                            "cv.stepprofiles.se"=NA,
+                            "cv.nsteps.opt"=NA,
+                            "cv.nsteps.1se"=NA)
+        
         # List of CV fitted values
         CV.fit <- list("cv.maxsteps"=CV.maxsteps,
                        "cv.nsteps"=CV.nsteps,
@@ -593,7 +579,6 @@ sbh <- function(X,
         cat("Cross-validated peeling length:", CV.nsteps, "\n")
         
         # Box membership indicator vector of all observations at each step, adjusted to the cross-validated peeling length
-        cat("Generating box memberships adjusted to the cross-validated peeling length ...\n")
         CV.boxind <- CV.boxind[1:CV.nsteps,,drop=FALSE]
         
         # Get the box sample size and support based on `CV.boxind`
@@ -622,6 +607,18 @@ sbh <- function(X,
           success <- FALSE
           cat("Could not find any bump variables in this dataset. Exiting ... \n\n", sep="")
           
+          # List of CV profiles
+          CV.profiles <- list("cv.varprofiles"=CV.varprofiles,
+                              "cv.varprofiles.mean"=CV.varprofiles.mean,
+                              "cv.varprofiles.se"=CV.varprofiles.se,
+                              "cv.varset.opt"=CV.varset.opt,
+                              "cv.varset.1se"=CV.varset.1se,
+                              "cv.stepprofiles"=NA,
+                              "cv.stepprofiles.mean"=NA,
+                              "cv.stepprofiles.se"=NA,
+                              "cv.nsteps.opt"=NA,
+                              "cv.nsteps.1se"=NA)
+          
           # List of CV fitted values
           CV.fit <- list("cv.maxsteps"=CV.maxsteps,
                          "cv.nsteps"=CV.nsteps,
@@ -630,7 +627,7 @@ sbh <- function(X,
                          "cv.boxind.support"=CV.boxind.support,
                          "cv.rules"=NA,
                          "cv.screened"=NA,
-                         "cv.trace"=CV.trace,
+                         "cv.trace"=NA,
                          "cv.sign"=NA,
                          "cv.used"=NA,
                          "cv.stats"=NA,
@@ -649,6 +646,18 @@ sbh <- function(X,
             success <- FALSE
             cat("Could not find any bump variables in this dataset. Exiting ... \n\n", sep="")
             
+            # List of CV profiles
+            CV.profiles <- list("cv.varprofiles"=CV.varprofiles,
+                                "cv.varprofiles.mean"=CV.varprofiles.mean,
+                                "cv.varprofiles.se"=CV.varprofiles.se,
+                                "cv.varset.opt"=CV.varset.opt,
+                                "cv.varset.1se"=CV.varset.1se,
+                                "cv.stepprofiles"=NA,
+                                "cv.stepprofiles.mean"=NA,
+                                "cv.stepprofiles.se"=NA,
+                                "cv.nsteps.opt"=NA,
+                                "cv.nsteps.1se"=NA)
+            
             # List of CV fitted values
             CV.fit <- list("cv.maxsteps"=CV.maxsteps,
                            "cv.nsteps"=CV.nsteps,
@@ -657,11 +666,12 @@ sbh <- function(X,
                            "cv.boxind.support"=CV.boxind.support,
                            "cv.rules"=NA,
                            "cv.screened"=NA,
-                           "cv.trace"=CV.trace,
+                           "cv.trace"=NA,
                            "cv.sign"=NA,
                            "cv.used"=NA,
                            "cv.stats"=NA,
-                           "cv.pval"=NA)            
+                           "cv.pval"=NA)
+
           } else {
             
             success <- TRUE
@@ -2169,17 +2179,13 @@ plot_trace <- function(object,
 #                             ci=TRUE,
 #                             precision=1e-3, 
 #                             mark=3,
-#                             col=ifelse(test=object$cvarg$peelcriterion != "grp", 
-#                                        yes=c(1,2), 
-#                                        no=c(3,4)), 
+#                             col=c(1,2),
 #                             lty=1, 
 #                             lwd=0.5, 
 #                             cex=0.5,
 #                             steps=1:object$cvfit$cv.nsteps,
 #                             add.caption=TRUE,
-#                             text.caption=ifelse(test=object$cvarg$peelcriterion != "grp", 
-#                                                 yes=c("outbox","inbox"), 
-#                                                 no=levels(object$groups)), 
+#                             text.caption=c("outbox","inbox"), 
 #                             nr=3, 
 #                             nc=4,
 #                             device=NULL, 
@@ -2210,17 +2216,13 @@ plot_km <- function(object,
                     ci=TRUE,	
                     precision=1e-3,
                     mark=3,
-                    col=ifelse(test=object$cvarg$peelcriterion != "grp", 
-                               yes=c(1,2), 
-                               no=c(3,4)), 
+                    col=c(1,2), 
                     lty=1,
                     lwd=0.5,
                     cex=0.5,
                     steps=1:object$cvfit$cv.nsteps,
                     add.caption=TRUE,
-                    text.caption=ifelse(test=object$cvarg$peelcriterion != "grp", 
-                                        yes=c("outbox","inbox"), 
-                                        no=levels(object$groups)), 
+                    text.caption=c("outbox","inbox"), 
                     nr=3,
                     nc=4,
                     device=NULL,
@@ -2249,21 +2251,24 @@ plot_km <- function(object,
         par(mfrow=c(nr, nc), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 0.0, 1.5), mgp=c(1.5, 0.5, 0))
       }
       
+      groups <- object$groups
+      grp1 <- 1*(groups == levels(groups)[1])
+      wg <- which(grp1 == 1)
       peelcriterion <- object$cvarg$peelcriterion
       y <- object$y
       delta <- object$delta
       L <- length(steps)
       for (l in 1:L) {
         i <- steps[l]
-        boxind <- object$cvfit$cv.boxind[i,]
+        box1 <- 1 * object$cvfit$cv.boxind[i,]
         if (peelcriterion != "grp") {
-          ng <- length(unique(boxind[!is.na(boxind)]))
+          ng <- length(unique(box1[!is.na(box1)]))
           if (ng == 1) {
-            boxind <- 1*boxind
+            box1 <- 1*box1
           } else {
-            boxind <- 2 - 1*boxind
+            box1 <- 2 - 1*box1
           }
-          surv <- survival::survfit(survival::Surv(time=y, event=delta) ~ 1 + boxind)
+          surv <- survival::survfit(survival::Surv(time=y, event=delta) ~ 1 + box1)
           if (ci) {
             plot(surv, main="", conf.int=TRUE, mark.time=FALSE, mark=NA, lty=c(2,2), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=cex, xlab=xlab, ylab=ylab, ...)
             par(new=TRUE)
@@ -2273,10 +2278,7 @@ plot_km <- function(object,
             legend(x="topright", inset=0.01, legend=rev(text.caption), lty=c(lty,lty), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=0.9*cex)
           }
         } else if (peelcriterion == "grp") {
-          groups <- object$groups
-          grp1 <- 1*(groups == levels(groups)[1])
-          wb <- which(boxind == 1)
-          surv <- survival::survfit(survival::Surv(time=y[wb], event=delta[wb]) ~ 1 + grp1[wb])
+          surv <- survival::survfit(formula=survival::Surv(time=y[wg], event=delta[wg]) ~ 1 + box1[wg], na.action="na.omit")
           if (ci) {
             plot(surv, main="", conf.int=TRUE, mark.time=FALSE, mark=NA, lty=c(2,2), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=cex, xlab=xlab, ylab=ylab, ...)
             par(new=TRUE)

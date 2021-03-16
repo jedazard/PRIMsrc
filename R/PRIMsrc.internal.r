@@ -3302,7 +3302,7 @@ cv.ave.box <- function(X,
         success <- TRUE
       }
     } else if (peelcriterion == "grp") {
-      if (all(is.na(CV.lhr)) || all(is.nan(CV.lhr)) || all(is.na(CV.grp.lhr)) || all(is.nan(CV.grp.lhr))) {
+      if (all(is.na(CV.grp.lhr)) || all(is.nan(CV.grp.lhr))) {
         success <- FALSE
         CV.maxsteps <- NA
         CV.support <- rep(x=NA, times=CV.Lm)
@@ -3355,7 +3355,7 @@ cv.ave.box <- function(X,
         success <- TRUE
       }
     } else if (peelcriterion == "grp") {
-      if (all(is.na(CV.lrt)) || all(is.nan(CV.lrt)) || all(is.na(CV.grp.lrt)) || all(is.nan(CV.grp.lrt))) {
+      if (all(is.na(CV.grp.lrt)) || all(is.nan(CV.grp.lrt))) {
         success <- FALSE
         CV.maxsteps <- NA
         CV.support <- rep(x=NA, times=CV.Lm)
@@ -3408,7 +3408,7 @@ cv.ave.box <- function(X,
         success <- TRUE
       }
     } else if (peelcriterion == "grp") {
-      if (all(is.na(CV.cer)) || all(is.nan(CV.cer)) || all(is.na(CV.grp.cer)) || all(is.nan(CV.grp.cer))) {
+      if (all(is.na(CV.grp.cer)) || all(is.nan(CV.grp.cer))) {
         success <- FALSE
         CV.maxsteps <- NA
         CV.support <- rep(x=NA, times=CV.Lm)
@@ -3682,13 +3682,15 @@ cv.comb.box <- function(X,
   ind.rem <- numeric(0)
   grpind <- (groups == levels(groups)[1])
   grpind1 <- 1*grpind
+  wg <- which(grpind1 == 1)
   for (l in 1:CV.Lm) {
     boxind <- CV.boxind[l,]
     boxind1 <- 1*boxind
     wb <- which(boxind1 == 1)
     if (peelcriterion != "grp") {
       if (l == 1) {
-        surv.fit <- survival::survfit(survival::Surv(CV.times[boxind], CV.status[boxind]) ~ 1, na.action=na.exclude)
+        surv.formula <- (survival::Surv(CV.times, CV.status) ~ 1 + boxind1)
+        surv.fit <- survival::survfit(surv.formula, na.action=na.exclude)
         timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
         probmat[l, (1:length(surv.fit$surv))] <- surv.fit$surv
         CV.lhr[l] <- 0
@@ -3697,11 +3699,11 @@ cv.comb.box <- function(X,
         CV.grp.lhr[l] <- NA
         CV.grp.lrt[l] <- NA
         CV.grp.cer[l] <- NA
-      } else if ((sum(boxind, na.rm=TRUE) != length(boxind[!is.na(boxind)])) && (sum(boxind, na.rm=TRUE) != 0)) {
-        surv.fit <- survival::survfit(survival::Surv(CV.times[boxind], CV.status[boxind]) ~ 1, na.action=na.exclude)
+      } else if ((sum(boxind1, na.rm=TRUE) != length(boxind1)) && (sum(boxind1, na.rm=TRUE) != 0)) {
+        surv.formula <- (survival::Surv(CV.times, CV.status) ~ 1 + boxind1)
+        surv.fit <- survival::survfit(surv.formula, na.action=na.exclude)
         timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
         probmat[l, (1:length(surv.fit$surv))] <- surv.fit$surv
-        surv.formula <- (survival::Surv(CV.times, CV.status) ~ 1 + boxind1)
         coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1, na.action=na.exclude, timefix=TRUE, method="efron")
         CV.lhr[l] <- coxobj$coef
         CV.lrt[l] <- survival::survdiff(surv.formula, na.action=na.exclude, rho=0)$chisq
@@ -3723,53 +3725,36 @@ cv.comb.box <- function(X,
       }
     } else if (peelcriterion == "grp") {
       if (l == 1) {
-        surv.fit <- survival::survfit(survival::Surv(CV.times, CV.status) ~ 1 + grpind1, na.action=na.exclude)
+        surv.formula <- (survival::Surv(CV.times, CV.status) ~ 1 + boxind1)
+        surv.fit <- survival::survfit(surv.formula, na.action=na.exclude)
         timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
         probmat[l, (1:length(surv.fit$surv))] <- surv.fit$surv
-        CV.lhr[l] <- 0
-        CV.lrt[l] <- 0
-        CV.cer[l] <- 1
-        surv.formula <- (survival::Surv(CV.times, CV.status) ~ 1 + grpind1)
+        CV.lhr[l] <- NA
+        CV.lrt[l] <- NA
+        CV.cer[l] <- NA
+        CV.grp.lhr[l] <- 0 
+        CV.grp.lrt[l] <- 0 
+        CV.grp.cer[l] <- 1
+      } else  if ((sum(boxind1[wg], na.rm=TRUE) != length(boxind1[wg])) && (sum(boxind1[wg], na.rm=TRUE) != 0)) {
+        surv.formula <- (survival::Surv(CV.times[wg], CV.status[wg]) ~ 1 + boxind1[wg])
+        surv.fit <- survival::survfit(surv.formula, na.action=na.exclude)
+        timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
+        probmat[l, (1:length(surv.fit$surv))] <- surv.fit$surv
+        CV.lhr[l] <- NA
+        CV.lrt[l] <- NA
+        CV.cer[l] <- NA
         coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1, na.action=na.exclude, timefix=TRUE, method="efron")
         CV.grp.lhr[l] <- coxobj$coef 
         CV.grp.lrt[l] <- survival::survdiff(surv.formula, na.action=na.exclude, rho=0)$chisq 
         predobj <- predict(object=coxobj, type="lp", reference="sample", na.action=na.exclude)
-        CV.grp.cer[l] <- Hmisc::rcorr.cens(x=predobj, S=survival::Surv(CV.times, CV.status))['C Index']
-      } else  if ((sum(grpind1[wb]) != length(grpind1[wb])) && (sum(grpind1[wb]) != 0)) {
-        if ((sum(boxind, na.rm=TRUE) != length(boxind[!is.na(boxind)])) && (sum(boxind, na.rm=TRUE) != 0)) {
-          surv.fit <- survival::survfit(survival::Surv(CV.times[wb], CV.status[wb]) ~ 1 + grpind1[wb], na.action=na.exclude)
-          timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
-          probmat[l, (1:length(surv.fit$surv))] <- surv.fit$surv
-          surv.formula <- (survival::Surv(CV.times, CV.status) ~ 1 + boxind1)
-          coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1, na.action=na.exclude, timefix=TRUE, method="efron")
-          CV.lhr[l] <- coxobj$coef
-          CV.lrt[l] <- survival::survdiff(surv.formula, na.action=na.exclude, rho=0)$chisq
-          predobj <- predict(object=coxobj, type="lp", reference="sample", na.action=na.exclude)
-          CV.cer[l] <- Hmisc::rcorr.cens(x=predobj, S=survival::Surv(CV.times, CV.status))['C Index']
-          surv.formula <- (survival::Surv(CV.times[wb], CV.status[wb]) ~ 1 + grpind1[wb])
-          coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1, na.action=na.exclude, timefix=TRUE, method="efron")
-          CV.grp.lhr[l] <- coxobj$coef 
-          CV.grp.lrt[l] <- survival::survdiff(surv.formula, na.action=na.exclude, rho=0)$chisq 
-          predobj <- predict(object=coxobj, type="lp", reference="sample", na.action=na.exclude)
-          CV.grp.cer[l] <- Hmisc::rcorr.cens(x=predobj, S=survival::Surv(CV.times[wb], CV.status[wb]))['C Index']
-        } else {
-          timemat[l, ] <- NA
-          probmat[l, ] <- NA
-          CV.lhr[l] <- NA
-          CV.lrt[l] <- NA
-          CV.cer[l] <- NA
-          CV.grp.lhr[l] <- NA
-          CV.grp.lrt[l] <- NA
-          CV.grp.cer[l] <- NA
-          ind.rem <- c(ind.rem, l)
-        }
+        CV.grp.cer[l] <- Hmisc::rcorr.cens(x=predobj, S=survival::Surv(CV.times[wg], CV.status[wg]))['C Index']
       } else {
         timemat[l, ] <- NA
         probmat[l, ] <- NA
         CV.lhr[l] <- NA
         CV.lrt[l] <- NA
         CV.cer[l] <- NA
-        CV.grp.lhr[l] <- NA 
+        CV.grp.lhr[l] <- NA
         CV.grp.lrt[l] <- NA
         CV.grp.cer[l] <- NA
         ind.rem <- c(ind.rem, l)
@@ -3832,7 +3817,7 @@ cv.comb.box <- function(X,
         success <- TRUE
       }
     } else if (peelcriterion == "grp") {
-      if (all(is.na(CV.lhr)) || all(is.nan(CV.lhr)) || all(is.na(CV.grp.lhr)) || all(is.nan(CV.grp.lhr))) {
+      if (all(is.na(CV.grp.lhr)) || all(is.nan(CV.grp.lhr))) {
         success <- FALSE
         CV.maxsteps <- NA
         CV.support <- rep(x=NA, times=CV.Lm)
@@ -3885,7 +3870,7 @@ cv.comb.box <- function(X,
         success <- TRUE
       }
     } else if (peelcriterion == "grp") {
-      if (all(is.na(CV.lrt)) || all(is.nan(CV.lrt)) || all(is.na(CV.grp.lrt)) || all(is.nan(CV.grp.lrt))) {
+      if (all(is.na(CV.grp.lrt)) || all(is.nan(CV.grp.lrt))) {
         success <- FALSE
         CV.maxsteps <- NA
         CV.support <- rep(x=NA, times=CV.Lm)
@@ -3938,7 +3923,7 @@ cv.comb.box <- function(X,
         success <- TRUE
       }
     } else if (peelcriterion == "grp") {
-      if (all(is.na(CV.cer)) || all(is.nan(CV.cer)) || all(is.na(CV.grp.cer)) || all(is.nan(CV.grp.cer))) {
+      if (all(is.na(CV.grp.cer)) || all(is.nan(CV.grp.cer))) {
         success <- FALSE
         CV.maxsteps <- NA
         CV.support <- rep(x=NA, times=CV.Lm)
@@ -4069,6 +4054,7 @@ cv.ave.peel <- function(traindata,
   ind.rem <- numeric(0)
   grpind <- (testgroups == levels(testgroups)[1])
   grpind1 <- 1*grpind
+  wg <- which(grpind1 == 1)
   for (l in 1:maxsteps) {
     # Extract the rule and sign as one vector
     boxcut <- peelobj$boxcut[l, ] * varsign
@@ -4080,7 +4066,8 @@ cv.ave.peel <- function(traindata,
     wb <- which(boxind1 == 1)
     if (peelcriterion != "grp") {
       if (l == 1) {
-        surv.fit <- survival::survfit(survival::Surv(testtime[boxind], teststatus[boxind]) ~ 1, na.action=na.exclude)
+        surv.formula <- (survival::Surv(testtime, teststatus) ~ 1 + boxind1)
+        surv.fit <- survival::survfit(surv.formula, na.action=na.exclude)
         timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
         probmat[l, (1:length(surv.fit$surv))] <- surv.fit$surv
         lhr <- 0
@@ -4089,11 +4076,11 @@ cv.ave.peel <- function(traindata,
         grplhr <- NA 
         grplrt <- NA
         grpcer <- NA
-      } else if ((sum(boxind, na.rm=TRUE) != length(boxind[!is.na(boxind)])) && (sum(boxind, na.rm=TRUE) != 0)) {
-        surv.fit <- survival::survfit(survival::Surv(testtime[boxind], teststatus[boxind]) ~ 1, na.action=na.exclude)
+      } else if ((sum(boxind1, na.rm=TRUE) != length(boxind1)) && (sum(boxind1, na.rm=TRUE) != 0)) {
+        surv.formula <- (survival::Surv(testtime, teststatus) ~ 1 + boxind1)
+        surv.fit <- survival::survfit(surv.formula, na.action=na.exclude)
         timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
         probmat[l, (1:length(surv.fit$surv))] <- surv.fit$surv
-        surv.formula <- (survival::Surv(testtime, teststatus) ~ 1 + boxind1)
         coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1, na.action=na.exclude, timefix=TRUE, method="efron")
         lhr <- coxobj$coef
         lrt <- survival::survdiff(surv.formula, na.action=na.exclude, rho=0)$chisq
@@ -4115,46 +4102,30 @@ cv.ave.peel <- function(traindata,
       }
     } else if (peelcriterion == "grp") {
       if (l == 1) {
-        surv.fit <- survival::survfit(survival::Surv(testtime, teststatus) ~ 1 + grpind1, na.action=na.exclude)
+        surv.formula <- (survival::Surv(testtime, teststatus) ~ 1 + boxind1)
+        surv.fit <- survival::survfit(surv.formula, na.action=na.exclude)
         timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
         probmat[l, (1:length(surv.fit$surv))] <- surv.fit$surv
-        lhr <- 0
-        lrt <- 0
-        cer <- 1
-        surv.formula <- (survival::Surv(testtime, teststatus) ~ 1 + grpind1)
+        lhr <- NA
+        lrt <- NA
+        cer <- NA
+        coxobj <- 
+        grplhr <- 0
+        grplrt <- 0 
+        grpcer <- 1
+      } else  if ((sum(boxind1, na.rm=TRUE) != length(boxind1)) && (sum(boxind1, na.rm=TRUE) != 0)) {
+        surv.formula <- (survival::Surv(testtime[wg], teststatus[wg]) ~ 1 + boxind1[wg])
+        surv.fit <- survival::survfit(surv.formula, na.action=na.exclude)
+        timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
+        probmat[l, (1:length(surv.fit$surv))] <- surv.fit$surv
+        lhr <- NA
+        lrt <- NA
+        cer <- NA
         coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1, na.action=na.exclude, timefix=TRUE, method="efron")
         grplhr <- coxobj$coef
         grplrt <- survival::survdiff(surv.formula, na.action=na.exclude, rho=0)$chisq 
         predobj <- predict(object=coxobj, type="lp", reference="sample", na.action=na.exclude)
-        grpcer <- Hmisc::rcorr.cens(x=predobj, S=survival::Surv(testtime, teststatus))['C Index']
-      } else  if ((sum(grpind1[wb]) != length(grpind1[wb])) && (sum(grpind1[wb]) != 0)) {
-        if ((sum(boxind, na.rm=TRUE) != length(boxind[!is.na(boxind)])) && (sum(boxind, na.rm=TRUE) != 0)) {
-          surv.fit <- survival::survfit(survival::Surv(testtime[wb], teststatus[wb]) ~ 1 + grpind1[wb], na.action=na.exclude)
-          timemat[l, (1:length(surv.fit$time))] <- surv.fit$time
-          probmat[l, (1:length(surv.fit$surv))] <- surv.fit$surv
-          surv.formula <- (survival::Surv(testtime, teststatus) ~ 1 + boxind1)
-          coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1, na.action=na.exclude, timefix=TRUE, method="efron")
-          lhr <- coxobj$coef
-          lrt <- survival::survdiff(surv.formula, na.action=na.exclude, rho=0)$chisq
-          predobj <- predict(object=coxobj, type="lp", reference="sample", na.action=na.exclude)
-          cer <- Hmisc::rcorr.cens(x=predobj, S=survival::Surv(testtime, teststatus))['C Index']
-          surv.formula <- (survival::Surv(testtime[wb], teststatus[wb]) ~ 1 + grpind1[wb])
-          coxobj <- survival::coxph(surv.formula, singular.ok=TRUE, iter.max=1, na.action=na.exclude, timefix=TRUE, method="efron")
-          grplhr <- coxobj$coef
-          grplrt <- survival::survdiff(surv.formula, na.action=na.exclude, rho=0)$chisq 
-          predobj <- predict(object=coxobj, type="lp", reference="sample", na.action=na.exclude)
-          grpcer <- Hmisc::rcorr.cens(x=predobj, S=survival::Surv(testtime[wb], teststatus[wb]))['C Index']
-        } else {
-          timemat[l, ] <- NA
-          probmat[l, ] <- NA
-          lhr <- NA
-          lrt <- NA
-          cer <- NA
-          grplhr <- NA 
-          grplrt <- NA
-          grpcer <- NA
-          ind.rem <- c(ind.rem, l)
-        }
+        grpcer <- Hmisc::rcorr.cens(x=predobj, S=survival::Surv(testtime[wg], teststatus[wg]))['C Index']
       } else {
         timemat[l, ] <- NA
         probmat[l, ] <- NA
@@ -4162,7 +4133,7 @@ cv.ave.peel <- function(traindata,
         lrt <- NA
         cer <- NA
         grplhr <- NA 
-        grplrt <- NA 
+        grplrt <- NA
         grpcer <- NA
         ind.rem <- c(ind.rem, l)
       }
@@ -5071,7 +5042,7 @@ zeroslope <- function(y, x, lag, span, degree, family, minimum) {
   } else {
     y <- y[order(x)]  # reorder the data in ascending values of x
     x <- x[order(x)]  # do the same for x
-    na <- is.na(y)
+    na <- (is.na(y) | is.nan(y))
     wa <- which(na)
     if (!is.empty(wa)) {
       xc <- x[-wa]
