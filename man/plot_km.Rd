@@ -6,10 +6,11 @@
 
 \description{
   Function for plotting the cross-validated survival distributions of a \code{sbh} object. It plots the 
-  cross-validated Kaplan-Meir estimates of survival distributions between the highest risk (inbox) versus
-  lower-risk (outbox) groups of observations (PRSP), or between the two specified fixed groups (PRGSP), 
-  if this option is used. The plot is done for a given peeling step (or number of steps) of the peeling sequence
-  (inner loop of our PRSP or PRGSP) algorithm) of the \code{sbh} object, as specified by the user.
+  cross-validated Kaplan-Meir estimates of survival distributions either between highest risk (inbump) 
+  versus lower-risk (outbump) bumps of observations (bump difference, PRSP algorithm), or between two specified 
+  fixed groups (group difference, PRGSP algorithm). The plot is done for a user-specified number of steps 
+  of the peeling sequence, i.e. peeling step of the inner loop of the Patient Recursive Survival Peeling (PRSP) or 
+  of the Patient Recursive Group Survival Peeling (PRGSP) algorithm of the \code{sbh} object.
 }
 
 \usage{
@@ -26,7 +27,7 @@
           cex = 0.5,
           steps = 1:object$cvfit$cv.nsteps,
           add.caption = TRUE,
-          text.caption = c("outbox","inbox"), 
+          text.caption = c("outbump","inbump"), 
           nr = 3, 
           nc = 4,
           device = NULL, 
@@ -85,14 +86,14 @@
   \item{steps}{
     \code{Integer} \code{vector}. Vector of peeling steps at which to plot the survival curves. 
     Defaults to all the peeling steps of \code{sbh} object \code{object}.
-  }
+  }  
   \item{add.caption}{
     \code{Logical} scalar. Shall the caption be plotted? 
     Defaults to \code{TRUE}.
   }
   \item{text.caption}{
     \code{Character} \code{vector} of caption content. 
-    Defaults to \{"outbox","inbox"\}.
+    Defaults to \{"outbump","inbump"\}.
   }
   \item{nr}{
     \code{Integer} scalar of the number of rows in the plot. 
@@ -135,9 +136,18 @@
 \details{
   Some of the plotting parameters are further defined in the function \code{plot.survfit} (R package \pkg{survival}).
   Step #0 always corresponds to the situation where the starting box covers the entire test-set data before peeling.
-  Cross-validated LRT, LHR of inbox samples and log-rank \eqn{p}-values of separation are shown at the bottom of the plot
-  with the corresponding peeling step. \eqn{P}-values are lower-bounded by the precision limit given by \eqn{1/A}, 
-  where \eqn{A} is the number of permutations.
+  
+  The plot is done for the given peeling criterion (\code{object$cvarg$peelcriterion}) of the \code{sbh} object. 
+  If a regular hunt of \emph{bump difference} is done (\code{peelcriterion} in \{"lrt", "lhr", "chs"\}), 
+  cross-validated Kaplan-Meir estimates (KM curves) are plotted between observations from the highest risk bump 
+  (in-bump) versus lower-risk bump (out-bump). If a hunt of (user-specified) fixed \emph{group difference} is 
+  done (\code{peelcriterion} in \{"bwgrp", "bwbmp"\}), KM curves are plotted either: (i) between observations 
+  of both groups within the highest risk bump (in-bump) ("bwgrp"), or similarly, (ii) between observations from 
+  the highest risk bump (in-bump) versus lower-risk bump (out-bump) within a given group ("bwbmp").  
+  
+  Cross-validated LRT, LHR values and log-rank \eqn{p}-values of separation between bumps or groups are shown at the 
+  bottom of the plot with the corresponding peeling step. \eqn{P}-values are lower-bounded by the precision limit given 
+  by \eqn{1/A}, where \eqn{A} is the number of permutations.
 }
 
 \value{
@@ -166,9 +176,9 @@
         \item Dazard J-E., Choe M., Pawitan Y., and Rao J.S. (2021c).
               "\emph{Identification and Characterization of Informative Prognostic Subgroups by Survival Bump Hunting.}"
               (in prep).
-        \item Rao J.S., Huilin Y., and Dazard J-E. (2021d).
+        \item Rao J.S., Huilin Y., and Dazard J-E. (2020).
               "\emph{Disparity Subtyping: Bringing Precision Medicine Closer to Disparity Science.}"
-              (in prep).
+              Cancer Epidemiology Biomarkers & Prevention, 29(6 Suppl):C018.
         \item Yi C. and Huang J. (2017).
               "\emph{Semismooth Newton Coordinate Descent Algorithm for Elastic-Net Penalized Huber Loss Regression and Quantile Regression}."
               J. Comp Graph. Statistics, 26(3):547-557.

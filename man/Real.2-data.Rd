@@ -57,9 +57,9 @@
         \item Dazard J-E., Choe M., Pawitan Y., and Rao J.S. (2021c).
               "\emph{Identification and Characterization of Informative Prognostic Subgroups by Survival Bump Hunting.}"
               (in prep).
-        \item Rao J.S., Huilin Y., and Dazard J-E. (2021d).
+        \item Rao J.S., Huilin Y., and Dazard J-E. (2020).
               "\emph{Disparity Subtyping: Bringing Precision Medicine Closer to Disparity Science.}"
-              (in prep).
+              Cancer Epidemiology Biomarkers & Prevention, 29(6 Suppl):C018.
         \item Yi C. and Huang J. (2017).
               "\emph{Semismooth Newton Coordinate Descent Algorithm for Elastic-Net Penalized Huber Loss Regression and Quantile Regression}."
               J. Comp Graph. Statistics, 26(3):547-557.
