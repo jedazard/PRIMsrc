@@ -51,13 +51,13 @@ citEntry(entry       = "Article",
                                   person(family="Huilin ", given="Y."),
                                   person(family="Dazard", given="J-E.")), 	
          journal     = "in prep",
-         year        = "2021",
-         volume      = "",
-         number      = "",
-         pages       = "",
-         textVersion = "Rao J.S., Huilin Y., and Dazard J-E. (2021).
+         year        = "2020",
+         volume      = "29",
+         number      = "6 Suppl",
+         pages       = "C018",
+         textVersion = "Rao J.S., Huilin Y., and Dazard J-E. (2020).
                         Disparity Subtyping: Bringing Precision Medicine Closer to Disparity Science, 
-                        (in prep).")
+                        Cancer Epidemiology Biomarkers & Prevention, 29(6 Suppl):C018.")
 
 citEntry(entry       = "Article",
          title       = "Semismooth Newton Coordinate Descent Algorithm for Elastic-Net Penalized Huber Loss Regression and Quantile Regression",
