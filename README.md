@@ -36,7 +36,7 @@ In the case of a time-to event outcome, possibly censored (as in survival or ris
 Patient Recursive Survival Peeling (PRSP) algorithm. See Dazard and Rao (2014, 2015, 2016, 2021a) for details, as well as Dazard et al. (2021c)
 for an application in Patient Survival Subtyping. Alternatively, "Group Survival Bump Hunting" (GSBH) is done by using a derivation of PRSP with 
 specifc peeling and cross-validation criterion, called Patient Recursive Group Survival Peeling (PRGSP). See Dazard and Rao (2021b) for details, 
-as well as Rao et al. (2021d) for an application in Survival Disparity Subtyping. 
+as well as Rao et al. (2020) for an application in Survival Disparity Subtyping.
 
 The package relies on an optional variable screening (pre-selection) procedure that is run before the PRSP algorithm and final variable usage 
 (selection) procedure is done. This is done by four possible cross-validated variable screening (pre-selection) procedures offered to the user 
@@ -104,9 +104,6 @@ Installation has been tested on Windows, Linux, OSX and Solaris platforms.
 
 See Travis CI build result:
 [![Build Status](https://travis-ci.com/jedazard/PRIMsrc.svg)](https://travis-ci.com/jedazard/PRIMsrc)
-
-See CRAN checks:
-[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/PRIMsrc)](https://cran.r-project.org/web/checks/check_results_PRIMsrc.html)
 
 
 ================
@@ -193,7 +190,7 @@ Funding/Provision/Help:
       
    + Rao J.S., Huilin Y., and Dazard J-E. 
       *Disparity Subtyping: Bringing Precision Medicine Closer to Disparity Science*. 
-      [2021d (in prep)].
+      [Cancer Epidemiology Biomarkers & Prevention 2020](https://cebp.aacrjournals.org/content/29/6_Supplement_1/C018), 29(6 Suppl):C018.
       
    + Dazard J-E., Choe M., LeBlanc M., and Rao J.S. 
       *Cross-validation and Peeling Strategies for Survival Bump Hunting using Recursive Peeling Methods*. 
