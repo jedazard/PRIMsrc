@@ -290,7 +290,7 @@ PACKAGE INSTALLATION
 - Minor updates in documentation files (DESCRIPTION, NEWS, and README).
 - Built and tested under R version 3.5.1 (2018-07-02) and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2021-04-18
+Date   : 2021-06-17
 o RELEASE 0.9.0
 SIGNIFICANT USER-VISIBLE CHANGES
 - New submission to CRAN after package was archived by CRAN on 2020-08-26 due to reverse 
@@ -299,10 +299,12 @@ SIGNIFICANT USER-VISIBLE CHANGES
   and 3 new ancilary parameters (`lag`, 'span`, `degree`), together into a new `sbh.control()` 
   function. These parameters are set for variable screening, optional formats and outputs of 
   SBH models, as well as tuning of internal scatterplot smoother.
-- Changed peeling criterion single option `grp` to two possible options: `bwgrp` or `bwbmp` 
-  to implement the two possible types of hunt of fixed group difference using the PRGSP 
-  algorithm (GSBH). See details in `sbh()` function.
-  Corrected plot function `plot_km()` to reflect this change.
+- Changed main `sbh()` function treatment of the peeling criterion `grp` option with a more 
+  sensible implementation for estimating a fixed group difference in the PRGSP algorithm (GSBH).
+  This is now done with a group by bump interaction effect. See details in `sbh()` function.
+- Corrected S3-generic `plot()` and `plot_km()` function to reflect this change.
+- Improved outputs of `plot_profile()` and `plot_traj()` and `plot_trace()` functions.
+- Added input option `range` to `plot_traj()` function.
 - Removed deprecated Lazyload and LazyData field values of DESCRIPTION file.
 - Corrected and updated Import and Depends field values of DESCRIPTION file.
 BUG FIXES
@@ -316,7 +318,6 @@ BUG FIXES
 - Corrected calculation of cross-validation error in the case of peeling criterion `grp`.
 - Corrected handling and return of p-values in the case of peeling criterion `grp`.  
 - Corrected handling of argument `proj` in S3-generic `plot()` function, and changed default values.
-- Correction of minor issues in plotting functions.
 - Correction of minor issues in the flow when no bump is found.
 - Corrected field '\usage{data(...)}' in Rd manual files.
 UTILITIES
@@ -324,7 +325,7 @@ UTILITIES
 PACKAGE INSTALLATION
 - Minor updates in manual files (Rd).
 - Minor updates in documentation files (DESCRIPTION, NEWS, and README).
-- Built and tested under R version 4.0.3 (2020-10-10).
+- Built and tested under R version 4.1.0 (2021-05-18).
 - Migrated update to GitHub and tested by Travis CI.
 ---------------------------------------------------------------------------------
 
