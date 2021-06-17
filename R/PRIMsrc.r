@@ -91,7 +91,7 @@ sbh <- function(X,
                 conf=NULL,
                 verbose=TRUE,
                 seed=NULL) {
-
+  
   # Parsing and evaluating SBH parameters
   alpha <- NULL
   beta <- NULL
@@ -119,12 +119,12 @@ sbh <- function(X,
   if ((!is.wholenumber(A)) || (A <= 0)) {
     stop("\nArgument 'A' must be a positive integer. Exiting ... \n\n")
   }
-  peelcriterion <- match.arg(arg=peelcriterion, choices=c("lrt", "lhr", "cer", "bwgrp", "bwbmp"), several.ok=FALSE)
+  peelcriterion <- match.arg(arg=peelcriterion, choices=c("lrt", "lhr", "cer", "grp"), several.ok=FALSE)
   if ((peelcriterion == "lhr") || (peelcriterion == "lrt") || (peelcriterion == "cer")) {
     cvcriterion <- match.arg(arg=cvcriterion, choices=c("lrt", "lhr", "cer"), several.ok=FALSE)
     groups <- NULL
-  } else if ((peelcriterion == "bwgrp") || (peelcriterion == "bwbmp")) {
-    cvcriterion <- match.arg(arg=cvcriterion, choices=c("lrt", "lhr", "cer"), several.ok=FALSE)
+  } else if (peelcriterion == "grp") {
+    cvcriterion <- match.arg(arg=cvcriterion, choices=c("cer"), several.ok=FALSE)
     if (is.null(groups)) {
       stop("\nArgument `groups` must be specified when used with PRGSP algorithm. Exiting ... \n\n")
     }
@@ -156,7 +156,7 @@ sbh <- function(X,
   if (!is.null(timeval)) {
     stopifnot (length(timeval) == 1L, !is.na(timeval), timeval >= 0) 
   }
-
+  
   # Checking Inputs of Data
   if (missing(X)) {
     stop("\nNo explanatory variables provided! Exiting ... \n\n")
@@ -431,12 +431,9 @@ sbh <- function(X,
       CV.bmp.lhr.list <- CV.box.obj$cv.bmp.lhr
       CV.bmp.lrt.list <- CV.box.obj$cv.bmp.lrt
       CV.bmp.cer.list <- CV.box.obj$cv.bmp.cer
-      CV.bwgrp.lhr.list <- CV.box.obj$cv.bwgrp.lhr
-      CV.bwgrp.lrt.list <- CV.box.obj$cv.bwgrp.lrt
-      CV.bwgrp.cer.list <- CV.box.obj$cv.bwgrp.cer
-      CV.bwbmp.lhr.list <- CV.box.obj$cv.bwbmp.lhr
-      CV.bwbmp.lrt.list <- CV.box.obj$cv.bwbmp.lrt
-      CV.bwbmp.cer.list <- CV.box.obj$cv.bwbmp.cer
+      CV.grp.lhr.list <- CV.box.obj$cv.grp.lhr
+      CV.grp.lrt.list <- CV.box.obj$cv.grp.lrt
+      CV.grp.cer.list <- CV.box.obj$cv.grp.cer
       CV.time.bar.list <- CV.box.obj$cv.time.bar
       CV.prob.bar.list <- CV.box.obj$cv.prob.bar
       CV.max.time.bar.list <- CV.box.obj$cv.max.time.bar
@@ -471,10 +468,8 @@ sbh <- function(X,
       if (cvcriterion == "lhr") {
         if ((peelcriterion == "lhr") || (peelcriterion == "lrt") || (peelcriterion == "cer")) {
           CV.stepprofiles <- list2mat(list=CV.bmp.lhr.list, fill=NA, coltrunc=CV.maxsteps)
-        } else if (peelcriterion == "bwgrp") {
-          CV.stepprofiles <- list2mat(list=CV.bwgrp.lhr.list, fill=NA, coltrunc=CV.maxsteps)
-        } else if (peelcriterion == "bwbmp") {
-          CV.stepprofiles <- list2mat(list=CV.bwbmp.lhr.list, fill=NA, coltrunc=CV.maxsteps)
+        } else if (peelcriterion == "grp") {
+          CV.stepprofiles <- list2mat(list=CV.grp.lhr.list, fill=NA, coltrunc=CV.maxsteps)
         } else {
           stop("Invalid peeling criterion. Exiting ...\n\n")
         }
@@ -496,10 +491,8 @@ sbh <- function(X,
       } else if (cvcriterion == "lrt") {
         if ((peelcriterion == "lhr") || (peelcriterion == "lrt") || (peelcriterion == "cer")) {
           CV.stepprofiles <- list2mat(list=CV.bmp.lrt.list, fill=NA, coltrunc=CV.maxsteps)
-        } else if (peelcriterion == "bwgrp") {
-          CV.stepprofiles <- list2mat(list=CV.bwgrp.lrt.list, fill=NA, coltrunc=CV.maxsteps)
-        } else if (peelcriterion == "bwbmp") {
-          CV.stepprofiles <- list2mat(list=CV.bwbmp.lrt.list, fill=NA, coltrunc=CV.maxsteps)
+        } else if (peelcriterion == "grp") {
+          CV.stepprofiles <- list2mat(list=CV.grp.lrt.list, fill=NA, coltrunc=CV.maxsteps)
         } else {
           stop("Invalid peeling criterion. Exiting ...\n\n")
         }
@@ -521,10 +514,8 @@ sbh <- function(X,
       } else if (cvcriterion == "cer") {
         if ((peelcriterion == "lhr") || (peelcriterion == "lrt") || (peelcriterion == "cer")) {
           CV.stepprofiles <- list2mat(list=CV.bmp.cer.list, fill=NA, coltrunc=CV.maxsteps)
-        } else if (peelcriterion == "bwgrp") {
-          CV.stepprofiles <- list2mat(list=CV.bwgrp.cer.list, fill=NA, coltrunc=CV.maxsteps)
-        } else if (peelcriterion == "bwbmp") {
-          CV.stepprofiles <- list2mat(list=CV.bwbmp.cer.list, fill=NA, coltrunc=CV.maxsteps)
+        } else if (peelcriterion == "grp") {
+          CV.stepprofiles <- list2mat(list=CV.grp.cer.list, fill=NA, coltrunc=CV.maxsteps)
         } else {
           stop("Invalid peeling criterion. Exiting ...\n\n")
         }
@@ -681,7 +672,7 @@ sbh <- function(X,
                            "cv.used"=NA,
                            "cv.stats"=NA,
                            "cv.pval"=NA)
-
+            
           } else {
             
             success <- TRUE
@@ -726,14 +717,6 @@ sbh <- function(X,
             CV.support.sd <- round(lapply.mat(X=CV.support.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
             CV.size.mu <- round(CV.boxind.size, digits=0)
             CV.size.sd <- round(lapply.mat(X=CV.size.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-            CV.time.bar.mu <- round(lapply.mat(X=CV.time.bar.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-            CV.time.bar.sd <- round(lapply.mat(X=CV.time.bar.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-            CV.prob.bar.mu <- round(lapply.mat(X=CV.prob.bar.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-            CV.prob.bar.sd <- round(lapply.mat(X=CV.prob.bar.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-            CV.max.time.bar.mu <- round(lapply.mat(X=CV.max.time.bar.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-            CV.max.time.bar.sd <- round(lapply.mat(X=CV.max.time.bar.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-            CV.min.prob.bar.mu <- round(lapply.mat(X=CV.min.prob.bar.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-            CV.min.prob.bar.sd <- round(lapply.mat(X=CV.min.prob.bar.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
             
             if ((peelcriterion == "lhr") || (peelcriterion == "lrt") || (peelcriterion == "cer")) {
               CV.bmp.lhr.mu <- round(lapply.mat(X=CV.bmp.lhr.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
@@ -742,6 +725,14 @@ sbh <- function(X,
               CV.bmp.lrt.sd <- round(lapply.mat(X=CV.bmp.lrt.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
               CV.bmp.cer.mu <- round(lapply.mat(X=CV.bmp.cer.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
               CV.bmp.cer.sd <- round(lapply.mat(X=CV.bmp.cer.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+              CV.time.bar.mu <- round(lapply.mat(X=CV.time.bar.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+              CV.time.bar.sd <- round(lapply.mat(X=CV.time.bar.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+              CV.prob.bar.mu <- round(lapply.mat(X=CV.prob.bar.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+              CV.prob.bar.sd <- round(lapply.mat(X=CV.prob.bar.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+              CV.max.time.bar.mu <- round(lapply.mat(X=CV.max.time.bar.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+              CV.max.time.bar.sd <- round(lapply.mat(X=CV.max.time.bar.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+              CV.min.prob.bar.mu <- round(lapply.mat(X=CV.min.prob.bar.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+              CV.min.prob.bar.sd <- round(lapply.mat(X=CV.min.prob.bar.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
               CV.stats.mu <- data.frame("Support"=CV.support.mu,
                                         "Size"=CV.size.mu,
                                         "LHR"=CV.bmp.lhr.mu,
@@ -764,71 +755,36 @@ sbh <- function(X,
                                         "MEFP"=CV.min.prob.bar.sd)
               rownames(CV.stats.sd) <- paste("step", 0:(CV.nsteps-1), sep="")
               colnames(CV.stats.sd) <- c("Support", "Size", "LHR", "LRT", "CER", "EFT", "EFP", "MEFT", "MEFP")
-            } else if (peelcriterion == "bwgrp") {
-              CV.bwgrp.lhr.mu <- round(lapply.mat(X=CV.bwgrp.lhr.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-              CV.bwgrp.lhr.sd <- round(lapply.mat(X=CV.bwgrp.lhr.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-              CV.bwgrp.lrt.mu <- round(lapply.mat(X=CV.bwgrp.lrt.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-              CV.bwgrp.lrt.sd <- round(lapply.mat(X=CV.bwgrp.lrt.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-              CV.bwgrp.cer.mu <- round(lapply.mat(X=CV.bwgrp.cer.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-              CV.bwgrp.cer.sd <- round(lapply.mat(X=CV.bwgrp.cer.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+            } else if (peelcriterion == "grp") {
+              CV.grp.lhr.mu <- round(lapply.mat(X=CV.grp.lhr.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+              CV.grp.lhr.sd <- round(lapply.mat(X=CV.grp.lhr.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+              CV.grp.cer.mu <- round(lapply.mat(X=CV.grp.cer.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
+              CV.grp.cer.sd <- round(lapply.mat(X=CV.grp.cer.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
               CV.stats.mu <- data.frame("Support"=CV.support.mu,
                                         "Size"=CV.size.mu,
-                                        "LHR"=CV.bwgrp.lhr.mu,
-                                        "LRT"=CV.bwgrp.lrt.mu,
-                                        "CER"=CV.bwgrp.cer.mu,
-                                        "EFT"=CV.time.bar.mu,
-                                        "EFP"=CV.prob.bar.mu,
-                                        "MEFT"=CV.max.time.bar.mu,
-                                        "MEFP"=CV.min.prob.bar.mu)
+                                        "GLHR"=CV.grp.lhr.mu,
+                                        "GCER"=CV.grp.cer.mu)
               rownames(CV.stats.mu) <- paste("step", 0:(CV.nsteps-1), sep="")
-              colnames(CV.stats.mu) <- c("Support", "Size", "LHR", "LRT", "CER", "EFT", "EFP", "MEFT", "MEFP")
+              colnames(CV.stats.mu) <- c("Support", "Size", "GLHR", "GCER")
               CV.stats.sd <- data.frame("Support"=CV.support.sd,
                                         "Size"=CV.size.sd,
-                                        "LHR"=CV.bwgrp.lhr.sd,
-                                        "LRT"=CV.bwgrp.lrt.sd,
-                                        "CER"=CV.bwgrp.cer.sd,
-                                        "EFT"=CV.time.bar.sd,
-                                        "EFP"=CV.prob.bar.sd,
-                                        "MEFT"=CV.max.time.bar.sd,
-                                        "MEFP"=CV.min.prob.bar.sd)
+                                        "GLHR"=CV.grp.lhr.sd,
+                                        "GCER"=CV.grp.cer.sd)
               rownames(CV.stats.sd) <- paste("step", 0:(CV.nsteps-1), sep="")
-              colnames(CV.stats.sd) <- c("Support", "Size", "LHR", "LRT", "CER", "EFT", "EFP", "MEFT", "MEFP")
-            } else if (peelcriterion == "bwbmp") {
-              CV.bwbmp.lhr.mu <- round(lapply.mat(X=CV.bwbmp.lhr.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-              CV.bwbmp.lhr.sd <- round(lapply.mat(X=CV.bwbmp.lhr.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-              CV.bwbmp.lrt.mu <- round(lapply.mat(X=CV.bwbmp.lrt.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-              CV.bwbmp.lrt.sd <- round(lapply.mat(X=CV.bwbmp.lrt.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-              CV.bwbmp.cer.mu <- round(lapply.mat(X=CV.bwbmp.cer.list, FUN=function(x){mean(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-              CV.bwbmp.cer.sd <- round(lapply.mat(X=CV.bwbmp.cer.list, FUN=function(x){sd(x, na.rm=TRUE)}, coltrunc=CV.nsteps), digits=decimals)
-              CV.stats.mu <- data.frame("Support"=CV.support.mu,
-                                        "Size"=CV.size.mu,
-                                        "LHR"=CV.bwbmp.lhr.mu,
-                                        "LRT"=CV.bwbmp.lrt.mu,
-                                        "CER"=CV.bwbmp.cer.mu,
-                                        "EFT"=CV.time.bar.mu,
-                                        "EFP"=CV.prob.bar.mu,
-                                        "MEFT"=CV.max.time.bar.mu,
-                                        "MEFP"=CV.min.prob.bar.mu)
-              rownames(CV.stats.mu) <- paste("step", 0:(CV.nsteps-1), sep="")
-              colnames(CV.stats.mu) <- c("Support", "Size", "LHR", "LRT", "CER", "EFT", "EFP", "MEFT", "MEFP")
-              CV.stats.sd <- data.frame("Support"=CV.support.sd,
-                                        "Size"=CV.size.sd,
-                                        "LHR"=CV.bwbmp.lhr.sd,
-                                        "LRT"=CV.bwbmp.lrt.sd,
-                                        "CER"=CV.bwbmp.cer.sd,
-                                        "EFT"=CV.time.bar.sd,
-                                        "EFP"=CV.prob.bar.sd,
-                                        "MEFT"=CV.max.time.bar.sd,
-                                        "MEFP"=CV.min.prob.bar.sd)
-              rownames(CV.stats.sd) <- paste("step", 0:(CV.nsteps-1), sep="")
-              colnames(CV.stats.sd) <- c("Support", "Size", "LHR", "LRT", "CER", "EFT", "EFP", "MEFT", "MEFP")
+              colnames(CV.stats.sd) <- c("Support", "Size", "GLHR", "GCER")
             } else {
               stop("Invalid peeling criterion. Exiting ...\n\n")
             }
             CV.stats <- list("mean"=CV.stats.mu, "sd"=CV.stats.sd)
             
             # Computation of p-values at each step
-            obs.chisq <- CV.stats$mean$LRT
+            if ((peelcriterion == "lhr") || (peelcriterion == "lrt") || (peelcriterion == "cer")) {
+              obs.stat <- CV.stats$mean$LRT
+            } else if (peelcriterion == "grp") {
+              obs.stat <- CV.stats$mean$GLHR
+            } else {
+              stop("Invalid peeling criterion. Exiting ...\n\n")
+            }
             CV.pval <- cv.pval(X=X.sel,
                                y=y,
                                delta=delta,
@@ -846,7 +802,7 @@ sbh <- function(X,
                                            ",peelcriterion=\"", peelcriterion, "\"",
                                            ",cvcriterion=\"", cvcriterion, "\"", sep=""),
                                groups=groups,
-                               obs.chisq=obs.chisq,
+                               obs.stat=obs.stat,
                                parallel.pv=parallel.pv,
                                clus.pv=cluster,
                                verbose=verbose,
@@ -964,22 +920,22 @@ sbh.control <- function(vscons = 0.5,
                         lag = 2, 
                         span = 0.10, 
                         degree = 2) {
-                        
-    stopifnot (length(decimals) == 1L, !is.na(decimals), as.integer(decimals) >= 1L, 
-               length(onese) == 1L, !is.na(onese), is.logical(onese), 
-               length(lag) == 1L, !is.na(lag), as.integer(lag) >= 1,
-               length(span) == 1L, !is.na(span), span >= 0, span <= 1, 
-               length(degree) == 1L, !is.na(degree), as.integer(degree) >= 1)
-    
-    list("vscons"=vscons, 
-         "decimals"=decimals, 
-         "onese"=onese, 
-         "probval"=probval, 
-         "timeval"=timeval, 
-         "lag"=lag, 
-         "span"=span,
-         "degree"=degree)
-         
+  
+  stopifnot (length(decimals) == 1L, !is.na(decimals), as.integer(decimals) >= 1L, 
+             length(onese) == 1L, !is.na(onese), is.logical(onese), 
+             length(lag) == 1L, !is.na(lag), as.integer(lag) >= 1,
+             length(span) == 1L, !is.na(span), span >= 0, span <= 1, 
+             length(degree) == 1L, !is.na(degree), as.integer(degree) >= 1)
+  
+  list("vscons"=vscons, 
+       "decimals"=decimals, 
+       "onese"=onese, 
+       "probval"=probval, 
+       "timeval"=timeval, 
+       "lag"=lag, 
+       "span"=span,
+       "degree"=degree)
+  
 }
 #===============================================================================================================================#
 
@@ -1011,7 +967,7 @@ sbh.control <- function(vscons = 0.5,
 #===============================================================================================================================#
 
 PRIMsrc.news <- function(...) {
-
+  
   newsfile <- file.path(system.file(package="PRIMsrc"), "NEWS")
   file.show(newsfile)
   
@@ -1186,7 +1142,7 @@ print.sbh <- function(x, ...) {
 # Usage         :
 #===============#
 #                    plot(x,
-#                         main=NULL,
+#                         main="Scatter Plot",
 #                         proj=x$cvfit$cv.used[c(1,2)], 
 #                         steps=x$cvfit$cv.nsteps,
 #                         pch=16, 
@@ -1202,7 +1158,7 @@ print.sbh <- function(x, ...) {
 #                         pch.group=c(1,1),
 #                         cex.group=c(1,1),
 #                         col.group=c(3,4),
-#                         add.caption.group=ifelse(test=((x$cvarg$peelcriterion == "bwgrp") || (x$cvarg$peelcriterion == "bwbmp")), 
+#                         add.caption.group=ifelse(test=(x$cvarg$peelcriterion == "grp"), 
 #                                                  yes=TRUE, 
 #                                                  no=FALSE),
 #                         text.caption.group=levels(x$groups),
@@ -1228,7 +1184,7 @@ print.sbh <- function(x, ...) {
 #===============================================================================================================================#
 
 plot.sbh <- function(x,
-                     main=NULL,
+                     main="Scatter Plot",
                      proj=x$cvfit$cv.used[c(1,2)],
                      steps=x$cvfit$cv.nsteps,
                      pch=16,
@@ -1244,7 +1200,7 @@ plot.sbh <- function(x,
                      pch.group=c(1,1),
                      cex.group=c(1,1),
                      col.group=c(3,4),
-                     add.caption.group=ifelse(test=((x$cvarg$peelcriterion == "bwgrp") || (x$cvarg$peelcriterion == "bwbmp")), 
+                     add.caption.group=ifelse(test=(x$cvarg$peelcriterion == "grp"), 
                                               yes=TRUE, 
                                               no=FALSE),
                      text.caption.group=levels(x$groups), 
@@ -1298,6 +1254,7 @@ plot.sbh <- function(x,
       } else {
         par(mfrow=c(1, 1), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 4.0, 1.5), mgp=c(1.5, 0.5, 0))
       }
+      
       peelcriterion <- object$cvarg$peelcriterion
       L <- length(steps)
       y <- object$y
@@ -1306,7 +1263,7 @@ plot.sbh <- function(x,
       plot(x=x, main=NULL, xlab=x.names[1], ylab=x.names[2], type="n", axes=FALSE, asp=asp, frame.plot=FALSE)
       axis(side=1, at=pretty(range(x[,1])), col=1, col.axis=1, cex.axis=1, line=0)
       axis(side=2, at=pretty(range(x[,2])), col=1, col.axis=1, cex.axis=1, line=0)
-      if ((peelcriterion == "bwgrp") || (peelcriterion == "bwbmp")) {
+      if (peelcriterion == "grp") {
         groups <- as.factor(x=object$groups)
         groups.lev <- levels(groups)
         groups.ng <- nlevels(groups)
@@ -1530,7 +1487,7 @@ predict.sbh <- function (object,
 # Usage         :
 #===============#
 #                    plot_profile(object,
-#                                 main=NULL,
+#                                 main="Profile Plots",
 #                                 xlim=NULL, 
 #                                 ylim=NULL,
 #                                 add.sd=TRUE, 
@@ -1564,7 +1521,7 @@ predict.sbh <- function (object,
 #===============================================================================================================================#
 
 plot_profile <- function(object,
-                         main=NULL,
+                         main="Profile Plots",
                          xlim=NULL,
                          ylim=NULL,
                          add.sd=TRUE,
@@ -1592,13 +1549,20 @@ plot_profile <- function(object,
                             add.sd, add.caption, text.caption, add.profiles,
                             pch, col, lty, lwd, cex, ...) {
       
+      peelcriterion <- object$cvarg$peelcriterion
       cvcriterion <- object$cvarg$cvcriterion
       if (cvcriterion == "lhr") {
         txt <- "LHR"
       } else if (cvcriterion == "lrt") {
         txt <- "LRT"
       } else if (cvcriterion == "cer") {
-        txt <- "CER"
+        if ((peelcriterion == "lhr") || (peelcriterion == "lrt") || (peelcriterion == "cer")) {
+          txt <- "CER"
+        } else if (peelcriterion == "grp") {
+          txt <- "GCER"
+        } else {
+          stop("Invalid peeling criterion. Exiting ...\n\n")
+        }
       } else {
         stop("Invalid CV criterion. Exiting ... \n\n")
       }
@@ -1769,8 +1733,9 @@ plot_profile <- function(object,
 # Usage         :
 #===============#
 #                    plot_traj (object,
-#                               main=NULL,
+#                               main="Trajectory Plots",
 #                               toplot=object$cvfit$cv.used,
+#                               range=NULL,
 #                               col.cov, 
 #                               lty.cov, 
 #                               lwd.cov,
@@ -1804,8 +1769,9 @@ plot_profile <- function(object,
 #===============================================================================================================================#
 
 plot_traj <- function(object,
-                      main=NULL,
+                      main="Trajectory Plots",
                       toplot=object$cvfit$cv.used,
+                      range=NULL,
                       col.cov,
                       lty.cov,
                       lwd.cov,
@@ -1832,12 +1798,14 @@ plot_traj <- function(object,
     trajplot <- function(object,
                          main,
                          toplot,
+                         range,
                          col.cov, lty.cov, lwd.cov,
-                         col, lty, lwd,
-                         cex, add.caption, text.caption,
+                         col, lty, lwd, cex, 
+                         add.caption, text.caption,
                          nr, nc, ...) {
       p <- length(toplot)
       varnames <- colnames(object$X)
+      peelcriterion <- object$cvarg$peelcriterion
       if (is.null(nc))
         nc <- 3
       if (is.null(nr)) {
@@ -1845,6 +1813,18 @@ plot_traj <- function(object,
           nr <- p%/%nc + 2
         } else {
           nr <- ((p+(1:nc))[which((p+(1:nc)) %% nc == 0)])%/%nc + 2
+        }
+      }
+      if (is.null(range)) {
+        if ((peelcriterion == "lhr") || (peelcriterion == "lrt") || (peelcriterion == "cer")) {
+          range <- list("lhr"=range(0, object$cvfit$cv.stats$mean$LHR, na.rm=TRUE), 
+                        "lrt"=range(0, object$cvfit$cv.stats$mean$LRT, na.rm=TRUE), 
+                        "cer"=range(0, object$cvfit$cv.stats$mean$CER, na.rm=TRUE))
+        } else if (peelcriterion == "grp") {
+          range <- list("glhr"=range(0, object$cvfit$cv.stats$mean$GLHR, na.rm=TRUE),
+                        "gcer"=range(0, object$cvfit$cv.stats$mean$GCER, na.rm=TRUE))
+        } else {
+          stop("Invalid peeling criterion. Exiting ...\n\n")
         }
       }
       if (missing(col.cov)) {
@@ -1865,80 +1845,110 @@ plot_traj <- function(object,
         plot(x=object$cvfit$cv.stats$mean$Support,
              y=object$cvfit$cv.rules$mean[,varnames[toplot[j]]],
              type='s', col=col.cov[j], lty=lty.cov[j], lwd=lwd.cov[j],
-             main=paste(varnames[toplot[j]], " covariate trajectory", sep=""), cex.main=cex,
-             xlim=range(0,1),
-             #ylim=range(object$X[,toplot[j]], na.rm=TRUE),
-             xlab="Box Mass",
+             main=paste(varnames[toplot[j]], " covariate", sep=""), cex.main=cex,
+             xlim=range(0, 1),
+             ylim=range(object$X[,toplot[j]], na.rm=TRUE),
+             xlab=expression(paste("Box Support (", beta, ")", sep="")),
              ylab="Covariate Range", ...)
       }
       if (add.caption)
         legend(x="bottomleft", inset=0.01, legend=text.caption, cex=cex)
       par(mfg=c(nr-1, 1))
       plot(object$cvfit$cv.stats$mean$Support,
-           object$cvfit$cv.stats$mean$Support,
+           object$cvfit$cv.stats$mean$Size,
            type='s', col=col, lty=lty, lwd=lwd,
-           main="Box support trajectory", cex.main=cex,
-           xlim=range(0,1),
-           ylim=range(0,1),
-           xlab="Box Mass",
-           ylab=expression(paste("Support (", beta, ")", sep="")), ...)
+           main="Box Sample Size", cex.main=cex,
+           xlim=range(0, 1),
+           ylim=range(0, object$cvfit$cv.stats$mean$Size),
+           xlab=expression(paste("Box Support (", beta, ")", sep="")),
+           ylab=expression(paste("Size (", italic(n), ")", sep="")), ...)
       if (add.caption)
         legend(x="bottomright", inset=0.01, legend=text.caption, cex=cex)
-      par(mfg=c(nr-1, 2))
-      plot(object$cvfit$cv.stats$mean$Support,
-           object$cvfit$cv.stats$mean$MEFT,
-           type='s', col=col, lty=lty, lwd=lwd,
-           main="MEFT trajectory", cex.main=cex,
-           xlim=range(0,1),
-           ylim=range(0, object$cvfit$cv.stats$mean$MEFT, na.rm=TRUE),
-           xlab="Box Mass",
-           ylab="Time", ...)
-      if (add.caption)
-        legend(x="bottomright", inset=0.01, legend=text.caption, cex=cex)
-      par(mfg=c(nr-1, 3))
-      plot(object$cvfit$cv.stats$mean$Support,
-           object$cvfit$cv.stats$mean$MEFP,
-           type='s', col=col, lty=lty, lwd=lwd,
-           main="MEFP trajectory", cex.main=cex,
-           xlim=range(0,1),
-           ylim=range(0,1),
-           xlab="Box Mass",
-           ylab="Probability", ...)
-      if (add.caption)
-        legend(x="bottomright", inset=0.01, legend=text.caption, cex=cex)
-      par(mfg=c(nr, 1))
-      plot(object$cvfit$cv.stats$mean$Support,
-           object$cvfit$cv.stats$mean$LHR,
-           type='s', col=col, lty=lty, lwd=lwd,
-           main="LHR trajectory", cex.main=cex,
-           xlim=range(0,1),
-           ylim=range(0, object$cvfit$cv.stats$mean$LHR, na.rm=TRUE),
-           xlab="Box Mass",
-           ylab=expression(paste("Log-Hazard Ratio (", lambda,")", sep="")), ...)
-      if (add.caption)
-        legend(x="top", inset=0.01, legend=text.caption, cex=cex)
-      par(mfg=c(nr, 2))
-      plot(object$cvfit$cv.stats$mean$Support,
-           object$cvfit$cv.stats$mean$LRT,
-           type='s', col=col, lty=lty, lwd=lwd,
-           main="LRT trajectory", cex.main=cex,
-           xlim=range(0,1),
-           ylim=range(0, object$cvfit$cv.stats$mean$LRT, na.rm=TRUE),
-           xlab="Box Mass",
-           ylab=expression(paste("Log-rank test (", chi^2 ,")", sep="")), ...)
-      if (add.caption)
-        legend(x="top", inset=0.01, legend=text.caption, cex=cex)
-      par(mfg=c(nr, 3))
-      plot(object$cvfit$cv.stats$mean$Support,
-           object$cvfit$cv.stats$mean$CER,
-           type='s', col=col, lty=lty, lwd=lwd,
-           main="CER trajectory", cex.main=cex,
-           xlim=range(0,1),
-           ylim=range(0,1),
-           xlab="Box Mass",
-           ylab=expression(paste("1-C (", theta,")", sep="")), ...)
-      if (add.caption)
-        legend(x="top", inset=0.01, legend=text.caption, cex=cex)
+      
+      if ((peelcriterion == "lhr") || (peelcriterion == "lrt") || (peelcriterion == "cer")) {
+        par(mfg=c(nr-1, 2))
+        plot(object$cvfit$cv.stats$mean$Support,
+             object$cvfit$cv.stats$mean$MEFT,
+             type='s', col=col, lty=lty, lwd=lwd,
+             main="Maximum Event-Free Time", cex.main=cex,
+             xlim=range(0, 1),
+             ylim=range(0, object$cvfit$cv.stats$mean$MEFT, na.rm=TRUE),
+             xlab=expression(paste("Box Support (", beta, ")", sep="")),
+             ylab="MEFT", ...)
+        if (add.caption)
+          legend(x="bottomright", inset=0.01, legend=text.caption, cex=cex)
+        par(mfg=c(nr-1, 3))
+        plot(object$cvfit$cv.stats$mean$Support,
+             object$cvfit$cv.stats$mean$MEFP,
+             type='s', col=col, lty=lty, lwd=lwd,
+             main="Minimum Event-Free Probability", cex.main=cex,
+             xlim=range(0, 1),
+             ylim=range(0, 1),
+             xlab=expression(paste("Box Support (", beta, ")", sep="")),
+             ylab="MEFP", ...)
+        if (add.caption)
+          legend(x="bottomright", inset=0.01, legend=text.caption, cex=cex)
+        par(mfg=c(nr, 1))
+        plot(object$cvfit$cv.stats$mean$Support,
+             object$cvfit$cv.stats$mean$LHR,
+             type='s', col=col, lty=lty, lwd=lwd,
+             main="Log-Hazard Ratio", cex.main=cex,
+             xlim=range(0, 1),
+             ylim=range$lhr,
+             xlab=expression(paste("Box Support (", beta, ")", sep="")),
+             ylab=expression(paste("LHR (", lambda,")", sep="")), ...)
+        if (add.caption)
+          legend(x="top", inset=0.01, legend=text.caption, cex=cex)
+        par(mfg=c(nr, 2))
+        plot(object$cvfit$cv.stats$mean$Support,
+             object$cvfit$cv.stats$mean$LRT,
+             type='s', col=col, lty=lty, lwd=lwd,
+             main="Log-Rank Test", cex.main=cex,
+             xlim=range(0, 1),
+             ylim=range$lrt,
+             xlab=expression(paste("Box Support (", beta, ")", sep="")),
+             ylab=expression(paste("LRT (", chi^2 ,")", sep="")), ...)
+        if (add.caption)
+          legend(x="top", inset=0.01, legend=text.caption, cex=cex)
+        par(mfg=c(nr, 3))
+        plot(object$cvfit$cv.stats$mean$Support,
+             object$cvfit$cv.stats$mean$CER,
+             type='s', col=col, lty=lty, lwd=lwd,
+             main="Concordance Error Rate", cex.main=cex,
+             xlim=range(0, 1),
+             ylim=range$cer,
+             xlab=expression(paste("Box Support (", beta, ")", sep="")),
+             ylab=expression(paste("CER (", theta,")", sep="")), ...)
+        if (add.caption)
+          legend(x="top", inset=0.01, legend=text.caption, cex=cex)
+        
+      } else if (peelcriterion == "grp") {
+        par(mfg=c(nr-1, 2))
+        plot(object$cvfit$cv.stats$mean$Support,
+             object$cvfit$cv.stats$mean$GLHR,
+             type='s', col=col, lty=lty, lwd=lwd,
+             main="Group Log-Hazard Ratio", cex.main=cex,
+             xlim=range(0, 1),
+             ylim=range$glhr,
+             xlab=expression(paste("Box Support (", beta, ")", sep="")),
+             ylab=expression(paste("GLHR (", lambda,")", sep="")), ...)
+        if (add.caption)
+          legend(x="top", inset=0.01, legend=text.caption, cex=cex)
+        par(mfg=c(nr-1, 3))
+        plot(object$cvfit$cv.stats$mean$Support,
+             object$cvfit$cv.stats$mean$GCER,
+             type='s', col=col, lty=lty, lwd=lwd,
+             main="Group Concordance Error Rate", cex.main=cex,
+             xlim=range(0, 1),
+             ylim=range$gcer,
+             xlab=expression(paste("Box Support (", beta, ")", sep="")),
+             ylab=expression(paste("GCER (", theta,")", sep="")), ...)
+        if (add.caption)
+          legend(x="top", inset=0.01, legend=text.caption, cex=cex)
+      } else {
+        stop("Invalid peeling criterion. Exiting ...\n\n")
+      }
+      
       if (!is.null(main)) {
         mtext(text=main, cex=1, side=3, outer=TRUE)
       }
@@ -1949,9 +1959,10 @@ plot_traj <- function(object,
       trajplot(object=object,
                main=main,
                toplot=toplot,
+               range=range,
                col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
-               col=col, lty=lty, lwd=lwd,
-               cex=cex, add.caption=add.caption, text.caption=text.caption,
+               col=col, lty=lty, lwd=lwd, cex=cex, 
+               add.caption=add.caption, text.caption=text.caption,
                nr=nr, nc=nc)
     } else if (device == "PS") {
       path <- normalizePath(path=path, winslash="\\", mustWork=FALSE)
@@ -1964,9 +1975,10 @@ plot_traj <- function(object,
       trajplot(object=object,
                main=main,
                toplot=toplot,
+               range=range,
                col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
-               col=col, lty=lty, lwd=lwd,
-               cex=cex, add.caption=add.caption, text.caption=text.caption,
+               col=col, lty=lty, lwd=lwd, cex=cex, 
+               add.caption=add.caption, text.caption=text.caption,
                nr=nr, nc=nc)
       dev.off()
     } else if (device == "PDF") {
@@ -1980,9 +1992,10 @@ plot_traj <- function(object,
       trajplot(object=object,
                main=main,
                toplot=toplot,
+               range=range,
                col.cov=col.cov, lty.cov=lty.cov, lwd.cov=lwd.cov,
-               col=col, lty=lty, lwd=lwd,
-               cex=cex, add.caption=add.caption, text.caption=text.caption,
+               col=col, lty=lty, lwd=lwd, cex=cex, 
+               add.caption=add.caption, text.caption=text.caption,
                nr=nr, nc=nc)
       dev.off()
     } else {
@@ -2008,8 +2021,8 @@ plot_traj <- function(object,
 # Usage         :
 #===============#
 #                    plot_trace (object,
-#                                main=NULL,
-#                                xlab="Box Mass", 
+#                                main="Covariate Trace Plots",
+#                                xlab=expression(paste("Box Support (", beta, ")", sep="")), 
 #                                ylab="Covariate Range (centered)",
 #                                toplot=object$cvfit$cv.used,
 #                                center=TRUE, 
@@ -2045,8 +2058,8 @@ plot_traj <- function(object,
 #===============================================================================================================================#
 
 plot_trace <- function(object,
-                       main=NULL,
-                       xlab="Box Mass",
+                       main="Covariate Trace Plots",
+                       xlab=expression(paste("Box Support (", beta, ")", sep="")),
                        ylab="Covariate Range (centered)",
                        toplot=object$cvfit$cv.used,
                        center=TRUE,
@@ -2206,7 +2219,7 @@ plot_trace <- function(object,
 # Usage         :
 #===============#
 #                    plot_km (object,
-#                             main=NULL,
+#                             main="Survival KM Plots",
 #                             xlab="Time", 
 #                             ylab="Probability",
 #                             ci=TRUE,
@@ -2217,12 +2230,15 @@ plot_trace <- function(object,
 #                             lwd=0.5, 
 #                             cex=0.5,
 #                             steps=1:object$cvfit$cv.nsteps,
+#                             plot.type="bumps",
+#                             bump.reference="in-bump",
+#                             group.reference=levels(object$groups)[1],
 #                             add.caption=TRUE,
-#                             text.caption=c("outbump","inbump"), 
+#                             text.caption=c("out-bump","in-bump"), 
 #                             nr=3, 
 #                             nc=4,
 #                             device=NULL, 
-#                             file="Survival Plots", 
+#                             file="Survival KM Plots", 
 #                             path=getwd(),
 #                             horizontal=TRUE, 
 #                             width=11, 
@@ -2243,7 +2259,7 @@ plot_trace <- function(object,
 #===============================================================================================================================#
 
 plot_km <- function(object,
-                    main=NULL,
+                    main="Survival KM Plots",
                     xlab="Time",
                     ylab="Probability",
                     ci=TRUE,	
@@ -2254,12 +2270,15 @@ plot_km <- function(object,
                     lwd=0.5,
                     cex=0.5,
                     steps=1:object$cvfit$cv.nsteps,
+                    plot.type="bumps",
+                    bump.reference="in-bump",
+                    group.reference=levels(object$groups)[1],
                     add.caption=TRUE,
-                    text.caption=c("outbump","inbump"), 
+                    text.caption=c("out-bump","in-bump"), 
                     nr=3,
                     nc=4,
                     device=NULL,
-                    file="Survival Plots",
+                    file="Survival KM Plots",
                     path=getwd(),
                     horizontal=TRUE,
                     width=11,
@@ -2274,7 +2293,8 @@ plot_km <- function(object,
                        main, xlab, ylab,
                        precision, mark,
                        col, lty, lwd, cex,
-                       steps,
+                       steps, plot.type, 
+                       bump.reference, group.reference,
                        add.caption, text.caption, 
                        nr, nc, ...) {
       
@@ -2284,16 +2304,19 @@ plot_km <- function(object,
         par(mfrow=c(nr, nc), oma=c(0, 0, 0, 0), mar=c(2.5, 2.5, 0.0, 1.5), mgp=c(1.5, 0.5, 0))
       }
       
-      groups <- object$groups
-      grp1 <- 1*(groups == levels(groups)[1])
-      wg <- which(grp1 == 1)
       peelcriterion <- object$cvarg$peelcriterion
       y <- object$y
       delta <- object$delta
       L <- length(steps)
       for (l in 1:L) {
         i <- steps[l]
-        box1 <- 1 * object$cvfit$cv.boxind[i,]
+        if (bump.reference == "in-bump") {
+          box1 <- 1 * object$cvfit$cv.boxind[i,]
+        } else if (bump.reference == "out-bump") {
+          box1 <- 1 * !object$cvfit$cv.boxind[i,]
+        } else {
+          stop("Invalid bump reference. Exiting ...\n\n")
+        }
         wb <- which(box1 == 1)
         if ((peelcriterion == "lhr") || (peelcriterion == "lrt") || (peelcriterion == "cer")) {
           ng <- length(unique(box1[!is.na(box1)]))
@@ -2302,54 +2325,81 @@ plot_km <- function(object,
           } else {
             box1 <- 2 - 1*box1
           }
-          surv <- survival::survfit(survival::Surv(time=y, event=delta) ~ 1 + box1)
-          if (ci) {
-            plot(surv, main="", conf.int=TRUE, mark.time=FALSE, mark=NA, lty=c(2,2), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=cex, xlab=xlab, ylab=ylab, ...)
-            par(new=TRUE)
-          }
-          plot(surv, main="", conf.int=FALSE, mark.time=TRUE, mark=mark, lty=c(lty,lty), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=cex, xlab=xlab, ylab=ylab, ...)
-          if (add.caption) {
-            legend(x="topright", inset=0.01, legend=rev(text.caption), lty=c(lty,lty), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=0.9*cex)
-          }
-        } else if (peelcriterion == "bwgrp") {
-            surv <- survival::survfit(survival::Surv(time=y[wb], event=delta[wb]) ~ 1 + grp1[wb])
+          if ((sum(box1, na.rm=TRUE) != length(box1[!is.na(box1)])) && (sum(box1, na.rm=TRUE) != 0)) {
+            surv <- survival::survfit(survival::Surv(time=y, event=delta) ~ 1 + box1)
             if (ci) {
-              plot(surv, main="", conf.int=TRUE, mark.time=FALSE, mark=NA, lty=c(2,2), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=cex, xlab=xlab, ylab=ylab, ...)
+              plot(surv, xlim=range(0,y), ylim=range(0,1), main="", conf.int=TRUE, mark.time=FALSE, mark=NA, lty=c(2,2), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=cex, xlab=xlab, ylab=ylab, ...)
               par(new=TRUE)
             }
-            plot(surv, main="", conf.int=FALSE, mark.time=TRUE, mark=mark, lty=c(lty,lty), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=cex, xlab=xlab, ylab=ylab, ...)
+            plot(surv, xlim=range(0,y), ylim=range(0,1), main="", conf.int=FALSE, mark.time=TRUE, mark=mark, lty=c(lty,lty), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=cex, xlab=xlab, ylab=ylab, ...)
             if (add.caption) {
               legend(x="topright", inset=0.01, legend=rev(text.caption), lty=c(lty,lty), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=0.9*cex)
             }
-        } else if (peelcriterion == "bwbmp") {
-          surv <- survival::survfit(formula=survival::Surv(time=y[wg], event=delta[wg]) ~ 1 + box1[wg], na.action="na.omit")
-          if (ci) {
-            plot(surv, main="", conf.int=TRUE, mark.time=FALSE, mark=NA, lty=c(2,2), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=cex, xlab=xlab, ylab=ylab, ...)
-            par(new=TRUE)
+            if (object$pv) {
+              if (object$cvfit$cv.pval$pval[i] <= precision) {
+                legend(x="bottom", inset=0.11, col="black", cex=0.9*cex, bty="n",
+                       legend=bquote(italic(p) <= .(precision)))
+              } else {
+                legend(x="bottom", inset=0.11, col="black", cex=0.9*cex, bty="n",
+                       legend=bquote(italic(p) == .(format(x=object$cvfit$cv.pval$pval[i], scientific=FALSE, digits=4, nsmall=4))))
+              }
+            }
+            legend(x="bottom", inset=0.01, col="black", cex=0.9*cex, bty="n",
+                   legend=substitute(group("", list(paste(italic(LHR) == x, sep="")), ""), list(x=format(x=object$cvfit$cv.stats$mean$LHR[i], digits=3, nsmall=3))))
+            legend(x="bottom", inset=0.06, col="black", cex=0.9*cex, bty="n",
+                   legend=substitute(group("", list(paste(italic(LRT) == x, sep="")), ""), list(x=format(x=object$cvfit$cv.stats$mean$LRT[i], digits=3, nsmall=3))))
+            legend(x="bottom", inset=0.16, legend=paste("Step ", i, sep=""), col="black", cex=0.9*cex, bty="n")
+            if (!is.null(main)) {
+              mtext(text=main, cex=1, side=3, outer=TRUE)
+            }
           }
-          plot(surv, main="", conf.int=FALSE, mark.time=TRUE, mark=mark, lty=c(lty,lty), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=cex, xlab=xlab, ylab=ylab, ...)
-          if (add.caption) {
-            legend(x="topright", inset=0.01, legend=rev(text.caption), lty=c(lty,lty), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=0.9*cex)
+        } else if (peelcriterion == "grp") {
+          groups <- object$groups
+          grp1 <- 1*(groups == group.reference)
+          wg <- which(grp1 == 1)
+          if (plot.type == "groups") {
+            if ((sum(grp1[wb], na.rm=TRUE) != length(grp1[wb][!is.na(grp1[wb])])) && 
+                (sum(grp1[-wb], na.rm=TRUE) != length(grp1[-wb][!is.na(grp1[-wb])])) && 
+                (sum(grp1[wb], na.rm=TRUE) != 0) &&
+                (sum(grp1[-wb], na.rm=TRUE) != 0)) {
+              surv <- survival::survfit(survival::Surv(time=y[wb], event=delta[wb]) ~ 1 + grp1[wb])
+              if (ci) {
+                plot(surv, xlim=range(0,y), ylim=range(0,1), main="", conf.int=TRUE, mark.time=FALSE, mark=NA, lty=c(2,2), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=cex, xlab=xlab, ylab=ylab, ...)
+                par(new=TRUE)
+              }
+              plot(surv, xlim=range(0,y), ylim=range(0,1), main="", conf.int=FALSE, mark.time=TRUE, mark=mark, lty=c(lty,lty), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=cex, xlab=xlab, ylab=ylab, ...)
+              if (add.caption) {
+                legend(x="topright", inset=0.01, legend=rev(text.caption), lty=c(lty,lty), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=0.9*cex)
+              }
+              legend(x="bottom", inset=0.01, legend=paste("Step ", i, sep=""), col="black", cex=0.9*cex, bty="n")
+              if (!is.null(main)) {
+                mtext(text=main, cex=1, side=3, outer=TRUE)
+              }
+            }
+          } else if (plot.type == "bumps") {
+            if ((sum(box1[wg], na.rm=TRUE) != length(box1[wg][!is.na(box1[wg])])) &&
+                (sum(box1[-wg], na.rm=TRUE) != length(box1[-wg][!is.na(box1[-wg])])) &&
+                (sum(box1[wg], na.rm=TRUE) != 0) &&
+                (sum(box1[-wg], na.rm=TRUE) != 0)) {
+              surv <- survival::survfit(formula=survival::Surv(time=y[wg], event=delta[wg]) ~ 1 + box1[wg], na.action="na.omit")
+              if (ci) {
+                plot(surv, xlim=range(0,y), ylim=range(0,1), main="", conf.int=TRUE, mark.time=FALSE, mark=NA, lty=c(2,2), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=cex, xlab=xlab, ylab=ylab, ...)
+                par(new=TRUE)
+              }
+              plot(surv, xlim=range(0,y), ylim=range(0,1), main="", conf.int=FALSE, mark.time=TRUE, mark=mark, lty=c(lty,lty), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=cex, xlab=xlab, ylab=ylab, ...)
+              if (add.caption) {
+                legend(x="topright", inset=0.01, legend=rev(text.caption), lty=c(lty,lty), lwd=c(lwd,lwd), col=c(col[2],col[1]), cex=0.9*cex)
+              }
+              legend(x="bottom", inset=0.01, legend=paste("Step ", i, sep=""), col="black", cex=0.9*cex, bty="n")
+              if (!is.null(main)) {
+                mtext(text=main, cex=1, side=3, outer=TRUE)
+              }
+            }
+          } else {
+            stop("Invalid plot type. Exiting ...\n\n")
           }
         } else {
           stop("Invalid peeling criterion. Exiting ...\n\n")
-        }
-        if (object$pv) {
-          if (object$cvfit$cv.pval$pval[i] <= precision) {
-            legend(x="bottom", inset=0.11, col="black", cex=0.9*cex, bty="n",
-                   legend=bquote(italic(p) <= .(precision)))
-          } else {
-            legend(x="bottom", inset=0.11, col="black", cex=0.9*cex, bty="n",
-                   legend=bquote(italic(p) == .(format(x=object$cvfit$cv.pval$pval[i], scientific=FALSE, digits=4, nsmall=4))))
-          }
-        }
-        legend(x="bottom", inset=0.01, col="black", cex=0.9*cex, bty="n",
-               legend=substitute(group("", list(paste(italic(LHR) == x, sep="")), ""), list(x=format(x=object$cvfit$cv.stats$mean$LHR[i], digits=3, nsmall=3))))
-        legend(x="bottom", inset=0.06, col="black", cex=0.9*cex, bty="n",
-               legend=substitute(group("", list(paste(italic(LRT) == x, sep="")), ""), list(x=format(x=object$cvfit$cv.stats$mean$LRT[i], digits=3, nsmall=3))))
-        legend(x="bottom", inset=0.16, legend=paste("Step ", i, sep=""), col="black", cex=0.9*cex, bty="n")
-        if (!is.null(main)) {
-          mtext(text=main, cex=1, side=3, outer=TRUE)
         }
       }
     }
@@ -2360,7 +2410,8 @@ plot_km <- function(object,
              main=main, xlab=xlab, ylab=ylab,
              precision=precision, mark=mark,
              col=col, lty=lty, lwd=lwd, cex=cex,
-             steps=steps,
+             steps=steps, plot.type=plot.type, 
+             bump.reference=bump.reference, group.reference=group.reference,
              add.caption=add.caption, text.caption=text.caption,
              nr=nr, nc=nc)
     } else if (device == "PS") {
@@ -2375,7 +2426,8 @@ plot_km <- function(object,
              main=main, xlab=xlab, ylab=ylab,
              precision=precision, mark=mark,
              col=col, lty=lty, lwd=lwd, cex=cex,
-             steps=steps,
+             steps=steps, plot.type=plot.type, 
+             bump.reference=bump.reference, group.reference=group.reference,
              add.caption=add.caption, text.caption=text.caption,
              nr=nr, nc=nc)
       dev.off()
@@ -2391,7 +2443,8 @@ plot_km <- function(object,
              main=main, xlab=xlab, ylab=ylab,
              precision=precision, mark=mark,
              col=col, lty=lty, lwd=lwd, cex=cex,
-             steps=steps,
+             steps=steps, plot.type=plot.type, 
+             bump.reference=bump.reference, group.reference=group.reference,
              add.caption=add.caption, text.caption=text.caption,
              nr=nr, nc=nc)
       dev.off()
