@@ -98,7 +98,7 @@ CRAN downloads in the last week:
 ================
 ### Requirements
 
-PRIMsrc (>= 0.9.0) requires R-3.5.0 (2018-04-23). It was built and tested under R version 4.0.3 (2020-10-10) and Travis CI. 
+PRIMsrc (>= 0.9.0) requires R-3.5.0 (2018-04-23). It was built and tested under R version 4.1.0 (2021-05-18) and Travis CI. 
 
 Installation has been tested on Windows, Linux, OSX and Solaris platforms. 
 
@@ -194,7 +194,7 @@ Funding/Provision/Help:
       
    + Dazard J-E., Choe M., LeBlanc M., and Rao J.S. 
       *Cross-validation and Peeling Strategies for Survival Bump Hunting using Recursive Peeling Methods*. 
-      [Statistical Analysis and Data Mining (2016), 9(1):12-42](https://onlinelibrary.wiley.com/doi/10.1002/sam.11301/full). 
+      [Statistical Analysis and Data Mining (2016), 9(1):12-42](https://onlinelibrary.wiley.com/doi/full/10.1002/sam.11301). 
       (The American Statistical Association Data Science Journal)
 
    + Dazard J-E., Choe M., LeBlanc M., and Rao J.S. 
