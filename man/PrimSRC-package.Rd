@@ -105,11 +105,11 @@
       \code{\link{plot}}
       \bold{2D Visualization of Data Scatter and Encapsulating Box} \cr           
             End-user S3-method plot function for two-dimensional visualization of scatter of data points 
-            and cross-validated encapsulating box of a \code{sbh} object for the highest risk (inbox) versus
-            lower-risk (outbox) groups (PRSP), and between the two specified fixed groups (PRGSP), 
-            if this option is used. The scatter plot is done for a given peeling step (or number of steps) 
-            of the peeling sequence (inner loop of our PRSP or PRGSP) and in a given plane of the used covariates 
-            of the \code{sbh} object, both specified by the user.\cr
+            and cross-validated encapsulating box of a \code{sbh} object for the higher-risk (in-bump) versus
+            lower-risk (out-bump) bumps (bump difference, PRSP algorithm), or between two specified fixed groups 
+            (group difference, PRGSP algorithm), if this option is used. The scatter plot is done for a given peeling 
+            step (or number of steps) of the peeling sequence (inner loop of our PRSP or PRGSP) and in a given plane 
+            of the used covariates of the \code{sbh} object, both specified by the user.\cr
 
       \code{\link{predict}}
       \bold{Predict Function}\cr
@@ -137,11 +137,11 @@
             covariates among the pre-selected ones at each iteration of the peeling sequence (inner loop of our PRSP or PRGSP algorithm). \cr
       \code{\link{plot_km}}
       \bold{Visualization of Survival Distributions} \cr
-            End-user function for plotting the cross-validated survival distributions of a \code{sbh} object. It plots the 
-            cross-validated Kaplan-Meir estimates of survival distributions between the highest risk (inbox) versus
-            lower-risk (outbox) groups of observations (PRSP), or between the two specified fixed groups (PRGSP), 
-            if this option is used. The plot is done for a given peeling step (or number of steps) of the peeling sequence
-            (inner loop of our PRSP or PRGSP) algorithm) of the \code{sbh} object, as specified by the user. \cr
+            End-user function for plotting the cross-validated survival distributions of a \code{sbh} object. 
+            It plots the cross-validated Kaplan-Meir estimates of survival distributions either between higher-risk (in-bump)
+            versus lower-risk (out-bump) bumps of observations (bump difference, PRSP algorithm), or between two specified 
+            fixed groups (group difference, PRGSP algorithm). The plot is done for a given peeling step (or number of steps) 
+            of the peeling sequence (inner loop of our PRSP or PRGSP) algorithm) of the \code{sbh} object. \cr
 
       \item{END-USER DATASETS} \cr
       \code{\link{Synthetic.1}},

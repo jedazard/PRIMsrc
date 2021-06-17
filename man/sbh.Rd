@@ -73,8 +73,9 @@
         of observations (\eqn{n}) should be randomly split. See details.
     } 
     \item{A}{
-        Positive \code{integer} of the number of permutations for the computation of log-rank permutation \eqn{p}-values. 
-        Defaults to 1000. Ignored if \code{pv=FALSE} or \code{cv=FALSE}.
+        Positive \code{integer} of the number of permutations used for generating the permutation distribution 
+        of the null distribution and the computation of log-rank permutation \eqn{p}-values. 
+        Defaults to 1000. Ignored if \code{pv=FALSE}.
     }
     \item{vs}{
         \code{logical} scalar. Flag for optional variable (covariate) screening (pre-selection). 
@@ -103,16 +104,15 @@
                 [1,\code{floor}(\eqn{p})]. Alternatively, use \code{msize=NULL} to allow the optimal model size to be 
                 determined by cross-validation. See below for details. 
                 Suggests \code{NULL}.
-            \item{\code{peelcriterion}} in \{"lhr", "lrt", "chs", "bwgrp", "bwbmp"\} stands for the peeling criterion 
-                used in the rate of increase between in-bump vs out-bump Log-Hazard Ratio (LHR), Log-Rank Test (LRT), or
-                Cumulative Hazard Summary (CHS), and between groups within a given bump (BWGRP), or between in-bump vs 
-                out-bump within a given group (BWBMP), respectively (see details). LHR, LRT, CHS are used in the PRSP 
-                algorithm for building a SBH model. BWGRP and BWBMP are used in the PRGSP algorithm for building a GSBH model. 
-                Suggests "lrt" for SBH and "bwgrp" for GSBH.
+            \item{\code{peelcriterion}} in \{"lhr", "lrt", "chs", "grp"\} stands for the peeling criterion 
+                used in the rate of increase between in-bump vs out-bump Log-Hazard Ratio (LHR), Log-Rank Test (LRT), 
+                or Cumulative Hazard Summary (CHS), and between fixed groups (GRP), respectively (see details). 
+                LHR, LRT, and CHS are used in the PRSP algorithm for building a SBH model, while GRP is used in the 
+                PRGSP algorithm for building a GSBH model. Suggests "lrt" for SBH and "grp" for GSBH.
             \item{\code{cvcriterion}} in \{"lhr", "lrt", "cer"\} stands for the cross-validation criterion 
                 Log-Hazard Ratio (LHR), Log-Rank Test (LRT), or Concordance Error Rate (CER), respectively, 
-                that is used for optimizing the model size (cardinal of subset of top-screened variables) and the optimal 
-                number of peeling steps (optimal peeling sequence length) in the PRSP variable screening procedure. 
+                that is used for optimizing the model size (cardinal of subset of top-screened variables) and the 
+                optimal number of peeling steps (optimal peeling sequence length) in the PRSP variable screening procedure. 
                 Suggests "cer".
         }
         PCQR: 
@@ -185,28 +185,29 @@
                 sequence of the PRSP algorithm. Defaults to 0.01.
             \item{\code{beta}} = \code{numeric} scalar of minimum box support at the end of the peeling sequence. 
                 Defaults to 0.10.
-            \item{\code{peelcriterion}} in \{"lhr", "lrt", "chs", "bwgrp", "bwbmp"\} stands for the peeling criterion 
-                used in the rate of increase between in-bump vs out-bump Log-Hazard Ratio (LHR), Log-Rank Test (LRT), or
-                Cumulative Hazard Summary (CHS), and between groups within a given bump (BWGRP), or between in-bump 
-                vs out-bump within a given group (BWBMP), respectively (see details). LHR, LRT, CHS are used in the PRSP 
-                algorithm for building a SBH model. BWGRP and BWBMP are used in the PRGSP algorithm for building a GSBH model. 
-                Defaults "lrt" for a SBH model.
+            \item{\code{peelcriterion}} in \{"lhr", "lrt", "chs", "grp"\} stands for the peeling criterion 
+                used in the rate of increase between in-bump vs out-bump Log-Hazard Ratio (LHR), Log-Rank Test (LRT), 
+                or Cumulative Hazard Summary (CHS), and between groups (GRP), respectively (see details). LHR, LRT, and CHS 
+                are used in the PRSP algorithm for building a SBH model, while GRP is used in the PRGSP algorithm 
+                for building a GSBH model. Defaults to "lrt" for SBH and "grp" for GSBH.
             \item{\code{cvcriterion}} in \{"lrt", "lhr", "cer"\} stands for the cross-validation criterion 
                 Log-Hazard Ratio (LHR), Log-Rank Test (LRT), or Concordance Error Rate (CER), respectively, 
-                that is used for tuning/optimizing the optimal number of peeling steps (i.e. optimal peeling sequence length) 
-                in the PRSP algorithm. Ignored if \code{cv} is \code{FALSE}. 
+                that is used for tuning/optimizing the optimal number of peeling steps. If a SBH model is built 
+                (\code{peelcriterion} in \{"lrt", "lhr", "chs"\}), all three \code{cvcriterion} in \{"lrt", "lhr", "cer"\}
+                are admissible. If a GSBH model is built, only \code{cvcriterion} in \{"cer"\} is allowed.
+                Ignored if \code{cv} is \code{FALSE}. 
                 Defaults to "cer".
         } 
         if \code{peelcriterion} is in \{"lrt", "lhr", "chs"\}, \code{groups} is automatically set to \code{NULL}.
     }
     \item{groups}{
-        \code{character} or \code{numeric} \code{vector}, or \code{factor} of group membership indicator variable. 
-        It is of length the sample size with entries taking on \code{levels} of data sample groups. Only two groups 
-        are allowed at this point (see details).
+        \code{character} or \code{numeric} \code{vector}, or \code{factor} of group membership indicator variable,
+        automatically converted into a \code{factor}. It is of sample size length and entries taking on the group 
+        \code{levels}. Only two groups are allowed at this point (see details).
         Defaults to \code{NULL}, i.e. when regular Patient Recursive Survival Peeling (PRSP) is used.
     }
     \item{pv}{
-        \code{logical} scalar. Flag for computation of log-rank \eqn{p}-values. 
+        \code{logical} scalar. Flag for computation of log-rank permutation \eqn{p}-values.
         Defaults to \code{FALSE}.
     }
     \item{control}{
@@ -218,10 +219,12 @@
         Defaults to \code{FALSE}, because it is not implemented yet.
     }
     \item{parallel.rep}{
-        \code{logical}. Is parallelization to be performed for replications? Defaults to \code{FALSE}.
+        \code{logical}. Is parallelization to be performed for replications? 
+        Defaults to \code{FALSE}.
     }
     \item{parallel.pv}{
-        \code{logical}. Is parallelization to be performed for computation of log-rank \eqn{p}-values? Defaults to \code{FALSE}.
+        \code{logical}. Is parallelization to be performed for computation of log-rank \eqn{p}-values? 
+        Defaults to \code{FALSE}.
     }
     \item{conf}{
         \code{list} of 5 fields containing the parameters values needed for creating the parallel backend (cluster configuration).
@@ -274,25 +277,23 @@
     If cross-validation is done (\code{cv = TRUE}, the optimal number of peeling steps (optimal peeling sequence length), 
     and the optimal model size (cardinal of subset of top-screened variables) will be determined by cross-validation. 
     If \code{cv = FALSE}, no cross-validation at all will be performed, and the values of \code{K} and \code{vscons} will both
-    be reset to 1, and traditional log-rank Mantel-Haenszel \eqn{p}-values will be computed (using the Chi-Squared 
-    distribution with 1 df for the null distribution) instead of log-rank permutation \eqn{p}-values (using the permutation 
-    distribution for the null distribution).
+    be reset to 1.
         
     The Patient Recursive Group Survival Peeling (PRGSP) algorithm is a derivation of our original Patient Recursive Survival Peeling (PRSP) 
     algorithm to search for (or find an extreme of) outcome \emph{difference} within existing (user-defined) fixed groups of observations. 
     See Dazard and Rao (2021b) for details, as well as Rao et al. (2020) for an application in Survival Disparity Subtyping.
     
-    The argument \code{object$cvarg$peelcriterion} is the peeling criterion used either in the PRSP or PRGSP algorithm for building 
-    a SBH model or GSBH model, respectively. The peeling criterion determines what type of bump hunting is done. If a regular hunt of 
+    The argument \code{object$cvarg$peelcriterion} is the peeling criterion that determines what type of bump hunting is done, that is,
+    either using the PRSP or PRGSP algorithm for building a SBH model or GSBH model, respectively. If a regular hunt of 
     \emph{bump difference} is done (SBH model, \code{peelcriterion} in \{"lrt", "lhr", "chs"\}), PRSP algorithm is used, and 
-    cross-validated bumps are generated between observations from the highest risk bump (in-bump) versus lower-risk bump (out-bump). 
-    If a hunt of (user-specified) fixed \emph{group difference} is done (GSBH model, \code{peelcriterion} in \{"bwgrp", "bwbmp"\}), 
-    PRGSP algorithm is used, and cross-validated bumps are generated in two possible ways: either (i) between observations of both 
-    groups within the highest risk bump (in-bump) ("bwgrp"), or similarly, (ii) between observations from the highest risk bump 
-    (in-bump) versus lower-risk bump (out-bump) within a given group ("bwbmp").
+    cross-validated bumps are generated between observations from the higher-risk bump (in-bump) versus lower-risk bump (out-bump). 
+    If a hunt of (user-specified) fixed \emph{group difference} is done (GSBH model, \code{peelcriterion} = \{"grp"\}), 
+    PRGSP algorithm is used, and cross-validated bumps are generated between interacting subgroup from the fixed groups and bumps 
+    (higher-risk (in-bump) versus lower-risk bump (out-bump)), that is, either between both groups within the higher-risk bump (in-bump), 
+    or equivalently, between higher-risk (in-bump) versus lower-risk bump (out-bump) within a given group.
 
     The argument \code{groups} is to be specified only if a hunt of (user-specified) fixed \emph{group difference} is to be done, i.e. 
-    when option \code{peelcriterion} in \{"bwgrp", "bwbmp"\} and PRGSP are used.
+    when option \code{peelcriterion} = \{"grp"\} and PRGSP are used.
     
     In the PRSP variable screening procedure (\code{vsarg} of "prsp"), setting option \code{msize} to a single non-\code{NULL} value 
     within the allowable range [1,\code{floor}(\eqn{p})] will override the cross-validation setting within the variable screening
@@ -344,7 +345,7 @@
               box membership indicators.
     }
     
-    If the computation of log-rank \eqn{p}-values is desired, then running with the parallelization option is strongly advised. 
+    If the computation of log-rank \eqn{p}-values is desired, then running with the parallelization option is strongly recommended. 
     In case of large (\eqn{p > n}) or very large (\eqn{p >> n}) datasets, it is also highly recommended to use the 
     parallelization option. 
   
@@ -389,7 +390,7 @@
     \item{delta}{\code{numeric} \code{vector} of observed event indicator in \{1,0\}.}
     \item{B}{positive \code{integer} of the number of replications used in the cross-validation procedure.}
     \item{K}{positive \code{integer} of the number of folds used in the cross-validation procedure.}
-    \item{A}{positive \code{integer} of the number of permutations used for the computation of log-rank \eqn{p}-values.}
+    \item{A}{positive \code{integer} of the number of permutations used for the computation of log-rank permutation \eqn{p}-values.}
     \item{vs}{\code{logical} scalar of returned flag of optional variable pre-selection.}
     \item{vstype}{\code{character} \code{vector} of the optional variable pre-selection procdure used.}
     \item{vsarg}{\code{list} of parameters used in the pre-selection procedure.}
@@ -398,7 +399,7 @@
     \item{cvtype}{\code{character} \code{vector} of the cross-validation technique used.}
     \item{cvarg}{\code{list} of parameters used in the Survival Bump Hunting procedure.}
     \item{groups}{\code{vector} of group membership if algorithm Patient Recursive Group Survival Peeling (PRGSP) is used.}
-    \item{pv}{\code{logical} scalar of returned flag of optional computation of log-rank \eqn{p}-values.}
+    \item{pv}{\code{logical} scalar of returned flag of optional computation of log-rank permutation \eqn{p}-values.}
     \item{onese}{\code{logical} scalar of returned flag of 1-standard error rule.}
     \item{decimals}{\code{integer} of the number of user-specified significant decimals.}
     \item{probval}{\code{Numeric} scalar of survival probability used.}
@@ -440,11 +441,12 @@
             \item{cv.trace: \code{numeric} \code{vector} of the modal trace values of covariate usage for all peeling steps.}
             \item{cv.sign: \code{numeric} \code{vector} in \{-1,+1\} of directions of peeling for all used (selected) covariates.} 
             \item{cv.used: \code{numeric} \code{vector} of covariates used (selected) for peeling, indexed in reference to original index.}
-            \item{cv.stats: \code{numeric} \code{matrix} of box endpoint quantities of interest (columns) for all peeling steps (rows).}
+            \item{cv.stats: \code{numeric} \code{matrix} of box endpoint descriptive statistics of interest (columns) at all peeling steps (rows).
+                The output varies according to the peeling criterion (\code{peelcriterion}) used (only relevant outputs are returned).}
             \item{cv.pval: \code{list} with 2 fields of two \code{vectors}. 
-                The first \code{cvfit$pval} is a \code{numeric} \code{vector} for log-rank \eqn{p}-values of separation of survival distributions,
-                The second \code{cvfit$seed} is is an \code{integer} scalar if parallelization is used, or an \code{integer} \code{vector} 
-                of \code{A} values, one for each permutation, if parallelization is not used.}
+                The first \code{cvfit$pval} is a \code{numeric} \code{vector} for log-rank permutation \eqn{p}-values. 
+                The second \code{cvfit$seed} is is an \code{integer} scalar of the seed if parallelization is used, 
+                or an \code{integer} \code{vector} of \code{A} values of seeds, one for each permutation, if parallelization is not used.}
         }
     }
     \item{success}{\code{logical} scalar of the returned flag of success at fitting the SBH model.}
@@ -597,7 +599,7 @@ plot(x = synt1,
      pch = 16, cex = 0.5, col = c(1,2),
      boxes = TRUE,
      col.box = 2, lty.box = 2, lwd.box = 1,
-     add.caption.box = TRUE, 
+     add.caption.box = TRUE,
      text.caption.box = paste("Step: ", synt1$cvfit$cv.nsteps, sep=""),
      device = NULL)
 
@@ -618,7 +620,7 @@ plot_traj(object = synt1,
 
 plot_trace(object = synt1,
            main = paste("Cross-validated trace plots for model #1", sep=""),
-           xlab = "Box Mass", ylab = "Covariate Range (centered)",
+           xlab = "Box Support", ylab = "Covariate Range (centered)",
            col = 1, lty = 1, lwd = 0.5, cex = 0.5,
            toplot = synt1$cvfit$cv.used,
            center = TRUE, scale = FALSE,
@@ -628,10 +630,13 @@ plot_km(object = synt1,
         main = paste("Cross-validated probability curves for model #1", sep=""),
         xlab = "Time", ylab = "Probability",
         ci = TRUE,
-        steps = 1:synt1$cvfit$cv.nsteps,
         col = c(1,2), lty = 1, lwd = 0.5, cex = 0.5,
+        steps = 1:synt1$cvfit$cv.nsteps,
+        plot.type = "bumps",
+        bump.reference = "in-bump",
+        group.reference = levels(synt1$groups)[1],
         add.caption = TRUE,
-        text.caption = c("outbox","inbox"), 
+        text.caption = c("out-bump","in-bump"), 
         device = NULL)
                                 
 \dontrun{

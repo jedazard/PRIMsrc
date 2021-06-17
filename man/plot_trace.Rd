@@ -13,8 +13,8 @@
 
 \usage{
   plot_trace(object,
-             main = NULL,
-             xlab = "Box Mass", 
+             main = "Covariate Trace Plots",
+             xlab = expression(paste("Box Support (", beta, ")", sep="")), 
              ylab = "Covariate Range (centered)",
              toplot = object$cvfit$cv.used,
              center = TRUE, 
@@ -42,11 +42,11 @@
   }
   \item{main}{
     \code{Character} \code{vector}. Main Title. 
-    Defaults to \code{NULL}.
+    Defaults to "Covariate Trace Plots".
   }
   \item{xlab}{
     \code{Character} \code{vector}. X-axis label. 
-    Defaults to "Box Mass".
+    Defaults to "Box Support (beta)".
   }\code{NULL}
   \item{ylab}{
     \code{Character} \code{vector}. Y-axis label. 
@@ -136,11 +136,13 @@
   The trace plots limit the display of traces to those only covariates that are used for peeling. 
   If centered, an horizontal black dotted line about 0 is added to the plot.
  
-  Due to the variability induced by cross-validation and replication, it is possible that more than one covariate be used for peeling at a given step.
-  So, for simplicity of the trace plots, only the modal or majority vote trace value (over the folds and replications of the cross-validation) is plotted. 
+  Due to the variability induced by cross-validation and replication, it is possible that more than 
+  one covariate be used for peeling at a given step. So, for simplicity of the trace plots, 
+  only the modal or majority vote trace value (over the folds and replications of the cross-validation) is plotted. 
   
   The top plot shows the overlay of covariate importance curves for each covariate.
-  The bottom plot shows the overlay of covariate usage curves for each covariate. It is a dicretized view of covariate importance.
+  The bottom plot shows the overlay of covariate usage curves for each covariate. It is a dicretized 
+  view of covariate importance.
   
   Both point to the magnitude and order with which covariates are used along the peeling sequence.
 }

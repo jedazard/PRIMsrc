@@ -6,15 +6,15 @@
 
 \description{
   Function for plotting the cross-validated peeling trajectories/profiles of a \code{sbh} object.
-  Applies to the pre-selected covariates specified by user and 
-  all other statistical quantities of interest at each iteration of the peeling sequence 
-  (inner loop of our PRSP or PRGSP algorithm). 
+  Applies to the pre-selected covariates specified by user and other output statistics of interest 
+  at each iteration of the peeling sequence (inner loop of our PRSP or PRGSP algorithm). 
 }
 
 \usage{
   plot_traj(object,
-            main = NULL, 
+            main = "Trajectory Plots", 
             toplot = object$cvfit$cv.used,
+            range = NULL,
             col.cov, 
             lty.cov, 
             lwd.cov,
@@ -40,11 +40,16 @@
   }
   \item{main}{
     \code{Character} \code{vector}. Main Title. 
-    Defaults to \code{NULL}.
+    Defaults to "Trajectory Plots".
   }
   \item{toplot}{
-    \code{Numeric} \code{vector}. Which of the pre-selected covariates to plot (in reference to the original index of covariates).
+    \code{Numeric} \code{vector}. Pre-selected covariates to plot (in reference to the original index of covariates).
     Defaults to covariates used for peeling.
+  }
+  \item{range}{
+    \code{List}. User-specified ranges of survival output statistics according to the peeling criterion 
+    (\code{peelcriterion}) that is used, so that only relevant entries are to be entered. See details.
+    Defaults to \code{NULL}, i.e. the full range of each statistic is going to be used.
   }
   \item{col.cov}{
     \code{Integer} \code{vector}. Line color for the covariate trajectory curve of each selected covariate. 
@@ -121,11 +126,18 @@
 }
 
 \details{
-  The plot limits the display of trajectories to those only covariates that are used for peeling.
+  The plot shows peeling trajectories of some box descriptive summary statistics and survival output statistics 
+  as a function of box support (i.e. peeling steps). It plots peeling trajectories of those only covariates that 
+  are used for peeling. It also plots according to the peeling criterion (\code{peelcriterion}) that is used so that 
+  only relevant outputs are plotted. These outputs are: Size (remaining sample size \eqn{n} in the box), 
+  Maximum Event-Free Time (MEFT), Minimum Event-Free Probability (MEFP), Log-Hazard Ratio (LHR), Log-Rank Test (LRT), 
+  and Concordance Error Rate (CER) if \code{peelcriterion} in \{"lhr", "lrt", "chs"\}, or Group Log-Hazard Ratio (GLHR), 
+  and Group Concordance Error Rate (GCER) if \code{peelcriterion} = "grp".
   
-  The plot includes box descriptive statistics (such as support), survival endpoint statistics
-  (such as Maximum Event-Free Time (MEFT), Minimum Event-Free Probability (MEVP), LHR, LRT)
-  and prediction performance (such as CER).
+  The \code{range} list includes user-specified ranges of Log-Hazard Ratio (LHR), Log-Rank Test (LRT), and Concordance Error Rate (CER) 
+  if \code{peelcriterion} in \{"lhr", "lrt", "chs"\}, or Group Log-Hazard Ratio (GLHR), and Group Concordance Error Rate (GCER) 
+  if \code{peelcriterion} = "grp". In the former case, the list should be of the form \code{range = list("lhr"=..., "lrt"=..., "cer"=...)}
+  In the latter case, the list should be of the form \code{range = list("glhr"=..., "gcer"=...)}.
 }
 
 \value{

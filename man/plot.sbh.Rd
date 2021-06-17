@@ -8,16 +8,18 @@
 
 \description{
   S3-method plot function for two-dimensional visualization of scatter of data points 
-  and cross-validated encapsulating box of a \code{sbh} object for the highest risk (inbox) versus
-  lower-risk (outbox) groups (PRSP), and between the two specified fixed groups (PRGSP), 
-  if this option is used. The scatter plot is done for a given peeling step (or number of steps) 
-  of the peeling sequence (inner loop of our PRSP or PRGSP), and in a given projection plane of 
-  the used covariates of the \code{sbh} object, both specified by the user.
+  and cross-validated encapsulating box of a \code{sbh} object. The box represents a Bump 
+  Hunting search either between higher-risk (in-bump) versus lower-risk (out-bump) 
+  observations (bump difference, PRSP algorithm), or between two specified fixed groups 
+  (group difference, PRGSP algorithm). The scatter plot is done for a given peeling step 
+  (or number of steps) of the peeling sequence (inner loop of our PRSP or PRGSP), 
+  and in a given projection plane of the used covariates of the \code{sbh} object, 
+  both specified by the user.
 }
 
 \usage{
   \method{plot}{sbh}(x,
-     main = NULL,
+     main = "Scatter Plot",
      proj = x$cvfit$cv.used[c(1,2)], 
      steps = x$cvfit$cv.nsteps,
      pch = 16, 
@@ -33,8 +35,7 @@
      pch.group = c(1,1),
      cex.group = c(1,1),
      col.group = c(3,4),
-     add.caption.group=ifelse(test = ((x$cvarg$peelcriterion == "bwgrp") || 
-                                      (x$cvarg$peelcriterion == "bwbmp")), 
+     add.caption.group = ifelse(test = (x$cvarg$peelcriterion == "grp"), 
                               yes = TRUE, 
                               no = FALSE),
      text.caption.group = levels(x$groups), 
@@ -52,7 +53,7 @@
   }
   \item{main}{
     \code{Character} \code{vector}. Main Title. 
-    Defaults to \code{NULL}.
+    Defaults to "Scatter Plot".
   }
   \item{proj}{
     \code{Integer} \code{vector} of length two, specifying the two used (selected) 
@@ -121,8 +122,7 @@
   }
   \item{add.caption.group}{
     \code{Logical} scalar. Shall the caption be plotted? 
-    Defaults to \code{TRUE} or \code{FALSE}, 
-    depending on \code{x$cvarg$peelcriterion}.
+    Defaults to \code{TRUE} or \code{FALSE}, depending on \code{x$cvarg$peelcriterion}.
   }
   \item{text.caption.group}{
     \code{Character} \code{vector} of caption content. 

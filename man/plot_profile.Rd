@@ -15,7 +15,7 @@
 
 \usage{
   plot_profile(object,
-               main = NULL,
+               main = "Profile Plots",
                xlim = NULL,
                ylim = NULL,
                add.sd = TRUE, 
@@ -41,7 +41,7 @@
   }
   \item{main}{
     \code{Character} \code{vector}. Main Title. 
-    Defaults to \code{NULL}.
+    Defaults to "Profile Plots".
   }
   \item{xlim}{
     \code{Numeric} \code{vector} of length 2. The x limits [x1, x2] of the plot. 

@@ -6,8 +6,8 @@
 
 \description{
   Function for plotting the cross-validated survival distributions of a \code{sbh} object. It plots the 
-  cross-validated Kaplan-Meir estimates of survival distributions either between highest risk (inbump) 
-  versus lower-risk (outbump) bumps of observations (bump difference, PRSP algorithm), or between two specified 
+  cross-validated Kaplan-Meir estimates of survival distributions either between higher-risk (in-bump) 
+  versus lower-risk (out-bump) bumps of observations (bump difference, PRSP algorithm), or between two specified 
   fixed groups (group difference, PRGSP algorithm). The plot is done for a user-specified number of steps 
   of the peeling sequence, i.e. peeling step of the inner loop of the Patient Recursive Survival Peeling (PRSP) or 
   of the Patient Recursive Group Survival Peeling (PRGSP) algorithm of the \code{sbh} object.
@@ -15,7 +15,7 @@
 
 \usage{
   plot_km(object,
-          main = NULL,
+          main = "Survival KM Plots",
           xlab = "Time",
           ylab = "Probability",
           ci = TRUE,
@@ -26,12 +26,15 @@
           lwd = 0.5,
           cex = 0.5,
           steps = 1:object$cvfit$cv.nsteps,
+          plot.type = "bumps",
+          bump.reference = "in-bump",
+          group.reference = levels(object$groups)[1],
           add.caption = TRUE,
-          text.caption = c("outbump","inbump"), 
+          text.caption = c("out-bump","in-bump"), 
           nr = 3, 
           nc = 4,
           device = NULL, 
-          file = "Survival Plots", 
+          file = "Survival KM Plots", 
           path = getwd(), 
           horizontal = TRUE, 
           width = 11,
@@ -44,7 +47,7 @@
   }
   \item{main}{
     \code{Character} \code{vector}. Main Title. 
-    Defaults to \code{NULL}.
+    Defaults to "Survival KM Plots".
   }
   \item{xlab}{
     \code{Character} \code{vector}. X-axis label. 
@@ -84,16 +87,30 @@
     Defaults to 0.5.
   }
   \item{steps}{
-    \code{Integer} \code{vector}. Vector of peeling steps at which to plot the survival curves. 
-    Defaults to all the peeling steps of \code{sbh} object \code{object}.
+    \code{Integer} \code{vector}. Vector of peeling steps at which to plot the survival 
+    curves. Defaults to all the peeling steps of \code{sbh} object \code{object}.
   }  
+  \item{plot.type}{
+    \code{Character} \code{vector} of plot type in \{"bumps", "groups"\} for plotting
+    survival curves between ("out-bump","in-bump") or between the fixed groups 
+    (\code{levels}(object$groups)), respectively.
+    Defaults to "bumps".
+  }
+  \item{bump.reference}{
+    \code{Character} \code{vector} in \{"out-bump","in-bump"\} of which bump is taken as 
+    the reference for plotting survival curves. Defaults to "in-bump".
+  }
+  \item{group.reference}{
+    \code{Character} \code{vector} of which of the fixed groups is taken as the reference 
+    for plotting survival curves. Defaults to \code{levels}(object$groups)[1].
+  }
   \item{add.caption}{
     \code{Logical} scalar. Shall the caption be plotted? 
     Defaults to \code{TRUE}.
   }
   \item{text.caption}{
     \code{Character} \code{vector} of caption content. 
-    Defaults to \{"outbump","inbump"\}.
+    Defaults to \{"out-bump","in-bump"\}.
   }
   \item{nr}{
     \code{Integer} scalar of the number of rows in the plot. 
@@ -104,16 +121,16 @@
     Defaults to 4.
   }
   \item{device}{
-    Graphic display device in \{\code{NULL}, "PS", "PDF"\}. 
+    \code{Character} \code{vector} of graphic display device in \{\code{NULL}, "PS", "PDF"\}. 
     Defaults to \code{NULL} (standard output screen).
     Currently implemented graphic display devices are "PS" (Postscript) or "PDF" (Portable Document Format).
   }
   \item{file}{
-    File name for output graphic. 
+    \code{Character} \code{vector} of file name for output graphic. 
     Defaults to "Survival Plots".
   }
   \item{path}{
-    Absolute path (without final (back)slash separator). 
+    \code{Character} \code{vector} of absolute path (without final (back)slash separator). 
     Defaults to the working directory path.
   }
   \item{horizontal}{
