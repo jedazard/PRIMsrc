@@ -5,9 +5,10 @@ Bump Hunting by Patient Rule Induction Method for Survival, Regression, and Clas
 ===============
 ### Description
 
-"Bump Hunting" (BH) refers to the task of mapping out a local region of the multi-dimensional input space where a target function of interest, 
-usually unknown, assumes smaller or larger values than its average over the entire space. In general, the region _R_ could be any smooth shape 
-(e.g. a convex hull) possibly disjoint.
+The general problem in "Bump Hunting" (BH) is to identify, characterize and predict hidden structures in the data that are informative and 
+significant. In practice, "Bump Hunting" refers to the task of mapping out a local region of the multi-dimensional input space where a target 
+function of interest, usually unknown, assumes smaller or larger values than its average over the entire space. In general, the region _R_ could 
+be any smooth shape (e.g. a convex hull) possibly disjoint.
     
 `PRIMsrc` implements a unified treatment of "Bump Hunting" (BH) by algorithms derived from the Patient Rule Induction Method (PRIM) 
 (Friedman and Fisher, 1999) for Survival, Regression and Classification outcomes (SRC). To estimate the region, PRIM generates decision rules 
