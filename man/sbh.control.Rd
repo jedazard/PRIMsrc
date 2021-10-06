@@ -46,7 +46,8 @@
     }
     \item{span}{
         \code{numeric} scalar in [0, 1], specifying the degree of smoothing in the internal \code{stats::loess} function. 
-        Defaults to 0.10. 
+        Defaults to 0.10. If \code{span} is too small with respect to the number of peeling steps (Adjusted maximum peeling length), 
+        choose a larger value such that \code{floor}(number of peeling steps * \code{span}) > 0.
     }
     \item{degree}{
         Positive \code{integer} indicating the degree of the polynomials (normally 1 or 2) to be used in the internal 

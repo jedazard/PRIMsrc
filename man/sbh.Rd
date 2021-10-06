@@ -18,6 +18,7 @@
 \usage{
   sbh(X, 
       y, 
+      groups = NULL,
       delta, 
       B = 30, 
       K = 5, 
@@ -33,7 +34,6 @@
                beta=0.10,
                peelcriterion=\"lrt\",
                cvcriterion=\"cer\"",
-      groups = NULL,
       pv = FALSE,
       control = sbh.control(vscons = 0.5, 
                             decimals = 2, 
@@ -53,13 +53,19 @@
 
 \arguments{
     \item{X}{
-        (\eqn{n} x \eqn{p}) \code{data.frame} or \code{numeric} \code{matrix} of \eqn{n} observations and 
-        \eqn{p} input covariates. If a \code{data.frame} is provided, it will be coerced to a 
-        \code{numeric} \code{matrix}. Discrete nominal covariates will be treated as ordinal variables.
+        A \code{numeric} (\eqn{n} x \eqn{p}) \code{matrix} of \eqn{n} observations and \eqn{p} input covariates. 
+        If input \code{X} is a \code{numeric} \code{data.frame}, it is acceptable and will be coerced to a 
+        \code{numeric} \code{matrix}. Discrete nominal covariates will be treated as ordinal variables. 
         \code{NA} missing values are not allowed.
     }
     \item{y}{
         \eqn{n}-\code{numeric} \code{vector} of observed times to event. \code{NA} missing values are not allowed.
+    }
+    \item{groups}{
+        \code{character} or \code{numeric} \code{vector}, or \code{factor} of group membership indicator variable,
+        automatically converted into a \code{factor}. It is of length the sample size, where entries take on group 
+        \code{levels}. Only two groups are allowed at this point (see details).
+        Defaults to \code{NULL}, i.e. when regular Patient Recursive Survival Peeling (PRSP) is used.
     }
     \item{delta}{
         \eqn{n}-\code{numeric} \code{vector} of observed status (censoring) indicator variable. 
@@ -199,12 +205,6 @@
                 Defaults to "cer".
         } 
         if \code{peelcriterion} is in \{"lrt", "lhr", "chs"\}, \code{groups} is automatically set to \code{NULL}.
-    }
-    \item{groups}{
-        \code{character} or \code{numeric} \code{vector}, or \code{factor} of group membership indicator variable,
-        automatically converted into a \code{factor}. It is of sample size length and entries taking on the group 
-        \code{levels}. Only two groups are allowed at this point (see details).
-        Defaults to \code{NULL}, i.e. when regular Patient Recursive Survival Peeling (PRSP) is used.
     }
     \item{pv}{
         \code{logical} scalar. Flag for computation of log-rank permutation \eqn{p}-values.
@@ -387,6 +387,7 @@
     \code{list} containing the following 23 fields:
     \item{X}{\code{numeric} \code{matrix} of original dataset.}
     \item{y}{\code{numeric} \code{vector} of observed failure / survival times.}
+    \item{groups}{\code{vector} of group membership if algorithm Patient Recursive Group Survival Peeling (PRGSP) is used.}
     \item{delta}{\code{numeric} \code{vector} of observed event indicator in \{1,0\}.}
     \item{B}{positive \code{integer} of the number of replications used in the cross-validation procedure.}
     \item{K}{positive \code{integer} of the number of folds used in the cross-validation procedure.}
@@ -394,12 +395,12 @@
     \item{vs}{\code{logical} scalar of returned flag of optional variable pre-selection.}
     \item{vstype}{\code{character} \code{vector} of the optional variable pre-selection procdure used.}
     \item{vsarg}{\code{list} of parameters used in the pre-selection procedure.}
-    \item{vscons}{\code{numeric} scalar of conservativeness of the variable screening (pre-selection) procedure.}
     \item{cv}{\code{logical} scalar of returned flag of optional cross-validation.}
     \item{cvtype}{\code{character} \code{vector} of the cross-validation technique used.}
     \item{cvarg}{\code{list} of parameters used in the Survival Bump Hunting procedure.}
-    \item{groups}{\code{vector} of group membership if algorithm Patient Recursive Group Survival Peeling (PRGSP) is used.}
-    \item{pv}{\code{logical} scalar of returned flag of optional computation of log-rank permutation \eqn{p}-values.}
+    \item{pv}{\code{logical} scalar of returned flag of optional computation of log-rank permutation \eqn{p}-values.}    
+    \item{control}{\code{list} of 8 fields of secondary (ancillary) parameters used for fitting the Survival Bump Hunting (SBH) model.}               
+    \item{vscons}{\code{numeric} scalar of conservativeness of the variable screening (pre-selection) procedure.}
     \item{onese}{\code{logical} scalar of returned flag of 1-standard error rule.}
     \item{decimals}{\code{integer} of the number of user-specified significant decimals.}
     \item{probval}{\code{Numeric} scalar of survival probability used.}
@@ -560,6 +561,7 @@ library("PRIMsrc")
 data("Synthetic.1", package="PRIMsrc")
 synt1 <- sbh(X = Synthetic.1[ , -c(1,2), drop=FALSE],
              y = Synthetic.1[ ,1, drop=TRUE],
+             groups = NULL,
              delta = Synthetic.1[ ,2, drop=TRUE],
              B = 1,
              K = 3,
@@ -570,7 +572,6 @@ synt1 <- sbh(X = Synthetic.1[ , -c(1,2), drop=FALSE],
                       beta=0.10,
                       peelcriterion=\"lrt\",
                       cvcriterion=\"lrt\"",
-             groups = NULL,
              pv = FALSE,
              control = sbh.control(probval = 0.5), 
              parallel.vs = FALSE,
@@ -683,7 +684,7 @@ plot_km(object = synt1,
     # MPI communication cluster
     # Distributed memory parallelization
     # Below, variable 'cpus' is the total number of requested 
-    # taks (threads/CPUs), which is specified from within a 
+    # tasks (threads/CPUs), which is specified from within a 
     # SLURM script.
     #==================================================
     if (require("Rmpi")) {
@@ -710,6 +711,7 @@ plot_km(object = synt1,
     data("Synthetic.1", package="PRIMsrc")
     synt1 <- sbh(X = Synthetic.1[ , -c(1,2), drop=FALSE],
                  y = Synthetic.1[ ,1, drop=TRUE],
+                 groups = NULL,
                  delta = Synthetic.1[ ,2, drop=TRUE],
                  B = 30,
                  K = 5,
@@ -725,7 +727,6 @@ plot_km(object = synt1,
                           beta=0.10,
                           peelcriterion=\"lrt\",
                           cvcriterion=\"lrt\"",
-                 groups = NULL,
                  pv = TRUE,
                  control = sbh.control(probval = 0.5, 
                                        vscons = 0.5), 
@@ -748,6 +749,7 @@ plot_km(object = synt1,
     data("Synthetic.4", package="PRIMsrc")
     synt4 <- sbh(X = Synthetic.4[ , -c(1,2), drop=FALSE],
                  y = Synthetic.4[ ,1, drop=TRUE],
+                 groups = NULL,
                  delta = Synthetic.4[ ,2, drop=TRUE],
                  B = 30,
                  K = 5,
@@ -765,7 +767,6 @@ plot_km(object = synt1,
                           beta=0.10,
                           peelcriterion=\"lrt\",
                           cvcriterion=\"cer\"",
-                 groups = NULL,
                  pv = TRUE,
                  control = sbh.control(probval = 0.5, 
                                        vscons = 0.5), 
