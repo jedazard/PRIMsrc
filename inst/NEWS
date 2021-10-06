@@ -290,18 +290,17 @@ PACKAGE INSTALLATION
 - Minor updates in documentation files (DESCRIPTION, NEWS, and README).
 - Built and tested under R version 3.5.1 (2018-07-02) and release update to GitHub.
 ---------------------------------------------------------------------------------
-Date   : 2021-06-17
+Date   : 2021-10-06
 o RELEASE 0.9.0
 SIGNIFICANT USER-VISIBLE CHANGES
 - New submission to CRAN after package was archived by CRAN on 2020-08-26 due to reverse 
   dependency of "superpc", that was archived on the same day.
 - Pooled 5 existing ancillary parameters (`vscons`, `decimals`, `onese`, `probval`, timeval`),
-  and 3 new ancilary parameters (`lag`, 'span`, `degree`), together into a new `sbh.control()` 
+  and 3 new ancilary parameters (`lag`, `span`, `degree`), together into a new `sbh.control()` 
   function. These parameters are set for variable screening, optional formats and outputs of 
-  SBH models, as well as tuning of internal scatterplot smoother.
-- Changed main `sbh()` function treatment of the peeling criterion `grp` option with a more 
-  sensible implementation for estimating a fixed group difference in the PRGSP algorithm (GSBH).
-  This is now done with a group by bump interaction effect. See details in `sbh()` function.
+  SBH models, as well as tuning of internal scatterplot smoother. All these (8) parameters are
+  now returned in a new list named `control`.
+- The S3-generic `predict()` function now takes a new argument `groups` and returns a 'sbh' object.
 - Corrected S3-generic `plot()` and `plot_km()` function to reflect this change.
 - Improved outputs of `plot_profile()` and `plot_traj()` and `plot_trace()` functions.
 - Added input option `range` to `plot_traj()` function.
@@ -309,15 +308,19 @@ SIGNIFICANT USER-VISIBLE CHANGES
 - Corrected and updated Import and Depends field values of DESCRIPTION file.
 BUG FIXES
 - Conditional tests and internal function `is.empty()` no longer coerce a Boolean vector
-  (logical of length > 1) to its first entry only (now passes R >= 3.6.0 CRAN check). 
+  (logical of length > 1) to its first entry only (now passes R >= 3.6.0 CRAN check).
+- Fixed mis-behaviour in case of a dropped cross-validation fold.
+- Fixed mis-behaviour in case span is too small.
 - Robustification against NA values and invalid inputs.
 - Execution was halted in versions >= 0.8.0 when `cvtype` was set to "averaged".
 - Added error handling in rare cases of absence of events in internal `survival::coxph()` function.
 - Internal calls to `tryCath` are now properly argumented with a valid function signature 
   (formal parameter not missing any more).
+- Corrected variable selection in the case of peeling criterion `grp`.
 - Corrected calculation of cross-validation error in the case of peeling criterion `grp`.
 - Corrected handling and return of p-values in the case of peeling criterion `grp`.  
-- Corrected handling of argument `proj` in S3-generic `plot()` function, and changed default values.
+- Corrected handling of argument `proj` and minor display problems in S3-generic `plot()` function, 
+  and changed default values.
 - Correction of minor issues in the flow when no bump is found.
 - Corrected field '\usage{data(...)}' in Rd manual files.
 UTILITIES
