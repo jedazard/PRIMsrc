@@ -104,7 +104,7 @@ PRIMsrc (>= 0.9.0) requires R-3.5.0 (2018-04-23). It was built and tested under 
 Installation has been tested on Windows, Linux, OSX and Solaris platforms. 
 
 See Travis CI build result:
-[![Build Status](https://app.travis-ci.com/github/jedazard/PRIMsrc/PRIMsrc.svg)](https://app.travis-ci.com/github/jedazard/PRIMsrc)
+[![Build Status](https://app.travis-ci.com/jedazard/PRIMsrc.svg?branch=master)](https://app.travis-ci.com/github/jedazard/PRIMsrc)
 
 
 ================
