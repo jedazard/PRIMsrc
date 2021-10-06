@@ -21,11 +21,11 @@
 #                             vsarg,
 #                             vscons,
 #                             cv,
+#                             groups,
 #                             onese,
 #                             parallel.vs,
 #                             parallel.rep,
-#                             clus.vs,
-#                             clus.rep,
+#                             conf,
 #                             verbose,
 #                             seed)
 #
@@ -53,11 +53,11 @@ cv.presel <- function(X,
                       vsarg,
                       vscons,
                       cv,
+                      groups,
                       onese,
                       parallel.vs,
                       parallel.rep,
-                      clus.vs,
-                      clus.rep,
+                      conf,
                       verbose,
                       seed) {
   
@@ -92,10 +92,13 @@ cv.presel <- function(X,
     eval(parse(text = unlist(strsplit(x = vsarg, split = ","))))
     
     replic <- 1:B
+    
     if (!parallel.rep) {
+      
       if (!is.null(seed)) {
         seed <- (0:(B-1)) + seed
       }
+      
       CV.type.presel.obj <- cv.type.presel(X=X,
                                            y=y,
                                            delta=delta,
@@ -105,29 +108,56 @@ cv.presel <- function(X,
                                            vsarg=vsarg,
                                            vscons=vscons,
                                            cv=cv,
+                                           groups=groups,
                                            onese=onese,
                                            parallel.vs=parallel.vs,
                                            parallel.rep=parallel.rep,
-                                           clus.vs=clus.vs,
+                                           conf=conf,
                                            verbose=verbose,
                                            seed=seed)
+      
     } else {
-      clusterSetRNGStream(cl=clus.rep, iseed=seed)
-      obj.cl <- clusterApply(cl=clus.rep, x=replic, fun=cv.type.presel,
-                             X=X,
-                             y=y,
-                             delta=delta,
-                             K=K,
-                             vstype=vstype,
-                             vsarg=vsarg,
-                             vscons=vscons,
-                             cv=cv,
-                             onese=onese,
-                             parallel.vs=parallel.vs,
-                             parallel.rep=parallel.rep,
-                             clus.vs=clus.vs,
-                             verbose=verbose,
-                             seed=NULL)
+      
+      # Parallel back-end registration
+      if (conf$type == "SOCKET") {
+        cluster <- parallel::makeCluster(spec=conf$spec,
+                                         type="PSOCK",
+                                         homogeneous=conf$homo,
+                                         outfile=conf$outfile,
+                                         verbose=conf$verbose)
+      } else if (conf$type == "MPI") {
+        cluster <- parallel::makeCluster(spec=conf$spec,
+                                         type="MPI",
+                                         homogeneous=conf$homo,
+                                         outfile=conf$outfile,
+                                         verbose=conf$verbose)
+      } else {
+        stop("Unrecognized cluster type: you must specify a \"SOCKET\" or \"MPI\" cluster type. Exiting ... \n\n")
+      }
+      
+      # Parallelization
+      parallel::clusterSetRNGStream(cl=cluster, iseed=seed)
+      obj.cl <- parallel::clusterApply(cl=cluster, x=replic, fun=cv.type.presel,
+                                       X=X,
+                                       y=y,
+                                       delta=delta,
+                                       K=K,
+                                       vstype=vstype,
+                                       vsarg=vsarg,
+                                       vscons=vscons,
+                                       cv=cv,
+                                       groups=groups,
+                                       onese=onese,
+                                       parallel.vs=parallel.vs,
+                                       parallel.rep=parallel.rep,
+                                       conf=conf,
+                                       verbose=verbose,
+                                       seed=NULL)
+      
+      # Stopping the cluster and cleaning all MPI states
+      parallel::stopCluster(cl=cluster)
+      
+      # Collect the results from all replicates
       CV.type.presel.obj <- list("varsel"=vector(mode="list", length=B),
                                  "varsign"=vector(mode="list", length=B),
                                  "boxstat.mean"=vector(mode="list", length=B),
@@ -141,8 +171,9 @@ cv.presel <- function(X,
       CV.type.presel.obj$vstype <- obj.cl[[1]]$vstype
       CV.type.presel.obj$vsarg <- obj.cl[[1]]$vsarg
       CV.type.presel.obj$vscons <- obj.cl[[1]]$vscons
+      
     }
-    # Collect the results from all replicates
+    
     vstype <- CV.type.presel.obj$vstype
     vsarg <- CV.type.presel.obj$vsarg
     vscons <- CV.type.presel.obj$vscons
@@ -427,10 +458,11 @@ cv.type.presel <- function(X,
                            vsarg,
                            vscons,
                            cv,
+                           groups,
                            onese,
                            parallel.vs,
                            parallel.rep,
-                           clus.vs,
+                           conf,
                            verbose,
                            seed) {
   
@@ -453,9 +485,10 @@ cv.type.presel <- function(X,
                          vsarg=vsarg,
                          vscons=vscons,
                          cv=cv,
+                         groups=groups,
                          onese=onese,
                          parallel=parallel.vs,
-                         clus=clus.vs,
+                         conf=conf,
                          verbose=verbose,
                          seed=seed[b])
         boxstat.mean[[b]] <- CVSEL$boxstat.mean
@@ -469,7 +502,7 @@ cv.type.presel <- function(X,
                          cv=cv,
                          onese=onese,
                          parallel=parallel.vs,
-                         clus=clus.vs,
+                         conf=conf,
                          verbose=verbose,
                          seed=seed[b])
         boxstat.mean[[b]] <- NULL
@@ -483,7 +516,7 @@ cv.type.presel <- function(X,
                         cv=cv,
                         onese=onese,
                         parallel=parallel.vs,
-                        clus=clus.vs,
+                        conf=conf,
                         verbose=verbose,
                         seed=seed[b])
         boxstat.mean[[b]] <- NULL
@@ -496,7 +529,7 @@ cv.type.presel <- function(X,
                          vscons=vscons,
                          cv=cv,
                          parallel=parallel.vs,
-                         clus=clus.vs,
+                         conf=conf,
                          verbose=verbose,
                          seed=seed[b])
         boxstat.mean[[b]] <- NULL
@@ -519,9 +552,10 @@ cv.type.presel <- function(X,
                        vsarg=vsarg,
                        vscons=vscons,
                        cv=cv,
+                       groups=groups,
                        onese=onese,
                        parallel=parallel.vs,
-                       clus=clus.vs,
+                       conf=conf,
                        verbose=verbose,
                        seed=seed)
       boxstat.mean <- CVSEL$boxstat.mean
@@ -535,7 +569,7 @@ cv.type.presel <- function(X,
                        cv=cv,
                        onese=onese,
                        parallel=parallel.vs,
-                       clus=clus.vs,
+                       conf=conf,
                        verbose=verbose,
                        seed=seed)
       boxstat.mean <- NULL
@@ -549,7 +583,7 @@ cv.type.presel <- function(X,
                       cv=cv,
                       onese=onese,
                       parallel=parallel.vs,
-                      clus=clus.vs,
+                      conf=conf,
                       verbose=verbose,
                       seed=seed)
       boxstat.mean <- NULL
@@ -562,7 +596,7 @@ cv.type.presel <- function(X,
                        vscons=vscons,
                        cv=cv,
                        parallel=parallel.vs,
-                       clus=clus.vs,
+                       conf=conf,
                        verbose=verbose,
                        seed=seed)
       boxstat.mean <- NULL
@@ -601,9 +635,10 @@ cv.prsp <- function(X,
                     vsarg,
                     vscons,
                     cv,
+                    groups,
                     onese,
                     parallel,
-                    clus,
+                    conf,
                     verbose,
                     seed) {
   
@@ -629,35 +664,51 @@ cv.prsp <- function(X,
   
   # Maximum Model Size or Vector of Model Sizes
   if (!is.null(msize)) {
+    Smax <- max(1,floor(p))
     if (msize < 1) {
       cat("Warning: Parameter `msize` was less than the minimal allowed value and was reset to ", 1, ".\n", sep="")
+      msize <- max(1,floor(msize))
     }
-    msize <- max(1,floor(msize))
-    Smax <- max(1,floor(p))
     if (msize > Smax) {
       cat("Warning: Parameter `msize` was greater than the maximal allowed vale and was reset to ", Smax, ".\n", sep="")
+      msize <- min(Smax, msize)
     }
-    msize <- min(Smax, msize)
   } else {
     Smax <- max(1,floor(p/5))
-    msize <- unique(ceiling(seq(from=max(1,floor(Smax/100)), to=Smax, length=min(msize,floor(100*Smax/p)))))
+    msize <- unique(ceiling(seq(from=max(1,floor(Smax/100)), to=Smax, length=floor(100*Smax/p))))
     cat("Model sizes to be explored by cross-validation: ", msize, "\n", sep=" ")
   }
   M <- length(msize)
   
-  # Creating argument `cvarg` of `cv.prsp.tune` for variable selection parameters
-  cvarg <- paste("alpha=", alpha,
-                 ",beta=", beta,
-                 ",L=", Lmax,
-                 ",peelcriterion=\"", peelcriterion, "\"",
-                 ",cvcriterion=\"", cvcriterion, "\"", sep="")
+  # Creating argument `arg` of `cv.prsp.tune` for variable selection parameters
+  arg <- paste("alpha=", alpha,
+               ",beta=", beta,
+               ",L=", Lmax,
+               ",peelcriterion=\"", peelcriterion, "\"",
+               ",cvcriterion=\"", cvcriterion, "\"", sep="")
   
   if (!is.null(seed)) {
     set.seed(seed)
   }
   
-  folds <- cv.folds(y=delta, K=K, seed=seed)
+  # Parallel back-end registration
+  if (parallel) {
+    if (conf$type == "SOCKET") {
+      cluster <- parallel::makeCluster(spec=conf$spec,
+                                       type="PSOCK",
+                                       homogeneous=conf$homo,
+                                       outfile=file.path(getwd(), "output_SOCK_inner.txt", fsep=.Platform$file.sep),
+                                       verbose=conf$verbose)
+    } else if (conf$type == "MPI") {
+      cluster <- parallel::makeCluster(spec=conf$spec,
+                                       type="MPI",
+                                       homogeneous=conf$homo,
+                                       outfile=file.path(getwd(), "output_MPI_inner.txt", fsep=.Platform$file.sep),
+                                       verbose=conf$verbose)
+    }
+  }
   
+  folds <- cv.folds(y=delta, K=K, seed=seed)
   varsel.list <- vector(mode="list", length=K)
   varsign.list <- vector(mode="list", length=K)
   boxstat.list <- vector(mode="list", length=K)
@@ -669,38 +720,45 @@ cv.prsp <- function(X,
       traindata <- testdata <- X[folds$perm[(folds$which == k)], , drop=FALSE]
       traintime <- testtime <- y[folds$perm[(folds$which == k)]]
       trainstatus <- teststatus <- delta[folds$perm[(folds$which == k)]]
+      traingroups <- testgroups <- groups[folds$perm[(folds$which == k)]]
     } else {
       traindata <- X[folds$perm[(folds$which != k)], , drop=FALSE]
       traintime <- y[folds$perm[(folds$which != k)]]
       trainstatus <- delta[folds$perm[(folds$which != k)]]
+      traingroups <- groups[folds$perm[(folds$which != k)]]
       testdata <- X[folds$perm[(folds$which == k)], , drop=FALSE]
       testtime <- y[folds$perm[(folds$which == k)]]
       teststatus <- delta[folds$perm[(folds$which == k)]]
+      testgroups <- groups[folds$perm[(folds$which == k)]]
     }
     # Training the model for each length of ranked statistics
     if (!parallel) {
       cv.obj <- cv.prsp.tune(traindata=traindata,
                              traintime=traintime,
                              trainstatus=trainstatus,
+                             traingroups=traingroups,
                              testdata=testdata,
                              testtime=testtime,
                              teststatus=teststatus,
-                             cvarg=cvarg,
+                             testgroups=testgroups,
+                             arg=arg,
                              msize=msize,
                              parallel=parallel,
                              verbose=verbose)
     } else {
-      clusterSetRNGStream(cl=clus, iseed=seed)
-      obj.cl <- clusterApply(cl=clus, x=msize, fun=cv.prsp.tune,
-                             traindata=traindata,
-                             traintime=traintime,
-                             trainstatus=trainstatus,
-                             testdata=testdata,
-                             testtime=testtime,
-                             teststatus=teststatus,
-                             cvarg=cvarg,
-                             parallel=parallel,
-                             verbose=verbose)
+      parallel::clusterSetRNGStream(cl=cluster, iseed=seed)
+      obj.cl <- parallel::clusterApply(cl=cluster, x=msize, fun=cv.prsp.tune,
+                                       traindata=traindata,
+                                       traintime=traintime,
+                                       trainstatus=trainstatus,
+                                       traingroups=traingroups,
+                                       testdata=testdata,
+                                       testtime=testtime,
+                                       teststatus=teststatus,
+                                       testgroups=testgroups,
+                                       arg=arg,
+                                       parallel=parallel,
+                                       verbose=verbose)
       cv.obj <- list("varsel"=vector(mode="list", length=M),
                      "varsign"=vector(mode="list", length=M),
                      "boxstat"=vector(mode="list", length=M),
@@ -723,6 +781,11 @@ cv.prsp <- function(X,
       varsign.list[[k]] <- as.list(rep(NA, M))
     }
     k <- k + 1
+  }
+  
+  # Stopping the cluster and cleaning all MPI states
+  if (parallel) {
+    parallel::stopCluster(cl=cluster)
   }
   
   # Get the fitted model
@@ -908,10 +971,12 @@ cv.prsp <- function(X,
 cv.prsp.tune <- function(traindata,
                          traintime,
                          trainstatus,
+                         traingroups,
                          testdata,
                          testtime,
                          teststatus,
-                         cvarg,
+                         testgroups,
+                         arg,
                          msize,
                          parallel,
                          verbose) {
@@ -922,7 +987,7 @@ cv.prsp.tune <- function(traindata,
   L <- NULL
   peelcriterion <- NULL
   cvcriterion <- NULL
-  eval(parse( text=unlist(strsplit(x=cvarg, split=",")) ))
+  eval(parse( text=unlist(strsplit(x=arg, split=",")) ))
   
   if (!parallel) {
     
@@ -933,7 +998,8 @@ cv.prsp.tune <- function(traindata,
     peelobj <- cv.prsp.univ(traindata=traindata,
                             traintime=traintime,
                             trainstatus=trainstatus,
-                            cvarg=cvarg)
+                            traingroups=traingroups,
+                            arg=arg)
     m <- 1
     while (m <= M) {
       if (verbose) cat("Model Size: ", msize[m], "\n")
@@ -989,7 +1055,8 @@ cv.prsp.tune <- function(traindata,
     peelobj <- cv.prsp.univ(traindata=traindata,
                             traintime=traintime,
                             trainstatus=trainstatus,
-                            cvarg=cvarg)
+                            traingroups=traingroups,
+                            arg=arg)
     if (is.empty(peelobj$varsel)) {
       success <- FALSE
       varsel <- NULL
@@ -1051,7 +1118,8 @@ cv.prsp.tune <- function(traindata,
 cv.prsp.univ <- function(traindata,
                          traintime,
                          trainstatus,
-                         cvarg) {
+                         traingroups,
+                         arg) {
   
   # Parsing and evaluating 'arg' to evaluate all parameters
   alpha <- NULL
@@ -1059,7 +1127,7 @@ cv.prsp.univ <- function(traindata,
   L <- NULL
   peelcriterion <- NULL
   cvcriterion <- NULL
-  eval(parse( text=unlist(strsplit(x=cvarg, split=",")) ))
+  eval(parse( text=unlist(strsplit(x=arg, split=",")) ))
   
   # Creating argument `arg` of `cv.comb.peel` for PRSP parameters
   arg <- paste("alpha=", alpha,
@@ -1083,7 +1151,7 @@ cv.prsp.univ <- function(traindata,
                      varsign=NULL,
                      initcutpts=NULL,
                      arg=arg,
-                     traingroups=NULL)
+                     traingroups=traingroups)
     cat("covariate: ", j, "\t (maxstep: ", prsp.fit$maxsteps, ")\n", sep="")
     varcut[j] <- prsp.fit$boxcut[1,1,drop=TRUE]
     varsign[j] <- prsp.fit$varsign
@@ -1187,7 +1255,7 @@ cv.pcqr <- function(X,
                     cv,
                     onese,
                     parallel,
-                    clus,
+                    conf,
                     verbose,
                     seed) {
   
@@ -1212,8 +1280,24 @@ cv.pcqr <- function(X,
     set.seed(seed)
   }
   
-  folds <- cv.folds(y=delta, K=K, seed=seed)
+  # Parallel back-end registration
+  if (parallel) {
+    if (conf$type == "SOCKET") {
+     cluster <- parallel::makeCluster(spec=conf$spec,
+                                       type="PSOCK",
+                                       homogeneous=conf$homo,
+                                       outfile=file.path(getwd(), "output_SOCK_inner.txt", fsep=.Platform$file.sep),
+                                       verbose=conf$verbose)
+    } else if (conf$type == "MPI") {
+      cluster <- parallel::makeCluster(spec=conf$spec,
+                                       type="MPI",
+                                       homogeneous=conf$homo,
+                                       outfile=file.path(getwd(), "output_MPI_inner.txt", fsep=.Platform$file.sep),
+                                       verbose=conf$verbose)
+    }
+  }
   
+  folds <- cv.folds(y=delta, K=K, seed=seed)
   varsel.list <- vector(mode="list", length=K)
   varsign.list <- vector(mode="list", length=K)
   k <- 1
@@ -1254,6 +1338,7 @@ cv.pcqr <- function(X,
                           dfmax=ncol(X)+1,
                           penalty.factor=rep(x=1, times=ncol(X)),
                           parallel=parallel,
+                          cluster=cluster,
                           verbose=verbose,
                           seed=seed)
       cv.errmu[[i]] <- cv.fit$cve
@@ -1323,6 +1408,11 @@ cv.pcqr <- function(X,
       }
     }
     k <- k + 1
+  }
+  
+  # Stopping the cluster and cleaning all MPI states
+  if (parallel) {
+    parallel::stopCluster(cl=cluster)
   }
   
   # Get the fitted model
@@ -1458,6 +1548,7 @@ cv.pcqreg <- function(X,
                       dfmax,
                       penalty.factor,
                       parallel,
+                      cluster,
                       verbose,
                       seed) {
   
@@ -1526,18 +1617,16 @@ cv.pcqreg <- function(X,
   
   E <- matrix(NA, nrow=n, ncol=length(cv.args$lambda))
   if (parallel) {
-    cluster <- makeCluster(detectCores())
-    clusterSetRNGStream(cl=cluster, iseed=seed)
-    fold.results <- parLapply(cl=cluster,
-                              X=1:nfolds,
-                              fun=cvf,
-                              XX=X,
-                              y=y,
-                              delta=delta,
-                              folds=folds,
-                              cv.args=cv.args,
-                              loss.args=loss.args)
-    stopCluster(cluster)
+    parallel::clusterSetRNGStream(cl=cluster, iseed=seed)
+    fold.results <- parallel::parLapply(cl=cluster,
+                                        X=1:nfolds,
+                                        fun=cvf,
+                                        XX=X,
+                                        y=y,
+                                        delta=delta,
+                                        folds=folds,
+                                        cv.args=cv.args,
+                                        loss.args=loss.args)
     for (i in 1:nfolds) {
       fit.i <- fold.results[[i]]
       E[folds$perm[(folds$which == i)], 1:fit.i$nl] <- fit.i$pe
@@ -1872,7 +1961,7 @@ cv.ppl <- function(X,
                    cv,
                    onese,
                    parallel,
-                   clus,
+                   conf,
                    verbose,
                    seed) {
   
@@ -1896,8 +1985,24 @@ cv.ppl <- function(X,
     set.seed(seed)
   }
   
-  folds <- cv.folds(y=delta, K=K, seed=seed)
+  # Parallel back-end registration
+  if (parallel) {
+    if (conf$type == "SOCKET") {
+      cluster <- parallel::makeCluster(spec=conf$spec,
+                                       type="PSOCK",
+                                       homogeneous=conf$homo,
+                                       outfile=file.path(getwd(), "output_SOCK_inner.txt", fsep=.Platform$file.sep),
+                                       verbose=conf$verbose)
+    } else if (conf$type == "MPI") {
+      cluster <- parallel::makeCluster(spec=conf$spec,
+                                       type="MPI",
+                                       homogeneous=conf$homo,
+                                       outfile=file.path(getwd(), "output_MPI_inner.txt", fsep=.Platform$file.sep),
+                                       verbose=conf$verbose)
+    }
+  }
   
+  folds <- cv.folds(y=delta, K=K, seed=seed)
   varsel.list <- vector(mode="list", length=K)
   varsign.list <- vector(mode="list", length=K)
   k <- 1
@@ -1919,6 +2024,7 @@ cv.ppl <- function(X,
     enlambda <- vector(mode="list", length=nalpha)
     cv.errmu <- vector(mode="list", length=nalpha)
     cv.errse <- vector(mode="list", length=nalpha)
+    
     for (i in 1:nalpha) {
       cv.fit <- glmnet::cv.glmnet(x=traindata,
                                   y=survival::Surv(time=traintime, event=trainstatus),
@@ -1970,6 +2076,11 @@ cv.ppl <- function(X,
       }
     }
     k <- k + 1
+  }
+  
+  # Stopping the cluster and cleaning all MPI states
+  if (parallel) {
+    parallel::stopCluster(cl=cluster)
   }
   
   # Get the fitted model
@@ -2096,7 +2207,7 @@ cv.spca <- function(X,
                     vscons,
                     cv,
                     parallel,
-                    clus,
+                    conf,
                     verbose,
                     seed) {
   
@@ -2123,8 +2234,24 @@ cv.spca <- function(X,
     set.seed(seed)
   }
   
-  folds <- cv.folds(y=delta, K=K, seed=seed)
+  # Parallel back-end registration
+  if (parallel) {
+    if (conf$type == "SOCKET") {
+      cluster <- parallel::makeCluster(spec=conf$spec,
+                                       type="PSOCK",
+                                       homogeneous=conf$homo,
+                                       outfile=file.path(getwd(), "output_SOCK_inner.txt", fsep=.Platform$file.sep),
+                                       verbose=conf$verbose)
+    } else if (conf$type == "MPI") {
+      cluster <- parallel::makeCluster(spec=conf$spec,
+                                       type="MPI",
+                                       homogeneous=conf$homo,
+                                       outfile=file.path(getwd(), "output_MPI_inner.txt", fsep=.Platform$file.sep),
+                                       verbose=conf$verbose)
+    }
+  }
   
+  folds <- cv.folds(y=delta, K=K, seed=seed)
   varsel.list <- vector(mode="list", length=K)
   varsign.list <- vector(mode="list", length=K)
   k <- 1
@@ -2214,6 +2341,11 @@ cv.spca <- function(X,
       pred.ind <- (pred.pcr <= median(pred.pcr))
     }
     k <- k + 1
+  }
+  
+  # Stopping the cluster and cleaning all MPI states
+  if (parallel) {
+    parallel::stopCluster(cl=cluster)
   }
   
   # Get the fitted model
@@ -2317,8 +2449,8 @@ cv.spca <- function(X,
 #                          decimals,
 #                          probval,
 #                          timeval,
-#                          parallel.rep,
-#                          clus.rep,
+#                          parallel,
+#                          conf,
 #                          verbose,
 #                          seed)
 #
@@ -2350,17 +2482,20 @@ cv.box <- function(X,
                    decimals,
                    probval,
                    timeval,
-                   parallel.rep,
-                   clus.rep,
+                   parallel,
+                   conf,
                    verbose,
                    seed) {
   
   seed <- seed[1]
   replic <- 1:B
-  if (!parallel.rep) {
+  
+  if (!parallel) {
+    
     if (!is.null(seed)) {
       seed <- (0:(B-1)) + seed
     }
+    
     CV.type.box.obj <- cv.type.box(X=X,
                                    y=y,
                                    delta=delta,
@@ -2375,28 +2510,53 @@ cv.box <- function(X,
                                    decimals=decimals,
                                    probval=probval,
                                    timeval=timeval,
-                                   parallel.rep=parallel.rep,
+                                   parallel=parallel,
                                    verbose=verbose,
                                    seed=seed)
+    
   } else {
-    clusterSetRNGStream(cl=clus.rep, iseed=seed)
-    obj.cl <- clusterApply(cl=clus.rep, x=replic, fun=cv.type.box,
-                           X=X,
-                           y=y,
-                           delta=delta,
-                           K=K,
-                           cvarg=cvarg,
-                           cv=cv,
-                           cvtype=cvtype,
-                           varsign=varsign,
-                           initcutpts=initcutpts,
-                           groups=groups,
-                           decimals=decimals,
-                           probval=probval,
-                           timeval=timeval,
-                           parallel.rep=parallel.rep,
-                           verbose=verbose,
-                           seed=NULL)
+    
+    # Parallel back-end registration
+    if (conf$type == "SOCKET") {
+      cluster <- parallel::makeCluster(spec=conf$spec,
+                                       type="PSOCK",
+                                       homogeneous=conf$homo,
+                                       outfile=conf$outfile,
+                                       verbose=conf$verbose)
+    } else if (conf$type == "MPI") {
+      cluster <- parallel::makeCluster(spec=conf$spec,
+                                       type="MPI",
+                                       homogeneous=conf$homo,
+                                       outfile=conf$outfile,
+                                       verbose=conf$verbose)
+    } else {
+      stop("Unrecognized cluster type: you must specify a \"SOCKET\" or \"MPI\" cluster type. Exiting ... \n\n")
+    }
+    
+    # Parallelization
+    parallel::clusterSetRNGStream(cl=cluster, iseed=seed)
+    obj.cl <- parallel::clusterApply(cl=cluster, x=replic, fun=cv.type.box,
+                                     X=X,
+                                     y=y,
+                                     delta=delta,
+                                     K=K,
+                                     cvarg=cvarg,
+                                     cv=cv,
+                                     cvtype=cvtype,
+                                     varsign=varsign,
+                                     initcutpts=initcutpts,
+                                     groups=groups,
+                                     decimals=decimals,
+                                     probval=probval,
+                                     timeval=timeval,
+                                     parallel=parallel,
+                                     verbose=verbose,
+                                     seed=NULL)
+    
+    # Stopping the cluster and cleaning all MPI states
+    parallel::stopCluster(cl=cluster)
+    
+    # Collect the results for each step from all the replicates
     CV.type.box.obj <- list("cv.maxsteps"=numeric(0),
                             "cv.trace"=vector(mode="list", length=B),
                             "cv.boxind"=vector(mode="list", length=B),
@@ -2414,7 +2574,6 @@ cv.box <- function(X,
                             "cv.max.time.bar"=vector(mode="list", length=B),
                             "cv.min.prob.bar"=vector(mode="list", length=B),
                             "success"=logical(B))
-    # Collect the peeling statistics for each step from all the replicates
     for (b in 1:B) {
       CV.type.box.obj$cv.maxsteps <- c(CV.type.box.obj$cv.maxsteps, obj.cl[[b]]$cv.maxsteps)
       CV.type.box.obj$cv.trace[[b]] <- obj.cl[[b]]$cv.trace
@@ -2434,6 +2593,7 @@ cv.box <- function(X,
       CV.type.box.obj$cv.min.prob.bar[[b]] <- obj.cl[[b]]$cv.min.prob.bar
       CV.type.box.obj$success[b] <- obj.cl[[b]]$success
     }
+    
   }
   
   return(list("cv.maxsteps"=CV.type.box.obj$cv.maxsteps,
@@ -2478,7 +2638,7 @@ cv.box <- function(X,
 #                               groups,
 #                               probval,
 #                               timeval,
-#                               parallel.rep,
+#                               parallel,
 #                               verbose,
 #                               seed)
 #
@@ -2510,11 +2670,11 @@ cv.type.box <- function(X,
                         decimals,
                         probval,
                         timeval,
-                        parallel.rep,
+                        parallel,
                         verbose,
                         seed) {
   
-  if (!parallel.rep) {
+  if (!parallel) {
     
     B <- length(replic)
     success <- logical(B)
@@ -2691,8 +2851,8 @@ cv.type.box <- function(X,
 #                             varsign,
 #                             initcutpts,
 #                             obs.stat,
-#                             parallel.pv,
-#                             clus.pv,
+#                             parallel,
+#                             conf,
 #                             verbose,
 #                             seed)
 #
@@ -2724,8 +2884,8 @@ cv.pval <- function(X,
                     varsign,
                     initcutpts,
                     obs.stat,
-                    parallel.pv,
-                    clus.pv,
+                    parallel,
+                    conf,
                     verbose,
                     seed) {
   
@@ -2745,47 +2905,76 @@ cv.pval <- function(X,
     
     # Computation of log-rank permutation p-values using the permutation distribution for the null distribution
     nperm <- 1:A
-    if (!parallel.pv) {
+    
+    if (!parallel) {
+      
       if (!is.null(seed)) {
         seed <- (0:(A-1)) + seed
       }
-      null.stat <- cv.null(X=X,
-                           y=y,
-                           delta=delta,
-                           nperm=nperm,
-                           K=K,
-                           cv=cv,
-                           cvtype=cvtype,
-                           cvarg=cvarg,
-                           groups=groups,
-                           peelcriterion=peelcriterion,
-                           decimals=decimals,
-                           varsign=varsign,
-                           initcutpts=initcutpts,
-                           parallel.pv=parallel.pv,
-                           verbose=verbose,
-                           seed=seed)
-      null.stat <- t(list2mat(list=null.stat, coltrunc=L, fill=NA))
+      
+      null.obj <- cv.null(X=X,
+                          y=y,
+                          delta=delta,
+                          nperm=nperm,
+                          K=K,
+                          cv=cv,
+                          cvtype=cvtype,
+                          cvarg=cvarg,
+                          groups=groups,
+                          peelcriterion=peelcriterion,
+                          decimals=decimals,
+                          varsign=varsign,
+                          initcutpts=initcutpts,
+                          parallel=parallel,
+                          verbose=verbose,
+                          seed=seed)
+      
     } else {
-      clusterSetRNGStream(cl=clus.pv, iseed=seed)
-      null.cl <- clusterApply(cl=clus.pv, x=nperm, fun=cv.null,
-                              X=X,
-                              y=y,
-                              delta=delta,
-                              K=K,
-                              cv=cv,
-                              cvtype=cvtype,
-                              cvarg=cvarg,
-                              groups=groups,
-                              peelcriterion=peelcriterion,
-                              decimals=decimals,
-                              varsign=varsign,
-                              initcutpts=initcutpts,
-                              parallel.pv=parallel.pv,
-                              verbose=verbose,
-                              seed=NULL)
-      null.stat <- t(list2mat(list=null.cl, coltrunc=L, fill=NA))
+      
+      # Parallel back-end registration
+      if (conf$type == "SOCKET") {
+        cluster <- parallel::makeCluster(spec=conf$spec,
+                                         type="PSOCK",
+                                         homogeneous=conf$homo,
+                                         outfile=conf$outfile,
+                                         verbose=conf$verbose)
+      } else if (conf$type == "MPI") {
+        cluster <- parallel::makeCluster(spec=conf$spec,
+                                         type="MPI",
+                                         homogeneous=conf$homo,
+                                         outfile=conf$outfile,
+                                         verbose=conf$verbose)
+      } else {
+        stop("Unrecognized cluster type: you must specify a \"SOCKET\" or \"MPI\" cluster type. Exiting ... \n\n")
+      }
+      
+      # Parallelization
+      parallel::clusterSetRNGStream(cl=cluster, iseed=seed)
+      null.obj <- parallel::clusterApply(cl=cluster, x=nperm, fun=cv.null,
+                                         X=X,
+                                         y=y,
+                                         delta=delta,
+                                         K=K,
+                                         cv=cv,
+                                         cvtype=cvtype,
+                                         cvarg=cvarg,
+                                         groups=groups,
+                                         peelcriterion=peelcriterion,
+                                         decimals=decimals,
+                                         varsign=varsign,
+                                         initcutpts=initcutpts,
+                                         parallel=parallel,
+                                         verbose=verbose,
+                                         seed=NULL)
+      
+      # Stopping the cluster and cleaning all MPI states
+      parallel::stopCluster(cl=cluster)
+      
     }
+    
+    # Collect the results from all replicates
+    null.stat <- t(list2mat(list=null.obj, coltrunc=L, fill=NA))
+    
     pval <- numeric(L)
     if ((peelcriterion == "lhr") || (peelcriterion == "lrt") || (peelcriterion == "cer")) {
       for (l in 1:L) {
@@ -2831,7 +3020,7 @@ cv.pval <- function(X,
 #                            decimals,
 #                            varsign,
 #                            initcutpts,
-#                            parallel.pv,
+#                            parallel,
 #                            verbose,
 #                            seed)
 #
@@ -2862,11 +3051,11 @@ cv.null <- function(X,
                     decimals,
                     varsign,
                     initcutpts,
-                    parallel.pv,
+                    parallel,
                     verbose,
                     seed) {
   
-  if (!parallel.pv) {
+  if (!parallel) {
     
     A <- length(nperm)
     n <- nrow(X)
@@ -3064,7 +3253,8 @@ cv.ave.box <- function(X,
   boxcut.list <- vector(mode="list", length=K)
   trace.list <- vector(mode="list", length=K)
   maxsteps <- numeric(K)
-  
+  ind <- numeric(0)
+
   for (k in 1:K) {
     if ((verbose) && (cv)) cat("Fold : ", k, "\n", sep="")
     # Initialize training and test data
@@ -3098,6 +3288,7 @@ cv.ave.box <- function(X,
       trace.list[[k]] <- peelobj$trace
     } else {
       if (verbose) cat("CV fold dropped... \n")
+      ind <- c(ind, k)
       maxsteps[k] <- NA
       boxstat.list[[k]] <- NA
       boxcut.list[[k]] <- NA
@@ -3105,9 +3296,17 @@ cv.ave.box <- function(X,
     }
   }
   
+  if (!is.empty(ind)) {
+    maxsteps <- maxsteps[-ind]
+    boxstat.list <- boxstat.list[-ind]
+    boxcut.list <- boxcut.list[-ind]
+    trace.list <- trace.list[-ind]
+  }
+
   # Cross-validated maximum peeling length from all folds
   CV.Lm <- min(maxsteps, na.rm=TRUE)
   
+  # Compute the averaged box for each step from all the folds
   # Truncate the cross-validated quantities from all folds to the same cross-validated length
   for (k in 1:K) {
     if (!is.matrix(boxcut.list[[k]])) {
@@ -3115,10 +3314,8 @@ cv.ave.box <- function(X,
     } else {
       boxcut.list[[k]] <- boxcut.list[[k]][1:CV.Lm,,drop=FALSE]
     }
-  }
-  
-  # Compute the averaged box statistics for each step from all the folds
-  # Each entry or row signifies a step
+  }  
+  # Each row of the final matrix signifies a step
   CV.boxcut <- matrix(data=NA, nrow=CV.Lm, ncol=p, dimnames=list(paste("step", 0:(CV.Lm-1), sep=""), colnames(X)))
   for (l in 1:CV.Lm) {
     summincut <- matrix(NA, K, p)
@@ -3145,16 +3342,7 @@ cv.ave.box <- function(X,
   # Get the adjusted cross-validated maximum peeling length, thresholded by minimal box support
   CV.Lm <- max(which(apply(CV.boxind, 1, function(x) {length(which(x))/n >= max(1/n, beta)})), na.rm=TRUE)
   
-  # Get the adjusted cross-validated quantities from all folds to the same cross-validated length
-  for (k in 1:K) {
-    if (!is.list(boxstat.list[[k]])) {
-      boxstat.list[[k]] <- rep(list(rep(NA,10)),CV.Lm)
-    } else {
-      boxstat.list[[k]] <- boxstat.list[[k]][1:CV.Lm]
-    }
-  }
-  
-  # Get the adjusted test box defnition and membership indicator vector of all observations for each step from all the folds
+  # Get the adjusted test box definition and membership indicator matrices for each step
   CV.boxind <- CV.boxind[1:CV.Lm,,drop=FALSE]
   CV.boxcut <- CV.boxcut[1:CV.Lm,,drop=FALSE]
   
@@ -3163,6 +3351,15 @@ cv.ave.box <- function(X,
   names(CV.size) <- paste("step", 0:(CV.Lm-1), sep="")
   CV.support <- CV.size/n
   names(CV.support) <- paste("step", 0:(CV.Lm-1), sep="")
+  
+  # Get the adjusted cross-validated quantities from all folds to the same cross-validated length
+  for (k in 1:K) {
+    if (!is.list(boxstat.list[[k]])) {
+      boxstat.list[[k]] <- rep(list(rep(NA,10)),CV.Lm)
+    } else {
+      boxstat.list[[k]] <- boxstat.list[[k]][1:CV.Lm]
+    }
+  }
   
   # Get the variable traces
   # Variable traces are first stacked and truncated in a matrix where folds are by rows and steps by columns
@@ -3533,7 +3730,8 @@ cv.comb.box <- function(X,
   boxcut.list <- vector(mode="list", length=K)
   trace.list <- vector(mode="list", length=K)
   maxsteps <- numeric(K)
-  
+  ind <- numeric(0)
+ 
   for (k in 1:K) {
     if ((verbose) && (cv)) cat("Fold : ", k, "\n", sep="")
     if (K == 1) {
@@ -3551,32 +3749,35 @@ cv.comb.box <- function(X,
       teststatus <- delta[folds$perm[(folds$which == k)]]
       testgroups <- groups[folds$perm[(folds$which == k)]]
     }
-    # Store the test set data from each fold (Note: the order of observations of times and status from each fold is kept in the list)
-    times.list[[k]] <- testtime
-    status.list[[k]] <- teststatus
-    # Store the test set results from each fold
     peelobj <- tryCatch(expr={cv.comb.peel(traindata=traindata, trainstatus=trainstatus, traintime=traintime,
                                            testdata=testdata, teststatus=teststatus, testtime=testtime,
                                            varsign=varsign, initcutpts=initcutpts, 
                                            arg=arg, traingroups=traingroups, testgroups=testgroups)},
                         error=function(x){NULL})
+    # Store the test set data from each fold (Note: there is a new order of observations from each fold)
+    times.list[[k]] <- testtime
+    status.list[[k]] <- teststatus
+    # Store the test set results from each fold
     if (is.list(peelobj)) {
       maxsteps[k] <- peelobj$maxsteps
       boxind.list[[k]] <- peelobj$boxind
-      boxcut.list[[k]] <- peelobj$boxcut
       trace.list[[k]] <- peelobj$trace
     } else {
       if (verbose) cat("CV fold dropped... \n")
+      ind <- c(ind, k)
       maxsteps[k] <- NA
-      boxind.list[[k]] <- NA
-      boxcut.list[[k]] <- NA
+      boxind.list[[k]] <- matrix(data=NA, nrow=1, ncol=length(which(folds$which == k)))
       trace.list[[k]] <- NA
     }
   }
-  
+  if (!is.empty(ind)) {
+    maxsteps <- maxsteps[-ind]
+    trace.list <- trace.list[-ind]
+  }
+
   # Cross-validated maximum peeling length from all folds
   CV.Lm <- min(maxsteps, na.rm=TRUE)
-  
+   
   # Get the test box membership indicator vector of all observations for each step from all the folds
   # Based on the combined membership indicator vectors over the folds
   # Re-ordered by initial order of observations
@@ -3584,25 +3785,8 @@ cv.comb.box <- function(X,
   rownames(CV.boxind) <- paste("step", 0:(CV.Lm-1), sep="")
   colnames(CV.boxind) <- rownames(X)
   
-  # Get the adjusted cross-validated maximum peeling length, thresholded by minimal box support
-  CV.Lm <- max(which(apply(CV.boxind, 1, function(x) {length(which(x))/n >= max(1/n, beta)})), na.rm=TRUE)
-  
-  # Get the adjusted test box membership indicator vector of all observations for each step from all the folds
-  CV.boxind <- CV.boxind[1:CV.Lm,,drop=FALSE]
-  
-  # Get the box sample size and support based on `CV.boxind`
-  CV.size <- apply(CV.boxind, 1, sum, na.rm=TRUE)
-  names(CV.size) <- paste("step", 0:(CV.Lm-1), sep="")
-  CV.support <- CV.size/n
-  names(CV.support) <- paste("step", 0:(CV.Lm-1), sep="")
-  
-  # Concatenates the observations of test times and status from all folds
-  # Re-ordered by initial order of observations
-  CV.times <- unlist(times.list)[ord]
-  CV.status <- unlist(status.list)[ord]
-  
   # Get the combined boxcut (truncated to the same cross-validated length) for each step from all the folds
-  # using the box circumscribing the combined test set in-box samples over all the folds
+  # using the box circumscribing the combined test set samples over all the folds
   CV.boxcut <- matrix(data=NA, nrow=CV.Lm, ncol=p, dimnames=list(paste("step", 0:(CV.Lm-1), sep=""), colnames(X)))
   for (l in 1:CV.Lm) {
     for (j in 1:p) {
@@ -3614,6 +3798,36 @@ cv.comb.box <- function(X,
     }
   }
   
+  # Get the box membership indicator vector of all observations (including the dropped ones in any fold) for each step from all the folds
+  # Based on the combined box over the folds
+  CV.boxind <- matrix(NA, nrow=CV.Lm, ncol=n)
+  for (l in 1:CV.Lm) {
+    boxcut <- CV.boxcut[l, ] * varsign
+    X.cut <- t(t(X) * varsign)
+    X.ind <- t(t(X.cut) >= boxcut)
+    CV.boxind[l,] <- (rowMeans(X.ind, na.rm = TRUE) == 1)  # Set as TRUE which observations are inside the box boudaries for all axes directions
+  }
+  rownames(CV.boxind) <- paste("step", 0:(CV.Lm-1), sep="")
+  colnames(CV.boxind) <- rownames(X)
+
+  # Get the adjusted cross-validated maximum peeling length, thresholded by minimal box support
+  CV.Lm <- max(which(apply(CV.boxind, 1, function(x) {length(which(x))/n >= max(1/n, beta)})), na.rm=TRUE)
+  
+  # Get the adjusted test box definition and membership indicator matrices for each step
+  CV.boxind <- CV.boxind[1:CV.Lm,,drop=FALSE]
+  CV.boxcut <- CV.boxcut[1:CV.Lm,,drop=FALSE]
+ 
+  # Get the box sample size and support based on `CV.boxind`
+  CV.size <- apply(CV.boxind, 1, sum, na.rm=TRUE)
+  names(CV.size) <- paste("step", 0:(CV.Lm-1), sep="")
+  CV.support <- CV.size/n
+  names(CV.support) <- paste("step", 0:(CV.Lm-1), sep="")
+  
+  # Concatenates the observations of test times and status from all folds
+  # Re-ordered by initial order of observations
+  CV.times <- unlist(times.list)[ord]
+  CV.status <- unlist(status.list)[ord]
+
   # Get the variable traces
   # Variable traces are first stacked and truncated in a matrix where folds are by rows and steps by columns
   CV.trace <- lapply.mat(X=trace.list,
@@ -3630,7 +3844,7 @@ cv.comb.box <- function(X,
                            }
                          })
   names(CV.trace) <- paste("step", 0:(CV.Lm-1), sep="")
-  
+
   # Box peeling rules for each step
   CV.rules<- as.data.frame(matrix(data=NA, nrow=CV.Lm, ncol=p, dimnames=list(paste("step", 0:(CV.Lm-1), sep=""), colnames(X))))
   for (j in 1:p) {
@@ -4028,8 +4242,13 @@ cv.ave.peel <- function(traindata,
   eval(parse( text=unlist(strsplit(x=arg, split=",")) ))
   
   # Training the model
-  peelobj <- prsp(traindata=traindata, traintime=traintime, trainstatus=trainstatus,
-                  varsign=varsign, initcutpts=initcutpts, arg=arg, traingroups=traingroups)
+  peelobj <- prsp(traindata=traindata, 
+                  traintime=traintime, 
+                  trainstatus=trainstatus,
+                  varsign=varsign, 
+                  initcutpts=initcutpts, 
+                  arg=arg, 
+                  traingroups=traingroups)
   maxsteps <- peelobj$maxsteps
   
   # Compute the box statistics for all steps, each entry or row signifies a step
@@ -4168,7 +4387,6 @@ cv.ave.peel <- function(traindata,
 #                                  testgroups,
 #                                  varsign,
 #                                  initcutpts,
-#                                  groups,
 #                                  arg)
 #===============#
 # Description   :
@@ -4194,12 +4412,16 @@ cv.comb.peel <- function(traindata,
                          testtime,
                          varsign,
                          initcutpts,
-                         groups,
                          arg) {
   
   # Training the model
-  peelobj <- prsp(traindata=traindata, traintime=traintime, trainstatus=trainstatus,
-                  varsign=varsign, initcutpts=initcutpts, arg=arg, traingroups=traingroups)
+  peelobj <- prsp(traindata=traindata, 
+                  traintime=traintime, 
+                  trainstatus=trainstatus,
+                  varsign=varsign, 
+                  initcutpts=initcutpts, 
+                  arg=arg, 
+                  traingroups=traingroups)
   maxsteps <- peelobj$maxsteps
   
   # Create the indicator matrix of the test data that is within the box for each step
@@ -4899,8 +5121,11 @@ list2mat <- function (list, coltrunc=NULL, sub=NULL, fill=NA) {
 cbindlist <- function(list, trunc) {
   
   if (!is.empty(list)) {
-    max.row <- max(sapply(list, nrow), na.rm=TRUE)
-    adjusted.list <- lapply(list, function(x) {rbind(x, matrix(data=NA, nrow=max.row - nrow(x), ncol=ncol(x)))})
+  
+    w <- unlist(lapply(X=list, FUN=function(x) {ifelse(test=is.empty(x), yes=TRUE, no=FALSE)}))
+    list <- list[!w]
+    max.row <- max(unlist(sapply(X=list, FUN=nrow)), na.rm=TRUE)
+    adjusted.list <- lapply(X=list, FUN=function(x) {rbind(x, matrix(data=NA, nrow=max.row - nrow(x), ncol=ncol(x)))})
     my.mat <- adjusted.list[[1]]
     lcl <- length(adjusted.list)
     if (lcl > 1) {
@@ -4920,7 +5145,6 @@ cbindlist <- function(list, trunc) {
   
 }
 #===============================================================================================================================#
-
 
 
 
@@ -4968,6 +5192,8 @@ is.empty <- function(x) {
         }
       }      
     }
+  } else if (is.list(x)) {
+    return( is.null(x) )   #NA is a non-empty value
   } else if (is.matrix(x) || is.data.frame(x)) {
     return( ((nrow(x) == 0) || (ncol(x) == 0)) )
   } 
@@ -5027,6 +5253,10 @@ is.wholenumber <- function(x, tol=.Machine$double.eps^0.5) {
 #===============================================================================================================================#
 
 zeroslope <- function(y, x, lag, span, degree, family, minimum) {
+  n <- length(x)
+  if (floor(n * span) == 0) {
+    stop("Span 'span' is too small with respect to number of peeling steps. Exiting ...\n\n")
+  }
   if (anyNA(x)) {
     stop("Peeling steps cannot contain NA values. Exiting ... \n\n")
   } else {
