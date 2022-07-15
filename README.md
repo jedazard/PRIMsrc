@@ -106,6 +106,9 @@ Installation has been tested on Windows, Linux, OSX and Solaris platforms.
 See Travis CI build result:
 [![Build Status](https://app.travis-ci.com/jedazard/PRIMsrc.svg?branch=master)](https://app.travis-ci.com/github/jedazard/PRIMsrc)
 
+See CRAN checks:
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/PRIMsrc)](https://cran.r-project.org/web/checks/check_results_PRIMsrc.html)
+
 
 ================
 ### Installation
